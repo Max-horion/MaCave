@@ -1,21 +1,17 @@
 {
   "@@locale": "fr",
-
   "appTitle": "Ma Cave",
   "@appTitle": {
     "description": "Nom de l'application, affiché dans la barre de titre."
   },
-
   "homeEmptyTitle": "Votre cave est vide",
   "@homeEmptyTitle": {
     "description": "Titre affiché sur l'écran d'accueil quand aucune bouteille n'est enregistrée."
   },
-
-  "homeEmptyMessage": "Les bouteilles que vous ajouterez apparaîtront ici.",
+  "homeEmptyMessage": "Touchez « Ajouter » pour enregistrer votre première bouteille.",
   "@homeEmptyMessage": {
     "description": "Message d'aide sous le titre de la cave vide."
   },
-
   "bottleCount": "{count, plural, =0{Aucune bouteille} =1{1 bouteille} other{{count} bouteilles}}",
   "@bottleCount": {
     "description": "Nombre de bouteilles, avec accord du pluriel.",
@@ -23,6 +19,423 @@
       "count": {
         "type": "int",
         "format": "decimalPattern"
+      }
+    }
+  },
+  "actionCancel": "Annuler",
+  "@actionCancel": {
+    "description": "Bouton pour fermer une fenêtre sans rien changer."
+  },
+  "actionSave": "Enregistrer",
+  "@actionSave": {
+    "description": "Bouton d'enregistrement d'un formulaire."
+  },
+  "actionDelete": "Supprimer",
+  "@actionDelete": {
+    "description": "Bouton de suppression."
+  },
+  "actionEdit": "Modifier",
+  "@actionEdit": {
+    "description": "Bouton pour modifier une fiche."
+  },
+  "actionUndo": "Annuler",
+  "@actionUndo": {
+    "description": "Action du bandeau qui annule la dernière opération."
+  },
+  "actionDecrease": "Moins",
+  "@actionDecrease": {
+    "description": "Infobulle du bouton qui diminue une quantité."
+  },
+  "actionIncrease": "Plus",
+  "@actionIncrease": {
+    "description": "Infobulle du bouton qui augmente une quantité."
+  },
+  "searchHint": "Rechercher une boisson",
+  "@searchHint": {
+    "description": "Texte d'aide du champ de recherche de la liste."
+  },
+  "filtersTooltip": "Filtres",
+  "@filtersTooltip": {
+    "description": "Infobulle du bouton des filtres."
+  },
+  "sortTooltip": "Trier",
+  "@sortTooltip": {
+    "description": "Infobulle du bouton de tri."
+  },
+  "sortByName": "Nom",
+  "@sortByName": {
+    "description": "Tri par nom."
+  },
+  "sortRecentlyAdded": "Derniers ajouts",
+  "@sortRecentlyAdded": {
+    "description": "Tri par date d'ajout, les plus récents d'abord."
+  },
+  "sortByVintage": "Millésime",
+  "@sortByVintage": {
+    "description": "Tri par millésime, le plus ancien d'abord."
+  },
+  "sortByStock": "Stock",
+  "@sortByStock": {
+    "description": "Tri par nombre de bouteilles, le plus grand d'abord."
+  },
+  "addDrinkButton": "Ajouter",
+  "@addDrinkButton": {
+    "description": "Bouton flottant pour ajouter une boisson."
+  },
+  "noResultsTitle": "Aucun résultat",
+  "@noResultsTitle": {
+    "description": "Titre quand la recherche ou les filtres ne trouvent rien."
+  },
+  "noResultsMessage": "Modifiez la recherche ou les filtres.",
+  "@noResultsMessage": {
+    "description": "Conseil sous « Aucun résultat »."
+  },
+  "clearFilters": "Effacer les filtres",
+  "@clearFilters": {
+    "description": "Bouton qui retire tous les filtres."
+  },
+  "drinkCount": "{count, plural, =0{Aucune référence} =1{1 référence} other{{count} références}}",
+  "@drinkCount": {
+    "description": "Nombre de références, avec accord du pluriel.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "cellarSummary": "{bottles} · {drinks}",
+  "@cellarSummary": {
+    "description": "Résumé sous le titre : « 12 bouteilles · 5 références ».",
+    "placeholders": {
+      "bottles": {
+        "type": "String"
+      },
+      "drinks": {
+        "type": "String"
+      }
+    }
+  },
+  "quickExitTooltip": "Retirer une bouteille",
+  "@quickExitTooltip": {
+    "description": "Infobulle du bouton « −1 »."
+  },
+  "bottleRemoved": "Bouteille retirée",
+  "@bottleRemoved": {
+    "description": "Bandeau affiché après une sortie, avec un bouton Annuler."
+  },
+  "bottlesRemoved": "{count, plural, =1{1 bouteille retirée} other{{count} bouteilles retirées}}",
+  "@bottlesRemoved": {
+    "description": "Bandeau après une sortie de plusieurs bouteilles.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bottlesAdded": "{count, plural, =1{1 bouteille ajoutée} other{{count} bouteilles ajoutées}}",
+  "@bottlesAdded": {
+    "description": "Bandeau après un ajout de bouteilles.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockCorrected": "Stock corrigé",
+  "@stockCorrected": {
+    "description": "Bandeau après une correction de stock."
+  },
+  "chooseLotTitle": "Quelle bouteille ?",
+  "@chooseLotTitle": {
+    "description": "Titre de la liste des lots quand une référence en a plusieurs."
+  },
+  "withoutVintage": "Sans millésime",
+  "@withoutVintage": {
+    "description": "Lot sans millésime."
+  },
+  "uncategorized": "Sans catégorie",
+  "@uncategorized": {
+    "description": "Référence dont le type a été supprimé."
+  },
+  "needsCompletionLabel": "À compléter",
+  "@needsCompletionLabel": {
+    "description": "Étiquette d'une fiche incomplète."
+  },
+  "favoriteLabel": "Favori",
+  "@favoriteLabel": {
+    "description": "Étiquette ou infobulle du favori."
+  },
+  "lotSummary": "{vintage} · {volume}",
+  "@lotSummary": {
+    "description": "Description courte d'un lot : « 2018 · 75 cl ».",
+    "placeholders": {
+      "vintage": {
+        "type": "String"
+      },
+      "volume": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersTitle": "Filtres",
+  "@filtersTitle": {
+    "description": "Titre du panneau des filtres."
+  },
+  "filterType": "Type",
+  "@filterType": {
+    "description": "Rubrique du filtre par type."
+  },
+  "filterAllTypes": "Tous",
+  "@filterAllTypes": {
+    "description": "Option « tous les types »."
+  },
+  "filterRegion": "Région ou pays",
+  "@filterRegion": {
+    "description": "Rubrique du filtre par région."
+  },
+  "filterAnyRegion": "Toutes",
+  "@filterAnyRegion": {
+    "description": "Option « toutes les régions »."
+  },
+  "filterFavorites": "Favoris uniquement",
+  "@filterFavorites": {
+    "description": "Interrupteur du filtre des favoris."
+  },
+  "filterNeedsCompletion": "Fiches à compléter",
+  "@filterNeedsCompletion": {
+    "description": "Interrupteur du filtre des fiches incomplètes."
+  },
+  "filterShowExhausted": "Afficher les épuisés",
+  "@filterShowExhausted": {
+    "description": "Interrupteur qui montre les références sans stock."
+  },
+  "showResults": "Voir les résultats",
+  "@showResults": {
+    "description": "Bouton qui ferme le panneau des filtres."
+  },
+  "lotsSection": "Lots",
+  "@lotsSection": {
+    "description": "Titre de la section des lots sur la fiche."
+  },
+  "addLot": "Ajouter un lot",
+  "@addLot": {
+    "description": "Bouton qui crée un lot (autre millésime ou volume)."
+  },
+  "addBottles": "Ajouter des bouteilles",
+  "@addBottles": {
+    "description": "Action ou titre : ajouter des bouteilles à un lot."
+  },
+  "removeBottles": "Retirer des bouteilles",
+  "@removeBottles": {
+    "description": "Action ou titre : sortie avec motif et commentaire."
+  },
+  "correctStock": "Corriger le stock",
+  "@correctStock": {
+    "description": "Action ou titre : saisie du nombre réel de bouteilles."
+  },
+  "correctStockHelp": "Nombre de bouteilles réellement présentes.",
+  "@correctStockHelp": {
+    "description": "Explication de la correction de stock."
+  },
+  "deleteLot": "Supprimer le lot",
+  "@deleteLot": {
+    "description": "Action de suppression d'un lot."
+  },
+  "deleteDrink": "Supprimer la référence",
+  "@deleteDrink": {
+    "description": "Action de suppression d'une référence."
+  },
+  "deleteDrinkConfirm": "Supprimer « {name} » et tous ses lots ?",
+  "@deleteDrinkConfirm": {
+    "description": "Question de confirmation avant suppression d'une référence.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteLotConfirm": "Supprimer le lot « {lot} » ?",
+  "@deleteLotConfirm": {
+    "description": "Question de confirmation avant suppression d'un lot.",
+    "placeholders": {
+      "lot": {
+        "type": "String"
+      }
+    }
+  },
+  "needsCompletionBanner": "Il manque des informations obligatoires sur cette fiche.",
+  "@needsCompletionBanner": {
+    "description": "Bandeau sur une fiche marquée « à compléter »."
+  },
+  "addedOn": "Ajouté le {date}",
+  "@addedOn": {
+    "description": "Date de création d'un lot.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "drinkNotFound": "Cette référence n'existe plus.",
+  "@drinkNotFound": {
+    "description": "Message si la fiche ouverte a été supprimée."
+  },
+  "exhausted": "Épuisé",
+  "@exhausted": {
+    "description": "Lot dont le stock est à zéro."
+  },
+  "formNewTitle": "Nouvelle boisson",
+  "@formNewTitle": {
+    "description": "Titre du formulaire de création."
+  },
+  "formEditTitle": "Modifier la fiche",
+  "@formEditTitle": {
+    "description": "Titre du formulaire de modification."
+  },
+  "formLotSection": "Bouteilles",
+  "@formLotSection": {
+    "description": "Section du formulaire de création : millésime, volume, quantité."
+  },
+  "characteristicsSection": "Caractéristiques",
+  "@characteristicsSection": {
+    "description": "Section des caractéristiques (robe, style…)."
+  },
+  "formIncompleteWarning": "Sans appellation ni région, la fiche sera marquée « à compléter ».",
+  "@formIncompleteWarning": {
+    "description": "Avertissement quand un champ obligatoire du vin est vide."
+  },
+  "fieldName": "Nom",
+  "@fieldName": {
+    "description": "Champ : nom de la boisson."
+  },
+  "fieldType": "Type",
+  "@fieldType": {
+    "description": "Champ : type de boisson."
+  },
+  "fieldProducer": "Producteur ou domaine",
+  "@fieldProducer": {
+    "description": "Champ : producteur."
+  },
+  "fieldAppellation": "Appellation",
+  "@fieldAppellation": {
+    "description": "Champ : appellation."
+  },
+  "fieldRegion": "Région",
+  "@fieldRegion": {
+    "description": "Champ : région."
+  },
+  "fieldCountry": "Pays",
+  "@fieldCountry": {
+    "description": "Champ : pays."
+  },
+  "fieldGrapes": "Cépages",
+  "@fieldGrapes": {
+    "description": "Champ : cépages."
+  },
+  "fieldAbv": "Degré d'alcool (% vol.)",
+  "@fieldAbv": {
+    "description": "Champ : degré d'alcool."
+  },
+  "fieldRating": "Note personnelle",
+  "@fieldRating": {
+    "description": "Champ : note sur 5 étoiles."
+  },
+  "fieldComment": "Commentaire",
+  "@fieldComment": {
+    "description": "Champ : commentaire libre."
+  },
+  "fieldVintage": "Millésime",
+  "@fieldVintage": {
+    "description": "Champ : millésime."
+  },
+  "fieldVolume": "Volume",
+  "@fieldVolume": {
+    "description": "Champ : volume de la bouteille."
+  },
+  "fieldQuantity": "Nombre de bouteilles",
+  "@fieldQuantity": {
+    "description": "Champ : quantité."
+  },
+  "fieldReason": "Motif",
+  "@fieldReason": {
+    "description": "Champ : motif de sortie."
+  },
+  "requiredFieldError": "Champ obligatoire",
+  "@requiredFieldError": {
+    "description": "Erreur : champ vide."
+  },
+  "invalidVintage": "Année entre 1800 et {max}",
+  "@invalidVintage": {
+    "description": "Erreur : millésime invalide.",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "invalidNumber": "Nombre invalide",
+  "@invalidNumber": {
+    "description": "Erreur : nombre mal saisi."
+  },
+  "ratingStars": "{count, plural, =1{1 étoile} other{{count} étoiles}}",
+  "@ratingStars": {
+    "description": "Infobulle d'une étoile de notation.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonConsumed": "Consommée",
+  "@reasonConsumed": {
+    "description": "Motif de sortie par défaut."
+  },
+  "reasonGifted": "Offerte",
+  "@reasonGifted": {
+    "description": "Motif de sortie : offerte."
+  },
+  "reasonBroken": "Cassée",
+  "@reasonBroken": {
+    "description": "Motif de sortie : cassée."
+  },
+  "volumeCentiliters": "{value} cl",
+  "@volumeCentiliters": {
+    "description": "Volume en centilitres ; value est déjà formaté (« 37,5 »).",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "volumeLiters": "{value} l",
+  "@volumeLiters": {
+    "description": "Volume en litres ; value est déjà formaté (« 1,5 »).",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "abvValue": "{value} % vol.",
+  "@abvValue": {
+    "description": "Degré d'alcool ; value est déjà formaté.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "errorInsufficientStock": "Stock insuffisant",
+  "@errorInsufficientStock": {
+    "description": "Erreur : on veut retirer plus que le stock."
+  },
+  "errorGeneric": "Une erreur est survenue : {message}",
+  "@errorGeneric": {
+    "description": "Erreur inattendue.",
+    "placeholders": {
+      "message": {
+        "type": "String"
       }
     }
   }

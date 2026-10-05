@@ -11,3 +11,9 @@ targets:
           schema_dir: drift_schemas/
           test_dir: test/drift/
           store_date_time_values_as_text: false
+          # Recherche plein texte (lib/data/search.drift).
+          sql:
+            dialect: sqlite
+            options:
+              modules:
+                - fts5

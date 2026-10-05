@@ -45,7 +45,7 @@ flutter build apk --release          # APK à installer manuellement
 |---|---|---|
 | 0 | Squelette : projet, traductions FR, thèmes clair/sombre, premier test, CLAUDE.md, architecture, Git/GitHub, installation sur le téléphone | **terminé** |
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
-| 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | à faire |
+| 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** (vérif. téléphone en attente) |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV | à faire |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge | à faire |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
@@ -61,6 +61,20 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 - `test/helpers.dart` — base en mémoire et `TestContext` (horloge et identifiants prévisibles).
 
 Règles du dépôt : chaque mouvement recalcule le stock en cache dans la même transaction ; on ne retire jamais plus que le stock ; les suppressions sont logiques ; le cache `stock` ne modifie pas `updatedAt`.
+
+## Où trouver quoi (lot 2)
+
+- `lib/data/search.drift` — index plein texte FTS5 + déclencheurs (schéma v2). `CaveDatabase.rebuildSearchIndex()` le reconstruit.
+- `lib/data/cave_queries.dart` — lectures « en direct » : liste filtrée (`watchDrinkList`), classification, fiche, lots, régions.
+- `lib/domain/drink_filter.dart` (filtres, tris, `ftsQuery`), `lib/domain/text.dart` (`fold` : tri sans accents).
+- `lib/features/cellar/` (liste, filtres), `lib/features/drink/` (fiche, formulaire), `lib/features/stock_actions.dart` (−1, ajout, retrait avec motif, correction, nouveau lot, bandeau Annuler).
+- `lib/ui/` — `formats.dart` (volumes, dates, nombres selon la langue), `widgets.dart` (sélecteur de quantité, étoiles, message vide).
+- `test/drift/cave/` — tests de migration générés par `make-migrations` + test de conservation des données v1 → v2.
+
+Pièges rencontrés :
+- `SnackBar` avec action : préciser `persist: false`, sinon il ne disparaît jamais (Flutter ≥ 3.3x).
+- Formulaires : `SingleChildScrollView` + `Column`, pas `ListView` — une ListView ne construit pas les champs hors écran et `Form.validate()` les ignore.
+- Tests d'interface avec drift : écrire en base dans `tester.runAsync`, attendre avec le helper `settle` ; un test en échec peut bloquer le lanceur jusqu'au délai (`--timeout 60s`).
 
 ## Conventions
 
@@ -78,3 +92,4 @@ Règles du dépôt : chaque mouvement recalcule le stock en cache dans la même 
 - 2026-10-05 — Lot 0 : projet créé, traductions et thèmes en place, 4 tests verts, architecture validée par le porteur ; dépôt GitHub privé `MaCave`.
 - 2026-10-05 — Lot 0 terminé : APK release (44 Mo) compilé en ~2 min et installé sur le téléphone, écran d'accueil vérifié. Si `adb devices` est vide : le téléphone est repassé en mode « Transfert de photos » ou le débogage USB s'est désactivé (OxygenOS) → « Transfert de fichiers » + réactiver le débogage USB.
 - 2026-10-05 — Lot 1 terminé : schéma v1 (drift), classification initiale, dépôt de la cave, 46 tests verts ; l'accueil affiche le nombre de bouteilles lu dans la base. APK 53 Mo.
+- 2026-10-05 — Lot 2 : recherche FTS5 (migration v1 → v2 testée), liste filtrée/triée, fiche, formulaire, −1 avec annulation ; 69 tests verts. Le formulaire est accepté sans appellation/région (fiche marquée « à compléter »).

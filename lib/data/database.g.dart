@@ -3,6 +3,480 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class DrinksFts extends Table
+    with TableInfo<DrinksFts, DrinksFt>, VirtualTableInfo<DrinksFts, DrinksFt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  DrinksFts(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _drinkIdMeta = const VerificationMeta(
+    'drinkId',
+  );
+  late final GeneratedColumn<String> drinkId = GeneratedColumn<String>(
+    'drink_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _producerMeta = const VerificationMeta(
+    'producer',
+  );
+  late final GeneratedColumn<String> producer = GeneratedColumn<String>(
+    'producer',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _appellationMeta = const VerificationMeta(
+    'appellation',
+  );
+  late final GeneratedColumn<String> appellation = GeneratedColumn<String>(
+    'appellation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _regionMeta = const VerificationMeta('region');
+  late final GeneratedColumn<String> region = GeneratedColumn<String>(
+    'region',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _countryMeta = const VerificationMeta(
+    'country',
+  );
+  late final GeneratedColumn<String> country = GeneratedColumn<String>(
+    'country',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _grapesMeta = const VerificationMeta('grapes');
+  late final GeneratedColumn<String> grapes = GeneratedColumn<String>(
+    'grapes',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    drinkId,
+    name,
+    producer,
+    appellation,
+    region,
+    country,
+    grapes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'drinks_fts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DrinksFt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('drink_id')) {
+      context.handle(
+        _drinkIdMeta,
+        drinkId.isAcceptableOrUnknown(data['drink_id']!, _drinkIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_drinkIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('producer')) {
+      context.handle(
+        _producerMeta,
+        producer.isAcceptableOrUnknown(data['producer']!, _producerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_producerMeta);
+    }
+    if (data.containsKey('appellation')) {
+      context.handle(
+        _appellationMeta,
+        appellation.isAcceptableOrUnknown(
+          data['appellation']!,
+          _appellationMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_appellationMeta);
+    }
+    if (data.containsKey('region')) {
+      context.handle(
+        _regionMeta,
+        region.isAcceptableOrUnknown(data['region']!, _regionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_regionMeta);
+    }
+    if (data.containsKey('country')) {
+      context.handle(
+        _countryMeta,
+        country.isAcceptableOrUnknown(data['country']!, _countryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_countryMeta);
+    }
+    if (data.containsKey('grapes')) {
+      context.handle(
+        _grapesMeta,
+        grapes.isAcceptableOrUnknown(data['grapes']!, _grapesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_grapesMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  DrinksFt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DrinksFt(
+      drinkId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}drink_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      producer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}producer'],
+      )!,
+      appellation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}appellation'],
+      )!,
+      region: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}region'],
+      )!,
+      country: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country'],
+      )!,
+      grapes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grapes'],
+      )!,
+    );
+  }
+
+  @override
+  DrinksFts createAlias(String alias) {
+    return DrinksFts(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(drink_id UNINDEXED, name, producer, appellation, region, country, grapes, tokenize = \'unicode61 remove_diacritics 2\')';
+}
+
+class DrinksFt extends DataClass implements Insertable<DrinksFt> {
+  final String drinkId;
+  final String name;
+  final String producer;
+  final String appellation;
+  final String region;
+  final String country;
+  final String grapes;
+  const DrinksFt({
+    required this.drinkId,
+    required this.name,
+    required this.producer,
+    required this.appellation,
+    required this.region,
+    required this.country,
+    required this.grapes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['drink_id'] = Variable<String>(drinkId);
+    map['name'] = Variable<String>(name);
+    map['producer'] = Variable<String>(producer);
+    map['appellation'] = Variable<String>(appellation);
+    map['region'] = Variable<String>(region);
+    map['country'] = Variable<String>(country);
+    map['grapes'] = Variable<String>(grapes);
+    return map;
+  }
+
+  DrinksFtsCompanion toCompanion(bool nullToAbsent) {
+    return DrinksFtsCompanion(
+      drinkId: Value(drinkId),
+      name: Value(name),
+      producer: Value(producer),
+      appellation: Value(appellation),
+      region: Value(region),
+      country: Value(country),
+      grapes: Value(grapes),
+    );
+  }
+
+  factory DrinksFt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DrinksFt(
+      drinkId: serializer.fromJson<String>(json['drink_id']),
+      name: serializer.fromJson<String>(json['name']),
+      producer: serializer.fromJson<String>(json['producer']),
+      appellation: serializer.fromJson<String>(json['appellation']),
+      region: serializer.fromJson<String>(json['region']),
+      country: serializer.fromJson<String>(json['country']),
+      grapes: serializer.fromJson<String>(json['grapes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'drink_id': serializer.toJson<String>(drinkId),
+      'name': serializer.toJson<String>(name),
+      'producer': serializer.toJson<String>(producer),
+      'appellation': serializer.toJson<String>(appellation),
+      'region': serializer.toJson<String>(region),
+      'country': serializer.toJson<String>(country),
+      'grapes': serializer.toJson<String>(grapes),
+    };
+  }
+
+  DrinksFt copyWith({
+    String? drinkId,
+    String? name,
+    String? producer,
+    String? appellation,
+    String? region,
+    String? country,
+    String? grapes,
+  }) => DrinksFt(
+    drinkId: drinkId ?? this.drinkId,
+    name: name ?? this.name,
+    producer: producer ?? this.producer,
+    appellation: appellation ?? this.appellation,
+    region: region ?? this.region,
+    country: country ?? this.country,
+    grapes: grapes ?? this.grapes,
+  );
+  DrinksFt copyWithCompanion(DrinksFtsCompanion data) {
+    return DrinksFt(
+      drinkId: data.drinkId.present ? data.drinkId.value : this.drinkId,
+      name: data.name.present ? data.name.value : this.name,
+      producer: data.producer.present ? data.producer.value : this.producer,
+      appellation: data.appellation.present
+          ? data.appellation.value
+          : this.appellation,
+      region: data.region.present ? data.region.value : this.region,
+      country: data.country.present ? data.country.value : this.country,
+      grapes: data.grapes.present ? data.grapes.value : this.grapes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DrinksFt(')
+          ..write('drinkId: $drinkId, ')
+          ..write('name: $name, ')
+          ..write('producer: $producer, ')
+          ..write('appellation: $appellation, ')
+          ..write('region: $region, ')
+          ..write('country: $country, ')
+          ..write('grapes: $grapes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    drinkId,
+    name,
+    producer,
+    appellation,
+    region,
+    country,
+    grapes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DrinksFt &&
+          other.drinkId == this.drinkId &&
+          other.name == this.name &&
+          other.producer == this.producer &&
+          other.appellation == this.appellation &&
+          other.region == this.region &&
+          other.country == this.country &&
+          other.grapes == this.grapes);
+}
+
+class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
+  final Value<String> drinkId;
+  final Value<String> name;
+  final Value<String> producer;
+  final Value<String> appellation;
+  final Value<String> region;
+  final Value<String> country;
+  final Value<String> grapes;
+  final Value<int> rowid;
+  const DrinksFtsCompanion({
+    this.drinkId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.producer = const Value.absent(),
+    this.appellation = const Value.absent(),
+    this.region = const Value.absent(),
+    this.country = const Value.absent(),
+    this.grapes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DrinksFtsCompanion.insert({
+    required String drinkId,
+    required String name,
+    required String producer,
+    required String appellation,
+    required String region,
+    required String country,
+    required String grapes,
+    this.rowid = const Value.absent(),
+  }) : drinkId = Value(drinkId),
+       name = Value(name),
+       producer = Value(producer),
+       appellation = Value(appellation),
+       region = Value(region),
+       country = Value(country),
+       grapes = Value(grapes);
+  static Insertable<DrinksFt> custom({
+    Expression<String>? drinkId,
+    Expression<String>? name,
+    Expression<String>? producer,
+    Expression<String>? appellation,
+    Expression<String>? region,
+    Expression<String>? country,
+    Expression<String>? grapes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (drinkId != null) 'drink_id': drinkId,
+      if (name != null) 'name': name,
+      if (producer != null) 'producer': producer,
+      if (appellation != null) 'appellation': appellation,
+      if (region != null) 'region': region,
+      if (country != null) 'country': country,
+      if (grapes != null) 'grapes': grapes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DrinksFtsCompanion copyWith({
+    Value<String>? drinkId,
+    Value<String>? name,
+    Value<String>? producer,
+    Value<String>? appellation,
+    Value<String>? region,
+    Value<String>? country,
+    Value<String>? grapes,
+    Value<int>? rowid,
+  }) {
+    return DrinksFtsCompanion(
+      drinkId: drinkId ?? this.drinkId,
+      name: name ?? this.name,
+      producer: producer ?? this.producer,
+      appellation: appellation ?? this.appellation,
+      region: region ?? this.region,
+      country: country ?? this.country,
+      grapes: grapes ?? this.grapes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (drinkId.present) {
+      map['drink_id'] = Variable<String>(drinkId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (producer.present) {
+      map['producer'] = Variable<String>(producer.value);
+    }
+    if (appellation.present) {
+      map['appellation'] = Variable<String>(appellation.value);
+    }
+    if (region.present) {
+      map['region'] = Variable<String>(region.value);
+    }
+    if (country.present) {
+      map['country'] = Variable<String>(country.value);
+    }
+    if (grapes.present) {
+      map['grapes'] = Variable<String>(grapes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DrinksFtsCompanion(')
+          ..write('drinkId: $drinkId, ')
+          ..write('name: $name, ')
+          ..write('producer: $producer, ')
+          ..write('appellation: $appellation, ')
+          ..write('region: $region, ')
+          ..write('country: $country, ')
+          ..write('grapes: $grapes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $DrinkTypesTable extends DrinkTypes
     with TableInfo<$DrinkTypesTable, DrinkType> {
   @override
@@ -528,941 +1002,6 @@ class DrinkTypesCompanion extends UpdateCompanion<DrinkType> {
           ..write('name: $name, ')
           ..write('fieldProfile: $fieldProfile, ')
           ..write('defaultVolumeMl: $defaultVolumeMl, ')
-          ..write('sortOrder: $sortOrder, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $CharacteristicFamiliesTable extends CharacteristicFamilies
-    with TableInfo<$CharacteristicFamiliesTable, CharacteristicFamily> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $CharacteristicFamiliesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedByMeta = const VerificationMeta(
-    'updatedBy',
-  );
-  @override
-  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
-    'updated_by',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _typeIdMeta = const VerificationMeta('typeId');
-  @override
-  late final GeneratedColumn<String> typeId = GeneratedColumn<String>(
-    'type_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES drink_types (id)',
-    ),
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
-    'sortOrder',
-  );
-  @override
-  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
-    'sort_order',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    updatedAt,
-    updatedBy,
-    deletedAt,
-    typeId,
-    name,
-    sortOrder,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'characteristic_families';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<CharacteristicFamily> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('updated_by')) {
-      context.handle(
-        _updatedByMeta,
-        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedByMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    if (data.containsKey('type_id')) {
-      context.handle(
-        _typeIdMeta,
-        typeId.isAcceptableOrUnknown(data['type_id']!, _typeIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_typeIdMeta);
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('sort_order')) {
-      context.handle(
-        _sortOrderMeta,
-        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  CharacteristicFamily map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return CharacteristicFamily(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      updatedBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}updated_by'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}deleted_at'],
-      ),
-      typeId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}type_id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      sortOrder: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}sort_order'],
-      )!,
-    );
-  }
-
-  @override
-  $CharacteristicFamiliesTable createAlias(String alias) {
-    return $CharacteristicFamiliesTable(attachedDatabase, alias);
-  }
-}
-
-class CharacteristicFamily extends DataClass
-    implements Insertable<CharacteristicFamily> {
-  /// UUID créé sur l'appareil.
-  final String id;
-
-  /// Date de dernière modification : la plus récente l'emporte à la fusion.
-  final int updatedAt;
-
-  /// Appareil auteur de la dernière modification (départage les égalités).
-  final String updatedBy;
-
-  /// Suppression logique : la ligne reste pour que la suppression se propage.
-  final int? deletedAt;
-  final String typeId;
-  final String name;
-  final int sortOrder;
-  const CharacteristicFamily({
-    required this.id,
-    required this.updatedAt,
-    required this.updatedBy,
-    this.deletedAt,
-    required this.typeId,
-    required this.name,
-    required this.sortOrder,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['updated_at'] = Variable<int>(updatedAt);
-    map['updated_by'] = Variable<String>(updatedBy);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<int>(deletedAt);
-    }
-    map['type_id'] = Variable<String>(typeId);
-    map['name'] = Variable<String>(name);
-    map['sort_order'] = Variable<int>(sortOrder);
-    return map;
-  }
-
-  CharacteristicFamiliesCompanion toCompanion(bool nullToAbsent) {
-    return CharacteristicFamiliesCompanion(
-      id: Value(id),
-      updatedAt: Value(updatedAt),
-      updatedBy: Value(updatedBy),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-      typeId: Value(typeId),
-      name: Value(name),
-      sortOrder: Value(sortOrder),
-    );
-  }
-
-  factory CharacteristicFamily.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return CharacteristicFamily(
-      id: serializer.fromJson<String>(json['id']),
-      updatedAt: serializer.fromJson<int>(json['updatedAt']),
-      updatedBy: serializer.fromJson<String>(json['updatedBy']),
-      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
-      typeId: serializer.fromJson<String>(json['typeId']),
-      name: serializer.fromJson<String>(json['name']),
-      sortOrder: serializer.fromJson<int>(json['sortOrder']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'updatedAt': serializer.toJson<int>(updatedAt),
-      'updatedBy': serializer.toJson<String>(updatedBy),
-      'deletedAt': serializer.toJson<int?>(deletedAt),
-      'typeId': serializer.toJson<String>(typeId),
-      'name': serializer.toJson<String>(name),
-      'sortOrder': serializer.toJson<int>(sortOrder),
-    };
-  }
-
-  CharacteristicFamily copyWith({
-    String? id,
-    int? updatedAt,
-    String? updatedBy,
-    Value<int?> deletedAt = const Value.absent(),
-    String? typeId,
-    String? name,
-    int? sortOrder,
-  }) => CharacteristicFamily(
-    id: id ?? this.id,
-    updatedAt: updatedAt ?? this.updatedAt,
-    updatedBy: updatedBy ?? this.updatedBy,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-    typeId: typeId ?? this.typeId,
-    name: name ?? this.name,
-    sortOrder: sortOrder ?? this.sortOrder,
-  );
-  CharacteristicFamily copyWithCompanion(CharacteristicFamiliesCompanion data) {
-    return CharacteristicFamily(
-      id: data.id.present ? data.id.value : this.id,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-      typeId: data.typeId.present ? data.typeId.value : this.typeId,
-      name: data.name.present ? data.name.value : this.name,
-      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CharacteristicFamily(')
-          ..write('id: $id, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('updatedBy: $updatedBy, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('typeId: $typeId, ')
-          ..write('name: $name, ')
-          ..write('sortOrder: $sortOrder')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, updatedAt, updatedBy, deletedAt, typeId, name, sortOrder);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is CharacteristicFamily &&
-          other.id == this.id &&
-          other.updatedAt == this.updatedAt &&
-          other.updatedBy == this.updatedBy &&
-          other.deletedAt == this.deletedAt &&
-          other.typeId == this.typeId &&
-          other.name == this.name &&
-          other.sortOrder == this.sortOrder);
-}
-
-class CharacteristicFamiliesCompanion
-    extends UpdateCompanion<CharacteristicFamily> {
-  final Value<String> id;
-  final Value<int> updatedAt;
-  final Value<String> updatedBy;
-  final Value<int?> deletedAt;
-  final Value<String> typeId;
-  final Value<String> name;
-  final Value<int> sortOrder;
-  final Value<int> rowid;
-  const CharacteristicFamiliesCompanion({
-    this.id = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.updatedBy = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.typeId = const Value.absent(),
-    this.name = const Value.absent(),
-    this.sortOrder = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  CharacteristicFamiliesCompanion.insert({
-    required String id,
-    required int updatedAt,
-    required String updatedBy,
-    this.deletedAt = const Value.absent(),
-    required String typeId,
-    required String name,
-    this.sortOrder = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       updatedAt = Value(updatedAt),
-       updatedBy = Value(updatedBy),
-       typeId = Value(typeId),
-       name = Value(name);
-  static Insertable<CharacteristicFamily> custom({
-    Expression<String>? id,
-    Expression<int>? updatedAt,
-    Expression<String>? updatedBy,
-    Expression<int>? deletedAt,
-    Expression<String>? typeId,
-    Expression<String>? name,
-    Expression<int>? sortOrder,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (updatedBy != null) 'updated_by': updatedBy,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (typeId != null) 'type_id': typeId,
-      if (name != null) 'name': name,
-      if (sortOrder != null) 'sort_order': sortOrder,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  CharacteristicFamiliesCompanion copyWith({
-    Value<String>? id,
-    Value<int>? updatedAt,
-    Value<String>? updatedBy,
-    Value<int?>? deletedAt,
-    Value<String>? typeId,
-    Value<String>? name,
-    Value<int>? sortOrder,
-    Value<int>? rowid,
-  }) {
-    return CharacteristicFamiliesCompanion(
-      id: id ?? this.id,
-      updatedAt: updatedAt ?? this.updatedAt,
-      updatedBy: updatedBy ?? this.updatedBy,
-      deletedAt: deletedAt ?? this.deletedAt,
-      typeId: typeId ?? this.typeId,
-      name: name ?? this.name,
-      sortOrder: sortOrder ?? this.sortOrder,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<int>(updatedAt.value);
-    }
-    if (updatedBy.present) {
-      map['updated_by'] = Variable<String>(updatedBy.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<int>(deletedAt.value);
-    }
-    if (typeId.present) {
-      map['type_id'] = Variable<String>(typeId.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (sortOrder.present) {
-      map['sort_order'] = Variable<int>(sortOrder.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CharacteristicFamiliesCompanion(')
-          ..write('id: $id, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('updatedBy: $updatedBy, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('typeId: $typeId, ')
-          ..write('name: $name, ')
-          ..write('sortOrder: $sortOrder, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $CharacteristicsTable extends Characteristics
-    with TableInfo<$CharacteristicsTable, Characteristic> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $CharacteristicsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedByMeta = const VerificationMeta(
-    'updatedBy',
-  );
-  @override
-  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
-    'updated_by',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _familyIdMeta = const VerificationMeta(
-    'familyId',
-  );
-  @override
-  late final GeneratedColumn<String> familyId = GeneratedColumn<String>(
-    'family_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES characteristic_families (id)',
-    ),
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
-    'sortOrder',
-  );
-  @override
-  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
-    'sort_order',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    updatedAt,
-    updatedBy,
-    deletedAt,
-    familyId,
-    name,
-    sortOrder,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'characteristics';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<Characteristic> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('updated_by')) {
-      context.handle(
-        _updatedByMeta,
-        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedByMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    if (data.containsKey('family_id')) {
-      context.handle(
-        _familyIdMeta,
-        familyId.isAcceptableOrUnknown(data['family_id']!, _familyIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_familyIdMeta);
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('sort_order')) {
-      context.handle(
-        _sortOrderMeta,
-        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Characteristic map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Characteristic(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      updatedBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}updated_by'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}deleted_at'],
-      ),
-      familyId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}family_id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      sortOrder: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}sort_order'],
-      )!,
-    );
-  }
-
-  @override
-  $CharacteristicsTable createAlias(String alias) {
-    return $CharacteristicsTable(attachedDatabase, alias);
-  }
-}
-
-class Characteristic extends DataClass implements Insertable<Characteristic> {
-  /// UUID créé sur l'appareil.
-  final String id;
-
-  /// Date de dernière modification : la plus récente l'emporte à la fusion.
-  final int updatedAt;
-
-  /// Appareil auteur de la dernière modification (départage les égalités).
-  final String updatedBy;
-
-  /// Suppression logique : la ligne reste pour que la suppression se propage.
-  final int? deletedAt;
-  final String familyId;
-  final String name;
-  final int sortOrder;
-  const Characteristic({
-    required this.id,
-    required this.updatedAt,
-    required this.updatedBy,
-    this.deletedAt,
-    required this.familyId,
-    required this.name,
-    required this.sortOrder,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['updated_at'] = Variable<int>(updatedAt);
-    map['updated_by'] = Variable<String>(updatedBy);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<int>(deletedAt);
-    }
-    map['family_id'] = Variable<String>(familyId);
-    map['name'] = Variable<String>(name);
-    map['sort_order'] = Variable<int>(sortOrder);
-    return map;
-  }
-
-  CharacteristicsCompanion toCompanion(bool nullToAbsent) {
-    return CharacteristicsCompanion(
-      id: Value(id),
-      updatedAt: Value(updatedAt),
-      updatedBy: Value(updatedBy),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-      familyId: Value(familyId),
-      name: Value(name),
-      sortOrder: Value(sortOrder),
-    );
-  }
-
-  factory Characteristic.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Characteristic(
-      id: serializer.fromJson<String>(json['id']),
-      updatedAt: serializer.fromJson<int>(json['updatedAt']),
-      updatedBy: serializer.fromJson<String>(json['updatedBy']),
-      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
-      familyId: serializer.fromJson<String>(json['familyId']),
-      name: serializer.fromJson<String>(json['name']),
-      sortOrder: serializer.fromJson<int>(json['sortOrder']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'updatedAt': serializer.toJson<int>(updatedAt),
-      'updatedBy': serializer.toJson<String>(updatedBy),
-      'deletedAt': serializer.toJson<int?>(deletedAt),
-      'familyId': serializer.toJson<String>(familyId),
-      'name': serializer.toJson<String>(name),
-      'sortOrder': serializer.toJson<int>(sortOrder),
-    };
-  }
-
-  Characteristic copyWith({
-    String? id,
-    int? updatedAt,
-    String? updatedBy,
-    Value<int?> deletedAt = const Value.absent(),
-    String? familyId,
-    String? name,
-    int? sortOrder,
-  }) => Characteristic(
-    id: id ?? this.id,
-    updatedAt: updatedAt ?? this.updatedAt,
-    updatedBy: updatedBy ?? this.updatedBy,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-    familyId: familyId ?? this.familyId,
-    name: name ?? this.name,
-    sortOrder: sortOrder ?? this.sortOrder,
-  );
-  Characteristic copyWithCompanion(CharacteristicsCompanion data) {
-    return Characteristic(
-      id: data.id.present ? data.id.value : this.id,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-      familyId: data.familyId.present ? data.familyId.value : this.familyId,
-      name: data.name.present ? data.name.value : this.name,
-      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('Characteristic(')
-          ..write('id: $id, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('updatedBy: $updatedBy, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('familyId: $familyId, ')
-          ..write('name: $name, ')
-          ..write('sortOrder: $sortOrder')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    updatedAt,
-    updatedBy,
-    deletedAt,
-    familyId,
-    name,
-    sortOrder,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Characteristic &&
-          other.id == this.id &&
-          other.updatedAt == this.updatedAt &&
-          other.updatedBy == this.updatedBy &&
-          other.deletedAt == this.deletedAt &&
-          other.familyId == this.familyId &&
-          other.name == this.name &&
-          other.sortOrder == this.sortOrder);
-}
-
-class CharacteristicsCompanion extends UpdateCompanion<Characteristic> {
-  final Value<String> id;
-  final Value<int> updatedAt;
-  final Value<String> updatedBy;
-  final Value<int?> deletedAt;
-  final Value<String> familyId;
-  final Value<String> name;
-  final Value<int> sortOrder;
-  final Value<int> rowid;
-  const CharacteristicsCompanion({
-    this.id = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.updatedBy = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.familyId = const Value.absent(),
-    this.name = const Value.absent(),
-    this.sortOrder = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  CharacteristicsCompanion.insert({
-    required String id,
-    required int updatedAt,
-    required String updatedBy,
-    this.deletedAt = const Value.absent(),
-    required String familyId,
-    required String name,
-    this.sortOrder = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       updatedAt = Value(updatedAt),
-       updatedBy = Value(updatedBy),
-       familyId = Value(familyId),
-       name = Value(name);
-  static Insertable<Characteristic> custom({
-    Expression<String>? id,
-    Expression<int>? updatedAt,
-    Expression<String>? updatedBy,
-    Expression<int>? deletedAt,
-    Expression<String>? familyId,
-    Expression<String>? name,
-    Expression<int>? sortOrder,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (updatedBy != null) 'updated_by': updatedBy,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (familyId != null) 'family_id': familyId,
-      if (name != null) 'name': name,
-      if (sortOrder != null) 'sort_order': sortOrder,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  CharacteristicsCompanion copyWith({
-    Value<String>? id,
-    Value<int>? updatedAt,
-    Value<String>? updatedBy,
-    Value<int?>? deletedAt,
-    Value<String>? familyId,
-    Value<String>? name,
-    Value<int>? sortOrder,
-    Value<int>? rowid,
-  }) {
-    return CharacteristicsCompanion(
-      id: id ?? this.id,
-      updatedAt: updatedAt ?? this.updatedAt,
-      updatedBy: updatedBy ?? this.updatedBy,
-      deletedAt: deletedAt ?? this.deletedAt,
-      familyId: familyId ?? this.familyId,
-      name: name ?? this.name,
-      sortOrder: sortOrder ?? this.sortOrder,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<int>(updatedAt.value);
-    }
-    if (updatedBy.present) {
-      map['updated_by'] = Variable<String>(updatedBy.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<int>(deletedAt.value);
-    }
-    if (familyId.present) {
-      map['family_id'] = Variable<String>(familyId.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (sortOrder.present) {
-      map['sort_order'] = Variable<int>(sortOrder.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CharacteristicsCompanion(')
-          ..write('id: $id, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('updatedBy: $updatedBy, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('familyId: $familyId, ')
-          ..write('name: $name, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -2489,6 +2028,941 @@ class DrinksCompanion extends UpdateCompanion<Drink> {
           ..write('needsCompletion: $needsCompletion, ')
           ..write('foodPairing: $foodPairing, ')
           ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CharacteristicFamiliesTable extends CharacteristicFamilies
+    with TableInfo<$CharacteristicFamiliesTable, CharacteristicFamily> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CharacteristicFamiliesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _typeIdMeta = const VerificationMeta('typeId');
+  @override
+  late final GeneratedColumn<String> typeId = GeneratedColumn<String>(
+    'type_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES drink_types (id)',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    updatedAt,
+    updatedBy,
+    deletedAt,
+    typeId,
+    name,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'characteristic_families';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CharacteristicFamily> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('type_id')) {
+      context.handle(
+        _typeIdMeta,
+        typeId.isAcceptableOrUnknown(data['type_id']!, _typeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CharacteristicFamily map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CharacteristicFamily(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      typeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $CharacteristicFamiliesTable createAlias(String alias) {
+    return $CharacteristicFamiliesTable(attachedDatabase, alias);
+  }
+}
+
+class CharacteristicFamily extends DataClass
+    implements Insertable<CharacteristicFamily> {
+  /// UUID créé sur l'appareil.
+  final String id;
+
+  /// Date de dernière modification : la plus récente l'emporte à la fusion.
+  final int updatedAt;
+
+  /// Appareil auteur de la dernière modification (départage les égalités).
+  final String updatedBy;
+
+  /// Suppression logique : la ligne reste pour que la suppression se propage.
+  final int? deletedAt;
+  final String typeId;
+  final String name;
+  final int sortOrder;
+  const CharacteristicFamily({
+    required this.id,
+    required this.updatedAt,
+    required this.updatedBy,
+    this.deletedAt,
+    required this.typeId,
+    required this.name,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['updated_by'] = Variable<String>(updatedBy);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['type_id'] = Variable<String>(typeId);
+    map['name'] = Variable<String>(name);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  CharacteristicFamiliesCompanion toCompanion(bool nullToAbsent) {
+    return CharacteristicFamiliesCompanion(
+      id: Value(id),
+      updatedAt: Value(updatedAt),
+      updatedBy: Value(updatedBy),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      typeId: Value(typeId),
+      name: Value(name),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory CharacteristicFamily.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CharacteristicFamily(
+      id: serializer.fromJson<String>(json['id']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String>(json['updatedBy']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      typeId: serializer.fromJson<String>(json['typeId']),
+      name: serializer.fromJson<String>(json['name']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String>(updatedBy),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'typeId': serializer.toJson<String>(typeId),
+      'name': serializer.toJson<String>(name),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  CharacteristicFamily copyWith({
+    String? id,
+    int? updatedAt,
+    String? updatedBy,
+    Value<int?> deletedAt = const Value.absent(),
+    String? typeId,
+    String? name,
+    int? sortOrder,
+  }) => CharacteristicFamily(
+    id: id ?? this.id,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy ?? this.updatedBy,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    typeId: typeId ?? this.typeId,
+    name: name ?? this.name,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  CharacteristicFamily copyWithCompanion(CharacteristicFamiliesCompanion data) {
+    return CharacteristicFamily(
+      id: data.id.present ? data.id.value : this.id,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      typeId: data.typeId.present ? data.typeId.value : this.typeId,
+      name: data.name.present ? data.name.value : this.name,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CharacteristicFamily(')
+          ..write('id: $id, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('typeId: $typeId, ')
+          ..write('name: $name, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, updatedAt, updatedBy, deletedAt, typeId, name, sortOrder);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CharacteristicFamily &&
+          other.id == this.id &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.deletedAt == this.deletedAt &&
+          other.typeId == this.typeId &&
+          other.name == this.name &&
+          other.sortOrder == this.sortOrder);
+}
+
+class CharacteristicFamiliesCompanion
+    extends UpdateCompanion<CharacteristicFamily> {
+  final Value<String> id;
+  final Value<int> updatedAt;
+  final Value<String> updatedBy;
+  final Value<int?> deletedAt;
+  final Value<String> typeId;
+  final Value<String> name;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const CharacteristicFamiliesCompanion({
+    this.id = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.typeId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CharacteristicFamiliesCompanion.insert({
+    required String id,
+    required int updatedAt,
+    required String updatedBy,
+    this.deletedAt = const Value.absent(),
+    required String typeId,
+    required String name,
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       updatedAt = Value(updatedAt),
+       updatedBy = Value(updatedBy),
+       typeId = Value(typeId),
+       name = Value(name);
+  static Insertable<CharacteristicFamily> custom({
+    Expression<String>? id,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? deletedAt,
+    Expression<String>? typeId,
+    Expression<String>? name,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (typeId != null) 'type_id': typeId,
+      if (name != null) 'name': name,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CharacteristicFamiliesCompanion copyWith({
+    Value<String>? id,
+    Value<int>? updatedAt,
+    Value<String>? updatedBy,
+    Value<int?>? deletedAt,
+    Value<String>? typeId,
+    Value<String>? name,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return CharacteristicFamiliesCompanion(
+      id: id ?? this.id,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      typeId: typeId ?? this.typeId,
+      name: name ?? this.name,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (typeId.present) {
+      map['type_id'] = Variable<String>(typeId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CharacteristicFamiliesCompanion(')
+          ..write('id: $id, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('typeId: $typeId, ')
+          ..write('name: $name, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CharacteristicsTable extends Characteristics
+    with TableInfo<$CharacteristicsTable, Characteristic> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CharacteristicsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _familyIdMeta = const VerificationMeta(
+    'familyId',
+  );
+  @override
+  late final GeneratedColumn<String> familyId = GeneratedColumn<String>(
+    'family_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES characteristic_families (id)',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    updatedAt,
+    updatedBy,
+    deletedAt,
+    familyId,
+    name,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'characteristics';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Characteristic> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('family_id')) {
+      context.handle(
+        _familyIdMeta,
+        familyId.isAcceptableOrUnknown(data['family_id']!, _familyIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_familyIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Characteristic map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Characteristic(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      familyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}family_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $CharacteristicsTable createAlias(String alias) {
+    return $CharacteristicsTable(attachedDatabase, alias);
+  }
+}
+
+class Characteristic extends DataClass implements Insertable<Characteristic> {
+  /// UUID créé sur l'appareil.
+  final String id;
+
+  /// Date de dernière modification : la plus récente l'emporte à la fusion.
+  final int updatedAt;
+
+  /// Appareil auteur de la dernière modification (départage les égalités).
+  final String updatedBy;
+
+  /// Suppression logique : la ligne reste pour que la suppression se propage.
+  final int? deletedAt;
+  final String familyId;
+  final String name;
+  final int sortOrder;
+  const Characteristic({
+    required this.id,
+    required this.updatedAt,
+    required this.updatedBy,
+    this.deletedAt,
+    required this.familyId,
+    required this.name,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['updated_at'] = Variable<int>(updatedAt);
+    map['updated_by'] = Variable<String>(updatedBy);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['family_id'] = Variable<String>(familyId);
+    map['name'] = Variable<String>(name);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  CharacteristicsCompanion toCompanion(bool nullToAbsent) {
+    return CharacteristicsCompanion(
+      id: Value(id),
+      updatedAt: Value(updatedAt),
+      updatedBy: Value(updatedBy),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      familyId: Value(familyId),
+      name: Value(name),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory Characteristic.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Characteristic(
+      id: serializer.fromJson<String>(json['id']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      updatedBy: serializer.fromJson<String>(json['updatedBy']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      familyId: serializer.fromJson<String>(json['familyId']),
+      name: serializer.fromJson<String>(json['name']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'updatedBy': serializer.toJson<String>(updatedBy),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'familyId': serializer.toJson<String>(familyId),
+      'name': serializer.toJson<String>(name),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  Characteristic copyWith({
+    String? id,
+    int? updatedAt,
+    String? updatedBy,
+    Value<int?> deletedAt = const Value.absent(),
+    String? familyId,
+    String? name,
+    int? sortOrder,
+  }) => Characteristic(
+    id: id ?? this.id,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedBy: updatedBy ?? this.updatedBy,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    familyId: familyId ?? this.familyId,
+    name: name ?? this.name,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  Characteristic copyWithCompanion(CharacteristicsCompanion data) {
+    return Characteristic(
+      id: data.id.present ? data.id.value : this.id,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      familyId: data.familyId.present ? data.familyId.value : this.familyId,
+      name: data.name.present ? data.name.value : this.name,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Characteristic(')
+          ..write('id: $id, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('familyId: $familyId, ')
+          ..write('name: $name, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    updatedAt,
+    updatedBy,
+    deletedAt,
+    familyId,
+    name,
+    sortOrder,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Characteristic &&
+          other.id == this.id &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedBy == this.updatedBy &&
+          other.deletedAt == this.deletedAt &&
+          other.familyId == this.familyId &&
+          other.name == this.name &&
+          other.sortOrder == this.sortOrder);
+}
+
+class CharacteristicsCompanion extends UpdateCompanion<Characteristic> {
+  final Value<String> id;
+  final Value<int> updatedAt;
+  final Value<String> updatedBy;
+  final Value<int?> deletedAt;
+  final Value<String> familyId;
+  final Value<String> name;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const CharacteristicsCompanion({
+    this.id = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.familyId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CharacteristicsCompanion.insert({
+    required String id,
+    required int updatedAt,
+    required String updatedBy,
+    this.deletedAt = const Value.absent(),
+    required String familyId,
+    required String name,
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       updatedAt = Value(updatedAt),
+       updatedBy = Value(updatedBy),
+       familyId = Value(familyId),
+       name = Value(name);
+  static Insertable<Characteristic> custom({
+    Expression<String>? id,
+    Expression<int>? updatedAt,
+    Expression<String>? updatedBy,
+    Expression<int>? deletedAt,
+    Expression<String>? familyId,
+    Expression<String>? name,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (familyId != null) 'family_id': familyId,
+      if (name != null) 'name': name,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CharacteristicsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? updatedAt,
+    Value<String>? updatedBy,
+    Value<int?>? deletedAt,
+    Value<String>? familyId,
+    Value<String>? name,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return CharacteristicsCompanion(
+      id: id ?? this.id,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      familyId: familyId ?? this.familyId,
+      name: name ?? this.name,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (familyId.present) {
+      map['family_id'] = Variable<String>(familyId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CharacteristicsCompanion(')
+          ..write('id: $id, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('familyId: $familyId, ')
+          ..write('name: $name, ')
+          ..write('sortOrder: $sortOrder, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4964,13 +5438,26 @@ class MetaCompanion extends UpdateCompanion<MetaEntry> {
 abstract class _$CaveDatabase extends GeneratedDatabase {
   _$CaveDatabase(QueryExecutor e) : super(e);
   $CaveDatabaseManager get managers => $CaveDatabaseManager(this);
+  late final DrinksFts drinksFts = DrinksFts(this);
   late final $DrinkTypesTable drinkTypes = $DrinkTypesTable(this);
+  late final $DrinksTable drinks = $DrinksTable(this);
+  late final Trigger drinksFtsInsert = Trigger(
+    'CREATE TRIGGER drinks_fts_insert AFTER INSERT ON drinks BEGIN INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes) VALUES (new.id, new.name, new.producer, new.appellation, new.region, new.country, new.grapes);END',
+    'drinks_fts_insert',
+  );
+  late final Trigger drinksFtsUpdate = Trigger(
+    'CREATE TRIGGER drinks_fts_update AFTER UPDATE ON drinks BEGIN DELETE FROM drinks_fts WHERE drink_id = old.id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes) VALUES (new.id, new.name, new.producer, new.appellation, new.region, new.country, new.grapes);END',
+    'drinks_fts_update',
+  );
+  late final Trigger drinksFtsDelete = Trigger(
+    'CREATE TRIGGER drinks_fts_delete AFTER DELETE ON drinks BEGIN DELETE FROM drinks_fts WHERE drink_id = old.id;END',
+    'drinks_fts_delete',
+  );
   late final $CharacteristicFamiliesTable characteristicFamilies =
       $CharacteristicFamiliesTable(this);
   late final $CharacteristicsTable characteristics = $CharacteristicsTable(
     this,
   );
-  late final $DrinksTable drinks = $DrinksTable(this);
   late final $DrinkCharacteristicsTable drinkCharacteristics =
       $DrinkCharacteristicsTable(this);
   late final $LotsTable lots = $LotsTable(this);
@@ -5010,10 +5497,14 @@ abstract class _$CaveDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    drinksFts,
     drinkTypes,
+    drinks,
+    drinksFtsInsert,
+    drinksFtsUpdate,
+    drinksFtsDelete,
     characteristicFamilies,
     characteristics,
-    drinks,
     drinkCharacteristics,
     lots,
     movements,
@@ -5027,8 +5518,273 @@ abstract class _$CaveDatabase extends GeneratedDatabase {
     idxLotsBarcode,
     idxMovementsLot,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'drinks',
+        limitUpdateKind: UpdateKind.insert,
+      ),
+      result: [TableUpdate('drinks_fts', kind: UpdateKind.insert)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'drinks',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [
+        TableUpdate('drinks_fts', kind: UpdateKind.delete),
+        TableUpdate('drinks_fts', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'drinks',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('drinks_fts', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
+typedef $DrinksFtsCreateCompanionBuilder = DrinksFtsCompanion Function({
+  required String drinkId,
+  required String name,
+  required String producer,
+  required String appellation,
+  required String region,
+  required String country,
+  required String grapes,
+  Value<int> rowid,
+});
+typedef $DrinksFtsUpdateCompanionBuilder = DrinksFtsCompanion Function({
+  Value<String> drinkId,
+  Value<String> name,
+  Value<String> producer,
+  Value<String> appellation,
+  Value<String> region,
+  Value<String> country,
+  Value<String> grapes,
+  Value<int> rowid,
+});
+
+class $DrinksFtsFilterComposer extends Composer<_$CaveDatabase, DrinksFts> {
+  $DrinksFtsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get drinkId => $composableBuilder(
+    column: $table.drinkId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get producer => $composableBuilder(
+    column: $table.producer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get appellation => $composableBuilder(
+    column: $table.appellation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get region => $composableBuilder(
+    column: $table.region,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get grapes => $composableBuilder(
+    column: $table.grapes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $DrinksFtsOrderingComposer extends Composer<_$CaveDatabase, DrinksFts> {
+  $DrinksFtsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get drinkId => $composableBuilder(
+    column: $table.drinkId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get producer => $composableBuilder(
+    column: $table.producer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get appellation => $composableBuilder(
+    column: $table.appellation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get region => $composableBuilder(
+    column: $table.region,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get grapes => $composableBuilder(
+    column: $table.grapes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $DrinksFtsAnnotationComposer extends Composer<_$CaveDatabase, DrinksFts> {
+  $DrinksFtsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get drinkId =>
+      $composableBuilder(column: $table.drinkId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get producer =>
+      $composableBuilder(column: $table.producer, builder: (column) => column);
+
+  GeneratedColumn<String> get appellation => $composableBuilder(
+    column: $table.appellation,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get region =>
+      $composableBuilder(column: $table.region, builder: (column) => column);
+
+  GeneratedColumn<String> get country =>
+      $composableBuilder(column: $table.country, builder: (column) => column);
+
+  GeneratedColumn<String> get grapes =>
+      $composableBuilder(column: $table.grapes, builder: (column) => column);
+}
+
+class $DrinksFtsTableManager
+    extends
+        RootTableManager<
+          _$CaveDatabase,
+          DrinksFts,
+          DrinksFt,
+          $DrinksFtsFilterComposer,
+          $DrinksFtsOrderingComposer,
+          $DrinksFtsAnnotationComposer,
+          $DrinksFtsCreateCompanionBuilder,
+          $DrinksFtsUpdateCompanionBuilder,
+          (DrinksFt, BaseReferences<_$CaveDatabase, DrinksFts, DrinksFt>),
+          DrinksFt,
+          PrefetchHooks Function()
+        > {
+  $DrinksFtsTableManager(_$CaveDatabase db, DrinksFts table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $DrinksFtsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $DrinksFtsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $DrinksFtsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> drinkId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> producer = const Value.absent(),
+                Value<String> appellation = const Value.absent(),
+                Value<String> region = const Value.absent(),
+                Value<String> country = const Value.absent(),
+                Value<String> grapes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DrinksFtsCompanion(
+                drinkId: drinkId,
+                name: name,
+                producer: producer,
+                appellation: appellation,
+                region: region,
+                country: country,
+                grapes: grapes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String drinkId,
+                required String name,
+                required String producer,
+                required String appellation,
+                required String region,
+                required String country,
+                required String grapes,
+                Value<int> rowid = const Value.absent(),
+              }) => DrinksFtsCompanion.insert(
+                drinkId: drinkId,
+                name: name,
+                producer: producer,
+                appellation: appellation,
+                region: region,
+                country: country,
+                grapes: grapes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<DrinksFts, DrinksFt>(table),
+                  BaseReferences<_$CaveDatabase, DrinksFts, DrinksFt>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $DrinksFtsProcessedTableManager =
+    ProcessedTableManager<
+      _$CaveDatabase,
+      DrinksFts,
+      DrinksFt,
+      $DrinksFtsFilterComposer,
+      $DrinksFtsOrderingComposer,
+      $DrinksFtsAnnotationComposer,
+      $DrinksFtsCreateCompanionBuilder,
+      $DrinksFtsUpdateCompanionBuilder,
+      (DrinksFt, BaseReferences<_$CaveDatabase, DrinksFts, DrinksFt>),
+      DrinksFt,
+      PrefetchHooks Function()
+    >;
 typedef $$DrinkTypesTableCreateCompanionBuilder = DrinkTypesCompanion Function({
   required String id,
   required int updatedAt,
@@ -5056,6 +5812,25 @@ final class $$DrinkTypesTableReferences
     extends BaseReferences<_$CaveDatabase, $DrinkTypesTable, DrinkType> {
   $$DrinkTypesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
+  static MultiTypedResultKey<$DrinksTable, List<Drink>> _drinksRefsTable(
+    _$CaveDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.drinks,
+    aliasName: 'drink_types__id__drinks__type_id',
+  );
+
+  $$DrinksTableProcessedTableManager get drinksRefs {
+    final manager = $$DrinksTableTableManager(
+      $_db,
+      $_db.drinks,
+    ).filter((f) => f.typeId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_drinksRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<
     $CharacteristicFamiliesTable,
     List<CharacteristicFamily>
@@ -5076,25 +5851,6 @@ final class $$DrinkTypesTableReferences
     final cache = $_typedResult.readTableOrNull(
       _characteristicFamiliesRefsTable($_db),
     );
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$DrinksTable, List<Drink>> _drinksRefsTable(
-    _$CaveDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.drinks,
-    aliasName: 'drink_types__id__drinks__type_id',
-  );
-
-  $$DrinksTableProcessedTableManager get drinksRefs {
-    final manager = $$DrinksTableTableManager(
-      $_db,
-      $_db.drinks,
-    ).filter((f) => f.typeId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_drinksRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -5151,6 +5907,31 @@ class $$DrinkTypesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  Expression<bool> drinksRefs(
+    Expression<bool> Function($$DrinksTableFilterComposer f) f,
+  ) {
+    final $$DrinksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.drinks,
+      getReferencedColumn: (t) => t.typeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DrinksTableFilterComposer(
+            $db: $db,
+            $table: $db.drinks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<bool> characteristicFamiliesRefs(
     Expression<bool> Function($$CharacteristicFamiliesTableFilterComposer f) f,
   ) {
@@ -5174,31 +5955,6 @@ class $$DrinkTypesTableFilterComposer
                     $removeJoinBuilderFromRootComposer,
               ),
         );
-    return f(composer);
-  }
-
-  Expression<bool> drinksRefs(
-    Expression<bool> Function($$DrinksTableFilterComposer f) f,
-  ) {
-    final $$DrinksTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.drinks,
-      getReferencedColumn: (t) => t.typeId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DrinksTableFilterComposer(
-            $db: $db,
-            $table: $db.drinks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
     return f(composer);
   }
 }
@@ -5291,6 +6047,31 @@ class $$DrinkTypesTableAnnotationComposer
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
 
+  Expression<T> drinksRefs<T extends Object>(
+    Expression<T> Function($$DrinksTableAnnotationComposer a) f,
+  ) {
+    final $$DrinksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.drinks,
+      getReferencedColumn: (t) => t.typeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DrinksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.drinks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> characteristicFamiliesRefs<T extends Object>(
     Expression<T> Function($$CharacteristicFamiliesTableAnnotationComposer a) f,
   ) {
@@ -5316,31 +6097,6 @@ class $$DrinkTypesTableAnnotationComposer
         );
     return f(composer);
   }
-
-  Expression<T> drinksRefs<T extends Object>(
-    Expression<T> Function($$DrinksTableAnnotationComposer a) f,
-  ) {
-    final $$DrinksTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.drinks,
-      getReferencedColumn: (t) => t.typeId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DrinksTableAnnotationComposer(
-            $db: $db,
-            $table: $db.drinks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
 }
 
 class $$DrinkTypesTableTableManager
@@ -5357,8 +6113,8 @@ class $$DrinkTypesTableTableManager
           (DrinkType, $$DrinkTypesTableReferences),
           DrinkType,
           PrefetchHooks Function({
-            bool characteristicFamiliesRefs,
             bool drinksRefs,
+            bool characteristicFamiliesRefs,
           })
         > {
   $$DrinkTypesTableTableManager(_$CaveDatabase db, $DrinkTypesTable table)
@@ -5425,37 +6181,16 @@ class $$DrinkTypesTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({characteristicFamiliesRefs = false, drinksRefs = false}) {
+              ({drinksRefs = false, characteristicFamiliesRefs = false}) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
-                    if (characteristicFamiliesRefs) db.characteristicFamilies,
                     if (drinksRefs) db.drinks,
+                    if (characteristicFamiliesRefs) db.characteristicFamilies,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
                     return [
-                      if (characteristicFamiliesRefs)
-                        await $_getPrefetchedData<
-                          DrinkType,
-                          $DrinkTypesTable,
-                          CharacteristicFamily
-                        >(
-                          currentTable: table,
-                          referencedTable: $$DrinkTypesTableReferences
-                              ._characteristicFamiliesRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DrinkTypesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).characteristicFamiliesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.typeId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
                       if (drinksRefs)
                         await $_getPrefetchedData<
                           DrinkType,
@@ -5471,6 +6206,27 @@ class $$DrinkTypesTableTableManager
                                 table,
                                 p0,
                               ).drinksRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.typeId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (characteristicFamiliesRefs)
+                        await $_getPrefetchedData<
+                          DrinkType,
+                          $DrinkTypesTable,
+                          CharacteristicFamily
+                        >(
+                          currentTable: table,
+                          referencedTable: $$DrinkTypesTableReferences
+                              ._characteristicFamiliesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DrinkTypesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).characteristicFamiliesRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.typeId == item.id,
@@ -5497,7 +6253,769 @@ typedef $$DrinkTypesTableProcessedTableManager =
       $$DrinkTypesTableUpdateCompanionBuilder,
       (DrinkType, $$DrinkTypesTableReferences),
       DrinkType,
-      PrefetchHooks Function({bool characteristicFamiliesRefs, bool drinksRefs})
+      PrefetchHooks Function({bool drinksRefs, bool characteristicFamiliesRefs})
+    >;
+typedef $$DrinksTableCreateCompanionBuilder = DrinksCompanion Function({
+  required String id,
+  required int updatedAt,
+  required String updatedBy,
+  Value<int?> deletedAt,
+  Value<String?> typeId,
+  required String name,
+  Value<String?> producer,
+  Value<String?> appellation,
+  Value<String?> region,
+  Value<String?> country,
+  Value<String?> grapes,
+  Value<double?> abv,
+  Value<int?> rating,
+  Value<bool> favorite,
+  Value<String?> comment,
+  Value<bool> needsCompletion,
+  Value<String?> foodPairing,
+  required int createdAt,
+  Value<int> rowid,
+});
+typedef $$DrinksTableUpdateCompanionBuilder = DrinksCompanion Function({
+  Value<String> id,
+  Value<int> updatedAt,
+  Value<String> updatedBy,
+  Value<int?> deletedAt,
+  Value<String?> typeId,
+  Value<String> name,
+  Value<String?> producer,
+  Value<String?> appellation,
+  Value<String?> region,
+  Value<String?> country,
+  Value<String?> grapes,
+  Value<double?> abv,
+  Value<int?> rating,
+  Value<bool> favorite,
+  Value<String?> comment,
+  Value<bool> needsCompletion,
+  Value<String?> foodPairing,
+  Value<int> createdAt,
+  Value<int> rowid,
+});
+
+final class $$DrinksTableReferences
+    extends BaseReferences<_$CaveDatabase, $DrinksTable, Drink> {
+  $$DrinksTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $DrinkTypesTable _typeIdTable(_$CaveDatabase db) =>
+      db.drinkTypes.createAlias('drinks__type_id__drink_types__id');
+
+  $$DrinkTypesTableProcessedTableManager? get typeId {
+    final $_column = $_itemColumn<String>('type_id');
+    if ($_column == null) return null;
+    final manager = $$DrinkTypesTableTableManager(
+      $_db,
+      $_db.drinkTypes,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_typeIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $DrinkCharacteristicsTable,
+    List<DrinkCharacteristic>
+  >
+  _drinkCharacteristicsRefsTable(_$CaveDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.drinkCharacteristics,
+        aliasName: 'drinks__id__drink_characteristics__drink_id',
+      );
+
+  $$DrinkCharacteristicsTableProcessedTableManager
+  get drinkCharacteristicsRefs {
+    final manager = $$DrinkCharacteristicsTableTableManager(
+      $_db,
+      $_db.drinkCharacteristics,
+    ).filter((f) => f.drinkId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _drinkCharacteristicsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$LotsTable, List<Lot>> _lotsRefsTable(
+    _$CaveDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.lots,
+    aliasName: 'drinks__id__lots__drink_id',
+  );
+
+  $$LotsTableProcessedTableManager get lotsRefs {
+    final manager = $$LotsTableTableManager(
+      $_db,
+      $_db.lots,
+    ).filter((f) => f.drinkId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_lotsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$DrinksTableFilterComposer
+    extends Composer<_$CaveDatabase, $DrinksTable> {
+  $$DrinksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get producer => $composableBuilder(
+    column: $table.producer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get appellation => $composableBuilder(
+    column: $table.appellation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get region => $composableBuilder(
+    column: $table.region,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get grapes => $composableBuilder(
+    column: $table.grapes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get abv => $composableBuilder(
+    column: $table.abv,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get favorite => $composableBuilder(
+    column: $table.favorite,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get comment => $composableBuilder(
+    column: $table.comment,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsCompletion => $composableBuilder(
+    column: $table.needsCompletion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get foodPairing => $composableBuilder(
+    column: $table.foodPairing,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$DrinkTypesTableFilterComposer get typeId {
+    final $$DrinkTypesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.typeId,
+      referencedTable: $db.drinkTypes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DrinkTypesTableFilterComposer(
+            $db: $db,
+            $table: $db.drinkTypes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> drinkCharacteristicsRefs(
+    Expression<bool> Function($$DrinkCharacteristicsTableFilterComposer f) f,
+  ) {
+    final $$DrinkCharacteristicsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.drinkCharacteristics,
+      getReferencedColumn: (t) => t.drinkId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DrinkCharacteristicsTableFilterComposer(
+            $db: $db,
+            $table: $db.drinkCharacteristics,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> lotsRefs(
+    Expression<bool> Function($$LotsTableFilterComposer f) f,
+  ) {
+    final $$LotsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.lots,
+      getReferencedColumn: (t) => t.drinkId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LotsTableFilterComposer(
+            $db: $db,
+            $table: $db.lots,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$DrinksTableOrderingComposer
+    extends Composer<_$CaveDatabase, $DrinksTable> {
+  $$DrinksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get producer => $composableBuilder(
+    column: $table.producer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get appellation => $composableBuilder(
+    column: $table.appellation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get region => $composableBuilder(
+    column: $table.region,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get country => $composableBuilder(
+    column: $table.country,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get grapes => $composableBuilder(
+    column: $table.grapes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get abv => $composableBuilder(
+    column: $table.abv,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get favorite => $composableBuilder(
+    column: $table.favorite,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get comment => $composableBuilder(
+    column: $table.comment,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsCompletion => $composableBuilder(
+    column: $table.needsCompletion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get foodPairing => $composableBuilder(
+    column: $table.foodPairing,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$DrinkTypesTableOrderingComposer get typeId {
+    final $$DrinkTypesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.typeId,
+      referencedTable: $db.drinkTypes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DrinkTypesTableOrderingComposer(
+            $db: $db,
+            $table: $db.drinkTypes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DrinksTableAnnotationComposer
+    extends Composer<_$CaveDatabase, $DrinksTable> {
+  $$DrinksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get producer =>
+      $composableBuilder(column: $table.producer, builder: (column) => column);
+
+  GeneratedColumn<String> get appellation => $composableBuilder(
+    column: $table.appellation,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get region =>
+      $composableBuilder(column: $table.region, builder: (column) => column);
+
+  GeneratedColumn<String> get country =>
+      $composableBuilder(column: $table.country, builder: (column) => column);
+
+  GeneratedColumn<String> get grapes =>
+      $composableBuilder(column: $table.grapes, builder: (column) => column);
+
+  GeneratedColumn<double> get abv =>
+      $composableBuilder(column: $table.abv, builder: (column) => column);
+
+  GeneratedColumn<int> get rating =>
+      $composableBuilder(column: $table.rating, builder: (column) => column);
+
+  GeneratedColumn<bool> get favorite =>
+      $composableBuilder(column: $table.favorite, builder: (column) => column);
+
+  GeneratedColumn<String> get comment =>
+      $composableBuilder(column: $table.comment, builder: (column) => column);
+
+  GeneratedColumn<bool> get needsCompletion => $composableBuilder(
+    column: $table.needsCompletion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get foodPairing => $composableBuilder(
+    column: $table.foodPairing,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$DrinkTypesTableAnnotationComposer get typeId {
+    final $$DrinkTypesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.typeId,
+      referencedTable: $db.drinkTypes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DrinkTypesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.drinkTypes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> drinkCharacteristicsRefs<T extends Object>(
+    Expression<T> Function($$DrinkCharacteristicsTableAnnotationComposer a) f,
+  ) {
+    final $$DrinkCharacteristicsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.drinkCharacteristics,
+          getReferencedColumn: (t) => t.drinkId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DrinkCharacteristicsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.drinkCharacteristics,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> lotsRefs<T extends Object>(
+    Expression<T> Function($$LotsTableAnnotationComposer a) f,
+  ) {
+    final $$LotsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.lots,
+      getReferencedColumn: (t) => t.drinkId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LotsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.lots,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$DrinksTableTableManager
+    extends
+        RootTableManager<
+          _$CaveDatabase,
+          $DrinksTable,
+          Drink,
+          $$DrinksTableFilterComposer,
+          $$DrinksTableOrderingComposer,
+          $$DrinksTableAnnotationComposer,
+          $$DrinksTableCreateCompanionBuilder,
+          $$DrinksTableUpdateCompanionBuilder,
+          (Drink, $$DrinksTableReferences),
+          Drink,
+          PrefetchHooks Function({
+            bool typeId,
+            bool drinkCharacteristicsRefs,
+            bool lotsRefs,
+          })
+        > {
+  $$DrinksTableTableManager(_$CaveDatabase db, $DrinksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DrinksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DrinksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DrinksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<String> updatedBy = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<String?> typeId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> producer = const Value.absent(),
+                Value<String?> appellation = const Value.absent(),
+                Value<String?> region = const Value.absent(),
+                Value<String?> country = const Value.absent(),
+                Value<String?> grapes = const Value.absent(),
+                Value<double?> abv = const Value.absent(),
+                Value<int?> rating = const Value.absent(),
+                Value<bool> favorite = const Value.absent(),
+                Value<String?> comment = const Value.absent(),
+                Value<bool> needsCompletion = const Value.absent(),
+                Value<String?> foodPairing = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DrinksCompanion(
+                id: id,
+                updatedAt: updatedAt,
+                updatedBy: updatedBy,
+                deletedAt: deletedAt,
+                typeId: typeId,
+                name: name,
+                producer: producer,
+                appellation: appellation,
+                region: region,
+                country: country,
+                grapes: grapes,
+                abv: abv,
+                rating: rating,
+                favorite: favorite,
+                comment: comment,
+                needsCompletion: needsCompletion,
+                foodPairing: foodPairing,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int updatedAt,
+                required String updatedBy,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<String?> typeId = const Value.absent(),
+                required String name,
+                Value<String?> producer = const Value.absent(),
+                Value<String?> appellation = const Value.absent(),
+                Value<String?> region = const Value.absent(),
+                Value<String?> country = const Value.absent(),
+                Value<String?> grapes = const Value.absent(),
+                Value<double?> abv = const Value.absent(),
+                Value<int?> rating = const Value.absent(),
+                Value<bool> favorite = const Value.absent(),
+                Value<String?> comment = const Value.absent(),
+                Value<bool> needsCompletion = const Value.absent(),
+                Value<String?> foodPairing = const Value.absent(),
+                required int createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => DrinksCompanion.insert(
+                id: id,
+                updatedAt: updatedAt,
+                updatedBy: updatedBy,
+                deletedAt: deletedAt,
+                typeId: typeId,
+                name: name,
+                producer: producer,
+                appellation: appellation,
+                region: region,
+                country: country,
+                grapes: grapes,
+                abv: abv,
+                rating: rating,
+                favorite: favorite,
+                comment: comment,
+                needsCompletion: needsCompletion,
+                foodPairing: foodPairing,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DrinksTable, Drink>(table),
+                  $$DrinksTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                typeId = false,
+                drinkCharacteristicsRefs = false,
+                lotsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (drinkCharacteristicsRefs) db.drinkCharacteristics,
+                    if (lotsRefs) db.lots,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (typeId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.typeId,
+                            referencedTable: $$DrinksTableReferences
+                                ._typeIdTable(db),
+                            referencedColumn: $$DrinksTableReferences
+                                ._typeIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (drinkCharacteristicsRefs)
+                        await $_getPrefetchedData<
+                          Drink,
+                          $DrinksTable,
+                          DrinkCharacteristic
+                        >(
+                          currentTable: table,
+                          referencedTable: $$DrinksTableReferences
+                              ._drinkCharacteristicsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DrinksTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).drinkCharacteristicsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.drinkId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (lotsRefs)
+                        await $_getPrefetchedData<Drink, $DrinksTable, Lot>(
+                          currentTable: table,
+                          referencedTable: $$DrinksTableReferences
+                              ._lotsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DrinksTableReferences(db, table, p0).lotsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.drinkId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$DrinksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$CaveDatabase,
+      $DrinksTable,
+      Drink,
+      $$DrinksTableFilterComposer,
+      $$DrinksTableOrderingComposer,
+      $$DrinksTableAnnotationComposer,
+      $$DrinksTableCreateCompanionBuilder,
+      $$DrinksTableUpdateCompanionBuilder,
+      (Drink, $$DrinksTableReferences),
+      Drink,
+      PrefetchHooks Function({
+        bool typeId,
+        bool drinkCharacteristicsRefs,
+        bool lotsRefs,
+      })
     >;
 typedef $$CharacteristicFamiliesTableCreateCompanionBuilder =
     CharacteristicFamiliesCompanion Function({
@@ -6441,768 +7959,6 @@ typedef $$CharacteristicsTableProcessedTableManager =
       (Characteristic, $$CharacteristicsTableReferences),
       Characteristic,
       PrefetchHooks Function({bool familyId, bool drinkCharacteristicsRefs})
-    >;
-typedef $$DrinksTableCreateCompanionBuilder = DrinksCompanion Function({
-  required String id,
-  required int updatedAt,
-  required String updatedBy,
-  Value<int?> deletedAt,
-  Value<String?> typeId,
-  required String name,
-  Value<String?> producer,
-  Value<String?> appellation,
-  Value<String?> region,
-  Value<String?> country,
-  Value<String?> grapes,
-  Value<double?> abv,
-  Value<int?> rating,
-  Value<bool> favorite,
-  Value<String?> comment,
-  Value<bool> needsCompletion,
-  Value<String?> foodPairing,
-  required int createdAt,
-  Value<int> rowid,
-});
-typedef $$DrinksTableUpdateCompanionBuilder = DrinksCompanion Function({
-  Value<String> id,
-  Value<int> updatedAt,
-  Value<String> updatedBy,
-  Value<int?> deletedAt,
-  Value<String?> typeId,
-  Value<String> name,
-  Value<String?> producer,
-  Value<String?> appellation,
-  Value<String?> region,
-  Value<String?> country,
-  Value<String?> grapes,
-  Value<double?> abv,
-  Value<int?> rating,
-  Value<bool> favorite,
-  Value<String?> comment,
-  Value<bool> needsCompletion,
-  Value<String?> foodPairing,
-  Value<int> createdAt,
-  Value<int> rowid,
-});
-
-final class $$DrinksTableReferences
-    extends BaseReferences<_$CaveDatabase, $DrinksTable, Drink> {
-  $$DrinksTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $DrinkTypesTable _typeIdTable(_$CaveDatabase db) =>
-      db.drinkTypes.createAlias('drinks__type_id__drink_types__id');
-
-  $$DrinkTypesTableProcessedTableManager? get typeId {
-    final $_column = $_itemColumn<String>('type_id');
-    if ($_column == null) return null;
-    final manager = $$DrinkTypesTableTableManager(
-      $_db,
-      $_db.drinkTypes,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_typeIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static MultiTypedResultKey<
-    $DrinkCharacteristicsTable,
-    List<DrinkCharacteristic>
-  >
-  _drinkCharacteristicsRefsTable(_$CaveDatabase db) =>
-      MultiTypedResultKey.fromTable(
-        db.drinkCharacteristics,
-        aliasName: 'drinks__id__drink_characteristics__drink_id',
-      );
-
-  $$DrinkCharacteristicsTableProcessedTableManager
-  get drinkCharacteristicsRefs {
-    final manager = $$DrinkCharacteristicsTableTableManager(
-      $_db,
-      $_db.drinkCharacteristics,
-    ).filter((f) => f.drinkId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(
-      _drinkCharacteristicsRefsTable($_db),
-    );
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$LotsTable, List<Lot>> _lotsRefsTable(
-    _$CaveDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.lots,
-    aliasName: 'drinks__id__lots__drink_id',
-  );
-
-  $$LotsTableProcessedTableManager get lotsRefs {
-    final manager = $$LotsTableTableManager(
-      $_db,
-      $_db.lots,
-    ).filter((f) => f.drinkId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_lotsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
-class $$DrinksTableFilterComposer
-    extends Composer<_$CaveDatabase, $DrinksTable> {
-  $$DrinksTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get updatedBy => $composableBuilder(
-    column: $table.updatedBy,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get producer => $composableBuilder(
-    column: $table.producer,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get appellation => $composableBuilder(
-    column: $table.appellation,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get region => $composableBuilder(
-    column: $table.region,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get country => $composableBuilder(
-    column: $table.country,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get grapes => $composableBuilder(
-    column: $table.grapes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get abv => $composableBuilder(
-    column: $table.abv,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get rating => $composableBuilder(
-    column: $table.rating,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get favorite => $composableBuilder(
-    column: $table.favorite,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get comment => $composableBuilder(
-    column: $table.comment,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get needsCompletion => $composableBuilder(
-    column: $table.needsCompletion,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get foodPairing => $composableBuilder(
-    column: $table.foodPairing,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $$DrinkTypesTableFilterComposer get typeId {
-    final $$DrinkTypesTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.typeId,
-      referencedTable: $db.drinkTypes,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DrinkTypesTableFilterComposer(
-            $db: $db,
-            $table: $db.drinkTypes,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  Expression<bool> drinkCharacteristicsRefs(
-    Expression<bool> Function($$DrinkCharacteristicsTableFilterComposer f) f,
-  ) {
-    final $$DrinkCharacteristicsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.drinkCharacteristics,
-      getReferencedColumn: (t) => t.drinkId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DrinkCharacteristicsTableFilterComposer(
-            $db: $db,
-            $table: $db.drinkCharacteristics,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> lotsRefs(
-    Expression<bool> Function($$LotsTableFilterComposer f) f,
-  ) {
-    final $$LotsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.lots,
-      getReferencedColumn: (t) => t.drinkId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$LotsTableFilterComposer(
-            $db: $db,
-            $table: $db.lots,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$DrinksTableOrderingComposer
-    extends Composer<_$CaveDatabase, $DrinksTable> {
-  $$DrinksTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get updatedBy => $composableBuilder(
-    column: $table.updatedBy,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get producer => $composableBuilder(
-    column: $table.producer,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get appellation => $composableBuilder(
-    column: $table.appellation,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get region => $composableBuilder(
-    column: $table.region,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get country => $composableBuilder(
-    column: $table.country,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get grapes => $composableBuilder(
-    column: $table.grapes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get abv => $composableBuilder(
-    column: $table.abv,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get rating => $composableBuilder(
-    column: $table.rating,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get favorite => $composableBuilder(
-    column: $table.favorite,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get comment => $composableBuilder(
-    column: $table.comment,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get needsCompletion => $composableBuilder(
-    column: $table.needsCompletion,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get foodPairing => $composableBuilder(
-    column: $table.foodPairing,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $$DrinkTypesTableOrderingComposer get typeId {
-    final $$DrinkTypesTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.typeId,
-      referencedTable: $db.drinkTypes,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DrinkTypesTableOrderingComposer(
-            $db: $db,
-            $table: $db.drinkTypes,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$DrinksTableAnnotationComposer
-    extends Composer<_$CaveDatabase, $DrinksTable> {
-  $$DrinksTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<int> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<String> get updatedBy =>
-      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
-
-  GeneratedColumn<int> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get producer =>
-      $composableBuilder(column: $table.producer, builder: (column) => column);
-
-  GeneratedColumn<String> get appellation => $composableBuilder(
-    column: $table.appellation,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get region =>
-      $composableBuilder(column: $table.region, builder: (column) => column);
-
-  GeneratedColumn<String> get country =>
-      $composableBuilder(column: $table.country, builder: (column) => column);
-
-  GeneratedColumn<String> get grapes =>
-      $composableBuilder(column: $table.grapes, builder: (column) => column);
-
-  GeneratedColumn<double> get abv =>
-      $composableBuilder(column: $table.abv, builder: (column) => column);
-
-  GeneratedColumn<int> get rating =>
-      $composableBuilder(column: $table.rating, builder: (column) => column);
-
-  GeneratedColumn<bool> get favorite =>
-      $composableBuilder(column: $table.favorite, builder: (column) => column);
-
-  GeneratedColumn<String> get comment =>
-      $composableBuilder(column: $table.comment, builder: (column) => column);
-
-  GeneratedColumn<bool> get needsCompletion => $composableBuilder(
-    column: $table.needsCompletion,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get foodPairing => $composableBuilder(
-    column: $table.foodPairing,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  $$DrinkTypesTableAnnotationComposer get typeId {
-    final $$DrinkTypesTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.typeId,
-      referencedTable: $db.drinkTypes,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$DrinkTypesTableAnnotationComposer(
-            $db: $db,
-            $table: $db.drinkTypes,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  Expression<T> drinkCharacteristicsRefs<T extends Object>(
-    Expression<T> Function($$DrinkCharacteristicsTableAnnotationComposer a) f,
-  ) {
-    final $$DrinkCharacteristicsTableAnnotationComposer composer =
-        $composerBuilder(
-          composer: this,
-          getCurrentColumn: (t) => t.id,
-          referencedTable: $db.drinkCharacteristics,
-          getReferencedColumn: (t) => t.drinkId,
-          builder:
-              (
-                joinBuilder, {
-                $addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer,
-              }) => $$DrinkCharacteristicsTableAnnotationComposer(
-                $db: $db,
-                $table: $db.drinkCharacteristics,
-                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                joinBuilder: joinBuilder,
-                $removeJoinBuilderFromRootComposer:
-                    $removeJoinBuilderFromRootComposer,
-              ),
-        );
-    return f(composer);
-  }
-
-  Expression<T> lotsRefs<T extends Object>(
-    Expression<T> Function($$LotsTableAnnotationComposer a) f,
-  ) {
-    final $$LotsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.lots,
-      getReferencedColumn: (t) => t.drinkId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$LotsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.lots,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$DrinksTableTableManager
-    extends
-        RootTableManager<
-          _$CaveDatabase,
-          $DrinksTable,
-          Drink,
-          $$DrinksTableFilterComposer,
-          $$DrinksTableOrderingComposer,
-          $$DrinksTableAnnotationComposer,
-          $$DrinksTableCreateCompanionBuilder,
-          $$DrinksTableUpdateCompanionBuilder,
-          (Drink, $$DrinksTableReferences),
-          Drink,
-          PrefetchHooks Function({
-            bool typeId,
-            bool drinkCharacteristicsRefs,
-            bool lotsRefs,
-          })
-        > {
-  $$DrinksTableTableManager(_$CaveDatabase db, $DrinksTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$DrinksTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$DrinksTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$DrinksTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<int> updatedAt = const Value.absent(),
-                Value<String> updatedBy = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<String?> typeId = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<String?> producer = const Value.absent(),
-                Value<String?> appellation = const Value.absent(),
-                Value<String?> region = const Value.absent(),
-                Value<String?> country = const Value.absent(),
-                Value<String?> grapes = const Value.absent(),
-                Value<double?> abv = const Value.absent(),
-                Value<int?> rating = const Value.absent(),
-                Value<bool> favorite = const Value.absent(),
-                Value<String?> comment = const Value.absent(),
-                Value<bool> needsCompletion = const Value.absent(),
-                Value<String?> foodPairing = const Value.absent(),
-                Value<int> createdAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => DrinksCompanion(
-                id: id,
-                updatedAt: updatedAt,
-                updatedBy: updatedBy,
-                deletedAt: deletedAt,
-                typeId: typeId,
-                name: name,
-                producer: producer,
-                appellation: appellation,
-                region: region,
-                country: country,
-                grapes: grapes,
-                abv: abv,
-                rating: rating,
-                favorite: favorite,
-                comment: comment,
-                needsCompletion: needsCompletion,
-                foodPairing: foodPairing,
-                createdAt: createdAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required int updatedAt,
-                required String updatedBy,
-                Value<int?> deletedAt = const Value.absent(),
-                Value<String?> typeId = const Value.absent(),
-                required String name,
-                Value<String?> producer = const Value.absent(),
-                Value<String?> appellation = const Value.absent(),
-                Value<String?> region = const Value.absent(),
-                Value<String?> country = const Value.absent(),
-                Value<String?> grapes = const Value.absent(),
-                Value<double?> abv = const Value.absent(),
-                Value<int?> rating = const Value.absent(),
-                Value<bool> favorite = const Value.absent(),
-                Value<String?> comment = const Value.absent(),
-                Value<bool> needsCompletion = const Value.absent(),
-                Value<String?> foodPairing = const Value.absent(),
-                required int createdAt,
-                Value<int> rowid = const Value.absent(),
-              }) => DrinksCompanion.insert(
-                id: id,
-                updatedAt: updatedAt,
-                updatedBy: updatedBy,
-                deletedAt: deletedAt,
-                typeId: typeId,
-                name: name,
-                producer: producer,
-                appellation: appellation,
-                region: region,
-                country: country,
-                grapes: grapes,
-                abv: abv,
-                rating: rating,
-                favorite: favorite,
-                comment: comment,
-                needsCompletion: needsCompletion,
-                foodPairing: foodPairing,
-                createdAt: createdAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable<$DrinksTable, Drink>(table),
-                  $$DrinksTableReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback:
-              ({
-                typeId = false,
-                drinkCharacteristicsRefs = false,
-                lotsRefs = false,
-              }) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (drinkCharacteristicsRefs) db.drinkCharacteristics,
-                    if (lotsRefs) db.lots,
-                  ],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (typeId) {
-                          state = state.withJoin(
-                            currentTable: table,
-                            currentColumn: table.typeId,
-                            referencedTable: $$DrinksTableReferences
-                                ._typeIdTable(db),
-                            referencedColumn: $$DrinksTableReferences
-                                ._typeIdTable(db)
-                                .id,
-                          ) as T;
-                        }
-
-                        return state;
-                      },
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (drinkCharacteristicsRefs)
-                        await $_getPrefetchedData<
-                          Drink,
-                          $DrinksTable,
-                          DrinkCharacteristic
-                        >(
-                          currentTable: table,
-                          referencedTable: $$DrinksTableReferences
-                              ._drinkCharacteristicsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DrinksTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).drinkCharacteristicsRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.drinkId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (lotsRefs)
-                        await $_getPrefetchedData<Drink, $DrinksTable, Lot>(
-                          currentTable: table,
-                          referencedTable: $$DrinksTableReferences
-                              ._lotsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$DrinksTableReferences(db, table, p0).lotsRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.drinkId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $$DrinksTableProcessedTableManager =
-    ProcessedTableManager<
-      _$CaveDatabase,
-      $DrinksTable,
-      Drink,
-      $$DrinksTableFilterComposer,
-      $$DrinksTableOrderingComposer,
-      $$DrinksTableAnnotationComposer,
-      $$DrinksTableCreateCompanionBuilder,
-      $$DrinksTableUpdateCompanionBuilder,
-      (Drink, $$DrinksTableReferences),
-      Drink,
-      PrefetchHooks Function({
-        bool typeId,
-        bool drinkCharacteristicsRefs,
-        bool lotsRefs,
-      })
     >;
 typedef $$DrinkCharacteristicsTableCreateCompanionBuilder =
     DrinkCharacteristicsCompanion Function({
@@ -8958,8 +9714,12 @@ typedef $$MetaTableProcessedTableManager =
 class $CaveDatabaseManager {
   final _$CaveDatabase _db;
   $CaveDatabaseManager(this._db);
+  $DrinksFtsTableManager get drinksFts =>
+      $DrinksFtsTableManager(_db, _db.drinksFts);
   $$DrinkTypesTableTableManager get drinkTypes =>
       $$DrinkTypesTableTableManager(_db, _db.drinkTypes);
+  $$DrinksTableTableManager get drinks =>
+      $$DrinksTableTableManager(_db, _db.drinks);
   $$CharacteristicFamiliesTableTableManager get characteristicFamilies =>
       $$CharacteristicFamiliesTableTableManager(
         _db,
@@ -8967,8 +9727,6 @@ class $CaveDatabaseManager {
       );
   $$CharacteristicsTableTableManager get characteristics =>
       $$CharacteristicsTableTableManager(_db, _db.characteristics);
-  $$DrinksTableTableManager get drinks =>
-      $$DrinksTableTableManager(_db, _db.drinks);
   $$DrinkCharacteristicsTableTableManager get drinkCharacteristics =>
       $$DrinkCharacteristicsTableTableManager(_db, _db.drinkCharacteristics);
   $$LotsTableTableManager get lots => $$LotsTableTableManager(_db, _db.lots);

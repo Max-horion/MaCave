@@ -1,0 +1,35 @@
+-- Index de recherche plein texte des références (CDC §6.5, docs/architecture.md §3).
+--
+-- FTS5 découpe les textes en mots ; « remove_diacritics 2 » ignore les accents
+-- et la casse : « saint emilion » trouve « Saint-Émilion ».
+-- L'index est tenu à jour par les déclencheurs ci-dessous : aucun code Dart
+-- n'a besoin d'y écrire. Les références supprimées (deleted_at) y restent et
+-- sont écartées au moment de la recherche.
+
+import 'tables.dart';
+
+CREATE VIRTUAL TABLE drinks_fts USING fts5(
+  drink_id UNINDEXED,
+  name,
+  producer,
+  appellation,
+  region,
+  country,
+  grapes,
+  tokenize = 'unicode61 remove_diacritics 2'
+);
+
+CREATE TRIGGER drinks_fts_insert AFTER INSERT ON drinks BEGIN
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes)
+  VALUES (new.id, new.name, new.producer, new.appellation, new.region, new.country, new.grapes);
+END;
+
+CREATE TRIGGER drinks_fts_update AFTER UPDATE ON drinks BEGIN
+  DELETE FROM drinks_fts WHERE drink_id = old.id;
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes)
+  VALUES (new.id, new.name, new.producer, new.appellation, new.region, new.country, new.grapes);
+END;
+
+CREATE TRIGGER drinks_fts_delete AFTER DELETE ON drinks BEGIN
+  DELETE FROM drinks_fts WHERE drink_id = old.id;
+END;

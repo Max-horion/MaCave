@@ -148,6 +148,51 @@ class CaveRepository {
     );
   }
 
+  /// Crée une référence complète en une seule transaction : fiche,
+  /// caractéristiques, premier lot et ses bouteilles (formulaire d'ajout).
+  Future<({String drinkId, String lotId})> addNewDrink({
+    required DrinkInput drink,
+    Set<String> characteristicIds = const {},
+    required int volumeMl,
+    int? vintage,
+    required int quantity,
+  }) {
+    return _db.transaction(() async {
+      final drinkId = await createDrink(drink);
+      await setDrinkCharacteristics(drinkId, characteristicIds);
+      final lotId = await findOrCreateLot(
+        drinkId: drinkId,
+        volumeMl: volumeMl,
+        vintage: vintage,
+      );
+      await addEntry(lotId, quantity);
+      return (drinkId: drinkId, lotId: lotId);
+    });
+  }
+
+  /// Enregistre la fiche et ses caractéristiques en une seule transaction.
+  Future<void> saveDrink(
+    String id,
+    DrinkInput input,
+    Set<String> characteristicIds,
+  ) {
+    return _db.transaction(() async {
+      await updateDrink(id, input);
+      await setDrinkCharacteristics(id, characteristicIds);
+    });
+  }
+
+  /// Ajoute ou retire une référence des favoris.
+  Future<void> setFavorite(String id, bool favorite) async {
+    await (_db.update(_db.drinks)..where((t) => t.id.equals(id))).write(
+      DrinksCompanion(
+        favorite: Value(favorite),
+        updatedAt: Value(_ctx.now()),
+        updatedBy: Value(_ctx.deviceId),
+      ),
+    );
+  }
+
   /// Supprime une référence et tous ses lots (suppression logique).
   Future<void> deleteDrink(String id) {
     return _db.transaction(() async {

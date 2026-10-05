@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../domain/drink_filter.dart';
+import 'cave_queries.dart';
 import 'cave_repository.dart';
 import 'database.dart';
 import 'write_context.dart';
@@ -30,3 +32,54 @@ final caveRepositoryProvider = Provider<CaveRepository>(
 final caveTotalsProvider = StreamProvider<CaveTotals>(
   (ref) => ref.watch(caveRepositoryProvider).watchTotals(),
 );
+
+/// Lectures « en direct » pour les écrans.
+final caveQueriesProvider = Provider<CaveQueries>(
+  (ref) => CaveQueries(ref.watch(databaseProvider)),
+);
+
+/// Types, familles et caractéristiques.
+final classificationProvider = StreamProvider<Classification>(
+  (ref) => ref.watch(caveQueriesProvider).watchClassification(),
+);
+
+/// Régions et pays présents dans la cave.
+final regionsProvider = StreamProvider<List<String>>(
+  (ref) => ref.watch(caveQueriesProvider).watchRegions(),
+);
+
+/// Recherche, filtres et tri de la liste (conservés tant que l'appli est ouverte).
+class DrinkFilterNotifier extends Notifier<DrinkFilter> {
+  @override
+  DrinkFilter build() => const DrinkFilter();
+
+  void change(DrinkFilter Function(DrinkFilter current) edit) {
+    state = edit(state);
+  }
+}
+
+final drinkFilterProvider = NotifierProvider<DrinkFilterNotifier, DrinkFilter>(
+  DrinkFilterNotifier.new,
+);
+
+/// Liste de la cave selon les filtres en cours.
+final drinkListProvider = StreamProvider<List<DrinkListItem>>(
+  (ref) => ref
+      .watch(caveQueriesProvider)
+      .watchDrinkList(ref.watch(drinkFilterProvider)),
+);
+
+/// Une référence, ses lots et ses caractéristiques (écran de la fiche).
+final drinkProvider = StreamProvider.autoDispose.family<Drink?, String>(
+  (ref, id) => ref.watch(caveQueriesProvider).watchDrink(id),
+);
+
+final lotsProvider = StreamProvider.autoDispose.family<List<Lot>, String>(
+  (ref, drinkId) => ref.watch(caveQueriesProvider).watchLotsOf(drinkId),
+);
+
+final drinkCharacteristicsProvider = StreamProvider.autoDispose
+    .family<Set<String>, String>(
+      (ref, drinkId) =>
+          ref.watch(caveQueriesProvider).watchDrinkCharacteristicIds(drinkId),
+    );

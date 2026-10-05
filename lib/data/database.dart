@@ -24,6 +24,7 @@ part 'database.g.dart';
     Settings,
     Meta,
   ],
+  include: {'search.drift'},
 )
 class CaveDatabase extends _$CaveDatabase {
   CaveDatabase(super.executor);
@@ -32,7 +33,7 @@ class CaveDatabase extends _$CaveDatabase {
   factory CaveDatabase.open() => CaveDatabase(driftDatabase(name: 'cave'));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   /// Auteur des données livrées avec l'application. Leur date est 0 : la
   /// moindre modification de l'utilisateur l'emporte à la synchronisation.
@@ -47,6 +48,16 @@ class CaveDatabase extends _$CaveDatabase {
       ).insert(MetaCompanion.insert(key: 'cave_id', value: const Uuid().v4()));
       await _seedClassification();
     },
+    onUpgrade: (m, from, to) async {
+      // Version 2 (lot 2) : index de recherche plein texte.
+      if (from < 2) {
+        await m.create(drinksFts);
+        await m.createTrigger(drinksFtsInsert);
+        await m.createTrigger(drinksFtsUpdate);
+        await m.createTrigger(drinksFtsDelete);
+        await rebuildSearchIndex();
+      }
+    },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
@@ -59,6 +70,17 @@ class CaveDatabase extends _$CaveDatabase {
       meta,
     )..where((t) => t.key.equals('cave_id'))).getSingle();
     return row.value;
+  }
+
+  /// Reconstruit entièrement l'index de recherche (migration, synchronisation).
+  Future<void> rebuildSearchIndex() async {
+    await customStatement('DELETE FROM drinks_fts');
+    await customStatement(
+      'INSERT INTO drinks_fts '
+      '(drink_id, name, producer, appellation, region, country, grapes) '
+      'SELECT id, name, producer, appellation, region, country, grapes '
+      'FROM drinks',
+    );
   }
 
   /// Insère la classification initiale du CDC §6.1.
