@@ -4,7 +4,7 @@ Application Android (Flutter) de gestion d'une cave personnelle : références (
 
 ## Documents de référence
 
-- `docs/cahier_des_charges_v0.4.md` — **cahier des charges** (CDC), converti du `.docx` (source officielle). En cas de doute fonctionnel, c'est lui qui fait foi ; citer la section (ex. « CDC §6.3 »).
+- `docs/cahier_des_charges_v0.5.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.5.docx` (source officielle ; la v0.4 est conservée pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis reconversion en Markdown. En cas de doute fonctionnel, c'est lui qui fait foi ; citer la section (ex. « CDC §6.3 »).
 - `docs/architecture.md` — bibliothèques, schéma de la base, principe de synchronisation.
 - Ce fichier — état d'avancement et conventions. **À mettre à jour à la fin de chaque lot.**
 
@@ -53,7 +53,10 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
-**Décisions du porteur :** une fiche incomplète (ex. vin sans appellation ni région) est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05).
+**Décisions du porteur** (reportées dans le CDC v0.5) :
+- une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
+- l'appellation est **facultative** pour le vin ; la région *ou* le pays restent obligatoires (2026-10-05).
+- Le marqueur « à compléter » est calculé à l'enregistrement de chaque fiche. **Ne jamais le recalculer en masse** silencieusement : le porteur s'en sert comme liste de fiches à revoir (ex. après un import).
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
 
@@ -118,3 +121,4 @@ Règles d'import :
 - 2026-10-05 — **Incident : les données saisies par le porteur (2 vins) ont été effacées.** Cause : `flutter install` désinstalle l'appli avant chaque installation. Toutes les installations précédentes repartaient donc d'une base vide : **les migrations n'ont jamais été testées sur le téléphone avec des données** (contrairement à ce qu'indiquaient les entrées ci-dessus), seulement par les tests automatiques. Correctif : `tool/installer.sh` (`adb install -r` + contrôle de `firstInstallTime`). Données non récupérables (sauvegarde Android désactivée).
 - 2026-10-05 — Installation sans perte vérifiée sur le téléphone : le porteur a ressaisi 2 références, `tool/installer.sh` (compilation + `adb install -r`) les a conservées.
 - 2026-10-05 — Lot 3 : export/import CSV, import Vivino (essai à blanc sur le vrai fichier : 31 références, 32 lots, 95 bouteilles, 0 erreur, 16 « à compléter »), historique sur la fiche, inventaire guidé, statistiques ; 114 tests verts.
+- 2026-10-05 — Import Vivino fait par le porteur sur le téléphone, OK ; fiches complétées à la main. Appellation rendue facultative (CDC v0.5) ; 118 tests verts.

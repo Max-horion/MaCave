@@ -23,9 +23,16 @@ void main() {
       );
     });
 
-    test('vin sans appellation', () {
+    test('vin sans appellation : complet (appellation facultative)', () {
       expect(
         needsCompletion(profile: FieldProfile.wine, region: 'Bordeaux'),
+        isFalse,
+      );
+    });
+
+    test('vin sans région ni pays', () {
+      expect(
+        needsCompletion(profile: FieldProfile.wine, appellation: 'AOC Test'),
         isTrue,
       );
     });
@@ -45,8 +52,8 @@ void main() {
       expect(
         needsCompletion(
           profile: FieldProfile.wine,
-          appellation: '  ',
-          region: 'Bordeaux',
+          appellation: 'AOC Test',
+          region: '  ',
         ),
         isTrue,
       );

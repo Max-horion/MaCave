@@ -1,7 +1,7 @@
 # Architecture technique — Ma Cave
 
 > **Statut : validée le 5 octobre 2026.**
-> Référence fonctionnelle : [cahier_des_charges_v0.4.md](cahier_des_charges_v0.4.md) (CDC).
+> Référence fonctionnelle : [cahier_des_charges_v0.5.md](cahier_des_charges_v0.5.md) (CDC).
 
 ## 1. Bibliothèques retenues
 

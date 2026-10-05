@@ -6,12 +6,15 @@ enum DrinkField { appellation, region, grapes, abv, vintage, foodPairing }
 /// Visibilité d'un champ pour un profil (CDC §4.1).
 enum FieldRule { required, optional, hidden }
 
-/// Tableau du CDC §4.1, pour les champs qui ne sont pas communs à tous les types.
+/// Tableau du CDC §4.1 (v0.5), pour les champs qui ne sont pas communs à tous
+/// les types.
 /// (Nom et type : toujours obligatoires ; producteur, caractéristiques, note,
 /// favori, commentaire : toujours facultatifs.)
 const Map<FieldProfile, Map<DrinkField, FieldRule>> fieldRules = {
   FieldProfile.wine: {
-    DrinkField.appellation: FieldRule.required,
+    // Facultative (décision du porteur, 05/10/2026, CDC v0.5) : un « Vin de
+    // France » ou beaucoup de vins étrangers n'en ont pas.
+    DrinkField.appellation: FieldRule.optional,
     DrinkField.region: FieldRule.required,
     DrinkField.grapes: FieldRule.optional,
     DrinkField.abv: FieldRule.optional,

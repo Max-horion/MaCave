@@ -2,14 +2,14 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.4.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.5.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.4 |
-| Date | 2 octobre 2026 |
-| Statut | Prêt pour le développement de la V1 |
+| Version | 0.5 |
+| Date | 5 octobre 2026 |
+| Statut | V1 en cours de développement |
 
 ### Historique des versions
 
@@ -19,6 +19,7 @@
 | 0.2 | 1er octobre 2026 | Structuration au format cahier des charges, questions Q1 à Q24, réponses du porteur. |
 | 0.3 | 1er octobre 2026 | Arbitrage de toutes les questions ouvertes et des points « à compléter » ; ajout du modèle de données, des paramètres, des choix techniques et du journal des décisions. |
 | 0.4 | 2 octobre 2026 | Relecture : diffusion future à d’autres utilisateurs, retrait par scan, synchronisation facultative (mode local seul) ; traitement des erreurs de synchronisation, changement de mode, tout serveur WebDAV, premier lancement, préparation des traductions. |
+| 0.5 | 5 octobre 2026 | Retours de la V1 en cours : appellation facultative pour le vin (4.1, 6.7) ; une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée. |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -73,7 +74,7 @@ Trois objets principaux : la référence, le lot et le mouvement. Les champs aff
 | Type | V1 | O | O | O | O |
 | Caractéristiques | V1 | F | F | F | F |
 | Producteur ou domaine | V1 | F | F | F | F |
-| Appellation | V1 | O | – | F | – |
+| Appellation | V1 | F | – | F | – |
 | Région, pays | V1 | O | F | F | – |
 | Cépages | V1 | F | – | – | – |
 | Degré d’alcool | V1 | F | F | F | – |
@@ -167,7 +168,7 @@ Ajout manuel ou assisté par scan. Il est possible d’ajouter des bouteilles au
 - **V2 :** consommation dans le temps (bouteilles sorties par mois ou par an, par type, références les plus consommées).
 Aucune notion de valeur.
 ### 6.7 Import et export
-- **Import Vivino (V1, utilisé une fois) :** fichier cellar.csv de l’export Vivino (vin, producteur, millésime, région, pays, type, quantité). Les volumes absents prennent la valeur par défaut du type ; les fiches incomplètes (appellation manquante…) sont importées avec le marqueur « à compléter ».
+- **Import Vivino (V1, utilisé une fois) :** fichier cellar.csv de l’export Vivino (vin, producteur, millésime, région, pays, type, quantité). Les volumes absents prennent la valeur par défaut du type ; les fiches incomplètes (région manquante…) sont importées avec le marqueur « à compléter ».
 - **Export CSV (V1) :** deux fichiers, stock (références et lots) et historique, lisibles dans Excel ou LibreOffice ; sert aussi de sauvegarde de secours.
 - **Import CSV (V1) :** au format de l’export, pour restaurer une sauvegarde ou importer une saisie préparée dans un tableur.
 - **Export PDF imprimable :** V2 éventuelle.
@@ -334,3 +335,5 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 02/10/2026 | Premier lancement | Écran d’accueil en 3 étapes : mode de stockage, import, valeurs par défaut. |
 | 02/10/2026 | Section 9 | Textes préparés pour la traduction ; identifiants dans le coffre sécurisé d’Android. |
 | 02/10/2026 | Section 10 | Canal de diffusion à choisir après la bêta. |
+| 05/10/2026 | 4.1, 6.2 | Une fiche incomplète (champ obligatoire manquant) est enregistrée avec le marqueur « à compléter », jamais refusée. |
+| 05/10/2026 | 4.1, 6.7 | Appellation facultative pour le vin (« Vin de France », vins étrangers sans équivalent) ; la région ou le pays restent obligatoires. À l’import Vivino, le marqueur « à compléter » signale une région manquante. |

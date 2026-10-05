@@ -301,9 +301,9 @@
   "@characteristicsSection": {
     "description": "Section des caractéristiques (robe, style…)."
   },
-  "formIncompleteWarning": "Sans appellation ni région, la fiche sera marquée « à compléter ».",
+  "formIncompleteWarning": "Sans région ni pays, la fiche sera marquée « à compléter ».",
   "@formIncompleteWarning": {
-    "description": "Avertissement quand un champ obligatoire du vin est vide."
+    "description": "Avertissement quand un champ obligatoire du vin (région ou pays) est vide."
   },
   "fieldName": "Nom",
   "@fieldName": {

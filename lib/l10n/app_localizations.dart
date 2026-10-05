@@ -466,10 +466,10 @@ abstract class AppLocalizations {
   /// **'Caractéristiques'**
   String get characteristicsSection;
 
-  /// Avertissement quand un champ obligatoire du vin est vide.
+  /// Avertissement quand un champ obligatoire du vin (région ou pays) est vide.
   ///
   /// In fr, this message translates to:
-  /// **'Sans appellation ni région, la fiche sera marquée « à compléter ».'**
+  /// **'Sans région ni pays, la fiche sera marquée « à compléter ».'**
   String get formIncompleteWarning;
 
   /// Champ : nom de la boisson.

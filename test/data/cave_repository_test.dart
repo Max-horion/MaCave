@@ -56,22 +56,21 @@ void main() {
       expect(d.needsCompletion, isFalse);
     });
 
-    test('un vin sans appellation est marqué « à compléter »', () async {
+    test('un vin sans région ni pays est marqué « à compléter »', () async {
       final id = await repo.createDrink(
-        DrinkInput(name: 'Vin incomplet', typeId: wineTypeId, region: 'X'),
+        DrinkInput(name: 'Vin incomplet', typeId: wineTypeId, appellation: 'Y'),
       );
       expect((await repo.drink(id))!.needsCompletion, isTrue);
 
       await repo.updateDrink(
         id,
-        DrinkInput(
-          name: 'Vin incomplet',
-          typeId: wineTypeId,
-          region: 'X',
-          appellation: 'Y',
-        ),
+        DrinkInput(name: 'Vin incomplet', typeId: wineTypeId, country: 'X'),
       );
-      expect((await repo.drink(id))!.needsCompletion, isFalse);
+      expect(
+        (await repo.drink(id))!.needsCompletion,
+        isFalse,
+        reason: 'appellation facultative',
+      );
     });
 
     test('nom vide ou note hors limites refusés', () async {

@@ -232,8 +232,9 @@ void main() {
       expect(report.drinksCreated, 7, reason: 'le château a deux millésimes');
       expect(report.lotsCreated, 8);
       expect(report.bottlesAdded, 27);
-      // Sans appellation déduite : 5 fiches « à compléter ».
-      expect(report.needsCompletion, 5);
+      // Appellation facultative : toutes les lignes ont une région, aucune
+      // fiche n'est « à compléter ».
+      expect(report.needsCompletion, 0);
 
       final list = await CaveQueries(db)
           .watchDrinkList(const DrinkFilter(query: 'appellation fictive rouge'))

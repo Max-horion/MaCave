@@ -192,7 +192,7 @@ void main() {
     await tester.tap(find.byKey(const Key('save-drink')));
     await settle(tester);
 
-    // La fiche créée s'affiche, marquée « à compléter » (vin sans appellation).
+    // La fiche créée s'affiche, marquée « à compléter » (vin sans région ni pays).
     expect(find.text('Vin Test'), findsOneWidget);
     expect(find.text('2018 · 75 cl'), findsOneWidget);
     expect(find.text('2 bouteilles'), findsOneWidget);

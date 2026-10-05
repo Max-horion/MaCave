@@ -267,8 +267,9 @@ void main() {
       expect(await names(const DrinkFilter(favoritesOnly: true)), [
         'Échezeaux Test',
       ]);
+      await add('Sans Région', typeId: wine, appellation: 'AOC Test');
       expect(await names(const DrinkFilter(needsCompletionOnly: true)), [
-        'Blanc Fictif',
+        'Sans Région',
       ]);
     });
 

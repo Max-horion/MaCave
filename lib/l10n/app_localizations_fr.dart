@@ -251,7 +251,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get formIncompleteWarning =>
-      'Sans appellation ni région, la fiche sera marquée « à compléter ».';
+      'Sans région ni pays, la fiche sera marquée « à compléter ».';
 
   @override
   String get fieldName => 'Nom';
