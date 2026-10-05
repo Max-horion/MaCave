@@ -16,7 +16,7 @@ void main() {
 
   test('le fichier est reconnu comme export Vivino', () {
     expect(isVivinoExport(table), isTrue);
-    expect(wines, hasLength(7));
+    expect(wines, hasLength(8));
   });
 
   test('« nom du vin » identique à la région : c\'est l\'appellation', () {
@@ -27,6 +27,12 @@ void main() {
     expect(w.vintage, 2015);
     expect(w.quantity, 6);
     expect(w.line, 2);
+  });
+
+  test('appellation reconnue malgré traits d\'union et espaces', () {
+    final w = byProducer('Château Trait-d\'Union');
+    expect(w.name, 'Château Trait-d\'Union');
+    expect(w.appellation, 'Côte Imaginaire Village');
   });
 
   test('sinon : nom = domaine + nom du vin, sans appellation', () {

@@ -386,14 +386,13 @@ class CaveImporter {
     required DrinkInput input,
   }) async {
     if (id.isNotEmpty && await _repo.drink(id) != null) return id;
-    final key = _Lookup.drinkKey(input.name, input.producer, type?.id);
-    final known = lookup.drinkIds[key];
+    final known = lookup.findDrink(input.name, input.producer, type?.id);
     if (known != null) return known;
 
     final idFree = id.isNotEmpty && !await _exists(_db.drinks, id);
     final created = await _repo.createDrink(input, id: idFree ? id : null);
     await _repo.setDrinkCharacteristics(created, characteristics);
-    lookup.drinkIds[key] = created;
+    lookup.addDrink(created, input.name, input.producer, type?.id);
     report.drinksCreated++;
     if ((await _repo.drink(created))!.needsCompletion) report.needsCompletion++;
     return created;
@@ -419,14 +418,15 @@ class CaveImporter {
 
 /// Données de la cave chargées une fois au début de l'import.
 class _Lookup {
-  _Lookup(this.types, this.families, this.values, this.drinkIds);
+  _Lookup(this.types, this.families, this.values);
 
   final List<DrinkType> types;
   final List<CharacteristicFamily> families;
   final List<Characteristic> values;
 
-  /// Clé « nom|producteur|type » → identifiant de référence active.
-  final Map<String, String> drinkIds;
+  /// Références actives (et créées pendant l'import), pour le rapprochement.
+  final List<({String id, String name, String producer, String? typeId})>
+  _drinks = [];
 
   static Future<_Lookup> load(CaveDatabase db) async {
     final types = await (db.select(
@@ -441,13 +441,36 @@ class _Lookup {
     final drinks = await (db.select(
       db.drinks,
     )..where((d) => d.deletedAt.isNull())).get();
-    return _Lookup(types, families, values, {
-      for (final d in drinks) drinkKey(d.name, d.producer, d.typeId): d.id,
-    });
+    final lookup = _Lookup(types, families, values);
+    for (final d in drinks) {
+      lookup.addDrink(d.id, d.name, d.producer, d.typeId);
+    }
+    return lookup;
   }
 
-  static String drinkKey(String name, String? producer, String? typeId) =>
-      '${fold(name.trim())}|${fold((producer ?? '').trim())}|${typeId ?? ''}';
+  void addDrink(String id, String name, String? producer, String? typeId) {
+    _drinks.add((
+      id: id,
+      name: compactKey(name),
+      producer: compactKey(producer ?? ''),
+      typeId: typeId,
+    ));
+  }
+
+  /// Même boisson : même nom et même type (aux accents, casse, espaces et
+  /// ponctuation près), et producteurs identiques, ou absent d'un côté (une
+  /// fiche saisie à la main n'a souvent pas de producteur).
+  String? findDrink(String name, String? producer, String? typeId) {
+    final n = compactKey(name), p = compactKey(producer ?? '');
+    for (final d in _drinks) {
+      if (d.name == n &&
+          d.typeId == typeId &&
+          (d.producer.isEmpty || p.isEmpty || d.producer == p)) {
+        return d.id;
+      }
+    }
+    return null;
+  }
 
   DrinkType? typeByName(String name) {
     final key = fold(name.trim());

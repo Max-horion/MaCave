@@ -229,14 +229,14 @@ void main() {
     test('références, lots et bouteilles', () async {
       final report = await CaveImporter(db, ctx).apply(vivino);
       expect(report.kind, ImportKind.vivino);
-      expect(report.drinksCreated, 6, reason: 'le château a deux millésimes');
-      expect(report.lotsCreated, 7);
-      expect(report.bottlesAdded, 26);
+      expect(report.drinksCreated, 7, reason: 'le château a deux millésimes');
+      expect(report.lotsCreated, 8);
+      expect(report.bottlesAdded, 27);
       // Sans appellation déduite : 5 fiches « à compléter ».
       expect(report.needsCompletion, 5);
 
       final list = await CaveQueries(db)
-          .watchDrinkList(const DrinkFilter(query: 'imaginaire rouge'))
+          .watchDrinkList(const DrinkFilter(query: 'appellation fictive rouge'))
           .first;
       expect(list.single.lots.map((l) => (l.vintage, l.stock)), [
         (2015, 6),
@@ -249,7 +249,37 @@ void main() {
       final again = await CaveImporter(db, ctx).apply(vivino);
       expect(again.drinksCreated, 0);
       expect(again.bottlesAdded, 0);
-      expect(again.lotsSkipped, 7);
+      expect(again.lotsSkipped, 8);
+    });
+
+    test('rapproche une fiche saisie à la main, sans producteur', () async {
+      // Saisie manuelle : même vin, sans producteur, nom en minuscules,
+      // millésime 2015 déjà en cave.
+      final types = await repo.drinkTypes();
+      final manual = await repo.addNewDrink(
+        drink: DrinkInput(name: 'château imaginaire', typeId: types.first.id),
+        volumeMl: 750,
+        vintage: 2015,
+        quantity: 9,
+      );
+      final report = await CaveImporter(db, ctx).apply(vivino);
+      expect(report.drinksCreated, 6, reason: 'pas de doublon du château');
+      expect(report.lotsSkipped, 1, reason: 'le 2015 existait déjà');
+      final lots = await repo.lotsOf(manual.drinkId);
+      expect(lots.map((l) => (l.vintage, l.stock)), [(2015, 9), (2018, 2)]);
+    });
+
+    test('deux producteurs différents : deux références', () async {
+      final types = await repo.drinkTypes();
+      await repo.createDrink(
+        DrinkInput(
+          name: 'Château Imaginaire',
+          producer: 'Autre Producteur',
+          typeId: types.first.id,
+        ),
+      );
+      final report = await CaveImporter(db, ctx).apply(vivino);
+      expect(report.drinksCreated, 7);
     });
   });
 }

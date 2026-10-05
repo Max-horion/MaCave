@@ -51,7 +51,8 @@ bool isVivinoExport(CsvTable table) =>
 ///
 /// Règles :
 /// - Vivino appelle souvent « nom du vin » ce qui est en fait l'appellation
-///   (il est alors identique à la région) : le domaine devient le nom de la
+///   (il est alors identique à la région, aux espaces, traits d'union et
+///   accents près) : le domaine devient le nom de la
 ///   référence, ce « nom » devient l'appellation. Sinon, nom = domaine + nom
 ///   du vin, sans appellation (la fiche sera « à compléter ») ;
 /// - pays en code (« fr ») ou en anglais traduit en français ;
@@ -71,7 +72,7 @@ List<VivinoWine> parseVivino(CsvTable table) {
     final nameIsAppellation =
         wineName.isNotEmpty &&
         region.isNotEmpty &&
-        fold(wineName) == fold(region);
+        compactKey(wineName) == compactKey(region);
     final String name;
     final String? appellation;
     if (nameIsAppellation && winery.isNotEmpty) {

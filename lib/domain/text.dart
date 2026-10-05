@@ -24,3 +24,9 @@ String fold(String input) {
   }
   return buffer.toString();
 }
+
+/// Clé de comparaison : [fold], puis seulement lettres et chiffres.
+/// « Montagne-Saint-Émilion » et « Montagne Saint Emilion » donnent la même
+/// clé « montagnesaintemilion ».
+String compactKey(String input) =>
+    fold(input).replaceAll(RegExp(r'[^a-z0-9]'), '');
