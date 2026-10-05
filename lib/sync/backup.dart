@@ -11,13 +11,17 @@ import 'cave_file.dart';
 /// Une sauvegarde : copie datée de la base et export CSV (CDC §8.4), trois
 /// fichiers qui partagent le même horodatage dans leur nom.
 class BackupSet {
-  const BackupSet({required this.date, required this.database});
+  const BackupSet({required this.date, required this.database, this.size = 0});
 
   /// Date de la sauvegarde (heure locale, à la seconde).
   final DateTime date;
 
   /// `cave_<date>.sqlite`, de quoi tout restaurer.
   final File database;
+
+  /// Taille de la base en octets, lue au moment de lister les sauvegardes :
+  /// l'écran ne relit pas le fichier, qui peut avoir été supprimé entre-temps.
+  final int size;
 
   File get stockCsv => File(_sibling('stock.csv'));
   File get historyCsv => File(_sibling('historique.csv'));
@@ -31,7 +35,7 @@ class BackupSet {
 }
 
 /// Sauvegardes de la cave dans un dossier (CDC §8.4) : « Sauvegarder
-/// maintenant », sauvegarde automatique, seules les [keep] dernières sont
+/// maintenant », sauvegarde automatique, seules les dernières sont
 /// conservées, restauration.
 ///
 /// Les noms de fichiers sont un format : ne pas les traduire ni les changer,
@@ -42,7 +46,7 @@ class BackupService {
     required this._store,
     required this._folder,
     required this._tempFolder,
-    this.keep = 10,
+    this.defaultKeep = 3,
     this.every = const Duration(days: 1),
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now;
@@ -53,8 +57,12 @@ class BackupService {
   final Future<Directory> Function() _tempFolder;
   final DateTime Function() _clock;
 
-  /// Nombre de sauvegardes conservées.
-  final int keep;
+  /// Nombre de sauvegardes conservées tant que l'utilisateur n'a pas choisi
+  /// (voir [keepCount]).
+  final int defaultKeep;
+
+  /// Choix proposés pour le nombre de sauvegardes conservées.
+  static const keepChoices = [1, 2, 3, 5, 10];
 
   /// Intervalle minimal entre deux sauvegardes automatiques.
   final Duration every;
@@ -62,6 +70,7 @@ class BackupService {
   static const _lastAtKey = 'backup_last_at';
   static const _lastFingerprintKey = 'backup_last_fingerprint';
   static const _lastErrorKey = 'backup_last_error';
+  static const _keepKey = 'backup_keep';
 
   static final _stampFormat = DateFormat('yyyy-MM-dd_HH-mm-ss');
   static final _namePattern = RegExp(
@@ -94,7 +103,14 @@ class BackupService {
       final match = _namePattern.firstMatch(entity.uri.pathSegments.last);
       if (match == null) continue;
       final date = _stampFormat.tryParseStrict(match.group(1)!);
-      if (date != null) sets.add(BackupSet(date: date, database: entity));
+      if (date == null) continue;
+      try {
+        sets.add(
+          BackupSet(date: date, database: entity, size: await entity.length()),
+        );
+      } on FileSystemException {
+        // Supprimée pendant la lecture du dossier : on l'ignore.
+      }
     }
     sets.sort((a, b) => b.date.compareTo(a.date));
     return sets;
@@ -148,11 +164,33 @@ class BackupService {
     return set;
   }
 
-  /// Supprime les sauvegardes au-delà des [keep] plus récentes. Seuls les
-  /// fichiers créés par l'application (nom reconnu) sont touchés.
+  /// Nombre de sauvegardes conservées (réglage propre à cet appareil).
+  Future<int> keepCount() async {
+    final value = int.tryParse(await _store.getString(_keepKey) ?? '');
+    return value != null && value >= 1 ? value : defaultKeep;
+  }
+
+  /// Change le nombre de sauvegardes conservées et supprime aussitôt celles
+  /// qui sont en trop : l'écran demande confirmation avant (voir
+  /// [excessWith]).
+  Future<void> setKeepCount(int count) => _exclusive(() async {
+    if (count < 1) throw ArgumentError.value(count, 'count', 'Au moins 1');
+    await _store.setString(_keepKey, '$count');
+    await _prune();
+  });
+
+  /// Nombre de sauvegardes qui seraient supprimées en n'en gardant que
+  /// [count].
+  Future<int> excessWith(int count) async {
+    final total = (await list()).length;
+    return total > count ? total - count : 0;
+  }
+
+  /// Supprime les sauvegardes au-delà des [keepCount] plus récentes. Seuls
+  /// les fichiers créés par l'application (nom reconnu) sont touchés.
   Future<void> _prune() async {
     final sets = await list();
-    for (final old in sets.skip(keep)) {
+    for (final old in sets.skip(await keepCount())) {
       for (final file in old.files) {
         await file.delete();
       }

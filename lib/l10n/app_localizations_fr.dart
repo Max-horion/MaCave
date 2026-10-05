@@ -718,9 +718,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupTitle => 'Sauvegardes';
 
   @override
-  String backupHelp(int keep) {
-    return 'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé. Les $keep dernières sauvegardes sont conservées.';
-  }
+  String get backupHelp =>
+      'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé.';
 
   @override
   String backupFolder(String path) {
@@ -808,4 +807,28 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get backupProblemNewer =>
       'Cette sauvegarde vient d\'une version plus récente de Ma Cave. Mettez l\'application à jour pour la restaurer.';
+
+  @override
+  String get backupKeepLabel => 'Sauvegardes conservées';
+
+  @override
+  String get backupKeepHelp =>
+      'Les plus anciennes sont supprimées automatiquement.';
+
+  @override
+  String get backupKeepConfirmTitle => 'Supprimer des sauvegardes ?';
+
+  @override
+  String backupKeepConfirmMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Les $count sauvegardes les plus anciennes seront supprimées.',
+      one: 'La sauvegarde la plus ancienne sera supprimée.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupKeepConfirm => 'Supprimer';
 }

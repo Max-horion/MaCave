@@ -876,14 +876,9 @@
   "@backupTitle": {
     "description": "Titre de l'écran des sauvegardes."
   },
-  "backupHelp": "Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé. Les {keep} dernières sauvegardes sont conservées.",
+  "backupHelp": "Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé.",
   "@backupHelp": {
-    "description": "Explication en tête de l'écran des sauvegardes.",
-    "placeholders": {
-      "keep": {
-        "type": "int"
-      }
-    }
+    "description": "Explication en tête de l'écran des sauvegardes."
   },
   "backupFolder": "Dossier : {path}",
   "@backupFolder": {
@@ -996,5 +991,30 @@
   "backupProblemNewer": "Cette sauvegarde vient d'une version plus récente de Ma Cave. Mettez l'application à jour pour la restaurer.",
   "@backupProblemNewer": {
     "description": "Fichier à restaurer créé par une version plus récente."
+  },
+  "backupKeepLabel": "Sauvegardes conservées",
+  "@backupKeepLabel": {
+    "description": "Réglage : nombre de sauvegardes gardées (les plus anciennes sont supprimées)."
+  },
+  "backupKeepHelp": "Les plus anciennes sont supprimées automatiquement.",
+  "@backupKeepHelp": {
+    "description": "Explication sous le réglage du nombre de sauvegardes."
+  },
+  "backupKeepConfirmTitle": "Supprimer des sauvegardes ?",
+  "@backupKeepConfirmTitle": {
+    "description": "Titre de la confirmation quand on réduit le nombre de sauvegardes."
+  },
+  "backupKeepConfirmMessage": "{count, plural, =1{La sauvegarde la plus ancienne sera supprimée.} other{Les {count} sauvegardes les plus anciennes seront supprimées.}}",
+  "@backupKeepConfirmMessage": {
+    "description": "Confirmation quand on réduit le nombre de sauvegardes conservées.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupKeepConfirm": "Supprimer",
+  "@backupKeepConfirm": {
+    "description": "Bouton : confirmer la suppression des sauvegardes en trop."
   }
 }

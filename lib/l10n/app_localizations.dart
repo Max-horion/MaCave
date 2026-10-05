@@ -1051,8 +1051,8 @@ abstract class AppLocalizations {
   /// Explication en tête de l'écran des sauvegardes.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé. Les {keep} dernières sauvegardes sont conservées.'**
-  String backupHelp(int keep);
+  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé.'**
+  String get backupHelp;
 
   /// Dossier où sont enregistrées les sauvegardes.
   ///
@@ -1167,6 +1167,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cette sauvegarde vient d\'une version plus récente de Ma Cave. Mettez l\'application à jour pour la restaurer.'**
   String get backupProblemNewer;
+
+  /// Réglage : nombre de sauvegardes gardées (les plus anciennes sont supprimées).
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardes conservées'**
+  String get backupKeepLabel;
+
+  /// Explication sous le réglage du nombre de sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les plus anciennes sont supprimées automatiquement.'**
+  String get backupKeepHelp;
+
+  /// Titre de la confirmation quand on réduit le nombre de sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer des sauvegardes ?'**
+  String get backupKeepConfirmTitle;
+
+  /// Confirmation quand on réduit le nombre de sauvegardes conservées.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{La sauvegarde la plus ancienne sera supprimée.} other{Les {count} sauvegardes les plus anciennes seront supprimées.}}'**
+  String backupKeepConfirmMessage(int count);
+
+  /// Bouton : confirmer la suppression des sauvegardes en trop.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get backupKeepConfirm;
 }
 
 class _AppLocalizationsDelegate

@@ -15,11 +15,15 @@ class BackupOverview {
     required this.folder,
     required this.sets,
     required this.lastError,
+    required this.keep,
   });
 
   final String folder;
   final List<BackupSet> sets;
   final String? lastError;
+
+  /// Nombre de sauvegardes conservées.
+  final int keep;
 }
 
 final backupOverviewProvider = FutureProvider.autoDispose<BackupOverview>((
@@ -30,6 +34,7 @@ final backupOverviewProvider = FutureProvider.autoDispose<BackupOverview>((
     folder: (await service.folder()).path,
     sets: await service.list(),
     lastError: await service.lastError(),
+    keep: await service.keepCount(),
   );
 });
 
@@ -51,7 +56,6 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final formats = Formats.of(context);
     final l10n = formats.l10n;
     final theme = Theme.of(context);
-    final service = ref.watch(backupServiceProvider);
     final overview = ref.watch(backupOverviewProvider);
 
     return Scaffold(
@@ -73,7 +77,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         data: (o) => ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
-            Text(l10n.backupHelp(service.keep)),
+            Text(l10n.backupHelp),
             const SizedBox(height: 12),
             SelectableText(
               l10n.backupFolder(o.folder),
@@ -99,7 +103,22 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               icon: const Icon(Icons.settings_backup_restore),
               label: Text(l10n.backupRestoreFromFile),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              minTileHeight: 56,
+              title: Text(l10n.backupKeepLabel),
+              subtitle: Text(l10n.backupKeepHelp),
+              trailing: DropdownButton<int>(
+                value: o.keep,
+                onChanged: _busy ? null : _changeKeep,
+                items: [
+                  for (final n in {...BackupService.keepChoices, o.keep})
+                    DropdownMenuItem(value: n, child: Text(formats.number(n))),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             Text(l10n.backupListTitle, style: theme.textTheme.titleMedium),
             const SizedBox(height: 4),
             if (o.sets.isEmpty)
@@ -114,9 +133,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 leading: const Icon(Icons.inventory_2_outlined),
                 title: Text(formats.dateTime(set.date)),
                 subtitle: Text(
-                  l10n.backupSize(
-                    formats.number((set.database.lengthSync() / 1024).ceil()),
-                  ),
+                  l10n.backupSize(formats.number((set.size / 1024).ceil())),
                 ),
                 trailing: const Icon(Icons.more_vert),
                 enabled: !_busy,
@@ -158,6 +175,36 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       ),
     );
   });
+
+  /// Change le nombre de sauvegardes conservées, après confirmation s'il
+  /// faut en supprimer.
+  Future<void> _changeKeep(int? count) async {
+    if (count == null) return;
+    final l10n = AppLocalizations.of(context);
+    final service = ref.read(backupServiceProvider);
+    final excess = await service.excessWith(count);
+    if (excess > 0 && mounted) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.backupKeepConfirmTitle),
+          content: Text(l10n.backupKeepConfirmMessage(excess)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.actionCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.backupKeepConfirm),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+    }
+    await _run(() => service.setKeepCount(count));
+  }
 
   Future<void> _share(BackupSet set) async {
     await SharePlus.instance.share(

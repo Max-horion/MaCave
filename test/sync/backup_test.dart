@@ -21,12 +21,12 @@ void main() {
   late MemoryLocalStore store;
   late DateTime now;
 
-  BackupService service({int keep = 10}) => BackupService(
+  BackupService service({int keep = 3}) => BackupService(
     db: db,
     store: store,
     folder: () async => backups,
     tempFolder: () async => Directory('${root.path}/tmp')..createSync(),
-    keep: keep,
+    defaultKeep: keep,
     clock: () => now,
   );
 
@@ -92,6 +92,42 @@ void main() {
     expect(backups.listSync().length, 3 * 3 + 1);
   });
 
+  test(
+    '3 sauvegardes par défaut ; le nombre se règle et s\'applique aussitôt',
+    () async {
+      await addBeer('Bière A', 1);
+      final s = BackupService(
+        db: db,
+        store: store,
+        folder: () async => backups,
+        tempFolder: () async => Directory('${root.path}/tmp')..createSync(),
+        clock: () => now,
+      );
+      expect(await s.keepCount(), 3);
+      for (var i = 0; i < 4; i++) {
+        now = now.add(const Duration(hours: 1));
+        await s.backupNow();
+      }
+      expect((await s.list()).length, 3);
+
+      // Plus de sauvegardes : rien n'est supprimé, les suivantes s'ajoutent.
+      await s.setKeepCount(5);
+      expect(await s.keepCount(), 5);
+      for (var i = 0; i < 3; i++) {
+        now = now.add(const Duration(hours: 1));
+        await s.backupNow();
+      }
+      expect((await s.list()).length, 5);
+
+      // Moins : les plus anciennes sont supprimées tout de suite.
+      expect(await s.excessWith(2), 3);
+      await s.setKeepCount(2);
+      final sets = await s.list();
+      expect(sets.map((b) => b.date.hour), [21, 20]);
+      expect(backups.listSync().length, 2 * 3);
+    },
+  );
+
   test('deux sauvegardes dans la même seconde ne s\'écrasent pas', () async {
     await addBeer('Bière A', 1);
     final a = await service().backupNow();
@@ -110,7 +146,7 @@ void main() {
       'au plus une par intervalle, et seulement si la cave a changé',
       () async {
         final lot = await addBeer('Bière A', 6);
-        final s = service();
+        final s = service(keep: 10);
         expect(await s.backupIfDue(), isNotNull);
 
         // Changement, mais moins d'un jour après : pas de sauvegarde.
