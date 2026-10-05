@@ -102,6 +102,17 @@ class DrinksFts extends Table
     requiredDuringInsert: true,
     $customConstraints: '',
   );
+  static const VerificationMeta _vintagesMeta = const VerificationMeta(
+    'vintages',
+  );
+  late final GeneratedColumn<String> vintages = GeneratedColumn<String>(
+    'vintages',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
   @override
   List<GeneratedColumn> get $columns => [
     drinkId,
@@ -113,6 +124,7 @@ class DrinksFts extends Table
     grapes,
     typeName,
     characteristics,
+    vintages,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -204,6 +216,14 @@ class DrinksFts extends Table
     } else if (isInserting) {
       context.missing(_characteristicsMeta);
     }
+    if (data.containsKey('vintages')) {
+      context.handle(
+        _vintagesMeta,
+        vintages.isAcceptableOrUnknown(data['vintages']!, _vintagesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_vintagesMeta);
+    }
     return context;
   }
 
@@ -249,6 +269,10 @@ class DrinksFts extends Table
         DriftSqlType.string,
         data['${effectivePrefix}characteristics'],
       )!,
+      vintages: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vintages'],
+      )!,
     );
   }
 
@@ -261,7 +285,7 @@ class DrinksFts extends Table
   bool get dontWriteConstraints => true;
   @override
   String get moduleAndArgs =>
-      'fts5(drink_id UNINDEXED, name, producer, appellation, region, country, grapes, type_name, characteristics, tokenize = \'unicode61 remove_diacritics 2\')';
+      'fts5(drink_id UNINDEXED, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages, tokenize = \'unicode61 remove_diacritics 2\')';
 }
 
 class DrinksFt extends DataClass implements Insertable<DrinksFt> {
@@ -274,6 +298,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
   final String grapes;
   final String typeName;
   final String characteristics;
+  final String vintages;
   const DrinksFt({
     required this.drinkId,
     required this.name,
@@ -284,6 +309,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
     required this.grapes,
     required this.typeName,
     required this.characteristics,
+    required this.vintages,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -297,6 +323,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
     map['grapes'] = Variable<String>(grapes);
     map['type_name'] = Variable<String>(typeName);
     map['characteristics'] = Variable<String>(characteristics);
+    map['vintages'] = Variable<String>(vintages);
     return map;
   }
 
@@ -311,6 +338,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
       grapes: Value(grapes),
       typeName: Value(typeName),
       characteristics: Value(characteristics),
+      vintages: Value(vintages),
     );
   }
 
@@ -329,6 +357,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
       grapes: serializer.fromJson<String>(json['grapes']),
       typeName: serializer.fromJson<String>(json['type_name']),
       characteristics: serializer.fromJson<String>(json['characteristics']),
+      vintages: serializer.fromJson<String>(json['vintages']),
     );
   }
   @override
@@ -344,6 +373,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
       'grapes': serializer.toJson<String>(grapes),
       'type_name': serializer.toJson<String>(typeName),
       'characteristics': serializer.toJson<String>(characteristics),
+      'vintages': serializer.toJson<String>(vintages),
     };
   }
 
@@ -357,6 +387,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
     String? grapes,
     String? typeName,
     String? characteristics,
+    String? vintages,
   }) => DrinksFt(
     drinkId: drinkId ?? this.drinkId,
     name: name ?? this.name,
@@ -367,6 +398,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
     grapes: grapes ?? this.grapes,
     typeName: typeName ?? this.typeName,
     characteristics: characteristics ?? this.characteristics,
+    vintages: vintages ?? this.vintages,
   );
   DrinksFt copyWithCompanion(DrinksFtsCompanion data) {
     return DrinksFt(
@@ -383,6 +415,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
       characteristics: data.characteristics.present
           ? data.characteristics.value
           : this.characteristics,
+      vintages: data.vintages.present ? data.vintages.value : this.vintages,
     );
   }
 
@@ -397,7 +430,8 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
           ..write('country: $country, ')
           ..write('grapes: $grapes, ')
           ..write('typeName: $typeName, ')
-          ..write('characteristics: $characteristics')
+          ..write('characteristics: $characteristics, ')
+          ..write('vintages: $vintages')
           ..write(')'))
         .toString();
   }
@@ -413,6 +447,7 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
     grapes,
     typeName,
     characteristics,
+    vintages,
   );
   @override
   bool operator ==(Object other) =>
@@ -426,7 +461,8 @@ class DrinksFt extends DataClass implements Insertable<DrinksFt> {
           other.country == this.country &&
           other.grapes == this.grapes &&
           other.typeName == this.typeName &&
-          other.characteristics == this.characteristics);
+          other.characteristics == this.characteristics &&
+          other.vintages == this.vintages);
 }
 
 class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
@@ -439,6 +475,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
   final Value<String> grapes;
   final Value<String> typeName;
   final Value<String> characteristics;
+  final Value<String> vintages;
   final Value<int> rowid;
   const DrinksFtsCompanion({
     this.drinkId = const Value.absent(),
@@ -450,6 +487,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
     this.grapes = const Value.absent(),
     this.typeName = const Value.absent(),
     this.characteristics = const Value.absent(),
+    this.vintages = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DrinksFtsCompanion.insert({
@@ -462,6 +500,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
     required String grapes,
     required String typeName,
     required String characteristics,
+    required String vintages,
     this.rowid = const Value.absent(),
   }) : drinkId = Value(drinkId),
        name = Value(name),
@@ -471,7 +510,8 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
        country = Value(country),
        grapes = Value(grapes),
        typeName = Value(typeName),
-       characteristics = Value(characteristics);
+       characteristics = Value(characteristics),
+       vintages = Value(vintages);
   static Insertable<DrinksFt> custom({
     Expression<String>? drinkId,
     Expression<String>? name,
@@ -482,6 +522,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
     Expression<String>? grapes,
     Expression<String>? typeName,
     Expression<String>? characteristics,
+    Expression<String>? vintages,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -494,6 +535,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
       if (grapes != null) 'grapes': grapes,
       if (typeName != null) 'type_name': typeName,
       if (characteristics != null) 'characteristics': characteristics,
+      if (vintages != null) 'vintages': vintages,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -508,6 +550,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
     Value<String>? grapes,
     Value<String>? typeName,
     Value<String>? characteristics,
+    Value<String>? vintages,
     Value<int>? rowid,
   }) {
     return DrinksFtsCompanion(
@@ -520,6 +563,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
       grapes: grapes ?? this.grapes,
       typeName: typeName ?? this.typeName,
       characteristics: characteristics ?? this.characteristics,
+      vintages: vintages ?? this.vintages,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -554,6 +598,9 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
     if (characteristics.present) {
       map['characteristics'] = Variable<String>(characteristics.value);
     }
+    if (vintages.present) {
+      map['vintages'] = Variable<String>(vintages.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -572,6 +619,7 @@ class DrinksFtsCompanion extends UpdateCompanion<DrinksFt> {
           ..write('grapes: $grapes, ')
           ..write('typeName: $typeName, ')
           ..write('characteristics: $characteristics, ')
+          ..write('vintages: $vintages, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4333,6 +4381,289 @@ class LotsCompanion extends UpdateCompanion<Lot> {
   }
 }
 
+class DrinkSearchRow extends DataClass {
+  final String drinkId;
+  final String name;
+  final String? producer;
+  final String? appellation;
+  final String? region;
+  final String? country;
+  final String? grapes;
+  final String? typeName;
+  final String? characteristics;
+  final String? vintages;
+  const DrinkSearchRow({
+    required this.drinkId,
+    required this.name,
+    this.producer,
+    this.appellation,
+    this.region,
+    this.country,
+    this.grapes,
+    this.typeName,
+    this.characteristics,
+    this.vintages,
+  });
+  factory DrinkSearchRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DrinkSearchRow(
+      drinkId: serializer.fromJson<String>(json['drink_id']),
+      name: serializer.fromJson<String>(json['name']),
+      producer: serializer.fromJson<String?>(json['producer']),
+      appellation: serializer.fromJson<String?>(json['appellation']),
+      region: serializer.fromJson<String?>(json['region']),
+      country: serializer.fromJson<String?>(json['country']),
+      grapes: serializer.fromJson<String?>(json['grapes']),
+      typeName: serializer.fromJson<String?>(json['type_name']),
+      characteristics: serializer.fromJson<String?>(json['characteristics']),
+      vintages: serializer.fromJson<String?>(json['vintages']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'drink_id': serializer.toJson<String>(drinkId),
+      'name': serializer.toJson<String>(name),
+      'producer': serializer.toJson<String?>(producer),
+      'appellation': serializer.toJson<String?>(appellation),
+      'region': serializer.toJson<String?>(region),
+      'country': serializer.toJson<String?>(country),
+      'grapes': serializer.toJson<String?>(grapes),
+      'type_name': serializer.toJson<String?>(typeName),
+      'characteristics': serializer.toJson<String?>(characteristics),
+      'vintages': serializer.toJson<String?>(vintages),
+    };
+  }
+
+  DrinkSearchRow copyWith({
+    String? drinkId,
+    String? name,
+    Value<String?> producer = const Value.absent(),
+    Value<String?> appellation = const Value.absent(),
+    Value<String?> region = const Value.absent(),
+    Value<String?> country = const Value.absent(),
+    Value<String?> grapes = const Value.absent(),
+    Value<String?> typeName = const Value.absent(),
+    Value<String?> characteristics = const Value.absent(),
+    Value<String?> vintages = const Value.absent(),
+  }) => DrinkSearchRow(
+    drinkId: drinkId ?? this.drinkId,
+    name: name ?? this.name,
+    producer: producer.present ? producer.value : this.producer,
+    appellation: appellation.present ? appellation.value : this.appellation,
+    region: region.present ? region.value : this.region,
+    country: country.present ? country.value : this.country,
+    grapes: grapes.present ? grapes.value : this.grapes,
+    typeName: typeName.present ? typeName.value : this.typeName,
+    characteristics: characteristics.present
+        ? characteristics.value
+        : this.characteristics,
+    vintages: vintages.present ? vintages.value : this.vintages,
+  );
+  @override
+  String toString() {
+    return (StringBuffer('DrinkSearchRow(')
+          ..write('drinkId: $drinkId, ')
+          ..write('name: $name, ')
+          ..write('producer: $producer, ')
+          ..write('appellation: $appellation, ')
+          ..write('region: $region, ')
+          ..write('country: $country, ')
+          ..write('grapes: $grapes, ')
+          ..write('typeName: $typeName, ')
+          ..write('characteristics: $characteristics, ')
+          ..write('vintages: $vintages')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    drinkId,
+    name,
+    producer,
+    appellation,
+    region,
+    country,
+    grapes,
+    typeName,
+    characteristics,
+    vintages,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DrinkSearchRow &&
+          other.drinkId == this.drinkId &&
+          other.name == this.name &&
+          other.producer == this.producer &&
+          other.appellation == this.appellation &&
+          other.region == this.region &&
+          other.country == this.country &&
+          other.grapes == this.grapes &&
+          other.typeName == this.typeName &&
+          other.characteristics == this.characteristics &&
+          other.vintages == this.vintages);
+}
+
+class DrinkSearchRows extends ViewInfo<DrinkSearchRows, DrinkSearchRow>
+    implements HasResultSet {
+  final String? _alias;
+  @override
+  final _$CaveDatabase attachedDatabase;
+  DrinkSearchRows(this.attachedDatabase, [this._alias]);
+  @override
+  List<GeneratedColumn> get $columns => [
+    drinkId,
+    name,
+    producer,
+    appellation,
+    region,
+    country,
+    grapes,
+    typeName,
+    characteristics,
+    vintages,
+  ];
+  @override
+  String get aliasedName => _alias ?? entityName;
+  @override
+  String get entityName => 'drink_search_rows';
+  @override
+  Map<SqlDialect, String> get createViewStatements => {
+    SqlDialect.sqlite: 'CREATE VIEW drink_search_rows AS SELECT d.id AS drink_id, d.name AS name, d.producer AS producer, d.appellation AS appellation, d.region AS region, d.country AS country, d.grapes AS grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL) AS type_name, (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) AS characteristics, (SELECT group_concat(DISTINCT l.vintage) FROM lots AS l WHERE l.drink_id = d.id AND l.deleted_at IS NULL) AS vintages FROM drinks AS d',
+  };
+  @override
+  DrinkSearchRows get asDslTable => this;
+  @override
+  DrinkSearchRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DrinkSearchRow(
+      drinkId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}drink_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      producer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}producer'],
+      ),
+      appellation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}appellation'],
+      ),
+      region: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}region'],
+      ),
+      country: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country'],
+      ),
+      grapes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grapes'],
+      ),
+      typeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type_name'],
+      ),
+      characteristics: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}characteristics'],
+      ),
+      vintages: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vintages'],
+      ),
+    );
+  }
+
+  late final GeneratedColumn<String> drinkId = GeneratedColumn<String>(
+    'drink_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> producer = GeneratedColumn<String>(
+    'producer',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> appellation = GeneratedColumn<String>(
+    'appellation',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> region = GeneratedColumn<String>(
+    'region',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> country = GeneratedColumn<String>(
+    'country',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> grapes = GeneratedColumn<String>(
+    'grapes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> typeName = GeneratedColumn<String>(
+    'type_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> characteristics = GeneratedColumn<String>(
+    'characteristics',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  late final GeneratedColumn<String> vintages = GeneratedColumn<String>(
+    'vintages',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+  );
+  @override
+  DrinkSearchRows createAlias(String alias) {
+    return DrinkSearchRows(attachedDatabase, alias);
+  }
+
+  @override
+  Query? get query => null;
+  @override
+  Set<String> get readTables => const {
+    'drinks',
+    'drink_types',
+    'drink_characteristics',
+    'characteristics',
+    'lots',
+    'characteristic_families',
+  };
+}
+
 class $MovementsTable extends Movements
     with TableInfo<$MovementsTable, Movement> {
   @override
@@ -5549,12 +5880,14 @@ abstract class _$CaveDatabase extends GeneratedDatabase {
   );
   late final $DrinkCharacteristicsTable drinkCharacteristics =
       $DrinkCharacteristicsTable(this);
+  late final $LotsTable lots = $LotsTable(this);
+  late final DrinkSearchRows drinkSearchRows = DrinkSearchRows(this);
   late final Trigger drinksFtsInsert = Trigger(
-    'CREATE TRIGGER drinks_fts_insert AFTER INSERT ON drinks BEGIN DELETE FROM drinks_fts WHERE drink_id = new.id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics) SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL), (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) FROM drinks AS d WHERE d.id = new.id;END',
+    'CREATE TRIGGER drinks_fts_insert AFTER INSERT ON drinks BEGIN DELETE FROM drinks_fts WHERE drink_id = new.id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id = new.id;END',
     'drinks_fts_insert',
   );
   late final Trigger drinksFtsUpdate = Trigger(
-    'CREATE TRIGGER drinks_fts_update AFTER UPDATE ON drinks BEGIN DELETE FROM drinks_fts WHERE drink_id = new.id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics) SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL), (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) FROM drinks AS d WHERE d.id = new.id;END',
+    'CREATE TRIGGER drinks_fts_update AFTER UPDATE ON drinks BEGIN DELETE FROM drinks_fts WHERE drink_id = new.id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id = new.id;END',
     'drinks_fts_update',
   );
   late final Trigger drinksFtsDelete = Trigger(
@@ -5562,22 +5895,29 @@ abstract class _$CaveDatabase extends GeneratedDatabase {
     'drinks_fts_delete',
   );
   late final Trigger drinksFtsLinkInsert = Trigger(
-    'CREATE TRIGGER drinks_fts_link_insert AFTER INSERT ON drink_characteristics BEGIN DELETE FROM drinks_fts WHERE drink_id = new.drink_id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics) SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL), (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) FROM drinks AS d WHERE d.id = new.drink_id;END',
+    'CREATE TRIGGER drinks_fts_link_insert AFTER INSERT ON drink_characteristics BEGIN DELETE FROM drinks_fts WHERE drink_id = new.drink_id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id = new.drink_id;END',
     'drinks_fts_link_insert',
   );
   late final Trigger drinksFtsLinkUpdate = Trigger(
-    'CREATE TRIGGER drinks_fts_link_update AFTER UPDATE ON drink_characteristics BEGIN DELETE FROM drinks_fts WHERE drink_id = new.drink_id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics) SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL), (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) FROM drinks AS d WHERE d.id = new.drink_id;END',
+    'CREATE TRIGGER drinks_fts_link_update AFTER UPDATE ON drink_characteristics BEGIN DELETE FROM drinks_fts WHERE drink_id = new.drink_id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id = new.drink_id;END',
     'drinks_fts_link_update',
   );
+  late final Trigger drinksFtsLotInsert = Trigger(
+    'CREATE TRIGGER drinks_fts_lot_insert AFTER INSERT ON lots BEGIN DELETE FROM drinks_fts WHERE drink_id = new.drink_id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id = new.drink_id;END',
+    'drinks_fts_lot_insert',
+  );
+  late final Trigger drinksFtsLotUpdate = Trigger(
+    'CREATE TRIGGER drinks_fts_lot_update AFTER UPDATE OF vintage, deleted_at ON lots BEGIN DELETE FROM drinks_fts WHERE drink_id = new.drink_id;INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id = new.drink_id;END',
+    'drinks_fts_lot_update',
+  );
   late final Trigger drinksFtsTypeUpdate = Trigger(
-    'CREATE TRIGGER drinks_fts_type_update AFTER UPDATE ON drink_types BEGIN DELETE FROM drinks_fts WHERE drink_id IN (SELECT id FROM drinks WHERE type_id = new.id);INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics) SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL), (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) FROM drinks AS d WHERE d.type_id = new.id;END',
+    'CREATE TRIGGER drinks_fts_type_update AFTER UPDATE ON drink_types BEGIN DELETE FROM drinks_fts WHERE drink_id IN (SELECT id FROM drinks WHERE type_id = new.id);INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id IN (SELECT id FROM drinks WHERE type_id = new.id);END',
     'drinks_fts_type_update',
   );
   late final Trigger drinksFtsCharacteristicUpdate = Trigger(
-    'CREATE TRIGGER drinks_fts_characteristic_update AFTER UPDATE ON characteristics BEGIN DELETE FROM drinks_fts WHERE drink_id IN (SELECT drink_id FROM drink_characteristics WHERE characteristic_id = new.id);INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics) SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes, (SELECT t.name FROM drink_types AS t WHERE t.id = d.type_id AND t.deleted_at IS NULL), (SELECT group_concat(c.name, \' \') FROM drink_characteristics AS dc JOIN characteristics AS c ON c.id = dc.characteristic_id WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL) FROM drinks AS d WHERE d.id IN (SELECT drink_id FROM drink_characteristics WHERE characteristic_id = new.id);END',
+    'CREATE TRIGGER drinks_fts_characteristic_update AFTER UPDATE ON characteristics BEGIN DELETE FROM drinks_fts WHERE drink_id IN (SELECT drink_id FROM drink_characteristics WHERE characteristic_id = new.id);INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages) SELECT drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics, vintages FROM drink_search_rows WHERE drink_id IN (SELECT drink_id FROM drink_characteristics WHERE characteristic_id = new.id);END',
     'drinks_fts_characteristic_update',
   );
-  late final $LotsTable lots = $LotsTable(this);
   late final $MovementsTable movements = $MovementsTable(this);
   late final $SettingsTable settings = $SettingsTable(this);
   late final $MetaTable meta = $MetaTable(this);
@@ -5620,14 +5960,17 @@ abstract class _$CaveDatabase extends GeneratedDatabase {
     characteristicFamilies,
     characteristics,
     drinkCharacteristics,
+    lots,
+    drinkSearchRows,
     drinksFtsInsert,
     drinksFtsUpdate,
     drinksFtsDelete,
     drinksFtsLinkInsert,
     drinksFtsLinkUpdate,
+    drinksFtsLotInsert,
+    drinksFtsLotUpdate,
     drinksFtsTypeUpdate,
     drinksFtsCharacteristicUpdate,
-    lots,
     movements,
     settings,
     meta,
@@ -5690,6 +6033,26 @@ abstract class _$CaveDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
+        'lots',
+        limitUpdateKind: UpdateKind.insert,
+      ),
+      result: [
+        TableUpdate('drinks_fts', kind: UpdateKind.delete),
+        TableUpdate('drinks_fts', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'lots',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [
+        TableUpdate('drinks_fts', kind: UpdateKind.delete),
+        TableUpdate('drinks_fts', kind: UpdateKind.insert),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
         'drink_types',
         limitUpdateKind: UpdateKind.update,
       ),
@@ -5721,6 +6084,7 @@ typedef $DrinksFtsCreateCompanionBuilder = DrinksFtsCompanion Function({
   required String grapes,
   required String typeName,
   required String characteristics,
+  required String vintages,
   Value<int> rowid,
 });
 typedef $DrinksFtsUpdateCompanionBuilder = DrinksFtsCompanion Function({
@@ -5733,6 +6097,7 @@ typedef $DrinksFtsUpdateCompanionBuilder = DrinksFtsCompanion Function({
   Value<String> grapes,
   Value<String> typeName,
   Value<String> characteristics,
+  Value<String> vintages,
   Value<int> rowid,
 });
 
@@ -5786,6 +6151,11 @@ class $DrinksFtsFilterComposer extends Composer<_$CaveDatabase, DrinksFts> {
 
   ColumnFilters<String> get characteristics => $composableBuilder(
     column: $table.characteristics,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vintages => $composableBuilder(
+    column: $table.vintages,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -5842,6 +6212,11 @@ class $DrinksFtsOrderingComposer extends Composer<_$CaveDatabase, DrinksFts> {
     column: $table.characteristics,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get vintages => $composableBuilder(
+    column: $table.vintages,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $DrinksFtsAnnotationComposer extends Composer<_$CaveDatabase, DrinksFts> {
@@ -5882,6 +6257,9 @@ class $DrinksFtsAnnotationComposer extends Composer<_$CaveDatabase, DrinksFts> {
     column: $table.characteristics,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get vintages =>
+      $composableBuilder(column: $table.vintages, builder: (column) => column);
 }
 
 class $DrinksFtsTableManager
@@ -5921,6 +6299,7 @@ class $DrinksFtsTableManager
                 Value<String> grapes = const Value.absent(),
                 Value<String> typeName = const Value.absent(),
                 Value<String> characteristics = const Value.absent(),
+                Value<String> vintages = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DrinksFtsCompanion(
                 drinkId: drinkId,
@@ -5932,6 +6311,7 @@ class $DrinksFtsTableManager
                 grapes: grapes,
                 typeName: typeName,
                 characteristics: characteristics,
+                vintages: vintages,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -5945,6 +6325,7 @@ class $DrinksFtsTableManager
                 required String grapes,
                 required String typeName,
                 required String characteristics,
+                required String vintages,
                 Value<int> rowid = const Value.absent(),
               }) => DrinksFtsCompanion.insert(
                 drinkId: drinkId,
@@ -5956,6 +6337,7 @@ class $DrinksFtsTableManager
                 grapes: grapes,
                 typeName: typeName,
                 characteristics: characteristics,
+                vintages: vintages,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

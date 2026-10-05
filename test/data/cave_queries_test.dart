@@ -165,6 +165,39 @@ void main() {
       ]);
     });
 
+    test('cherche par millésime', () async {
+      expect(await names(const DrinkFilter(query: '2015')), [
+        'Château Exemple',
+      ]);
+      expect(await names(const DrinkFilter(query: 'blanc 2010')), [
+        'Blanc Fictif',
+      ]);
+    });
+
+    test('suit les lots ajoutés et supprimés', () async {
+      final id =
+          (await queries
+                  .watchDrinkList(const DrinkFilter(query: 'imaginaire'))
+                  .first)
+              .single
+              .drink
+              .id;
+      expect(await names(const DrinkFilter(query: '2021')), isEmpty);
+
+      final lot = await repo.findOrCreateLot(
+        drinkId: id,
+        volumeMl: 330,
+        vintage: 2021,
+      );
+      await repo.addEntry(lot, 1);
+      expect(await names(const DrinkFilter(query: '2021')), [
+        'Bière Imaginaire',
+      ]);
+
+      await repo.deleteLot(lot);
+      expect(await names(const DrinkFilter(query: '2021')), isEmpty);
+    });
+
     test('caractères spéciaux sans erreur', () async {
       expect(await names(const DrinkFilter(query: '"*-:(')), hasLength(4));
     });

@@ -78,5 +78,13 @@ void main() {
         )
         .get();
     expect(byType.map((r) => r.read<String>('drink_id')), ['d']);
+
+    // v4 : les millésimes des lots aussi.
+    final byVintage = await db
+        .customSelect(
+          "SELECT drink_id FROM drinks_fts WHERE drinks_fts MATCH '2018*'",
+        )
+        .get();
+    expect(byVintage.map((r) => r.read<String>('drink_id')), ['d']);
   });
 }

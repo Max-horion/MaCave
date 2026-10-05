@@ -35,7 +35,7 @@ class CaveDatabase extends _$CaveDatabase {
   factory CaveDatabase.open() => CaveDatabase(driftDatabase(name: 'cave'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   /// Auteur des données livrées avec l'application. Leur date est 0 : la
   /// moindre modification de l'utilisateur l'emporte à la synchronisation.
@@ -55,33 +55,23 @@ class CaveDatabase extends _$CaveDatabase {
     // par les tests de test/drift/.
     onUpgrade: stepByStep(
       // v2 (lot 2) : index de recherche plein texte. Ses déclencheurs et son
-      // contenu sont posés par l'étape suivante, qui recrée l'index.
+      // contenu sont posés par la dernière étape, qui recrée l'index.
       from1To2: (m, schema) async {
         await m.create(schema.drinksFts);
       },
-      // v3 : l'index contient aussi le type et les caractéristiques. Il ne
-      // contient que des données recalculables : on le recrée entièrement.
+      // v3 : l'index contient aussi le type et les caractéristiques.
+      // v4 : … et les millésimes des lots, via la vue drink_search_rows.
+      // L'index ne contient que des données recalculables : chaque étape le
+      // recrée entièrement dans sa forme finale, déclencheurs compris.
       from2To3: (m, schema) async {
-        for (final trigger in [
-          'drinks_fts_insert',
-          'drinks_fts_update',
-          'drinks_fts_delete',
-        ]) {
-          await customStatement('DROP TRIGGER IF EXISTS $trigger');
-        }
-        await customStatement('DROP TABLE IF EXISTS drinks_fts');
+        await _dropSearchIndex();
         await m.create(schema.drinksFts);
-        for (final trigger in [
-          drinksFtsInsert,
-          drinksFtsUpdate,
-          drinksFtsDelete,
-          drinksFtsLinkInsert,
-          drinksFtsLinkUpdate,
-          drinksFtsTypeUpdate,
-          drinksFtsCharacteristicUpdate,
-        ]) {
-          await m.createTrigger(trigger);
-        }
+      },
+      from3To4: (m, schema) async {
+        await _dropSearchIndex();
+        await m.create(schema.drinksFts);
+        await m.createView(schema.drinkSearchRows);
+        await _createSearchTriggers(m);
         await rebuildSearchIndex();
       },
     ),
@@ -99,23 +89,52 @@ class CaveDatabase extends _$CaveDatabase {
     return row.value;
   }
 
-  /// Reconstruit entièrement l'index de recherche (migration, synchronisation).
-  /// Même contenu que celui écrit par les déclencheurs de search.drift.
+  /// Reconstruit entièrement l'index de recherche (migration, synchronisation),
+  /// à partir de la vue drink_search_rows (search.drift).
   Future<void> rebuildSearchIndex() async {
     await customStatement('DELETE FROM drinks_fts');
     await customStatement(
       'INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, '
-      'country, grapes, type_name, characteristics) '
-      'SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, '
-      'd.grapes, '
-      '(SELECT t.name FROM drink_types t '
-      'WHERE t.id = d.type_id AND t.deleted_at IS NULL), '
-      "(SELECT group_concat(c.name, ' ') FROM drink_characteristics dc "
-      'JOIN characteristics c ON c.id = dc.characteristic_id '
-      'WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL '
-      'AND c.deleted_at IS NULL) '
-      'FROM drinks d',
+      'country, grapes, type_name, characteristics, vintages) '
+      'SELECT drink_id, name, producer, appellation, region, country, grapes, '
+      'type_name, characteristics, vintages FROM drink_search_rows',
     );
+  }
+
+  /// Supprime l'index, sa vue et tous ses déclencheurs, quelle que soit la
+  /// version d'origine (noms des versions 2 à 4).
+  Future<void> _dropSearchIndex() async {
+    for (final trigger in [
+      'drinks_fts_insert',
+      'drinks_fts_update',
+      'drinks_fts_delete',
+      'drinks_fts_link_insert',
+      'drinks_fts_link_update',
+      'drinks_fts_lot_insert',
+      'drinks_fts_lot_update',
+      'drinks_fts_type_update',
+      'drinks_fts_characteristic_update',
+    ]) {
+      await customStatement('DROP TRIGGER IF EXISTS $trigger');
+    }
+    await customStatement('DROP VIEW IF EXISTS drink_search_rows');
+    await customStatement('DROP TABLE IF EXISTS drinks_fts');
+  }
+
+  Future<void> _createSearchTriggers(Migrator m) async {
+    for (final trigger in [
+      drinksFtsInsert,
+      drinksFtsUpdate,
+      drinksFtsDelete,
+      drinksFtsLinkInsert,
+      drinksFtsLinkUpdate,
+      drinksFtsLotInsert,
+      drinksFtsLotUpdate,
+      drinksFtsTypeUpdate,
+      drinksFtsCharacteristicUpdate,
+    ]) {
+      await m.createTrigger(trigger);
+    }
   }
 
   /// Insère la classification initiale du CDC §6.1.
