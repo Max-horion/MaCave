@@ -83,3 +83,15 @@ final drinkCharacteristicsProvider = StreamProvider.autoDispose
       (ref, drinkId) =>
           ref.watch(caveQueriesProvider).watchDrinkCharacteristicIds(drinkId),
     );
+
+/// Historique des mouvements d'une référence (fiche).
+final drinkMovementsProvider = StreamProvider.autoDispose
+    .family<List<MovementWithLot>, String>(
+      (ref, drinkId) =>
+          ref.watch(caveQueriesProvider).watchMovementsOfDrink(drinkId),
+    );
+
+/// Statistiques de la cave.
+final statsProvider = StreamProvider.autoDispose<CaveStats>(
+  (ref) => ref.watch(caveQueriesProvider).watchStats(),
+);

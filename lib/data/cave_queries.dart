@@ -62,6 +62,41 @@ class Classification {
   };
 }
 
+/// Un mouvement et le lot auquel il appartient (historique de la fiche).
+typedef MovementWithLot = ({Movement movement, Lot lot});
+
+/// Un lot à vérifier pendant l'inventaire, avec le nom de sa référence.
+typedef InventoryItem = ({String drinkName, Lot lot});
+
+/// Une barre de graphique : libellé (null = non renseigné) et bouteilles.
+typedef StatEntry = ({String? label, int bottles});
+
+/// Répartition des bouteilles d'une famille de caractéristiques.
+typedef FamilyStats = ({
+  String typeName,
+  String familyName,
+  List<StatEntry> values,
+});
+
+/// Statistiques de base, sans notion de valeur (CDC §6.6).
+class CaveStats {
+  const CaveStats({
+    required this.bottles,
+    required this.drinks,
+    required this.byType,
+    required this.byFamily,
+    required this.byRegion,
+  });
+
+  final int bottles;
+
+  /// Références ayant au moins une bouteille.
+  final int drinks;
+  final List<StatEntry> byType;
+  final List<FamilyStats> byFamily;
+  final List<StatEntry> byRegion;
+}
+
 /// Lectures « en direct » pour les écrans : chaque méthode `watch…` renvoie un
 /// flux qui émet de nouveau dès que les tables concernées changent.
 class CaveQueries {
@@ -281,5 +316,148 @@ class CaveQueries {
           ..where((c) => c.drinkId.equals(drinkId) & c.deletedAt.isNull()))
         .watch()
         .map((rows) => {for (final r in rows) r.characteristicId});
+  }
+
+  /// Mouvements actifs de tous les lots actifs d'une référence, du plus récent
+  /// au plus ancien.
+  Stream<List<MovementWithLot>> watchMovementsOfDrink(String drinkId) {
+    final query =
+        _db.select(_db.movements).join([
+            innerJoin(_db.lots, _db.lots.id.equalsExp(_db.movements.lotId)),
+          ])
+          ..where(
+            _db.lots.drinkId.equals(drinkId) &
+                _db.lots.deletedAt.isNull() &
+                _db.movements.deletedAt.isNull(),
+          )
+          ..orderBy([
+            OrderingTerm.desc(_db.movements.occurredAt),
+            OrderingTerm.desc(_db.movements.id),
+          ]);
+    return query.watch().map(
+      (rows) => [
+        for (final r in rows)
+          (movement: r.readTable(_db.movements), lot: r.readTable(_db.lots)),
+      ],
+    );
+  }
+
+  /// Lots à vérifier pendant l'inventaire (CDC §6.4), triés par nom de
+  /// référence puis millésime. Lecture ponctuelle : la liste ne doit pas
+  /// changer d'ordre pendant que l'utilisateur la parcourt.
+  Future<List<InventoryItem>> inventoryLots({
+    bool includeExhausted = false,
+  }) async {
+    final query = _db.select(_db.lots).join([
+      innerJoin(_db.drinks, _db.drinks.id.equalsExp(_db.lots.drinkId)),
+    ])..where(_db.lots.deletedAt.isNull() & _db.drinks.deletedAt.isNull());
+    if (!includeExhausted) query.where(_db.lots.stock.isBiggerThanValue(0));
+    final items = [
+      for (final r in await query.get())
+        (drinkName: r.readTable(_db.drinks).name, lot: r.readTable(_db.lots)),
+    ];
+    items.sort((a, b) {
+      final byName = fold(a.drinkName).compareTo(fold(b.drinkName));
+      if (byName != 0) return byName;
+      final va = a.lot.vintage, vb = b.lot.vintage;
+      if (va != vb) {
+        if (va == null) return 1;
+        if (vb == null) return -1;
+        return va.compareTo(vb);
+      }
+      return a.lot.volumeMl.compareTo(b.lot.volumeMl);
+    });
+    return items;
+  }
+
+  /// Statistiques de la cave, mises à jour en direct (CDC §6.6).
+  /// Seuls les lots en stock comptent.
+  Stream<CaveStats> watchStats() {
+    const inStock =
+        'l.deleted_at IS NULL AND d.deleted_at IS NULL AND l.stock > 0';
+    return _db
+        .customSelect(
+          'SELECT 1',
+          readsFrom: {
+            _db.lots,
+            _db.drinks,
+            _db.drinkTypes,
+            _db.drinkCharacteristics,
+            _db.characteristics,
+            _db.characteristicFamilies,
+          },
+        )
+        .watch()
+        .asyncMap((_) async {
+          final totals = await _db
+              .customSelect(
+                'SELECT COALESCE(SUM(l.stock), 0) AS bottles, '
+                'COUNT(DISTINCT l.drink_id) AS drinks '
+                'FROM lots l JOIN drinks d ON d.id = l.drink_id '
+                'WHERE $inStock',
+              )
+              .getSingle();
+          final byType = await _db
+              .customSelect(
+                'SELECT t.name AS label, SUM(l.stock) AS bottles '
+                'FROM lots l JOIN drinks d ON d.id = l.drink_id '
+                'LEFT JOIN drink_types t '
+                'ON t.id = d.type_id AND t.deleted_at IS NULL '
+                'WHERE $inStock GROUP BY t.id ORDER BY bottles DESC',
+              )
+              .get();
+          final byValue = await _db
+              .customSelect(
+                'SELECT t.name AS type_name, f.id AS family_id, '
+                'f.name AS family_name, c.name AS label, '
+                'SUM(l.stock) AS bottles '
+                'FROM lots l JOIN drinks d ON d.id = l.drink_id '
+                'JOIN drink_characteristics dc '
+                'ON dc.drink_id = d.id AND dc.deleted_at IS NULL '
+                'JOIN characteristics c '
+                'ON c.id = dc.characteristic_id AND c.deleted_at IS NULL '
+                'JOIN characteristic_families f '
+                'ON f.id = c.family_id AND f.deleted_at IS NULL '
+                'JOIN drink_types t '
+                'ON t.id = f.type_id AND t.deleted_at IS NULL '
+                'WHERE $inStock GROUP BY c.id '
+                'ORDER BY t.sort_order, f.sort_order, bottles DESC',
+              )
+              .get();
+          final byRegion = await _db
+              .customSelect(
+                'SELECT COALESCE(d.region, d.country) AS label, '
+                'SUM(l.stock) AS bottles '
+                'FROM lots l JOIN drinks d ON d.id = l.drink_id '
+                'WHERE $inStock GROUP BY label ORDER BY bottles DESC',
+              )
+              .get();
+
+          StatEntry entry(QueryRow r) => (
+            label: r.readNullable<String>('label'),
+            bottles: r.read<int>('bottles'),
+          );
+          final families = <String, FamilyStats>{};
+          for (final r in byValue) {
+            families
+                .putIfAbsent(
+                  r.read<String>('family_id'),
+                  () => (
+                    typeName: r.read<String>('type_name'),
+                    familyName: r.read<String>('family_name'),
+                    values: <StatEntry>[],
+                  ),
+                )
+                .values
+                .add(entry(r));
+          }
+          return CaveStats(
+            bottles: totals.read<int>('bottles'),
+            drinks: totals.read<int>('drinks'),
+            byType: byType.map(entry).toList(),
+            byFamily: families.values.toList(),
+            byRegion: byRegion.map(entry).toList(),
+          );
+        });
   }
 }

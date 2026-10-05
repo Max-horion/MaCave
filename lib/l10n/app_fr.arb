@@ -438,5 +438,434 @@
         "type": "String"
       }
     }
+  },
+  "menuTooltip": "Plus d'actions",
+  "@menuTooltip": {
+    "description": "Infobulle du menu de l'écran principal."
+  },
+  "menuInventory": "Inventaire",
+  "@menuInventory": {
+    "description": "Entrée de menu : inventaire guidé."
+  },
+  "menuStatistics": "Statistiques",
+  "@menuStatistics": {
+    "description": "Entrée de menu : statistiques."
+  },
+  "menuImport": "Importer un fichier",
+  "@menuImport": {
+    "description": "Entrée de menu : import CSV ou Vivino."
+  },
+  "menuExport": "Exporter (CSV)",
+  "@menuExport": {
+    "description": "Entrée de menu : export CSV."
+  },
+  "historySection": "Historique",
+  "@historySection": {
+    "description": "Titre de la section des mouvements sur la fiche."
+  },
+  "historyEmpty": "Aucun mouvement.",
+  "@historyEmpty": {
+    "description": "Historique vide."
+  },
+  "movementEntry": "{count, plural, =1{+1 bouteille} other{+{count} bouteilles}}",
+  "@movementEntry": {
+    "description": "Mouvement : entrée.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "movementExit": "{count, plural, =1{−1 bouteille} other{−{count} bouteilles}}",
+  "@movementExit": {
+    "description": "Mouvement : sortie.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "movementInventory": "Inventaire : {count}",
+  "@movementInventory": {
+    "description": "Mouvement : ajustement d'inventaire (nombre constaté).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportTitle": "Exporter la cave",
+  "@exportTitle": {
+    "description": "Titre du choix de l'export."
+  },
+  "exportHelp": "Deux fichiers CSV, lisibles dans Excel ou LibreOffice : le stock et l'historique. Ils servent aussi de sauvegarde.",
+  "@exportHelp": {
+    "description": "Explication de l'export."
+  },
+  "exportShare": "Partager",
+  "@exportShare": {
+    "description": "Action : partager les fichiers (courriel, Drive…)."
+  },
+  "exportSave": "Enregistrer sur le téléphone",
+  "@exportSave": {
+    "description": "Action : enregistrer les fichiers dans un dossier."
+  },
+  "exportSaved": "{count, plural, =1{1 fichier enregistré} other{{count} fichiers enregistrés}}",
+  "@exportSaved": {
+    "description": "Confirmation après enregistrement.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportFileStock": "ma-cave-stock-{date}.csv",
+  "@exportFileStock": {
+    "description": "Nom du fichier de stock exporté.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFileHistory": "ma-cave-historique-{date}.csv",
+  "@exportFileHistory": {
+    "description": "Nom du fichier d'historique exporté.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "importPreviewTitle": "Aperçu de l'import",
+  "@importPreviewTitle": {
+    "description": "Titre du bilan avant import."
+  },
+  "importKindStock": "Sauvegarde ou tableur : stock",
+  "@importKindStock": {
+    "description": "Nature du fichier reconnu."
+  },
+  "importKindHistory": "Sauvegarde : historique",
+  "@importKindHistory": {
+    "description": "Nature du fichier reconnu."
+  },
+  "importKindVivino": "Export Vivino",
+  "@importKindVivino": {
+    "description": "Nature du fichier reconnu."
+  },
+  "importDrinksCreated": "{count, plural, =0{Aucune référence créée} =1{1 référence créée} other{{count} références créées}}",
+  "@importDrinksCreated": {
+    "description": "Bilan d'import.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importLotsCreated": "{count, plural, =0{Aucun lot créé} =1{1 lot créé} other{{count} lots créés}}",
+  "@importLotsCreated": {
+    "description": "Bilan d'import.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importBottles": "{count, plural, =0{Aucune bouteille ajoutée} =1{1 bouteille ajoutée} other{{count} bouteilles ajoutées}}",
+  "@importBottles": {
+    "description": "Bilan d'import.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importLotsAdjusted": "{count, plural, =1{1 lot existant remis au stock du fichier} other{{count} lots existants remis au stock du fichier}}",
+  "@importLotsAdjusted": {
+    "description": "Bilan d'import (restauration).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importLotsSkipped": "{count, plural, =1{1 lot déjà présent, laissé tel quel} other{{count} lots déjà présents, laissés tels quels}}",
+  "@importLotsSkipped": {
+    "description": "Bilan d'import Vivino.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importMovements": "{count, plural, =0{Aucun mouvement ajouté} =1{1 mouvement ajouté} other{{count} mouvements ajoutés}}",
+  "@importMovements": {
+    "description": "Bilan d'import d'historique.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importMovementsSkipped": "{count, plural, =1{1 mouvement déjà présent} other{{count} mouvements déjà présents}}",
+  "@importMovementsSkipped": {
+    "description": "Bilan d'import d'historique.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importNeedsCompletion": "{count, plural, =1{1 fiche sera « à compléter »} other{{count} fiches seront « à compléter »}}",
+  "@importNeedsCompletion": {
+    "description": "Bilan d'import.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importUnknownCharacteristics": "Caractéristiques inconnues, ignorées : {names}",
+  "@importUnknownCharacteristics": {
+    "description": "Bilan d'import.",
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "importIssuesTitle": "{count, plural, =1{1 ligne ignorée} other{{count} lignes ignorées}}",
+  "@importIssuesTitle": {
+    "description": "Titre de la liste des lignes en erreur.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importIssueLine": "Ligne {line} : {message}",
+  "@importIssueLine": {
+    "description": "Une ligne en erreur.",
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "importNothing": "Rien à importer : tout est déjà dans la cave.",
+  "@importNothing": {
+    "description": "Bilan quand l'import ne changerait rien."
+  },
+  "importConfirm": "Importer",
+  "@importConfirm": {
+    "description": "Bouton de confirmation de l'import."
+  },
+  "importDone": "Import terminé",
+  "@importDone": {
+    "description": "Confirmation après import."
+  },
+  "importUnreadable": "Fichier illisible : {message}",
+  "@importUnreadable": {
+    "description": "Erreur à la lecture du fichier.",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "issueUnknownFormat": "fichier non reconnu (ni sauvegarde Ma Cave, ni export Vivino)",
+  "@issueUnknownFormat": {
+    "description": "Erreur d'import."
+  },
+  "issueMissingName": "nom manquant",
+  "@issueMissingName": {
+    "description": "Erreur d'import."
+  },
+  "issueInvalidVolume": "volume invalide « {value} »",
+  "@issueInvalidVolume": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "issueInvalidVintage": "millésime invalide « {value} »",
+  "@issueInvalidVintage": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "issueInvalidStock": "stock invalide « {value} »",
+  "@issueInvalidStock": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "issueUnknownLot": "lot introuvable « {value} »",
+  "@issueUnknownLot": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "issueInvalidDate": "date invalide « {value} »",
+  "@issueInvalidDate": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "issueInvalidKind": "nature invalide « {value} »",
+  "@issueInvalidKind": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "issueInvalidQuantity": "quantité invalide « {value} »",
+  "@issueInvalidQuantity": {
+    "description": "Erreur d'import.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryTitle": "Inventaire",
+  "@inventoryTitle": {
+    "description": "Titre de l'écran d'inventaire."
+  },
+  "inventoryIntro": "Les lots défilent un par un : confirmez le nombre de bouteilles, ou corrigez-le.",
+  "@inventoryIntro": {
+    "description": "Explication avant de commencer l'inventaire."
+  },
+  "inventoryIncludeExhausted": "Inclure les lots épuisés",
+  "@inventoryIncludeExhausted": {
+    "description": "Option de l'inventaire."
+  },
+  "inventoryLotCount": "{count, plural, =0{Aucun lot à vérifier} =1{1 lot à vérifier} other{{count} lots à vérifier}}",
+  "@inventoryLotCount": {
+    "description": "Nombre de lots de l'inventaire.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inventoryStart": "Commencer",
+  "@inventoryStart": {
+    "description": "Bouton qui lance l'inventaire."
+  },
+  "inventoryProgress": "{current} / {total}",
+  "@inventoryProgress": {
+    "description": "Avancement de l'inventaire.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "inventoryRecorded": "Stock enregistré",
+  "@inventoryRecorded": {
+    "description": "Libellé du stock actuel pendant l'inventaire."
+  },
+  "inventoryConfirm": "C'est juste",
+  "@inventoryConfirm": {
+    "description": "Bouton : le stock est correct."
+  },
+  "inventoryCorrect": "Corriger",
+  "@inventoryCorrect": {
+    "description": "Bouton : saisir le vrai nombre."
+  },
+  "inventoryValidate": "Valider",
+  "@inventoryValidate": {
+    "description": "Bouton : enregistrer la correction."
+  },
+  "inventoryPrevious": "Précédent",
+  "@inventoryPrevious": {
+    "description": "Bouton : revenir au lot précédent."
+  },
+  "inventoryDoneTitle": "Inventaire terminé",
+  "@inventoryDoneTitle": {
+    "description": "Titre de fin d'inventaire."
+  },
+  "inventorySummary": "{confirmed, plural, =0{Aucun lot confirmé} =1{1 lot confirmé} other{{confirmed} lots confirmés}}, {corrected, plural, =0{aucun corrigé} =1{1 corrigé} other{{corrected} corrigés}}.",
+  "@inventorySummary": {
+    "description": "Bilan de l'inventaire.",
+    "placeholders": {
+      "confirmed": {
+        "type": "int"
+      },
+      "corrected": {
+        "type": "int"
+      }
+    }
+  },
+  "inventoryFinish": "Terminer",
+  "@inventoryFinish": {
+    "description": "Bouton de fin d'inventaire."
+  },
+  "statsTitle": "Statistiques",
+  "@statsTitle": {
+    "description": "Titre de l'écran des statistiques."
+  },
+  "statsBottles": "Bouteilles",
+  "@statsBottles": {
+    "description": "Libellé du nombre total de bouteilles."
+  },
+  "statsDrinks": "Références",
+  "@statsDrinks": {
+    "description": "Libellé du nombre de références en stock."
+  },
+  "statsByType": "Par type",
+  "@statsByType": {
+    "description": "Titre du graphique par type."
+  },
+  "statsByRegion": "Par région ou pays",
+  "@statsByRegion": {
+    "description": "Titre du graphique par région."
+  },
+  "statsOther": "Autres",
+  "@statsOther": {
+    "description": "Regroupement des petites catégories."
+  },
+  "statsUnknownRegion": "Non renseignée",
+  "@statsUnknownRegion": {
+    "description": "Région absente."
+  },
+  "statsEmpty": "Ajoutez des bouteilles pour voir les statistiques.",
+  "@statsEmpty": {
+    "description": "Statistiques sans données."
+  },
+  "statsBarValue": "{label} : {count}",
+  "@statsBarValue": {
+    "description": "Lecture d'écran d'une barre de graphique.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
   }
 }

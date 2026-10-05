@@ -8,6 +8,9 @@ import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
 import '../drink/drink_detail_screen.dart';
+import '../exchange/exchange_actions.dart';
+import '../inventory/inventory_screen.dart';
+import '../stats/stats_screen.dart';
 import '../drink/drink_form_screen.dart';
 import '../stock_actions.dart';
 import 'filter_sheet.dart';
@@ -38,6 +41,7 @@ class CellarScreen extends ConsumerWidget {
               child: const Icon(Icons.tune),
             ),
           ),
+          const _MainMenu(),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(100),
@@ -100,6 +104,62 @@ class CellarScreen extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: Text(l10n.addDrinkButton),
       ),
+    );
+  }
+}
+
+enum _MenuAction { inventory, statistics, import, export }
+
+/// Menu « ⋮ » : inventaire, statistiques, import et export.
+class _MainMenu extends ConsumerWidget {
+  const _MainMenu();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    void open(Widget screen) => Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (_) => screen),
+    );
+    return PopupMenuButton<_MenuAction>(
+      tooltip: l10n.menuTooltip,
+      onSelected: (action) => switch (action) {
+        _MenuAction.inventory => open(const InventoryScreen()),
+        _MenuAction.statistics => open(const StatsScreen()),
+        _MenuAction.import => startImport(context, ref),
+        _MenuAction.export => startExport(context, ref),
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: _MenuAction.inventory,
+          child: ListTile(
+            leading: const Icon(Icons.fact_check_outlined),
+            title: Text(l10n.menuInventory),
+          ),
+        ),
+        PopupMenuItem(
+          value: _MenuAction.statistics,
+          child: ListTile(
+            leading: const Icon(Icons.bar_chart),
+            title: Text(l10n.menuStatistics),
+          ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: _MenuAction.import,
+          child: ListTile(
+            leading: const Icon(Icons.file_open_outlined),
+            title: Text(l10n.menuImport),
+          ),
+        ),
+        PopupMenuItem(
+          value: _MenuAction.export,
+          child: ListTile(
+            leading: const Icon(Icons.ios_share),
+            title: Text(l10n.menuExport),
+          ),
+        ),
+      ],
     );
   }
 }

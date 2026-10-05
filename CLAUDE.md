@@ -48,10 +48,12 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 0 | Squelette : projet, traductions FR, thèmes clair/sombre, premier test, CLAUDE.md, architecture, Git/GitHub, installation sur le téléphone | **terminé** |
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
-| 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV | à faire |
+| 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge | à faire |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
+
+**Décisions du porteur :** une fiche incomplète (ex. vin sans appellation ni région) est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05).
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
 
@@ -80,6 +82,20 @@ Pièges rencontrés :
 - Recherche : le porteur s'attend à trouver par tout ce qu'il voit (type, caractéristiques, millésime) → tout cela est dans l'index ; les pluriels en s/x sont ramenés au singulier (`ftsQuery`).
 - Tests d'interface avec drift : écrire en base dans `tester.runAsync`, attendre avec le helper `settle` ; un test en échec peut bloquer le lanceur jusqu'au délai (`--timeout 60s`).
 
+## Où trouver quoi (lot 3)
+
+- `lib/domain/csv.dart` — lecture/écriture CSV maison (séparateur deviné, guillemets, marque UTF-8 pour Excel), `CsvTable` (colonnes retrouvées par nom, sans casse ni accents).
+- `lib/domain/vivino.dart` — interprétation de l'export Vivino (nom/appellation, pays, type → caractéristique).
+- `lib/data/exchange/exchange_format.dart` — **le format des fichiers** (noms de colonnes, valeurs « entrée/sortie/inventaire », « consommée/offerte/cassée ») : ne pas traduire, ne pas renommer (les sauvegardes existantes doivent rester relisibles).
+- `lib/data/exchange/csv_export.dart`, `cave_import.dart` — export ; import avec détection du type de fichier, aperçu par transaction annulée (`preview`) puis `apply`.
+- `lib/features/exchange/`, `inventory/`, `stats/` — écrans ; menu « ⋮ » dans `cellar_screen.dart`.
+
+Règles d'import :
+- **Stock** (sauvegarde ou tableur) : références/lots retrouvés par ID, sinon par nom + producteur + type / millésime + volume, sinon créés (avec l'ID du fichier s'il est libre). Le stock est fixé par un ajustement d'inventaire. Les fiches existantes ne sont pas modifiées.
+- **Historique** : mouvements ajoutés avec leur date d'origine s'ils sont inconnus (par ID) et si leur lot existe.
+- **Vivino** : un lot déjà présent avant l'import est ignoré → réimporter ne double pas le stock. Note communautaire et lien Vivino non importés.
+- Restauration complète = importer le fichier de stock, puis celui d'historique.
+
 ## Conventions
 
 - **Textes de l'interface** : jamais en dur dans le code. Tout passe par `lib/l10n/app_fr.arb` (avec une `description` pour chaque clé), puis `AppLocalizations.of(context).cle`. Pluriels au format ICU (voir `bottleCount`). Dates et nombres formatés selon la langue de l'appareil (`intl`).
@@ -101,3 +117,4 @@ Pièges rencontrés :
 - 2026-10-05 — Retour du porteur : pas de recherche par année. Millésimes des lots indexés (schéma v4, vue `drink_search_rows`) ; 81 tests verts.
 - 2026-10-05 — **Incident : les données saisies par le porteur (2 vins) ont été effacées.** Cause : `flutter install` désinstalle l'appli avant chaque installation. Toutes les installations précédentes repartaient donc d'une base vide : **les migrations n'ont jamais été testées sur le téléphone avec des données** (contrairement à ce qu'indiquaient les entrées ci-dessus), seulement par les tests automatiques. Correctif : `tool/installer.sh` (`adb install -r` + contrôle de `firstInstallTime`). Données non récupérables (sauvegarde Android désactivée).
 - 2026-10-05 — Installation sans perte vérifiée sur le téléphone : le porteur a ressaisi 2 références, `tool/installer.sh` (compilation + `adb install -r`) les a conservées.
+- 2026-10-05 — Lot 3 : export/import CSV, import Vivino (essai à blanc sur le vrai fichier : 31 références, 32 lots, 95 bouteilles, 0 erreur, 16 « à compléter »), historique sur la fiche, inventaire guidé, statistiques ; 114 tests verts.

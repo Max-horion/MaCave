@@ -1,0 +1,8 @@
+Winery,Wine name,Vintage,Region,Country,Regional wine style,Average rating,Wine ratings count,Wine type,Link to wine,User cellar count
+Château Imaginaire,Appellation Fictive,2015,Appellation Fictive,France,Bordeaux Fictif,3.9,1200,Red Wine,https://example.invalid/wines/1,6
+Château Imaginaire,Appellation Fictive,2018,Appellation Fictive,France,Bordeaux Fictif,3.8,900,Red Wine,https://example.invalid/wines/2,2
+Domaine Inventé,"Cuvée Exemple, Vieilles Vignes",,Vallée Test,fr,,4.1,50,White Wine,https://example.invalid/wines/3,1
+Maison Factice,Rosé de Test,2022,Provence Test,,,3.5,10,Rosé Wine,https://example.invalid/wines/4,3
+Cave Fictive,Bulles Imaginaires,2019,Champagne Test,France,,4.0,80,Sparkling,https://example.invalid/wines/5,12
+Domaine Doux,Liquoreux Test,2010,Sauternes Test,France,,4.2,300,Dessert Wine,https://example.invalid/wines/6,1
+Domaine Muté,Vin de Liqueur Test,,Jura Test,France,,3.4,20,Fortified Wine,https://example.invalid/wines/7,1

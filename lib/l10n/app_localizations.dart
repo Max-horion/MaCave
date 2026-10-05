@@ -627,6 +627,414 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Une erreur est survenue : {message}'**
   String errorGeneric(String message);
+
+  /// Infobulle du menu de l'écran principal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus d\'actions'**
+  String get menuTooltip;
+
+  /// Entrée de menu : inventaire guidé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire'**
+  String get menuInventory;
+
+  /// Entrée de menu : statistiques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statistiques'**
+  String get menuStatistics;
+
+  /// Entrée de menu : import CSV ou Vivino.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer un fichier'**
+  String get menuImport;
+
+  /// Entrée de menu : export CSV.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter (CSV)'**
+  String get menuExport;
+
+  /// Titre de la section des mouvements sur la fiche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get historySection;
+
+  /// Historique vide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun mouvement.'**
+  String get historyEmpty;
+
+  /// Mouvement : entrée.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{+1 bouteille} other{+{count} bouteilles}}'**
+  String movementEntry(int count);
+
+  /// Mouvement : sortie.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{−1 bouteille} other{−{count} bouteilles}}'**
+  String movementExit(int count);
+
+  /// Mouvement : ajustement d'inventaire (nombre constaté).
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire : {count}'**
+  String movementInventory(int count);
+
+  /// Titre du choix de l'export.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter la cave'**
+  String get exportTitle;
+
+  /// Explication de l'export.
+  ///
+  /// In fr, this message translates to:
+  /// **'Deux fichiers CSV, lisibles dans Excel ou LibreOffice : le stock et l\'historique. Ils servent aussi de sauvegarde.'**
+  String get exportHelp;
+
+  /// Action : partager les fichiers (courriel, Drive…).
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get exportShare;
+
+  /// Action : enregistrer les fichiers dans un dossier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer sur le téléphone'**
+  String get exportSave;
+
+  /// Confirmation après enregistrement.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 fichier enregistré} other{{count} fichiers enregistrés}}'**
+  String exportSaved(int count);
+
+  /// Nom du fichier de stock exporté.
+  ///
+  /// In fr, this message translates to:
+  /// **'ma-cave-stock-{date}.csv'**
+  String exportFileStock(String date);
+
+  /// Nom du fichier d'historique exporté.
+  ///
+  /// In fr, this message translates to:
+  /// **'ma-cave-historique-{date}.csv'**
+  String exportFileHistory(String date);
+
+  /// Titre du bilan avant import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aperçu de l\'import'**
+  String get importPreviewTitle;
+
+  /// Nature du fichier reconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde ou tableur : stock'**
+  String get importKindStock;
+
+  /// Nature du fichier reconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde : historique'**
+  String get importKindHistory;
+
+  /// Nature du fichier reconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Export Vivino'**
+  String get importKindVivino;
+
+  /// Bilan d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune référence créée} =1{1 référence créée} other{{count} références créées}}'**
+  String importDrinksCreated(int count);
+
+  /// Bilan d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun lot créé} =1{1 lot créé} other{{count} lots créés}}'**
+  String importLotsCreated(int count);
+
+  /// Bilan d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune bouteille ajoutée} =1{1 bouteille ajoutée} other{{count} bouteilles ajoutées}}'**
+  String importBottles(int count);
+
+  /// Bilan d'import (restauration).
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 lot existant remis au stock du fichier} other{{count} lots existants remis au stock du fichier}}'**
+  String importLotsAdjusted(int count);
+
+  /// Bilan d'import Vivino.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 lot déjà présent, laissé tel quel} other{{count} lots déjà présents, laissés tels quels}}'**
+  String importLotsSkipped(int count);
+
+  /// Bilan d'import d'historique.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun mouvement ajouté} =1{1 mouvement ajouté} other{{count} mouvements ajoutés}}'**
+  String importMovements(int count);
+
+  /// Bilan d'import d'historique.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 mouvement déjà présent} other{{count} mouvements déjà présents}}'**
+  String importMovementsSkipped(int count);
+
+  /// Bilan d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 fiche sera « à compléter »} other{{count} fiches seront « à compléter »}}'**
+  String importNeedsCompletion(int count);
+
+  /// Bilan d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Caractéristiques inconnues, ignorées : {names}'**
+  String importUnknownCharacteristics(String names);
+
+  /// Titre de la liste des lignes en erreur.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 ligne ignorée} other{{count} lignes ignorées}}'**
+  String importIssuesTitle(int count);
+
+  /// Une ligne en erreur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ligne {line} : {message}'**
+  String importIssueLine(int line, String message);
+
+  /// Bilan quand l'import ne changerait rien.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à importer : tout est déjà dans la cave.'**
+  String get importNothing;
+
+  /// Bouton de confirmation de l'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer'**
+  String get importConfirm;
+
+  /// Confirmation après import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Import terminé'**
+  String get importDone;
+
+  /// Erreur à la lecture du fichier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier illisible : {message}'**
+  String importUnreadable(String message);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'fichier non reconnu (ni sauvegarde Ma Cave, ni export Vivino)'**
+  String get issueUnknownFormat;
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'nom manquant'**
+  String get issueMissingName;
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'volume invalide « {value} »'**
+  String issueInvalidVolume(String value);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'millésime invalide « {value} »'**
+  String issueInvalidVintage(String value);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'stock invalide « {value} »'**
+  String issueInvalidStock(String value);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'lot introuvable « {value} »'**
+  String issueUnknownLot(String value);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'date invalide « {value} »'**
+  String issueInvalidDate(String value);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'nature invalide « {value} »'**
+  String issueInvalidKind(String value);
+
+  /// Erreur d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'quantité invalide « {value} »'**
+  String issueInvalidQuantity(String value);
+
+  /// Titre de l'écran d'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire'**
+  String get inventoryTitle;
+
+  /// Explication avant de commencer l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les lots défilent un par un : confirmez le nombre de bouteilles, ou corrigez-le.'**
+  String get inventoryIntro;
+
+  /// Option de l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inclure les lots épuisés'**
+  String get inventoryIncludeExhausted;
+
+  /// Nombre de lots de l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun lot à vérifier} =1{1 lot à vérifier} other{{count} lots à vérifier}}'**
+  String inventoryLotCount(int count);
+
+  /// Bouton qui lance l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get inventoryStart;
+
+  /// Avancement de l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'{current} / {total}'**
+  String inventoryProgress(int current, int total);
+
+  /// Libellé du stock actuel pendant l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock enregistré'**
+  String get inventoryRecorded;
+
+  /// Bouton : le stock est correct.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est juste'**
+  String get inventoryConfirm;
+
+  /// Bouton : saisir le vrai nombre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Corriger'**
+  String get inventoryCorrect;
+
+  /// Bouton : enregistrer la correction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get inventoryValidate;
+
+  /// Bouton : revenir au lot précédent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précédent'**
+  String get inventoryPrevious;
+
+  /// Titre de fin d'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire terminé'**
+  String get inventoryDoneTitle;
+
+  /// Bilan de l'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'{confirmed, plural, =0{Aucun lot confirmé} =1{1 lot confirmé} other{{confirmed} lots confirmés}}, {corrected, plural, =0{aucun corrigé} =1{1 corrigé} other{{corrected} corrigés}}.'**
+  String inventorySummary(int confirmed, int corrected);
+
+  /// Bouton de fin d'inventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get inventoryFinish;
+
+  /// Titre de l'écran des statistiques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statistiques'**
+  String get statsTitle;
+
+  /// Libellé du nombre total de bouteilles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bouteilles'**
+  String get statsBottles;
+
+  /// Libellé du nombre de références en stock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Références'**
+  String get statsDrinks;
+
+  /// Titre du graphique par type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par type'**
+  String get statsByType;
+
+  /// Titre du graphique par région.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par région ou pays'**
+  String get statsByRegion;
+
+  /// Regroupement des petites catégories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres'**
+  String get statsOther;
+
+  /// Région absente.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non renseignée'**
+  String get statsUnknownRegion;
+
+  /// Statistiques sans données.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez des bouteilles pour voir les statistiques.'**
+  String get statsEmpty;
+
+  /// Lecture d'écran d'une barre de graphique.
+  ///
+  /// In fr, this message translates to:
+  /// **'{label} : {count}'**
+  String statsBarValue(String label, String count);
 }
 
 class _AppLocalizationsDelegate

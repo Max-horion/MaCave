@@ -348,4 +348,366 @@ class AppLocalizationsFr extends AppLocalizations {
   String errorGeneric(String message) {
     return 'Une erreur est survenue : $message';
   }
+
+  @override
+  String get menuTooltip => 'Plus d\'actions';
+
+  @override
+  String get menuInventory => 'Inventaire';
+
+  @override
+  String get menuStatistics => 'Statistiques';
+
+  @override
+  String get menuImport => 'Importer un fichier';
+
+  @override
+  String get menuExport => 'Exporter (CSV)';
+
+  @override
+  String get historySection => 'Historique';
+
+  @override
+  String get historyEmpty => 'Aucun mouvement.';
+
+  @override
+  String movementEntry(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '+$count bouteilles',
+      one: '+1 bouteille',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String movementExit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '−$count bouteilles',
+      one: '−1 bouteille',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String movementInventory(int count) {
+    return 'Inventaire : $count';
+  }
+
+  @override
+  String get exportTitle => 'Exporter la cave';
+
+  @override
+  String get exportHelp =>
+      'Deux fichiers CSV, lisibles dans Excel ou LibreOffice : le stock et l\'historique. Ils servent aussi de sauvegarde.';
+
+  @override
+  String get exportShare => 'Partager';
+
+  @override
+  String get exportSave => 'Enregistrer sur le téléphone';
+
+  @override
+  String exportSaved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fichiers enregistrés',
+      one: '1 fichier enregistré',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String exportFileStock(String date) {
+    return 'ma-cave-stock-$date.csv';
+  }
+
+  @override
+  String exportFileHistory(String date) {
+    return 'ma-cave-historique-$date.csv';
+  }
+
+  @override
+  String get importPreviewTitle => 'Aperçu de l\'import';
+
+  @override
+  String get importKindStock => 'Sauvegarde ou tableur : stock';
+
+  @override
+  String get importKindHistory => 'Sauvegarde : historique';
+
+  @override
+  String get importKindVivino => 'Export Vivino';
+
+  @override
+  String importDrinksCreated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count références créées',
+      one: '1 référence créée',
+      zero: 'Aucune référence créée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importLotsCreated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots créés',
+      one: '1 lot créé',
+      zero: 'Aucun lot créé',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importBottles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bouteilles ajoutées',
+      one: '1 bouteille ajoutée',
+      zero: 'Aucune bouteille ajoutée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importLotsAdjusted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots existants remis au stock du fichier',
+      one: '1 lot existant remis au stock du fichier',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importLotsSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots déjà présents, laissés tels quels',
+      one: '1 lot déjà présent, laissé tel quel',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importMovements(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mouvements ajoutés',
+      one: '1 mouvement ajouté',
+      zero: 'Aucun mouvement ajouté',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importMovementsSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mouvements déjà présents',
+      one: '1 mouvement déjà présent',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importNeedsCompletion(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fiches seront « à compléter »',
+      one: '1 fiche sera « à compléter »',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importUnknownCharacteristics(String names) {
+    return 'Caractéristiques inconnues, ignorées : $names';
+  }
+
+  @override
+  String importIssuesTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lignes ignorées',
+      one: '1 ligne ignorée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importIssueLine(int line, String message) {
+    return 'Ligne $line : $message';
+  }
+
+  @override
+  String get importNothing => 'Rien à importer : tout est déjà dans la cave.';
+
+  @override
+  String get importConfirm => 'Importer';
+
+  @override
+  String get importDone => 'Import terminé';
+
+  @override
+  String importUnreadable(String message) {
+    return 'Fichier illisible : $message';
+  }
+
+  @override
+  String get issueUnknownFormat =>
+      'fichier non reconnu (ni sauvegarde Ma Cave, ni export Vivino)';
+
+  @override
+  String get issueMissingName => 'nom manquant';
+
+  @override
+  String issueInvalidVolume(String value) {
+    return 'volume invalide « $value »';
+  }
+
+  @override
+  String issueInvalidVintage(String value) {
+    return 'millésime invalide « $value »';
+  }
+
+  @override
+  String issueInvalidStock(String value) {
+    return 'stock invalide « $value »';
+  }
+
+  @override
+  String issueUnknownLot(String value) {
+    return 'lot introuvable « $value »';
+  }
+
+  @override
+  String issueInvalidDate(String value) {
+    return 'date invalide « $value »';
+  }
+
+  @override
+  String issueInvalidKind(String value) {
+    return 'nature invalide « $value »';
+  }
+
+  @override
+  String issueInvalidQuantity(String value) {
+    return 'quantité invalide « $value »';
+  }
+
+  @override
+  String get inventoryTitle => 'Inventaire';
+
+  @override
+  String get inventoryIntro =>
+      'Les lots défilent un par un : confirmez le nombre de bouteilles, ou corrigez-le.';
+
+  @override
+  String get inventoryIncludeExhausted => 'Inclure les lots épuisés';
+
+  @override
+  String inventoryLotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots à vérifier',
+      one: '1 lot à vérifier',
+      zero: 'Aucun lot à vérifier',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get inventoryStart => 'Commencer';
+
+  @override
+  String inventoryProgress(int current, int total) {
+    return '$current / $total';
+  }
+
+  @override
+  String get inventoryRecorded => 'Stock enregistré';
+
+  @override
+  String get inventoryConfirm => 'C\'est juste';
+
+  @override
+  String get inventoryCorrect => 'Corriger';
+
+  @override
+  String get inventoryValidate => 'Valider';
+
+  @override
+  String get inventoryPrevious => 'Précédent';
+
+  @override
+  String get inventoryDoneTitle => 'Inventaire terminé';
+
+  @override
+  String inventorySummary(int confirmed, int corrected) {
+    String _temp0 = intl.Intl.pluralLogic(
+      confirmed,
+      locale: localeName,
+      other: '$confirmed lots confirmés',
+      one: '1 lot confirmé',
+      zero: 'Aucun lot confirmé',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      corrected,
+      locale: localeName,
+      other: '$corrected corrigés',
+      one: '1 corrigé',
+      zero: 'aucun corrigé',
+    );
+    return '$_temp0, $_temp1.';
+  }
+
+  @override
+  String get inventoryFinish => 'Terminer';
+
+  @override
+  String get statsTitle => 'Statistiques';
+
+  @override
+  String get statsBottles => 'Bouteilles';
+
+  @override
+  String get statsDrinks => 'Références';
+
+  @override
+  String get statsByType => 'Par type';
+
+  @override
+  String get statsByRegion => 'Par région ou pays';
+
+  @override
+  String get statsOther => 'Autres';
+
+  @override
+  String get statsUnknownRegion => 'Non renseignée';
+
+  @override
+  String get statsEmpty => 'Ajoutez des bouteilles pour voir les statistiques.';
+
+  @override
+  String statsBarValue(String label, String count) {
+    return '$label : $count';
+  }
 }

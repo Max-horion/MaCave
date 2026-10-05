@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
 import '../../data/providers.dart';
+import '../../domain/enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
@@ -169,6 +170,60 @@ class _DrinkDetailBody extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         for (final lot in lots) _LotCard(lot: lot),
+        const SizedBox(height: 24),
+        Text(l10n.historySection, style: theme.textTheme.titleLarge),
+        _History(drinkId: drink.id),
+      ],
+    );
+  }
+}
+
+/// Historique des mouvements de la référence, du plus récent au plus ancien
+/// (CDC §6.3).
+class _History extends ConsumerWidget {
+  const _History({required this.drinkId});
+
+  final String drinkId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formats = Formats.of(context);
+    final l10n = formats.l10n;
+    final movements = ref.watch(drinkMovementsProvider(drinkId)).value;
+    if (movements == null) return const SizedBox.shrink();
+    if (movements.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(l10n.historyEmpty),
+      );
+    }
+    return Column(
+      children: [
+        for (final (:movement, :lot) in movements)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(switch (movement.kind) {
+              MovementKind.entry => Icons.add_circle_outline,
+              MovementKind.exit => Icons.remove_circle_outline,
+              MovementKind.inventory => Icons.fact_check_outlined,
+            }),
+            title: Text(
+              '${switch (movement.kind) {
+                MovementKind.entry => l10n.movementEntry(movement.quantity),
+                MovementKind.exit => l10n.movementExit(movement.quantity),
+                MovementKind.inventory => l10n.movementInventory(movement.quantity),
+              }} · ${formats.lot(lot)}',
+            ),
+            subtitle: Text(
+              [
+                formats.date(movement.occurredAt),
+                if (movement.reason != null &&
+                    movement.reason != ExitReason.consumed)
+                  formats.reason(movement.reason!),
+                ?movement.comment,
+              ].join(' · '),
+            ),
+          ),
       ],
     );
   }

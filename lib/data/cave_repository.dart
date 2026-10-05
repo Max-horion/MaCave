@@ -86,8 +86,9 @@ class CaveRepository {
     )..where((t) => t.id.equals(id) & t.deletedAt.isNull())).getSingleOrNull();
   }
 
-  Future<String> createDrink(DrinkInput input) async {
-    final id = _ctx.newId();
+  /// Crée une référence. [id] n'est fourni que par l'import (restauration).
+  Future<String> createDrink(DrinkInput input, {String? id}) async {
+    id ??= _ctx.newId();
     final now = _ctx.now();
     final companion = await _drinkCompanion(input);
     await _db
@@ -278,12 +279,15 @@ class CaveRepository {
   /// Retrouve le lot (référence × millésime × volume) ou le crée s'il n'existe
   /// pas : ajouter des bouteilles à un lot existant augmente son stock, quelle
   /// que soit la date (CDC §3). Un code-barres fourni complète un lot qui n'en
-  /// a pas encore.
+  /// a pas encore. [id] et [createdAt] ne sont fournis que par l'import
+  /// (restauration).
   Future<String> findOrCreateLot({
     required String drinkId,
     required int volumeMl,
     int? vintage,
     String? barcode,
+    String? id,
+    int? createdAt,
   }) {
     if (volumeMl <= 0) {
       throw ArgumentError.value(volumeMl, 'volumeMl', 'Volume positif');
@@ -315,22 +319,22 @@ class CaveRepository {
         }
         return existing.id;
       }
-      final id = _ctx.newId();
+      final lotId = id ?? _ctx.newId();
       await _db
           .into(_db.lots)
           .insert(
             LotsCompanion.insert(
-              id: id,
+              id: lotId,
               drinkId: drinkId,
               vintage: Value(vintage),
               volumeMl: volumeMl,
               barcode: Value(barcode),
-              createdAt: now,
+              createdAt: createdAt ?? now,
               updatedAt: now,
               updatedBy: _ctx.deviceId,
             ),
           );
-      return id;
+      return lotId;
     });
   }
 
