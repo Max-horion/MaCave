@@ -49,13 +49,15 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
-| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge | à faire |
+| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **en cours** (4a terminée) |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
-**Décisions du porteur** (reportées dans le CDC v0.5) :
+**Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
 - l'appellation est **facultative** pour le vin ; la région *ou* le pays restent obligatoires (2026-10-05).
+- **Pas de tâches de fond en V1** (2026-10-05) : sauvegarde et synchro se font appli ouverte (ouverture, mise en arrière-plan, après modification, bouton) ; pas de workmanager ni de notification « erreur > 24 h » (affichée dans l'appli à la place). Écart au CDC §8.3/§8.4 à reporter dans sa prochaine version.
+- Sauvegardes : **3 conservées par défaut**, nombre réglable sur l'écran Sauvegardes (2026-10-05).
 - Le marqueur « à compléter » est calculé à l'enregistrement de chaque fiche. **Ne jamais le recalculer en masse** silencieusement : le porteur s'en sert comme liste de fiches à revoir (ex. après un import).
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
@@ -99,6 +101,19 @@ Règles d'import :
 - **Vivino** : un lot déjà présent avant l'import est ignoré → réimporter ne double pas le stock. Note communautaire et lien Vivino non importés.
 - Restauration complète = importer le fichier de stock, puis celui d'historique.
 
+## Où trouver quoi (lot 4)
+
+- `lib/sync/cave_file.dart` — opérations sur un fichier de base entier, réutilisées par la synchro : `inspectCaveFile` (intégrité, version ≤ actuelle, `cave_id` ; lève `CaveFileException`), `snapshotDatabase` (`VACUUM INTO`), `migratedCopy` (met une copie au schéma actuel avec les migrations drift), `replaceDatabaseContents` (`ATTACH` + remplacement en une transaction, `meta` comprise).
+- `lib/sync/backup.dart` — `BackupService` : sauvegarde = `cave_<date>.sqlite` + `_stock.csv` + `_historique.csv` (**noms = format, ne pas changer**), `backupIfDue` (au plus 1 par jour, seulement si l'« empreinte » de la base a changé, jamais d'exception), `restore` (copie mise à niveau d'abord, puis sauvegarde de sécurité, puis remplacement).
+- `lib/sync/providers.dart` — dossier `Documents/Cave/Sauvegardes` (Android 11+ : écriture sans autorisation, vérifié sur le téléphone ; l'appli ne voit plus ses fichiers après une réinstallation → « Restaurer depuis un fichier »), widget `AutoBackup` (dans `main.dart`).
+- `lib/data/local_store.dart` — préférences propres à l'appareil (`PrefsLocalStore`, `MemoryLocalStore` pour les tests).
+- `lib/features/backup/backup_screen.dart` — écran Sauvegardes (menu ⋮).
+
+Pièges rencontrés :
+- Tests d'interface avec de vraies écritures de fichiers : faire le `tap` dans `tester.runAsync`, sinon l'action ne progresse pas.
+- Ne jamais lire un fichier (taille…) pendant `build` : il peut avoir été supprimé (plantage trouvé par un test).
+- Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
+
 ## Conventions
 
 - **Textes de l'interface** : jamais en dur dans le code. Tout passe par `lib/l10n/app_fr.arb` (avec une `description` pour chaque clé), puis `AppLocalizations.of(context).cle`. Pluriels au format ICU (voir `bottleCount`). Dates et nombres formatés selon la langue de l'appareil (`intl`).
@@ -122,3 +137,4 @@ Règles d'import :
 - 2026-10-05 — Installation sans perte vérifiée sur le téléphone : le porteur a ressaisi 2 références, `tool/installer.sh` (compilation + `adb install -r`) les a conservées.
 - 2026-10-05 — Lot 3 : export/import CSV, import Vivino (essai à blanc sur le vrai fichier : 31 références, 32 lots, 95 bouteilles, 0 erreur, 16 « à compléter »), historique sur la fiche, inventaire guidé, statistiques ; 114 tests verts.
 - 2026-10-05 — Import Vivino fait par le porteur sur le téléphone, OK ; fiches complétées à la main. Appellation rendue facultative (CDC v0.5) ; 118 tests verts.
+- 2026-10-05 — Lot 4a : sauvegardes locales (base + CSV, 3 conservées, réglable), sauvegarde automatique, restauration ; 134 tests verts. Vérifié sur le téléphone : sauvegarde automatique à l'ouverture, fichiers lisibles dans Documents/Cave/Sauvegardes, restauration puis retour arrière par la sauvegarde de sécurité. APK 63 Mo (moteur SQLite pour lire les sauvegardes).

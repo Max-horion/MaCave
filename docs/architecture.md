@@ -126,7 +126,11 @@ Une purge doit aussi se propager, sinon la fusion ferait revenir les mouvements 
 
 ## 5. Sauvegardes (lot 4)
 
-Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées. Mode synchronisé : dossier `Sauvegardes` du serveur ; mode local : dossier choisi sur l'appareil. Point à vérifier au lot 4 : l'écriture dans un dossier choisi par l'utilisateur passe par les autorisations de stockage d'Android 11+, plus restrictives.
+Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées (3 par défaut, réglable). Mode synchronisé : dossier `Sauvegardes` du serveur (étape 4c/4d) ; mode local : `Documents/Cave/Sauvegardes` sur l'appareil.
+
+- **Fait au lot 4a** (`lib/sync/backup.dart`) : sauvegarde automatique appli ouverte (à l'ouverture et à la mise en arrière-plan, au plus une fois par jour, seulement si la base a changé), « Sauvegarder maintenant », partage, restauration avec vérification du fichier et sauvegarde de sécurité préalable.
+- **Pas de tâche de fond** (workmanager) en V1, décision du 5 octobre 2026.
+- **Android** : depuis Android 11, une appli peut écrire ses propres fichiers dans `Documents` sans autorisation, mais ne voit pas ceux des autres applis (ni les siens après une réinstallation) : la restauration passe alors par le sélecteur de fichiers. Android 8 à 10 demanderait l'autorisation de stockage (non gérée pour l'instant). Le choix d'un autre dossier par l'utilisateur (CDC §8.4) reste à faire.
 
 ## 6. Points d'attention
 
