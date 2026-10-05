@@ -16,7 +16,8 @@ Débutant (un peu de Python, découvre Flutter/Dart). Communiquer en français, 
 
 - PC Kubuntu 26.04, **8 Go de RAM** : fermer Android Studio pendant les compilations. Gradle est volontairement limité dans `android/gradle.properties` (1,5 Go, 2 workers, Kotlin dans le même processus) — ne pas remonter ces valeurs.
 - Flutter stable dans `~/development/flutter` (dans le PATH via `~/.bashrc`). Ne jamais proposer `snap install flutter`.
-- Téléphone de test : OnePlus 13 (CPH2653), Android 16, en USB.
+- Téléphone de test : OnePlus 13 (CPH2653), Android 16, en USB (`adb` : `~/Android/Sdk/platform-tools/adb`).
+- Dépôt : https://github.com/Max-horion/MaCave (privé), branche `main`.
 
 ```bash
 flutter pub get                      # dépendances
@@ -41,7 +42,7 @@ flutter build apk --release          # APK à installer manuellement
 
 | Lot | Contenu | État |
 |---|---|---|
-| 0 | Squelette : projet, traductions FR, thèmes clair/sombre, premier test, CLAUDE.md, architecture, Git/GitHub, installation sur le téléphone | en cours |
+| 0 | Squelette : projet, traductions FR, thèmes clair/sombre, premier test, CLAUDE.md, architecture, Git/GitHub, installation sur le téléphone | **terminé** |
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | à faire |
 | 2 | Liste, recherche plein texte, filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | à faire |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV | à faire |
@@ -65,3 +66,4 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 ## Journal
 
 - 2026-10-05 — Lot 0 : projet créé, traductions et thèmes en place, 4 tests verts, architecture validée par le porteur ; dépôt GitHub privé `MaCave`.
+- 2026-10-05 — Lot 0 terminé : APK release (44 Mo) compilé en ~2 min et installé sur le téléphone, écran d'accueil vérifié. Si `adb devices` est vide : le téléphone est repassé en mode « Transfert de photos » ou le débogage USB s'est désactivé (OxygenOS) → « Transfert de fichiers » + réactiver le débogage USB.
