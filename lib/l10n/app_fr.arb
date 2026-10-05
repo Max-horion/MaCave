@@ -867,5 +867,134 @@
         "type": "String"
       }
     }
+  },
+  "menuBackups": "Sauvegardes",
+  "@menuBackups": {
+    "description": "Entrée de menu : écran des sauvegardes."
+  },
+  "backupTitle": "Sauvegardes",
+  "@backupTitle": {
+    "description": "Titre de l'écran des sauvegardes."
+  },
+  "backupHelp": "Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé. Les {keep} dernières sauvegardes sont conservées.",
+  "@backupHelp": {
+    "description": "Explication en tête de l'écran des sauvegardes.",
+    "placeholders": {
+      "keep": {
+        "type": "int"
+      }
+    }
+  },
+  "backupFolder": "Dossier : {path}",
+  "@backupFolder": {
+    "description": "Dossier où sont enregistrées les sauvegardes.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "backupFolderHelp": "Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.",
+  "@backupFolderHelp": {
+    "description": "Conseil sous le dossier des sauvegardes."
+  },
+  "backupNow": "Sauvegarder maintenant",
+  "@backupNow": {
+    "description": "Bouton : sauvegarde immédiate."
+  },
+  "backupRestoreFromFile": "Restaurer depuis un fichier…",
+  "@backupRestoreFromFile": {
+    "description": "Bouton : choisir un fichier de sauvegarde (.sqlite) à restaurer."
+  },
+  "backupListTitle": "Sauvegardes sur ce téléphone",
+  "@backupListTitle": {
+    "description": "Titre de la liste des sauvegardes."
+  },
+  "backupNone": "Aucune sauvegarde pour l'instant.",
+  "@backupNone": {
+    "description": "Liste des sauvegardes vide."
+  },
+  "backupLastError": "La dernière sauvegarde automatique a échoué : {message}",
+  "@backupLastError": {
+    "description": "Erreur de la sauvegarde automatique.",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "backupDone": "Sauvegarde enregistrée.",
+  "@backupDone": {
+    "description": "Confirmation après « Sauvegarder maintenant »."
+  },
+  "backupShare": "Partager",
+  "@backupShare": {
+    "description": "Action : partager les fichiers d'une sauvegarde."
+  },
+  "backupRestore": "Restaurer",
+  "@backupRestore": {
+    "description": "Action : restaurer une sauvegarde."
+  },
+  "backupSize": "{size} Ko",
+  "@backupSize": {
+    "description": "Taille d'un fichier de sauvegarde, en kilo-octets.",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreTitle": "Restaurer cette sauvegarde ?",
+  "@backupRestoreTitle": {
+    "description": "Titre de la confirmation de restauration."
+  },
+  "backupContents": "{drinks, plural, =0{aucune référence} =1{1 référence} other{{drinks} références}}, {bottles, plural, =0{aucune bouteille} =1{1 bouteille} other{{bottles} bouteilles}}",
+  "@backupContents": {
+    "description": "Contenu d'une sauvegarde.",
+    "placeholders": {
+      "drinks": {
+        "type": "int"
+      },
+      "bottles": {
+        "type": "int"
+      }
+    }
+  },
+  "backupRestoreMessage": "La cave actuelle sera remplacée par celle de la sauvegarde du {date} : {contents}.\n\nLa cave actuelle est d'abord sauvegardée : vous pourrez revenir en arrière en restaurant cette sauvegarde de sécurité.",
+  "@backupRestoreMessage": {
+    "description": "Message de confirmation de restauration.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "contents": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreFileMessage": "La cave actuelle sera remplacée par celle de ce fichier : {contents}.\n\nLa cave actuelle est d'abord sauvegardée : vous pourrez revenir en arrière en restaurant cette sauvegarde de sécurité.",
+  "@backupRestoreFileMessage": {
+    "description": "Confirmation de restauration d'un fichier choisi.",
+    "placeholders": {
+      "contents": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestored": "Cave restaurée.",
+  "@backupRestored": {
+    "description": "Confirmation après une restauration."
+  },
+  "backupProblemUnreadable": "Ce fichier n'est pas une sauvegarde lisible : il est peut-être endommagé.",
+  "@backupProblemUnreadable": {
+    "description": "Fichier à restaurer illisible."
+  },
+  "backupProblemNotACave": "Ce fichier n'est pas une sauvegarde de Ma Cave. Pour un fichier CSV, utilisez « Importer un fichier ».",
+  "@backupProblemNotACave": {
+    "description": "Fichier à restaurer qui n'est pas une base Ma Cave."
+  },
+  "backupProblemNewer": "Cette sauvegarde vient d'une version plus récente de Ma Cave. Mettez l'application à jour pour la restaurer.",
+  "@backupProblemNewer": {
+    "description": "Fichier à restaurer créé par une version plus récente."
   }
 }

@@ -710,4 +710,102 @@ class AppLocalizationsFr extends AppLocalizations {
   String statsBarValue(String label, String count) {
     return '$label : $count';
   }
+
+  @override
+  String get menuBackups => 'Sauvegardes';
+
+  @override
+  String get backupTitle => 'Sauvegardes';
+
+  @override
+  String backupHelp(int keep) {
+    return 'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé. Les $keep dernières sauvegardes sont conservées.';
+  }
+
+  @override
+  String backupFolder(String path) {
+    return 'Dossier : $path';
+  }
+
+  @override
+  String get backupFolderHelp =>
+      'Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.';
+
+  @override
+  String get backupNow => 'Sauvegarder maintenant';
+
+  @override
+  String get backupRestoreFromFile => 'Restaurer depuis un fichier…';
+
+  @override
+  String get backupListTitle => 'Sauvegardes sur ce téléphone';
+
+  @override
+  String get backupNone => 'Aucune sauvegarde pour l\'instant.';
+
+  @override
+  String backupLastError(String message) {
+    return 'La dernière sauvegarde automatique a échoué : $message';
+  }
+
+  @override
+  String get backupDone => 'Sauvegarde enregistrée.';
+
+  @override
+  String get backupShare => 'Partager';
+
+  @override
+  String get backupRestore => 'Restaurer';
+
+  @override
+  String backupSize(String size) {
+    return '$size Ko';
+  }
+
+  @override
+  String get backupRestoreTitle => 'Restaurer cette sauvegarde ?';
+
+  @override
+  String backupContents(int drinks, int bottles) {
+    String _temp0 = intl.Intl.pluralLogic(
+      drinks,
+      locale: localeName,
+      other: '$drinks références',
+      one: '1 référence',
+      zero: 'aucune référence',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      bottles,
+      locale: localeName,
+      other: '$bottles bouteilles',
+      one: '1 bouteille',
+      zero: 'aucune bouteille',
+    );
+    return '$_temp0, $_temp1';
+  }
+
+  @override
+  String backupRestoreMessage(String date, String contents) {
+    return 'La cave actuelle sera remplacée par celle de la sauvegarde du $date : $contents.\n\nLa cave actuelle est d\'abord sauvegardée : vous pourrez revenir en arrière en restaurant cette sauvegarde de sécurité.';
+  }
+
+  @override
+  String backupRestoreFileMessage(String contents) {
+    return 'La cave actuelle sera remplacée par celle de ce fichier : $contents.\n\nLa cave actuelle est d\'abord sauvegardée : vous pourrez revenir en arrière en restaurant cette sauvegarde de sécurité.';
+  }
+
+  @override
+  String get backupRestored => 'Cave restaurée.';
+
+  @override
+  String get backupProblemUnreadable =>
+      'Ce fichier n\'est pas une sauvegarde lisible : il est peut-être endommagé.';
+
+  @override
+  String get backupProblemNotACave =>
+      'Ce fichier n\'est pas une sauvegarde de Ma Cave. Pour un fichier CSV, utilisez « Importer un fichier ».';
+
+  @override
+  String get backupProblemNewer =>
+      'Cette sauvegarde vient d\'une version plus récente de Ma Cave. Mettez l\'application à jour pour la restaurer.';
 }

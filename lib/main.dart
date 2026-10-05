@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'app.dart';
 import 'data/providers.dart';
 import 'data/write_context.dart';
+import 'sync/providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ Future<void> main() async {
           WriteContext(deviceId: deviceId),
         ),
       ],
-      child: const CaveApp(),
+      child: const AutoBackup(child: CaveApp()),
     ),
   );
 }

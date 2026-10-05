@@ -1035,6 +1035,138 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{label} : {count}'**
   String statsBarValue(String label, String count);
+
+  /// Entrée de menu : écran des sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardes'**
+  String get menuBackups;
+
+  /// Titre de l'écran des sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardes'**
+  String get backupTitle;
+
+  /// Explication en tête de l'écran des sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé. Les {keep} dernières sauvegardes sont conservées.'**
+  String backupHelp(int keep);
+
+  /// Dossier où sont enregistrées les sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier : {path}'**
+  String backupFolder(String path);
+
+  /// Conseil sous le dossier des sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.'**
+  String get backupFolderHelp;
+
+  /// Bouton : sauvegarde immédiate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarder maintenant'**
+  String get backupNow;
+
+  /// Bouton : choisir un fichier de sauvegarde (.sqlite) à restaurer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer depuis un fichier…'**
+  String get backupRestoreFromFile;
+
+  /// Titre de la liste des sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegardes sur ce téléphone'**
+  String get backupListTitle;
+
+  /// Liste des sauvegardes vide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sauvegarde pour l\'instant.'**
+  String get backupNone;
+
+  /// Erreur de la sauvegarde automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'La dernière sauvegarde automatique a échoué : {message}'**
+  String backupLastError(String message);
+
+  /// Confirmation après « Sauvegarder maintenant ».
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde enregistrée.'**
+  String get backupDone;
+
+  /// Action : partager les fichiers d'une sauvegarde.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get backupShare;
+
+  /// Action : restaurer une sauvegarde.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer'**
+  String get backupRestore;
+
+  /// Taille d'un fichier de sauvegarde, en kilo-octets.
+  ///
+  /// In fr, this message translates to:
+  /// **'{size} Ko'**
+  String backupSize(String size);
+
+  /// Titre de la confirmation de restauration.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer cette sauvegarde ?'**
+  String get backupRestoreTitle;
+
+  /// Contenu d'une sauvegarde.
+  ///
+  /// In fr, this message translates to:
+  /// **'{drinks, plural, =0{aucune référence} =1{1 référence} other{{drinks} références}}, {bottles, plural, =0{aucune bouteille} =1{1 bouteille} other{{bottles} bouteilles}}'**
+  String backupContents(int drinks, int bottles);
+
+  /// Message de confirmation de restauration.
+  ///
+  /// In fr, this message translates to:
+  /// **'La cave actuelle sera remplacée par celle de la sauvegarde du {date} : {contents}.\n\nLa cave actuelle est d\'abord sauvegardée : vous pourrez revenir en arrière en restaurant cette sauvegarde de sécurité.'**
+  String backupRestoreMessage(String date, String contents);
+
+  /// Confirmation de restauration d'un fichier choisi.
+  ///
+  /// In fr, this message translates to:
+  /// **'La cave actuelle sera remplacée par celle de ce fichier : {contents}.\n\nLa cave actuelle est d\'abord sauvegardée : vous pourrez revenir en arrière en restaurant cette sauvegarde de sécurité.'**
+  String backupRestoreFileMessage(String contents);
+
+  /// Confirmation après une restauration.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cave restaurée.'**
+  String get backupRestored;
+
+  /// Fichier à restaurer illisible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce fichier n\'est pas une sauvegarde lisible : il est peut-être endommagé.'**
+  String get backupProblemUnreadable;
+
+  /// Fichier à restaurer qui n'est pas une base Ma Cave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce fichier n\'est pas une sauvegarde de Ma Cave. Pour un fichier CSV, utilisez « Importer un fichier ».'**
+  String get backupProblemNotACave;
+
+  /// Fichier à restaurer créé par une version plus récente.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette sauvegarde vient d\'une version plus récente de Ma Cave. Mettez l\'application à jour pour la restaurer.'**
+  String get backupProblemNewer;
 }
 
 class _AppLocalizationsDelegate

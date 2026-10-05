@@ -43,6 +43,10 @@ class Formats {
       DateFormat.yMMMMd(_locale)
           .format(DateTime.fromMillisecondsSinceEpoch(millis));
 
+  /// « 5 octobre 2026 14:30 ».
+  String dateTime(DateTime value) =>
+      DateFormat.yMMMMd(_locale).add_Hm().format(value);
+
   String abv(double value) =>
       l10n.abvValue(NumberFormat('0.#', _locale).format(value));
 

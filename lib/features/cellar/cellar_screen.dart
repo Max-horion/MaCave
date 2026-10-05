@@ -7,6 +7,7 @@ import '../../domain/drink_filter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../backup/backup_screen.dart';
 import '../drink/drink_detail_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../inventory/inventory_screen.dart';
@@ -108,9 +109,9 @@ class CellarScreen extends ConsumerWidget {
   }
 }
 
-enum _MenuAction { inventory, statistics, import, export }
+enum _MenuAction { inventory, statistics, import, export, backups }
 
-/// Menu « ⋮ » : inventaire, statistiques, import et export.
+/// Menu « ⋮ » : inventaire, statistiques, import, export et sauvegardes.
 class _MainMenu extends ConsumerWidget {
   const _MainMenu();
 
@@ -128,6 +129,7 @@ class _MainMenu extends ConsumerWidget {
         _MenuAction.statistics => open(const StatsScreen()),
         _MenuAction.import => startImport(context, ref),
         _MenuAction.export => startExport(context, ref),
+        _MenuAction.backups => open(const BackupScreen()),
       },
       itemBuilder: (_) => [
         PopupMenuItem(
@@ -157,6 +159,13 @@ class _MainMenu extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.ios_share),
             title: Text(l10n.menuExport),
+          ),
+        ),
+        PopupMenuItem(
+          value: _MenuAction.backups,
+          child: ListTile(
+            leading: const Icon(Icons.save_outlined),
+            title: Text(l10n.menuBackups),
           ),
         ),
       ],
