@@ -26,9 +26,11 @@ dart run build_runner build          # code généré de drift (~1 min, ~800 Mo 
 dart run drift_dev make-migrations   # après tout changement de schéma : photo + tests de migration
 flutter analyze                      # analyse statique : doit afficher « No issues found »
 flutter test                         # tests automatiques
-flutter run                          # lancer sur le téléphone (mode debug)
-flutter build apk --release          # APK à installer manuellement
+tool/installer.sh                    # compile et installe sur le téléphone EN GARDANT LES DONNÉES
+flutter build apk --release          # APK seul (installation : tool/installer.sh --no-build)
 ```
+
+> ⚠️ **Ne jamais utiliser `flutter install`** sur le téléphone du porteur : il désinstalle l'appli avant de la réinstaller, ce qui **efface sa base**. Utiliser `tool/installer.sh` (`adb install -r`, mise à jour sur place, avec vérification). `flutter run` est acceptable (il ne désinstalle qu'en cas de conflit de signature), mais l'éviter quand le téléphone contient des données réelles. La sauvegarde Android est désactivée sur ce téléphone : rien ne permet de récupérer une base effacée avant le lot 4.
 
 ## Choix techniques (détails dans docs/architecture.md)
 
@@ -97,3 +99,4 @@ Pièges rencontrés :
 - 2026-10-05 — Lot 2 : recherche FTS5 (migration v1 → v2 testée), liste filtrée/triée, fiche, formulaire, −1 avec annulation ; 69 tests verts. Le formulaire est accepté sans appellation/région (fiche marquée « à compléter »).
 - 2026-10-05 — Retour du porteur : la recherche « vin », « rouge » ne trouvait rien (type et caractéristiques non indexés). Corrigé en schéma v3 (migration étape par étape), pluriels acceptés ; 76 tests verts.
 - 2026-10-05 — Retour du porteur : pas de recherche par année. Millésimes des lots indexés (schéma v4, vue `drink_search_rows`) ; 81 tests verts.
+- 2026-10-05 — **Incident : les données saisies par le porteur (2 vins) ont été effacées.** Cause : `flutter install` désinstalle l'appli avant chaque installation. Toutes les installations précédentes repartaient donc d'une base vide : **les migrations n'ont jamais été testées sur le téléphone avec des données** (contrairement à ce qu'indiquaient les entrées ci-dessus), seulement par les tests automatiques. Correctif : `tool/installer.sh` (`adb install -r` + contrôle de `firstInstallTime`). Données non récupérables (sauvegarde Android désactivée).
