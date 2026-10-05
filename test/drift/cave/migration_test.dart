@@ -36,7 +36,7 @@ void main() {
 
   // Vérifie qu'une base v1 réelle (avec des données) garde tout après la
   // migration et que la recherche plein texte trouve les références existantes.
-  test('v1 → v2 : données conservées et références trouvables', () async {
+  test('v1 → dernière version : données conservées et références trouvables', () async {
     final schema = await verifier.schemaAt(1);
     final raw = schema.rawDatabase;
     raw.execute(
@@ -70,5 +70,13 @@ void main() {
         )
         .get();
     expect(found.map((r) => r.read<String>('drink_id')), ['d']);
+
+    // v3 : le type est indexé aussi.
+    final byType = await db
+        .customSelect(
+          "SELECT drink_id FROM drinks_fts WHERE drinks_fts MATCH 'vin*'",
+        )
+        .get();
+    expect(byType.map((r) => r.read<String>('drink_id')), ['d']);
   });
 }

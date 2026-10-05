@@ -3,6 +3,7 @@ import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
 import 'package:cave/domain/drink_filter.dart';
 import 'package:cave/domain/enums.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers.dart';
@@ -121,6 +122,47 @@ void main() {
 
     test('cherche aussi dans la région', () async {
       expect(await names(const DrinkFilter(query: 'alsace')), ['Blanc Fictif']);
+    });
+
+    test('cherche dans le type et les caractéristiques', () async {
+      expect(await names(const DrinkFilter(query: 'vin rouge')), [
+        'Château Exemple',
+        'Échezeaux Test',
+      ]);
+      expect(await names(const DrinkFilter(query: 'biere')), [
+        'Bière Imaginaire',
+      ]);
+    });
+
+    test('accepte les pluriels', () async {
+      expect(await names(const DrinkFilter(query: 'vins rouges')), [
+        'Château Exemple',
+        'Échezeaux Test',
+      ]);
+    });
+
+    test('suit les changements de caractéristiques', () async {
+      final id =
+          (await queries
+                  .watchDrinkList(const DrinkFilter(query: 'alsace'))
+                  .first)
+              .single
+              .drink
+              .id;
+      expect(await names(const DrinkFilter(query: 'rouge alsace')), isEmpty);
+      await repo.setDrinkCharacteristics(id, {characteristic('Rouge')});
+      expect(await names(const DrinkFilter(query: 'rouge alsace')), [
+        'Blanc Fictif',
+      ]);
+    });
+
+    test('suit le renommage d\'une caractéristique', () async {
+      await (db.update(db.characteristics)
+            ..where((c) => c.id.equals(characteristic('Sec'))))
+          .write(const CharacteristicsCompanion(name: Value('Brut')));
+      expect(await names(const DrinkFilter(query: 'brut')), [
+        'Château Exemple',
+      ]);
     });
 
     test('caractères spéciaux sans erreur', () async {
@@ -248,6 +290,13 @@ void main() {
   group('ftsQuery', () {
     test('mots en préfixes entre guillemets', () {
       expect(ftsQuery('Saint-Émilion 2015'), '"Saint"* "Émilion"* "2015"*');
+    });
+
+    test('pluriels en s ou x ramenés au singulier', () {
+      expect(ftsQuery('vins rouges'), '"vin"* "rouge"*');
+      expect(ftsQuery('châteaux'), '"château"*');
+      // Mots courts laissés tels quels.
+      expect(ftsQuery('as gris'), '"as"* "gri"*');
     });
 
     test('rien à chercher', () {

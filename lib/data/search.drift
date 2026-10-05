@@ -2,9 +2,15 @@
 --
 -- FTS5 découpe les textes en mots ; « remove_diacritics 2 » ignore les accents
 -- et la casse : « saint emilion » trouve « Saint-Émilion ».
+--
+-- En plus des champs de la fiche, l'index contient le nom du type (« Vin ») et
+-- des caractéristiques (« Rouge Sec ») : « vin rouge » trouve les vins rouges.
+-- (Schéma v3 ; en v2, seuls les champs de la fiche étaient indexés.)
+--
 -- L'index est tenu à jour par les déclencheurs ci-dessous : aucun code Dart
--- n'a besoin d'y écrire. Les références supprimées (deleted_at) y restent et
--- sont écartées au moment de la recherche.
+-- n'a besoin d'y écrire. Chaque déclencheur efface puis réécrit la ligne de la
+-- référence concernée, avec la même requête. Les références supprimées
+-- (deleted_at) y restent et sont écartées au moment de la recherche.
 
 import 'tables.dart';
 
@@ -16,20 +22,83 @@ CREATE VIRTUAL TABLE drinks_fts USING fts5(
   region,
   country,
   grapes,
+  type_name,
+  characteristics,
   tokenize = 'unicode61 remove_diacritics 2'
 );
 
+-- Une référence créée ou modifiée.
 CREATE TRIGGER drinks_fts_insert AFTER INSERT ON drinks BEGIN
-  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes)
-  VALUES (new.id, new.name, new.producer, new.appellation, new.region, new.country, new.grapes);
+  DELETE FROM drinks_fts WHERE drink_id = new.id;
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics)
+  SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes,
+    (SELECT t.name FROM drink_types t WHERE t.id = d.type_id AND t.deleted_at IS NULL),
+    (SELECT group_concat(c.name, ' ') FROM drink_characteristics dc
+       JOIN characteristics c ON c.id = dc.characteristic_id
+       WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL)
+  FROM drinks d WHERE d.id = new.id;
 END;
 
 CREATE TRIGGER drinks_fts_update AFTER UPDATE ON drinks BEGIN
-  DELETE FROM drinks_fts WHERE drink_id = old.id;
-  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes)
-  VALUES (new.id, new.name, new.producer, new.appellation, new.region, new.country, new.grapes);
+  DELETE FROM drinks_fts WHERE drink_id = new.id;
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics)
+  SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes,
+    (SELECT t.name FROM drink_types t WHERE t.id = d.type_id AND t.deleted_at IS NULL),
+    (SELECT group_concat(c.name, ' ') FROM drink_characteristics dc
+       JOIN characteristics c ON c.id = dc.characteristic_id
+       WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL)
+  FROM drinks d WHERE d.id = new.id;
 END;
 
 CREATE TRIGGER drinks_fts_delete AFTER DELETE ON drinks BEGIN
   DELETE FROM drinks_fts WHERE drink_id = old.id;
+END;
+
+-- Une caractéristique ajoutée, retirée (deleted_at) ou réactivée sur une référence.
+CREATE TRIGGER drinks_fts_link_insert AFTER INSERT ON drink_characteristics BEGIN
+  DELETE FROM drinks_fts WHERE drink_id = new.drink_id;
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics)
+  SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes,
+    (SELECT t.name FROM drink_types t WHERE t.id = d.type_id AND t.deleted_at IS NULL),
+    (SELECT group_concat(c.name, ' ') FROM drink_characteristics dc
+       JOIN characteristics c ON c.id = dc.characteristic_id
+       WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL)
+  FROM drinks d WHERE d.id = new.drink_id;
+END;
+
+CREATE TRIGGER drinks_fts_link_update AFTER UPDATE ON drink_characteristics BEGIN
+  DELETE FROM drinks_fts WHERE drink_id = new.drink_id;
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics)
+  SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes,
+    (SELECT t.name FROM drink_types t WHERE t.id = d.type_id AND t.deleted_at IS NULL),
+    (SELECT group_concat(c.name, ' ') FROM drink_characteristics dc
+       JOIN characteristics c ON c.id = dc.characteristic_id
+       WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL)
+  FROM drinks d WHERE d.id = new.drink_id;
+END;
+
+-- Un type renommé ou supprimé : toutes ses références sont réindexées.
+CREATE TRIGGER drinks_fts_type_update AFTER UPDATE ON drink_types BEGIN
+  DELETE FROM drinks_fts WHERE drink_id IN (SELECT id FROM drinks WHERE type_id = new.id);
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics)
+  SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes,
+    (SELECT t.name FROM drink_types t WHERE t.id = d.type_id AND t.deleted_at IS NULL),
+    (SELECT group_concat(c.name, ' ') FROM drink_characteristics dc
+       JOIN characteristics c ON c.id = dc.characteristic_id
+       WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL)
+  FROM drinks d WHERE d.type_id = new.id;
+END;
+
+-- Une caractéristique renommée ou supprimée : ses références sont réindexées.
+CREATE TRIGGER drinks_fts_characteristic_update AFTER UPDATE ON characteristics BEGIN
+  DELETE FROM drinks_fts WHERE drink_id IN
+    (SELECT drink_id FROM drink_characteristics WHERE characteristic_id = new.id);
+  INSERT INTO drinks_fts (drink_id, name, producer, appellation, region, country, grapes, type_name, characteristics)
+  SELECT d.id, d.name, d.producer, d.appellation, d.region, d.country, d.grapes,
+    (SELECT t.name FROM drink_types t WHERE t.id = d.type_id AND t.deleted_at IS NULL),
+    (SELECT group_concat(c.name, ' ') FROM drink_characteristics dc
+       JOIN characteristics c ON c.id = dc.characteristic_id
+       WHERE dc.drink_id = d.id AND dc.deleted_at IS NULL AND c.deleted_at IS NULL)
+  FROM drinks d
+  WHERE d.id IN (SELECT drink_id FROM drink_characteristics WHERE characteristic_id = new.id);
 END;

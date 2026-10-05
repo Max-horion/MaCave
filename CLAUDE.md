@@ -64,7 +64,8 @@ Règles du dépôt : chaque mouvement recalcule le stock en cache dans la même 
 
 ## Où trouver quoi (lot 2)
 
-- `lib/data/search.drift` — index plein texte FTS5 + déclencheurs (schéma v2). `CaveDatabase.rebuildSearchIndex()` le reconstruit.
+- `lib/data/search.drift` — index plein texte FTS5 + déclencheurs (schéma v3 : champs de la fiche + nom du type + caractéristiques). `CaveDatabase.rebuildSearchIndex()` le reconstruit avec la même requête : **les deux doivent rester identiques**.
+- Migrations : `onUpgrade: stepByStep(...)` dans `database.dart`, aidé par `database.steps.dart` (généré par `make-migrations`). Une étape par version.
 - `lib/data/cave_queries.dart` — lectures « en direct » : liste filtrée (`watchDrinkList`), classification, fiche, lots, régions.
 - `lib/domain/drink_filter.dart` (filtres, tris, `ftsQuery`), `lib/domain/text.dart` (`fold` : tri sans accents).
 - `lib/features/cellar/` (liste, filtres), `lib/features/drink/` (fiche, formulaire), `lib/features/stock_actions.dart` (−1, ajout, retrait avec motif, correction, nouveau lot, bandeau Annuler).
@@ -74,6 +75,7 @@ Règles du dépôt : chaque mouvement recalcule le stock en cache dans la même 
 Pièges rencontrés :
 - `SnackBar` avec action : préciser `persist: false`, sinon il ne disparaît jamais (Flutter ≥ 3.3x).
 - Formulaires : `SingleChildScrollView` + `Column`, pas `ListView` — une ListView ne construit pas les champs hors écran et `Form.validate()` les ignore.
+- Recherche : « vin rouge » doit trouver les vins rouges → le type et les caractéristiques sont dans l'index ; les pluriels en s/x sont ramenés au singulier (`ftsQuery`).
 - Tests d'interface avec drift : écrire en base dans `tester.runAsync`, attendre avec le helper `settle` ; un test en échec peut bloquer le lanceur jusqu'au délai (`--timeout 60s`).
 
 ## Conventions
@@ -93,3 +95,4 @@ Pièges rencontrés :
 - 2026-10-05 — Lot 0 terminé : APK release (44 Mo) compilé en ~2 min et installé sur le téléphone, écran d'accueil vérifié. Si `adb devices` est vide : le téléphone est repassé en mode « Transfert de photos » ou le débogage USB s'est désactivé (OxygenOS) → « Transfert de fichiers » + réactiver le débogage USB.
 - 2026-10-05 — Lot 1 terminé : schéma v1 (drift), classification initiale, dépôt de la cave, 46 tests verts ; l'accueil affiche le nombre de bouteilles lu dans la base. APK 53 Mo.
 - 2026-10-05 — Lot 2 : recherche FTS5 (migration v1 → v2 testée), liste filtrée/triée, fiche, formulaire, −1 avec annulation ; 69 tests verts. Le formulaire est accepté sans appellation/région (fiche marquée « à compléter »).
+- 2026-10-05 — Retour du porteur : la recherche « vin », « rouge » ne trouvait rien (type et caractéristiques non indexés). Corrigé en schéma v3 (migration étape par étape), pluriels acceptés ; 76 tests verts.

@@ -87,10 +87,21 @@ class DrinkFilter {
 /// références contenant un mot commençant par « ch » ET un mot commençant par
 /// « fig ». Les guillemets neutralisent les caractères spéciaux de FTS5
 /// (`-`, `*`, `:`…) qu'un utilisateur pourrait taper.
+///
+/// Pluriels : un « s » ou un « x » final est retiré des mots de plus de trois
+/// lettres (« vins rouges » → « vin* rouge* »). Comme la recherche se fait par
+/// début de mot, « gris » → « gri* » trouve toujours « gris ».
 String? ftsQuery(String input) {
   final words = input
       .split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))
-      .where((w) => w.isNotEmpty);
+      .where((w) => w.isNotEmpty)
+      .map(_singular);
   if (words.isEmpty) return null;
   return words.map((w) => '"$w"*').join(' ');
+}
+
+String _singular(String word) {
+  if (word.length <= 3) return word;
+  final last = word[word.length - 1].toLowerCase();
+  return last == 's' || last == 'x' ? word.substring(0, word.length - 1) : word;
 }
