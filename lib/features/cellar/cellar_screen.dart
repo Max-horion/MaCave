@@ -26,20 +26,7 @@ class CellarScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l10n.appTitle),
-            if (totals != null)
-              Text(
-                l10n.cellarSummary(
-                  l10n.bottleCount(totals.bottles),
-                  l10n.drinkCount(totals.drinksInStock),
-                ),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-          ],
-        ),
+        title: Text(l10n.appTitle),
         actions: [
           _SortMenu(current: filter.sort),
           IconButton(
@@ -48,15 +35,33 @@ class CellarScreen extends ConsumerWidget {
             icon: Badge(
               isLabelVisible: filter.activeCount > 0,
               label: Text('${filter.activeCount}'),
-              child: const Icon(Icons.filter_list),
+              child: const Icon(Icons.tune),
             ),
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(72),
+          preferredSize: const Size.fromHeight(100),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: _SearchField(initial: filter.query),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SearchField(initial: filter.query),
+                const SizedBox(height: 6),
+                // Résumé sur toute la largeur : jamais coupé par les boutons.
+                Text(
+                  totals == null
+                      ? ''
+                      : l10n.cellarSummary(
+                          l10n.bottleCount(totals.bottles),
+                          l10n.drinkCount(totals.drinksInStock),
+                        ),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -163,7 +168,7 @@ class _SortMenu extends ConsumerWidget {
     };
     return PopupMenuButton<DrinkSort>(
       tooltip: l10n.sortTooltip,
-      icon: const Icon(Icons.sort),
+      icon: const Icon(Icons.swap_vert),
       initialValue: current,
       onSelected: (sort) => ref
           .read(drinkFilterProvider.notifier)
