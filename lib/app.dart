@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'data/providers.dart';
 
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
@@ -24,13 +27,14 @@ class CaveApp extends StatelessWidget {
   }
 }
 
-/// Écran d'accueil provisoire (lot 0), remplacé par la liste de la cave au lot 2.
-class HomeScreen extends StatelessWidget {
+/// Écran d'accueil provisoire, remplacé par la liste de la cave au lot 2.
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final bottles = ref.watch(caveTotalsProvider).value?.bottles ?? 0;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -59,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              Text(l10n.bottleCount(0), style: textTheme.labelLarge),
+              Text(l10n.bottleCount(bottles), style: textTheme.labelLarge),
             ],
           ),
         ),

@@ -1,0 +1,13 @@
+# Configuration de la génération de code drift.
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # Photos successives du schéma, pour générer et tester les migrations
+          # (`dart run drift_dev make-migrations` après chaque changement).
+          databases:
+            cave: lib/data/database.dart
+          schema_dir: drift_schemas/
+          test_dir: test/drift/
+          store_date_time_values_as_text: false

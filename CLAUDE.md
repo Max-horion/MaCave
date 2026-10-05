@@ -22,7 +22,8 @@ Débutant (un peu de Python, découvre Flutter/Dart). Communiquer en français, 
 ```bash
 flutter pub get                      # dépendances
 flutter gen-l10n                     # régénère les traductions (aussi fait automatiquement au build)
-dart run build_runner build          # code généré de drift (à partir du lot 1)
+dart run build_runner build          # code généré de drift (~1 min, ~800 Mo de RAM)
+dart run drift_dev make-migrations   # après tout changement de schéma : photo + tests de migration
 flutter analyze                      # analyse statique : doit afficher « No issues found »
 flutter test                         # tests automatiques
 flutter run                          # lancer sur le téléphone (mode debug)
@@ -43,14 +44,23 @@ flutter build apk --release          # APK à installer manuellement
 | Lot | Contenu | État |
 |---|---|---|
 | 0 | Squelette : projet, traductions FR, thèmes clair/sombre, premier test, CLAUDE.md, architecture, Git/GitHub, installation sur le téléphone | **terminé** |
-| 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | à faire |
-| 2 | Liste, recherche plein texte, filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | à faire |
+| 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
+| 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | à faire |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV | à faire |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge | à faire |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
+
+## Où trouver quoi (lot 1)
+
+- `lib/domain/` — logique pure : `enums.dart` (valeurs stockées en base, ne jamais renommer), `stock.dart` (calcul du stock), `field_rules.dart` (champs par type, marqueur « à compléter »), `initial_classification.dart` (CDC §6.1).
+- `lib/data/` — `tables.dart` (schéma), `database.dart` (création, classification initiale à identifiants fixes UUID v5, `cave_id`), `cave_repository.dart` (**seule porte d'entrée** vers les données : références, lots, mouvements, stock), `providers.dart` (Riverpod), `write_context.dart` (appareil, horloge, UUID v7).
+- `drift_schemas/` — photos du schéma par version (générées, à commiter).
+- `test/helpers.dart` — base en mémoire et `TestContext` (horloge et identifiants prévisibles).
+
+Règles du dépôt : chaque mouvement recalcule le stock en cache dans la même transaction ; on ne retire jamais plus que le stock ; les suppressions sont logiques ; le cache `stock` ne modifie pas `updatedAt`.
 
 ## Conventions
 
@@ -67,3 +77,4 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 - 2026-10-05 — Lot 0 : projet créé, traductions et thèmes en place, 4 tests verts, architecture validée par le porteur ; dépôt GitHub privé `MaCave`.
 - 2026-10-05 — Lot 0 terminé : APK release (44 Mo) compilé en ~2 min et installé sur le téléphone, écran d'accueil vérifié. Si `adb devices` est vide : le téléphone est repassé en mode « Transfert de photos » ou le débogage USB s'est désactivé (OxygenOS) → « Transfert de fichiers » + réactiver le débogage USB.
+- 2026-10-05 — Lot 1 terminé : schéma v1 (drift), classification initiale, dépôt de la cave, 46 tests verts ; l'accueil affiche le nombre de bouteilles lu dans la base. APK 53 Mo.
