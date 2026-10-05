@@ -1,0 +1,8 @@
+# Configuration de la génération des traductions (flutter gen-l10n).
+# Le français est la langue de référence : toute nouvelle chaîne s'ajoute d'abord
+# dans app_fr.arb ; une autre langue = un fichier app_xx.arb de plus.
+arb-dir: lib/l10n
+template-arb-file: app_fr.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false

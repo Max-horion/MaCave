@@ -1,0 +1,29 @@
+{
+  "@@locale": "fr",
+
+  "appTitle": "Ma Cave",
+  "@appTitle": {
+    "description": "Nom de l'application, affiché dans la barre de titre."
+  },
+
+  "homeEmptyTitle": "Votre cave est vide",
+  "@homeEmptyTitle": {
+    "description": "Titre affiché sur l'écran d'accueil quand aucune bouteille n'est enregistrée."
+  },
+
+  "homeEmptyMessage": "Les bouteilles que vous ajouterez apparaîtront ici.",
+  "@homeEmptyMessage": {
+    "description": "Message d'aide sous le titre de la cave vide."
+  },
+
+  "bottleCount": "{count, plural, =0{Aucune bouteille} =1{1 bouteille} other{{count} bouteilles}}",
+  "@bottleCount": {
+    "description": "Nombre de bouteilles, avec accord du pluriel.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  }
+}
