@@ -1255,5 +1255,176 @@
   "syncBackupsNote": "Les sauvegardes sont aussi copiées dans le dossier « Sauvegardes » du serveur.",
   "@syncBackupsNote": {
     "description": "Rappel sur l'écran de synchronisation."
+  },
+  "menuStorage": "Espace disque",
+  "@menuStorage": {
+    "description": "Menu principal : ouvrir l'écran Espace disque (purges)."
+  },
+  "storageTitle": "Espace disque",
+  "@storageTitle": {
+    "description": "Titre de l'écran Espace disque."
+  },
+  "storageSize": "Taille de la base : {size}",
+  "@storageSize": {
+    "description": "Taille du fichier de la cave (déjà formatée, ex. « 312 Ko »).",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "storageKilobytes": "{count} Ko",
+  "@storageKilobytes": {
+    "description": "Taille en kilo-octets.",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "storageMegabytes": "{count} Mo",
+  "@storageMegabytes": {
+    "description": "Taille en mégaoctets.",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "storageHistory": "{count, plural, =0{Historique : aucun mouvement} =1{Historique : 1 mouvement} other{Historique : {count} mouvements}}",
+  "@storageHistory": {
+    "description": "Nombre de mouvements dans l'historique.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageHistorySince": "Depuis le {date}",
+  "@storageHistorySince": {
+    "description": "Date du plus ancien mouvement.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "storagePurgedBefore": "Historique déjà purgé avant le {date}.",
+  "@storagePurgedBefore": {
+    "description": "Date de la dernière purge manuelle.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "storagePurgeTitle": "Purge de l'historique",
+  "@storagePurgeTitle": {
+    "description": "Titre de la section purge manuelle."
+  },
+  "storagePurgeHelp": "Supprime les mouvements anciens pour alléger la base. Les stocks ne changent pas : le stock de chaque lot à la date choisie est conservé. Les statistiques de consommation de cette période sont perdues.",
+  "@storagePurgeHelp": {
+    "description": "Explication de la purge manuelle."
+  },
+  "storagePurgeButton": "Purger l'historique…",
+  "@storagePurgeButton": {
+    "description": "Bouton : choisir la date de purge."
+  },
+  "storagePurgeNothingOld": "Aucun mouvement de plus d'un mois : rien à purger.",
+  "@storagePurgeNothingOld": {
+    "description": "La purge n'est pas possible : pas de mouvement assez ancien."
+  },
+  "storagePurgePickerHelp": "Supprimer l'historique avant le",
+  "@storagePurgePickerHelp": {
+    "description": "Titre du calendrier de choix de la date de purge."
+  },
+  "storagePurgeNone": "Aucun mouvement avant cette date.",
+  "@storagePurgeNone": {
+    "description": "Message : rien à purger avant la date choisie."
+  },
+  "storagePurgeConfirmTitle": "Purger l'historique ?",
+  "@storagePurgeConfirmTitle": {
+    "description": "Titre de la confirmation de purge."
+  },
+  "storagePurgeConfirmMessage": "{count, plural, =1{1 mouvement antérieur au {date} sera supprimé} other{{count} mouvements antérieurs au {date} seront supprimés}} définitivement, sur tous les appareils synchronisés. Les stocks ne changent pas. Une sauvegarde est faite avant.",
+  "@storagePurgeConfirmMessage": {
+    "description": "Confirmation de la purge manuelle.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "storagePurgeConfirm": "Purger",
+  "@storagePurgeConfirm": {
+    "description": "Bouton : confirmer la purge."
+  },
+  "storagePurgeDone": "{count, plural, =0{Aucun mouvement supprimé} =1{1 mouvement supprimé} other{{count} mouvements supprimés}}",
+  "@storagePurgeDone": {
+    "description": "Message : résultat de la purge manuelle.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageAutoTitle": "Purge automatique",
+  "@storageAutoTitle": {
+    "description": "Interrupteur : purge automatique des lots épuisés."
+  },
+  "storageAutoHelp": "Supprime les lots épuisés sans mouvement depuis le délai choisi, avec leur historique, et la référence si elle n'a plus aucun lot. Les lots en stock ne sont jamais supprimés.",
+  "@storageAutoHelp": {
+    "description": "Explication de la purge automatique."
+  },
+  "storageAutoDelay": "Délai sans mouvement",
+  "@storageAutoDelay": {
+    "description": "Choix du délai de la purge automatique."
+  },
+  "storageMonths": "{count, plural, =1{1 mois} other{{count} mois}}",
+  "@storageMonths": {
+    "description": "Durée en mois.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageYears": "{count, plural, =1{1 an} other{{count} ans}}",
+  "@storageYears": {
+    "description": "Durée en années.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageAutoConfirmTitle": "Purge automatique",
+  "@storageAutoConfirmTitle": {
+    "description": "Titre de la confirmation de la purge automatique."
+  },
+  "storageAutoConfirmMessage": "{count, plural, =1{1 lot épuisé sera supprimé} other{{count} lots épuisés seront supprimés}} dès maintenant, avec leur historique. Une sauvegarde est faite avant.",
+  "@storageAutoConfirmMessage": {
+    "description": "Confirmation : lots supprimés dès l'activation de la purge automatique.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageAutoConfirm": "Supprimer",
+  "@storageAutoConfirm": {
+    "description": "Bouton : confirmer la purge automatique immédiate."
+  },
+  "storageAutoDone": "{count, plural, =0{Aucun lot supprimé} =1{1 lot supprimé} other{{count} lots supprimés}}",
+  "@storageAutoDone": {
+    "description": "Message : résultat de la purge automatique.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

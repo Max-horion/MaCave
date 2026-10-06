@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../data/cave_repository.dart';
 import '../data/database.dart';
+import '../data/history_purge.dart';
 import '../data/write_context.dart';
 
 // Moteur de fusion de la synchronisation (docs/architecture.md §4, étape 3) :
@@ -18,6 +19,8 @@ import '../data/write_context.dart';
 //   une annulation l'emporte toujours, quelles que soient les horloges ;
 // - lots en double (même référence, millésime et volume créés sur deux
 //   appareils) : regroupés, les mouvements rattachés au lot conservé ;
+// - purge de l'historique (history_purge.dart) : la date la plus récente des
+//   deux bases s'applique ; les mouvements antérieurs ne sont jamais repris ;
 // - `meta` n'est jamais fusionnée ; le cache `stock` et l'index de recherche
 //   sont recalculés.
 //
@@ -93,10 +96,19 @@ Future<MergeResult> mergeCaveFile(
         throw OtherCaveException(localId: localId, otherId: otherId ?? '');
       }
 
+      // Purge de l'historique : la plus récente des deux bases s'applique.
+      final purge = HistoryPurge(db, ctx);
+      final localPurge = await purge.purgedBefore();
+      final otherPurge = await purge.purgedBefore(schema: 'source');
+      final purgedBefore = [
+        ?localPurge,
+        ?otherPurge,
+      ].fold<int?>(null, (a, b) => a == null || b > a ? b : a);
+
       // Avant la fusion : la base locale a-t-elle quelque chose de plus ?
       var localAhead = false;
       for (final table in tables) {
-        if (await _localAhead(db, table)) {
+        if (await _localAhead(db, table, purgedBefore: purgedBefore)) {
           localAhead = true;
           break;
         }
@@ -104,7 +116,26 @@ Future<MergeResult> mergeCaveFile(
 
       final applied = <String, int>{};
       for (final table in tables) {
-        applied[table.actualTableName] = await _mergeTable(db, table);
+        applied[table.actualTableName] = await _mergeTable(
+          db,
+          table,
+          purgedBefore: purgedBefore,
+        );
+      }
+
+      if (purgedBefore != null) {
+        // Purge faite par l'autre appareil : appliquée ici aussi. La date est
+        // réécrite si la fusion des réglages l'a fait reculer.
+        if (localPurge == null || purgedBefore > localPurge) {
+          await purge.applyPurge(purgedBefore);
+        }
+        await purge.recordPurgeDate(purgedBefore);
+        // Reports de stock ou date réécrite : peut-être absents du fichier.
+        if (!localAhead) {
+          localAhead =
+              await _localAhead(db, db.movements, purgedBefore: purgedBefore) ||
+              await _localAhead(db, db.settings);
+        }
       }
 
       final regrouped = await _regroupDuplicateLots(db, ctx);
@@ -146,7 +177,11 @@ String _wins(TableInfo<Table, dynamic> table, String winner, String loser) {
 
 /// Copie dans la base locale les lignes du fichier inconnues ou gagnantes.
 /// Retourne le nombre de lignes ajoutées ou modifiées.
-Future<int> _mergeTable(CaveDatabase db, TableInfo<Table, dynamic> table) {
+Future<int> _mergeTable(
+  CaveDatabase db,
+  TableInfo<Table, dynamic> table, {
+  int? purgedBefore,
+}) {
   final name = table.actualTableName;
   final key = _keyOf(table);
   final columns = table.$columns.map((c) => c.name).toList();
@@ -156,10 +191,14 @@ Future<int> _mergeTable(CaveDatabase db, TableInfo<Table, dynamic> table) {
       .where((c) => c != key && !(name == 'lots' && c == 'stock'))
       .map((c) => '"$c" = excluded."$c"')
       .join(', ');
-  // « WHERE true » : exigé par SQLite pour un INSERT … SELECT … ON CONFLICT.
+  // Mouvements purgés : jamais repris. « WHERE true » : exigé par SQLite
+  // pour un INSERT … SELECT … ON CONFLICT.
+  final filter = name == 'movements' && purgedBefore != null
+      ? 'occurred_at >= $purgedBefore'
+      : 'true';
   return db.customUpdate(
     'INSERT INTO main."$name" AS t ($list) '
-    'SELECT $list FROM source."$name" WHERE true '
+    'SELECT $list FROM source."$name" WHERE $filter '
     'ON CONFLICT("$key") DO UPDATE SET $updates '
     'WHERE ${_wins(table, 'excluded', 't')}',
   );
@@ -169,15 +208,22 @@ Future<int> _mergeTable(CaveDatabase db, TableInfo<Table, dynamic> table) {
 /// qui y gagnerait ?
 Future<bool> _localAhead(
   CaveDatabase db,
-  TableInfo<Table, dynamic> table,
-) async {
+  TableInfo<Table, dynamic> table, {
+  int? purgedBefore,
+}) async {
   final name = table.actualTableName;
   final key = _keyOf(table);
+  // Mouvements antérieurs à la purge : voués à disparaître, pas à être
+  // envoyés.
+  final purged = name == 'movements' && purgedBefore != null
+      ? 'l.occurred_at >= $purgedBefore AND '
+      : '';
   final row = await db
       .customSelect(
         'SELECT EXISTS (SELECT 1 FROM main."$name" l '
         'LEFT JOIN source."$name" r ON r."$key" = l."$key" '
-        'WHERE r."$key" IS NULL OR ${_wins(table, 'l', 'r')}) AS ahead',
+        'WHERE $purged(r."$key" IS NULL OR ${_wins(table, 'l', 'r')})) '
+        'AS ahead',
       )
       .getSingle();
   return row.read<bool>('ahead');

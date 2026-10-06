@@ -1533,6 +1533,168 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Les sauvegardes sont aussi copiées dans le dossier « Sauvegardes » du serveur.'**
   String get syncBackupsNote;
+
+  /// Menu principal : ouvrir l'écran Espace disque (purges).
+  ///
+  /// In fr, this message translates to:
+  /// **'Espace disque'**
+  String get menuStorage;
+
+  /// Titre de l'écran Espace disque.
+  ///
+  /// In fr, this message translates to:
+  /// **'Espace disque'**
+  String get storageTitle;
+
+  /// Taille du fichier de la cave (déjà formatée, ex. « 312 Ko »).
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille de la base : {size}'**
+  String storageSize(String size);
+
+  /// Taille en kilo-octets.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} Ko'**
+  String storageKilobytes(String count);
+
+  /// Taille en mégaoctets.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} Mo'**
+  String storageMegabytes(String count);
+
+  /// Nombre de mouvements dans l'historique.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Historique : aucun mouvement} =1{Historique : 1 mouvement} other{Historique : {count} mouvements}}'**
+  String storageHistory(int count);
+
+  /// Date du plus ancien mouvement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis le {date}'**
+  String storageHistorySince(String date);
+
+  /// Date de la dernière purge manuelle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique déjà purgé avant le {date}.'**
+  String storagePurgedBefore(String date);
+
+  /// Titre de la section purge manuelle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Purge de l\'historique'**
+  String get storagePurgeTitle;
+
+  /// Explication de la purge manuelle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprime les mouvements anciens pour alléger la base. Les stocks ne changent pas : le stock de chaque lot à la date choisie est conservé. Les statistiques de consommation de cette période sont perdues.'**
+  String get storagePurgeHelp;
+
+  /// Bouton : choisir la date de purge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Purger l\'historique…'**
+  String get storagePurgeButton;
+
+  /// La purge n'est pas possible : pas de mouvement assez ancien.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun mouvement de plus d\'un mois : rien à purger.'**
+  String get storagePurgeNothingOld;
+
+  /// Titre du calendrier de choix de la date de purge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer l\'historique avant le'**
+  String get storagePurgePickerHelp;
+
+  /// Message : rien à purger avant la date choisie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun mouvement avant cette date.'**
+  String get storagePurgeNone;
+
+  /// Titre de la confirmation de purge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Purger l\'historique ?'**
+  String get storagePurgeConfirmTitle;
+
+  /// Confirmation de la purge manuelle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 mouvement antérieur au {date} sera supprimé} other{{count} mouvements antérieurs au {date} seront supprimés}} définitivement, sur tous les appareils synchronisés. Les stocks ne changent pas. Une sauvegarde est faite avant.'**
+  String storagePurgeConfirmMessage(int count, String date);
+
+  /// Bouton : confirmer la purge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Purger'**
+  String get storagePurgeConfirm;
+
+  /// Message : résultat de la purge manuelle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun mouvement supprimé} =1{1 mouvement supprimé} other{{count} mouvements supprimés}}'**
+  String storagePurgeDone(int count);
+
+  /// Interrupteur : purge automatique des lots épuisés.
+  ///
+  /// In fr, this message translates to:
+  /// **'Purge automatique'**
+  String get storageAutoTitle;
+
+  /// Explication de la purge automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprime les lots épuisés sans mouvement depuis le délai choisi, avec leur historique, et la référence si elle n\'a plus aucun lot. Les lots en stock ne sont jamais supprimés.'**
+  String get storageAutoHelp;
+
+  /// Choix du délai de la purge automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Délai sans mouvement'**
+  String get storageAutoDelay;
+
+  /// Durée en mois.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 mois} other{{count} mois}}'**
+  String storageMonths(int count);
+
+  /// Durée en années.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 an} other{{count} ans}}'**
+  String storageYears(int count);
+
+  /// Titre de la confirmation de la purge automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Purge automatique'**
+  String get storageAutoConfirmTitle;
+
+  /// Confirmation : lots supprimés dès l'activation de la purge automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 lot épuisé sera supprimé} other{{count} lots épuisés seront supprimés}} dès maintenant, avec leur historique. Une sauvegarde est faite avant.'**
+  String storageAutoConfirmMessage(int count);
+
+  /// Bouton : confirmer la purge automatique immédiate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get storageAutoConfirm;
+
+  /// Message : résultat de la purge automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun lot supprimé} =1{1 lot supprimé} other{{count} lots supprimés}}'**
+  String storageAutoDone(int count);
 }
 
 class _AppLocalizationsDelegate

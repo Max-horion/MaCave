@@ -122,12 +122,31 @@ class _AutomaticTasksState extends ConsumerState<AutomaticTasks>
   }
 
   /// Synchronisation d'abord : la sauvegarde du jour contient alors les
-  /// modifications des autres appareils.
+  /// modifications des autres appareils. Puis purge automatique, après la
+  /// sauvegarde.
   Future<void> _opened() async {
     if (!mounted) return;
     await ref.read(syncControllerProvider.notifier).start();
     if (!mounted) return;
     await ref.read(backupServiceProvider).backupIfDue();
+    if (!mounted) return;
+    await _autoPurgeIfDue();
+  }
+
+  /// Purge automatique (si activée), au plus une fois par jour. Ne gêne
+  /// jamais l'appli : une erreur est ignorée, elle sera retentée demain.
+  Future<void> _autoPurgeIfDue() async {
+    const lastKey = 'auto_purge_last_day';
+    final store = ref.read(localStoreProvider);
+    final now = DateTime.now();
+    final today = '${now.year}-${now.month}-${now.day}';
+    try {
+      if (await store.getString(lastKey) == today) return;
+      await ref.read(historyPurgeProvider).autoPurge(now.toUtc());
+      await store.setString(lastKey, today);
+    } catch (_) {
+      // Rien : voir ci-dessus.
+    }
   }
 
   @override

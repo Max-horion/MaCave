@@ -129,6 +129,13 @@ L'activation de la synchro sur une cave existante quand le serveur en a déjà u
 
 Une purge doit aussi se propager, sinon la fusion ferait revenir les mouvements effacés. La purge manuelle « avant une date » enregistre cette date dans `settings` (synchronisée) ; la fusion ignore les mouvements antérieurs. La purge automatique des lots épuisés passe par la suppression logique du lot.
 
+Fait au lot 4e (`lib/data/history_purge.dart`) :
+- avant d'effacer, chaque lot reçoit un **report de stock** : un inventaire, à la date de purge, du stock à cette date. Comme un inventaire remplace le stock, les mouvements antérieurs n'ont plus d'effet et peuvent disparaître sans changer aucun stock. Son identifiant est dérivé du lot et de la date : deux appareils qui purgent à la même date produisent le même report ;
+- la date ne recule jamais : la fusion prend la plus récente des deux bases et la réécrit si besoin ;
+- la purge manuelle est limitée aux mouvements de plus de 30 jours, pour laisser aux autres appareils le temps d'envoyer leurs mouvements ;
+- purge automatique : lot, mouvements et référence sans autre lot supprimés logiquement ; réglage commun (`settings`), désactivé par défaut.
+- Pas encore fait : l'effacement définitif des pierres tombales anciennes (gain de place faible, risque de résurrection par un appareil resté longtemps hors ligne).
+
 ## 5. Sauvegardes (lot 4)
 
 Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées (3 par défaut, réglable). Toujours dans `Documents/Cave/Sauvegardes` sur l'appareil ; en mode synchronisé, la plus récente est **aussi** copiée dans le dossier `Sauvegardes` du serveur, qui en garde le même nombre (décision du 06/10/2026, `lib/sync/server_backups.dart`).

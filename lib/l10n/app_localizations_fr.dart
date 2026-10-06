@@ -1023,4 +1023,157 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get syncBackupsNote =>
       'Les sauvegardes sont aussi copiées dans le dossier « Sauvegardes » du serveur.';
+
+  @override
+  String get menuStorage => 'Espace disque';
+
+  @override
+  String get storageTitle => 'Espace disque';
+
+  @override
+  String storageSize(String size) {
+    return 'Taille de la base : $size';
+  }
+
+  @override
+  String storageKilobytes(String count) {
+    return '$count Ko';
+  }
+
+  @override
+  String storageMegabytes(String count) {
+    return '$count Mo';
+  }
+
+  @override
+  String storageHistory(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Historique : $count mouvements',
+      one: 'Historique : 1 mouvement',
+      zero: 'Historique : aucun mouvement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storageHistorySince(String date) {
+    return 'Depuis le $date';
+  }
+
+  @override
+  String storagePurgedBefore(String date) {
+    return 'Historique déjà purgé avant le $date.';
+  }
+
+  @override
+  String get storagePurgeTitle => 'Purge de l\'historique';
+
+  @override
+  String get storagePurgeHelp =>
+      'Supprime les mouvements anciens pour alléger la base. Les stocks ne changent pas : le stock de chaque lot à la date choisie est conservé. Les statistiques de consommation de cette période sont perdues.';
+
+  @override
+  String get storagePurgeButton => 'Purger l\'historique…';
+
+  @override
+  String get storagePurgeNothingOld =>
+      'Aucun mouvement de plus d\'un mois : rien à purger.';
+
+  @override
+  String get storagePurgePickerHelp => 'Supprimer l\'historique avant le';
+
+  @override
+  String get storagePurgeNone => 'Aucun mouvement avant cette date.';
+
+  @override
+  String get storagePurgeConfirmTitle => 'Purger l\'historique ?';
+
+  @override
+  String storagePurgeConfirmMessage(int count, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mouvements antérieurs au $date seront supprimés',
+      one: '1 mouvement antérieur au $date sera supprimé',
+    );
+    return '$_temp0 définitivement, sur tous les appareils synchronisés. Les stocks ne changent pas. Une sauvegarde est faite avant.';
+  }
+
+  @override
+  String get storagePurgeConfirm => 'Purger';
+
+  @override
+  String storagePurgeDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mouvements supprimés',
+      one: '1 mouvement supprimé',
+      zero: 'Aucun mouvement supprimé',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get storageAutoTitle => 'Purge automatique';
+
+  @override
+  String get storageAutoHelp =>
+      'Supprime les lots épuisés sans mouvement depuis le délai choisi, avec leur historique, et la référence si elle n\'a plus aucun lot. Les lots en stock ne sont jamais supprimés.';
+
+  @override
+  String get storageAutoDelay => 'Délai sans mouvement';
+
+  @override
+  String storageMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mois',
+      one: '1 mois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storageYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ans',
+      one: '1 an',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get storageAutoConfirmTitle => 'Purge automatique';
+
+  @override
+  String storageAutoConfirmMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots épuisés seront supprimés',
+      one: '1 lot épuisé sera supprimé',
+    );
+    return '$_temp0 dès maintenant, avec leur historique. Une sauvegarde est faite avant.';
+  }
+
+  @override
+  String get storageAutoConfirm => 'Supprimer';
+
+  @override
+  String storageAutoDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lots supprimés',
+      one: '1 lot supprimé',
+      zero: 'Aucun lot supprimé',
+    );
+    return '$_temp0';
+  }
 }

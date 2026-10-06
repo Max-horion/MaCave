@@ -4,6 +4,7 @@ import '../domain/drink_filter.dart';
 import 'cave_queries.dart';
 import 'cave_repository.dart';
 import 'database.dart';
+import 'history_purge.dart';
 import 'write_context.dart';
 
 // Providers Riverpod : ils fournissent la base et le dépôt aux écrans.
@@ -23,6 +24,14 @@ final writeContextProvider = Provider<WriteContext>(
 
 final caveRepositoryProvider = Provider<CaveRepository>(
   (ref) => CaveRepository(
+    ref.watch(databaseProvider),
+    ref.watch(writeContextProvider),
+  ),
+);
+
+/// Purges de l'historique (manuelle et automatique).
+final historyPurgeProvider = Provider<HistoryPurge>(
+  (ref) => HistoryPurge(
     ref.watch(databaseProvider),
     ref.watch(writeContextProvider),
   ),

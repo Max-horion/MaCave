@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
+import 'package:cave/data/history_purge.dart';
 import 'package:cave/sync/cave_file.dart';
 import 'package:cave/sync/merge.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
@@ -259,6 +260,76 @@ void main() {
       await sync(pc, phone);
       await sync(phone, pc);
       expect(await pc.dump(), await phone.dump());
+    });
+  });
+
+  group('purge de l\'historique', () {
+    final y2024 = DateTime.utc(2024).millisecondsSinceEpoch;
+    final y2025 = DateTime.utc(2025).millisecondsSinceEpoch;
+    final y2026 = DateTime.utc(2026).millisecondsSinceEpoch;
+    late String lotId;
+
+    Future<int> movementCount(Device d) async =>
+        (await d.db.select(d.db.movements).get()).length;
+
+    setUp(() async {
+      phone.ctx.time = y2024;
+      lotId = await phone.addBeer('Bière', 6);
+      await phone.repo.addExit(lotId, 1);
+      phone.ctx.time = y2026;
+      await phone.repo.addExit(lotId, 1);
+      await sync(phone, pc);
+    });
+
+    test('la purge d\'un appareil s\'applique à l\'autre', () async {
+      await HistoryPurge(phone.db, phone.ctx).purgeBefore(y2025);
+      final r = await sync(phone, pc);
+
+      expect(r.localAhead, isFalse);
+      expect(await HistoryPurge(pc.db, pc.ctx).purgedBefore(), y2025);
+      expect(await pc.stockOf(lotId), 4);
+      // Report de stock + sortie de 2026 : comme sur le téléphone.
+      expect(await movementCount(pc), 2);
+      expect(await pc.dump(), await phone.dump());
+    });
+
+    test('l\'autre appareil ne fait pas revenir l\'historique purgé', () async {
+      await HistoryPurge(phone.db, phone.ctx).purgeBefore(y2025);
+      // Le PC n'a pas encore reçu la purge ; le téléphone fusionne son
+      // fichier, qui contient encore les mouvements de 2024.
+      final r = await sync(pc, phone);
+
+      expect(r.applied['movements'], 0);
+      expect(await movementCount(phone), 2);
+      expect(await phone.stockOf(lotId), 4);
+    });
+
+    test('une sortie récente faite ailleurs pendant la purge compte', () async {
+      await HistoryPurge(phone.db, phone.ctx).purgeBefore(y2025);
+      pc.ctx.time = y2026 + 1000000;
+      await pc.repo.addExit(lotId, 1);
+
+      await sync(pc, phone);
+      await sync(phone, pc);
+      expect(await phone.stockOf(lotId), 3);
+      expect(await pc.stockOf(lotId), 3);
+      expect(await pc.dump(), await phone.dump());
+    });
+
+    test('la date de purge ne recule jamais', () async {
+      phone.ctx.time = y2026 + 1000000;
+      await HistoryPurge(phone.db, phone.ctx).purgeBefore(y2025);
+      // Le PC purge plus tôt, avec une estampille plus récente.
+      pc.ctx.time = y2026 + 5000000;
+      await HistoryPurge(pc.db, pc.ctx).purgeBefore(y2024 + 1);
+
+      final r = await sync(phone, pc);
+      expect(r.localAhead, isTrue);
+      await sync(pc, phone);
+      for (final d in [phone, pc]) {
+        expect(await HistoryPurge(d.db, d.ctx).purgedBefore(), y2025);
+        expect(await d.stockOf(lotId), 4);
+      }
     });
   });
 

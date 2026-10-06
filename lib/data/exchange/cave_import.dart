@@ -6,6 +6,7 @@ import '../../domain/text.dart';
 import '../../domain/vivino.dart';
 import '../cave_repository.dart';
 import '../database.dart';
+import '../history_purge.dart';
 import '../write_context.dart';
 import 'exchange_format.dart';
 
@@ -244,6 +245,8 @@ class CaveImporter {
       for (final e in reasonTokens.entries) fold(e.value): e.key,
     };
 
+    final purgedBefore = await HistoryPurge(_db, _ctx).purgedBefore();
+
     for (final (i, row) in table.rows.indexed) {
       final line = i + 2;
       String col(String name) => table.cell(row, name);
@@ -267,6 +270,11 @@ class CaveImporter {
             col(HistoryColumns.date),
           ),
         );
+        continue;
+      }
+      // Antérieur à une purge de l'historique : ne revient jamais.
+      if (purgedBefore != null && date < purgedBefore) {
+        report.movementsSkipped++;
         continue;
       }
       final kind = kinds[fold(col(HistoryColumns.kind))];
