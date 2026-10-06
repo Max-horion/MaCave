@@ -49,7 +49,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
-| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **en cours** (4a terminée) |
+| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **en cours** (4a, 4b terminées) |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
@@ -105,6 +105,7 @@ Règles d'import :
 
 - `lib/sync/cave_file.dart` — opérations sur un fichier de base entier, réutilisées par la synchro : `inspectCaveFile` (intégrité, version ≤ actuelle, `cave_id` ; lève `CaveFileException`), `snapshotDatabase` (`VACUUM INTO`), `migratedCopy` (met une copie au schéma actuel avec les migrations drift), `replaceDatabaseContents` (`ATTACH` + remplacement en une transaction, `meta` comprise).
 - `lib/sync/backup.dart` — `BackupService` : sauvegarde = `cave_<date>.sqlite` + `_stock.csv` + `_historique.csv` (**noms = format, ne pas changer**), `backupIfDue` (au plus 1 par jour, seulement si l'« empreinte » de la base a changé, jamais d'exception), `restore` (copie mise à niveau d'abord, puis sauvegarde de sécurité, puis remplacement).
+- `lib/sync/merge.dart` — **moteur de fusion** (4b) : `mergeCaveFile(db, ctx, chemin)` fusionne un fichier de la même cave (vérifié + `migratedCopy` d'abord) en une transaction, via `ATTACH` + `INSERT … ON CONFLICT DO UPDATE … WHERE <gagnant>`. Fiches et réglages : le plus récent gagne (`updated_at`, puis `updated_by`). Mouvements : ajoutés s'ils sont inconnus ; seule une annulation peut modifier un mouvement connu, et elle l'emporte toujours (indépendant des horloges). Lots en double regroupés sur le plus ancien (`created_at`, `id`), choix identique sur tous les appareils. `MergeResult.localAhead` = il faut renvoyer la base au serveur. `OtherCaveException` si le `cave_id` diffère.
 - `lib/sync/providers.dart` — dossier `Documents/Cave/Sauvegardes` (Android 11+ : écriture sans autorisation, vérifié sur le téléphone ; l'appli ne voit plus ses fichiers après une réinstallation → « Restaurer depuis un fichier »), widget `AutoBackup` (dans `main.dart`).
 - `lib/data/local_store.dart` — préférences propres à l'appareil (`PrefsLocalStore`, `MemoryLocalStore` pour les tests).
 - `lib/features/backup/backup_screen.dart` — écran Sauvegardes (menu ⋮).
@@ -112,6 +113,8 @@ Règles d'import :
 Pièges rencontrés :
 - Tests d'interface avec de vraies écritures de fichiers : faire le `tap` dans `tester.runAsync`, sinon l'action ne progresse pas.
 - Ne jamais lire un fichier (taille…) pendant `build` : il peut avoir été supprimé (plantage trouvé par un test).
+- Fusion : un appareil resté hors ligne longtemps qui ajoute un mouvement sur un lot entre-temps regroupé (doublon supprimé) le verra arriver sur le lot supprimé, donc non compté. Cas très rare (3 appareils hors ligne) ; à revoir si ça arrive.
+- Fusion : les ID des appareils de test doivent être distincts (`_DeviceContext` dans `test/sync/merge_test.dart`), sinon les `id-0001` se croisent.
 - Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
 
 ## Conventions
@@ -138,3 +141,4 @@ Pièges rencontrés :
 - 2026-10-05 — Lot 3 : export/import CSV, import Vivino (essai à blanc sur le vrai fichier : 31 références, 32 lots, 95 bouteilles, 0 erreur, 16 « à compléter »), historique sur la fiche, inventaire guidé, statistiques ; 114 tests verts.
 - 2026-10-05 — Import Vivino fait par le porteur sur le téléphone, OK ; fiches complétées à la main. Appellation rendue facultative (CDC v0.5) ; 118 tests verts.
 - 2026-10-05 — Lot 4a : sauvegardes locales (base + CSV, 3 conservées, réglable), sauvegarde automatique, restauration ; 134 tests verts. Vérifié sur le téléphone : sauvegarde automatique à l'ouverture, fichiers lisibles dans Documents/Cave/Sauvegardes, restauration puis retour arrière par la sauvegarde de sécurité. APK 63 Mo (moteur SQLite pour lire les sauvegardes).
+- 2026-10-06 — Lot 4b : moteur de fusion (`lib/sync/merge.dart`), 17 tests (deux appareils simulés, fusion dans les deux sens, convergence vérifiée) ; 151 tests verts. Pas encore branché : il le sera par le cycle de synchro (4c).

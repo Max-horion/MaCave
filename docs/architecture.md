@@ -100,10 +100,11 @@ Le serveur contient un seul fichier, `cave.sqlite`, dans le dossier choisi. Aucu
    - version plus récente → synchro suspendue, invitation à mettre l'appli à jour ;
    - `cave_id` différent → ce n'est pas la même cave : on ne fusionne jamais, l'utilisateur choisit (CDC §8.2).
 3. **Fusionner dans la base locale, en une seule transaction** (tout ou rien, même en cas de coupure de batterie) :
-   - **mouvements** : ajoutés s'ils sont inconnus (identifiés par leur UUID). Ils s'additionnent donc sans perte et sans doublon ; une annulation est une pierre tombale qui se propage ;
+   - **mouvements** : ajoutés s'ils sont inconnus (identifiés par leur UUID). Ils s'additionnent donc sans perte et sans doublon ; une annulation est une pierre tombale qui se propage et l'emporte toujours, quelles que soient les horloges (un mouvement n'est jamais modifié autrement) ;
    - **fiches** (types, caractéristiques, références, lots, réglages) : ligne par ligne, **la plus récente l'emporte** (`updated_at`, puis `updated_by` en cas d'égalité) ; une suppression est une modification comme une autre ;
-   - **lots en double** (même référence, millésime et volume créés hors ligne sur deux appareils) : regroupés, leurs mouvements rattachés au lot conservé ;
+   - **lots en double** (même référence, millésime et volume créés hors ligne sur deux appareils) : regroupés, leurs mouvements rattachés au lot conservé — le plus ancien (`created_at`, puis `id`), pour que tous les appareils fassent le même choix ;
    - recalcul des stocks en cache et de l'index de recherche.
+   - Fait au lot 4b : `lib/sync/merge.dart` (`mergeCaveFile`), qui indique aussi si la base locale a des modifications à envoyer (`localAhead`).
 4. **Envoyer** s'il y a des modifications locales : copie cohérente de la base (`VACUUM INTO` un fichier temporaire — on n'envoie jamais le fichier en cours d'utilisation), puis
    - `PUT` avec `If-Match: <ETag lu à l'étape 1>` : le serveur refuse (« 412 ») si quelqu'un a écrit entre-temps → **on n'écrase jamais**, on recommence au début du cycle (3 essais maximum, puis nouvelle tentative plus tard) ;
    - premier envoi : `If-None-Match: *` (refusé si un fichier est apparu entre-temps).
