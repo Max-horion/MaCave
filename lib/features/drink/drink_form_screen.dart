@@ -168,6 +168,41 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
     );
     try {
       if (_isNew) {
+        // Doublon probable : proposer d'ajouter les bouteilles à la
+        // référence existante (CDC §6.2).
+        final similar = await ref
+            .read(caveQueriesProvider)
+            .similarDrinks(
+              name: input.name,
+              producer: input.producer,
+              profile: profile,
+            );
+        if (similar.isNotEmpty) {
+          if (!mounted) return;
+          final choice = await _askSimilar(similar);
+          if (!mounted) return;
+          if (choice == null) {
+            setState(() => _saving = false);
+            return;
+          }
+          if (choice case _UseExisting(:final drink)) {
+            await repo.addToExistingDrink(
+              drinkId: drink.id,
+              volumeMl: _volumeMl ?? type?.defaultVolumeMl ?? 750,
+              vintage: int.tryParse(_vintage.text.trim()),
+              quantity: _quantity,
+              barcode: widget.barcode,
+            );
+            if (!mounted) return;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) => DrinkDetailScreen(drinkId: drink.id),
+              ),
+            );
+            return;
+          }
+        }
         final created = await repo.addNewDrink(
           drink: input,
           characteristicIds: _characteristicIds,
@@ -197,6 +232,53 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
         ),
       );
     }
+  }
+
+  /// Références proches : ajouter à l'une d'elles, créer quand même, ou
+  /// revenir au formulaire (null).
+  Future<_SimilarChoice?> _askSimilar(List<SimilarDrink> similar) {
+    final l10n = AppLocalizations.of(context);
+    return showDialog<_SimilarChoice>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.similarTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l10n.similarMessage),
+              const SizedBox(height: 8),
+              for (final s in similar)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  minTileHeight: 64,
+                  title: Text(s.drink.name),
+                  subtitle: Text(
+                    [
+                      ?s.drink.producer,
+                      l10n.bottleCount(s.bottles),
+                    ].join(' · '),
+                  ),
+                  trailing: const Icon(Icons.add_circle_outline),
+                  onTap: () => Navigator.pop(context, _UseExisting(s.drink)),
+                ),
+              const SizedBox(height: 8),
+              OutlinedButton(
+                onPressed: () => Navigator.pop(context, const _CreateAnyway()),
+                child: Text(l10n.similarCreateAnyway),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.similarBack),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -402,4 +484,18 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
       ),
     );
   }
+}
+
+/// Choix devant une référence proche.
+sealed class _SimilarChoice {
+  const _SimilarChoice();
+}
+
+class _UseExisting extends _SimilarChoice {
+  const _UseExisting(this.drink);
+  final Drink drink;
+}
+
+class _CreateAnyway extends _SimilarChoice {
+  const _CreateAnyway();
 }

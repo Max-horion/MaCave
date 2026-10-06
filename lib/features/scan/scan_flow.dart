@@ -49,9 +49,7 @@ Future<void> handleScannedCode(
           context,
           normalized,
           // Recherche lancée tout de suite, pendant l'affichage de la fiche.
-          OpenFoodFacts.canLookUp(normalized)
-              ? ref.read(openFoodFactsProvider).lookUp(normalized)
-              : null,
+          OpenFoodFacts.canLookUp(normalized) ? _lookUp(ref, normalized) : null,
         )
       : await _showKnown(context, normalized, matches);
   if (choice == null || !context.mounted) return;
@@ -84,8 +82,8 @@ Future<void> handleScannedCode(
           builder: (_) => DrinkFormScreen(barcode: normalized, draft: draft),
         ),
       );
-    case _Associate():
-      await _associate(context, ref, normalized);
+    case _Associate(:final drink):
+      await _associate(context, ref, normalized, drink: drink);
     case _ScanAgain():
       await startScan(context, ref);
   }
@@ -124,7 +122,31 @@ class _NewDrink extends _ScanChoice {
 }
 
 class _Associate extends _ScanChoice {
-  const _Associate();
+  const _Associate([this.drink]);
+
+  /// Référence déjà choisie (proposée comme proche) ; sinon, à chercher.
+  final Drink? drink;
+}
+
+/// Résultat d'Open Food Facts et, si un produit est trouvé, les références
+/// de la cave qui lui ressemblent (doublons, CDC §6.2).
+typedef _Lookup = ({OffResult result, List<SimilarDrink> similar});
+
+Future<_Lookup> _lookUp(WidgetRef ref, String code) async {
+  final queries = ref.read(caveQueriesProvider);
+  final result = await ref.read(openFoodFactsProvider).lookUp(code);
+  final draft = result is OffFound ? result.draft : null;
+  final name = draft?.name;
+  return (
+    result: result,
+    similar: name == null
+        ? const <SimilarDrink>[]
+        : await queries.similarDrinks(
+            name: name,
+            producer: draft!.producer,
+            profile: draft.profile,
+          ),
+  );
 }
 
 class _ScanAgain extends _ScanChoice {
@@ -219,7 +241,7 @@ Future<_ScanChoice?> _showKnown(
 Future<_ScanChoice?> _showUnknown(
   BuildContext context,
   String code,
-  Future<OffResult>? lookup,
+  Future<_Lookup>? lookup,
 ) {
   return showModalBottomSheet<_ScanChoice>(
     context: context,
@@ -235,7 +257,7 @@ class _UnknownCodeSheet extends StatelessWidget {
   final String code;
 
   /// Null : pas de recherche (QR code, contenu non numérique).
-  final Future<OffResult>? lookup;
+  final Future<_Lookup>? lookup;
 
   @override
   Widget build(BuildContext context) {
@@ -245,10 +267,11 @@ class _UnknownCodeSheet extends StatelessWidget {
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: FutureBuilder<OffResult>(
+        child: FutureBuilder<_Lookup>(
           future: lookup,
           builder: (context, snapshot) {
-            final result = snapshot.data;
+            final result = snapshot.data?.result;
+            final similar = snapshot.data?.similar ?? const [];
             final searching =
                 lookup != null &&
                 snapshot.connectionState != ConnectionState.done;
@@ -296,6 +319,25 @@ class _UnknownCodeSheet extends StatelessWidget {
                     OffUnavailable() => l10n.offUnavailable,
                     OffFound() => '',
                   }, style: theme.textTheme.bodySmall),
+                if (similar.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(l10n.scanMaybeTitle, style: theme.textTheme.titleMedium),
+                  Text(l10n.scanMaybeHelp, style: theme.textTheme.bodySmall),
+                  for (final s in similar)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      minTileHeight: 64,
+                      title: Text(s.drink.name),
+                      subtitle: Text(
+                        [
+                          ?s.drink.producer,
+                          l10n.bottleCount(s.bottles),
+                        ].join(' · '),
+                      ),
+                      trailing: const Icon(Icons.link),
+                      onTap: () => Navigator.pop(context, _Associate(s.drink)),
+                    ),
+                ],
                 const SizedBox(height: 16),
                 FilledButton.icon(
                   onPressed: () => Navigator.pop(context, _NewDrink(draft)),
@@ -330,9 +372,10 @@ class _UnknownCodeSheet extends StatelessWidget {
 Future<void> _associate(
   BuildContext context,
   WidgetRef ref,
-  String code,
-) async {
-  final drink = await Navigator.push<Drink>(
+  String code, {
+  Drink? drink,
+}) async {
+  drink ??= await Navigator.push<Drink>(
     context,
     MaterialPageRoute(builder: (_) => const DrinkPickerScreen()),
   );

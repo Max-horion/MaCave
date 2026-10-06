@@ -1881,6 +1881,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Open Food Facts ne répond pas : fiche à remplir, le code sera mémorisé.'**
   String get offUnavailable;
+
+  /// Titre : références proches du produit trouvé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà dans votre cave ?'**
+  String get scanMaybeTitle;
+
+  /// Aide sous les références proches.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez une référence pour lui associer ce code.'**
+  String get scanMaybeHelp;
+
+  /// Titre de l'avertissement de doublon à la création.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence proche déjà dans la cave'**
+  String get similarTitle;
+
+  /// Explication de l'avertissement de doublon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter les bouteilles à l\'une de ces références plutôt que d\'en créer une nouvelle ? Sa fiche n\'est pas modifiée.'**
+  String get similarMessage;
+
+  /// Bouton : ignorer l'avertissement de doublon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une nouvelle référence'**
+  String get similarCreateAnyway;
+
+  /// Bouton : fermer l'avertissement de doublon pour modifier la saisie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir au formulaire'**
+  String get similarBack;
 }
 
 class _AppLocalizationsDelegate

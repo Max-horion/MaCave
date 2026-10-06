@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 
 import '../domain/drink_filter.dart';
+import '../domain/enums.dart';
+import '../domain/similarity.dart';
 import '../domain/text.dart';
 import 'database.dart';
 
@@ -99,10 +101,81 @@ class CaveStats {
 
 /// Lectures « en direct » pour les écrans : chaque méthode `watch…` renvoie un
 /// flux qui émet de nouveau dès que les tables concernées changent.
+/// Référence existante qui ressemble à celle qu'on s'apprête à créer
+/// (CDC §6.2, doublons).
+class SimilarDrink {
+  const SimilarDrink({
+    required this.drink,
+    required this.score,
+    required this.bottles,
+  });
+
+  final Drink drink;
+
+  /// Ressemblance, de [similarityThreshold] à 1.
+  final double score;
+
+  /// Bouteilles en stock (pour reconnaître la référence d'un coup d'œil).
+  final int bottles;
+}
+
 class CaveQueries {
   CaveQueries(this._db);
 
   final CaveDatabase _db;
+
+  /// Références actives qui ressemblent à [name] (et [producer]), de la plus
+  /// proche à la moins proche, [limit] au plus. Avec [profile] connu, une
+  /// référence d'un autre profil (une bière pour un vin) est écartée.
+  /// [excludeId] : la référence elle-même, en modification.
+  Future<List<SimilarDrink>> similarDrinks({
+    required String name,
+    String? producer,
+    FieldProfile? profile,
+    String? excludeId,
+    int limit = 3,
+  }) async {
+    if (similarityWords(name).isEmpty) return const [];
+    final rows = await _db
+        .customSelect(
+          'SELECT d.*, t.field_profile AS profile, '
+          '(SELECT COALESCE(SUM(l.stock), 0) FROM lots l '
+          'WHERE l.drink_id = d.id AND l.deleted_at IS NULL) AS bottles '
+          'FROM drinks d LEFT JOIN drink_types t ON t.id = d.type_id '
+          'AND t.deleted_at IS NULL '
+          'WHERE d.deleted_at IS NULL',
+          readsFrom: {_db.drinks, _db.drinkTypes, _db.lots},
+        )
+        .get();
+    final found = <SimilarDrink>[];
+    for (final row in rows) {
+      final drink = await _db.drinks.mapFromRow(row);
+      if (drink.id == excludeId) continue;
+      final other = FieldProfile.values
+          .asNameMap()[row.readNullable<String>('profile')];
+      if (profile != null && other != null && other != profile) continue;
+      final score = similarityScore(
+        name: name,
+        producer: producer,
+        otherName: drink.name,
+        otherProducer: drink.producer,
+      );
+      if (score >= similarityThreshold) {
+        found.add(
+          SimilarDrink(
+            drink: drink,
+            score: score,
+            bottles: row.read<int>('bottles'),
+          ),
+        );
+      }
+    }
+    found.sort((a, b) {
+      final byScore = b.score.compareTo(a.score);
+      return byScore != 0 ? byScore : b.bottles.compareTo(a.bottles);
+    });
+    return found.take(limit).toList();
+  }
 
   /// Liste de la cave selon les filtres (CDC §6.5).
   Stream<List<DrinkListItem>> watchDrinkList(DrinkFilter filter) {

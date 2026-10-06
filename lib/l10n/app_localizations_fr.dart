@@ -1283,4 +1283,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get offUnavailable =>
       'Open Food Facts ne répond pas : fiche à remplir, le code sera mémorisé.';
+
+  @override
+  String get scanMaybeTitle => 'Déjà dans votre cave ?';
+
+  @override
+  String get scanMaybeHelp =>
+      'Touchez une référence pour lui associer ce code.';
+
+  @override
+  String get similarTitle => 'Référence proche déjà dans la cave';
+
+  @override
+  String get similarMessage =>
+      'Ajouter les bouteilles à l\'une de ces références plutôt que d\'en créer une nouvelle ? Sa fiche n\'est pas modifiée.';
+
+  @override
+  String get similarCreateAnyway => 'Créer une nouvelle référence';
+
+  @override
+  String get similarBack => 'Revenir au formulaire';
 }

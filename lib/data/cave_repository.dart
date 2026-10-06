@@ -175,6 +175,29 @@ class CaveRepository {
     });
   }
 
+  /// Ajoute des bouteilles à une référence existante, dans le lot
+  /// (millésime × volume) correspondant, créé au besoin : choix « ajouter à
+  /// la référence proche » au lieu d'en créer une nouvelle (doublons,
+  /// CDC §6.2). Retourne le lot et le mouvement d'entrée.
+  Future<({String lotId, String movementId})> addToExistingDrink({
+    required String drinkId,
+    required int volumeMl,
+    int? vintage,
+    required int quantity,
+    String? barcode,
+  }) {
+    return _db.transaction(() async {
+      final lotId = await findOrCreateLot(
+        drinkId: drinkId,
+        volumeMl: volumeMl,
+        vintage: vintage,
+        barcode: barcode,
+      );
+      final movementId = await addEntry(lotId, quantity);
+      return (lotId: lotId, movementId: movementId);
+    });
+  }
+
   /// Enregistre la fiche et ses caractéristiques en une seule transaction.
   Future<void> saveDrink(
     String id,

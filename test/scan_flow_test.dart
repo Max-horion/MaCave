@@ -244,6 +244,35 @@ void main() {
     expect(characteristics, hasLength(1), reason: 'IPA');
   });
 
+  testWidgets('produit trouvé et référence proche : on lui associe le code', (
+    tester,
+  ) async {
+    final ids = await beer(tester, barcode: null);
+    await open(
+      tester,
+      code,
+      product: {
+        'product_name': 'Biere test',
+        'quantity': '33 cl',
+        'categories_tags': ['en:beers'],
+      },
+    );
+    await scan(tester);
+
+    expect(find.text('Déjà dans votre cave ?'), findsOneWidget);
+    await tester.runAsync(() async => tester.tap(find.text('Bière Test')));
+    await settle(tester);
+    // Un seul lot : choisi dans la liste des lots de la référence.
+    await tester.runAsync(
+      () async => tester.tap(find.textContaining('33 cl').last),
+    );
+    await settle(tester);
+
+    expect(find.text('−1'), findsOneWidget);
+    final lot = (await tester.runAsync(() => repo.lot(ids.lotId)))!;
+    expect(lot.barcode, code);
+  });
+
   testWidgets('code inconnu : associé à un lot existant, puis « −1 »', (
     tester,
   ) async {

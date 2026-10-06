@@ -50,7 +50,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes : 5a scan + lampe, 5b Open Food Facts, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison, 5e doublons | **en cours** (5a terminée, 5b faite, à vérifier sur le téléphone) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a terminée ; 5b et 5e faites, à vérifier sur le téléphone) |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -59,6 +59,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 - **Pas de tâches de fond en V1** (2026-10-05) : sauvegarde et synchro se font appli ouverte (ouverture, mise en arrière-plan, après modification, bouton) ; pas de workmanager ni de notification « erreur > 24 h » (affichée dans l'appli à la place). Écart au CDC §8.3/§8.4 à reporter dans sa prochaine version.
 - Sauvegardes : **3 conservées par défaut**, nombre réglable sur l'écran Sauvegardes (2026-10-05).
 - En mode synchronisé, sauvegardes **sur le téléphone ET sur le serveur** (dossier `Sauvegardes` à côté de la cave, même nombre conservé) (2026-10-06). Le CDC §8.4 ne prévoyait que le serveur : écart à reporter.
+- Doublons (5e) faits **avant** la reconnaissance de texte, et utilisés aussi dans la fiche « Code inconnu » quand Open Food Facts trouve le produit (« Déjà dans votre cave ? ») et, au 5c, pour le nom lu sur l'étiquette (2026-10-06, idée du porteur).
 - Le marqueur « à compléter » est calculé à l'enregistrement de chaque fiche. **Ne jamais le recalculer en masse** silencieusement : le porteur s'en sert comme liste de fiches à revoir (ex. après un import).
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
@@ -147,6 +148,8 @@ Pièges rencontrés :
 - Bouton « Scanner » au-dessus d'« Ajouter » sur la liste.
 - `lib/scan/open_food_facts.dart` — recherche d'un code inconnu (5b) : `OpenFoodFacts.lookUp` → `OffFound(DrinkDraft)` / `OffNotFound` / `OffOffline` (aucune requête) / `OffUnavailable`. **Seuls les codes de 8 à 14 chiffres sont envoyés** (jamais le contenu d'un QR code), avec un User-Agent sans adresse personnelle. `draftFromProduct` : nom, marque → producteur, degré, volume, catégories (`en:red-wines`…) → profil + noms de caractéristiques. `openFoodFactsProvider` (`lib/scan/providers.dart`, réseau via `syncEnvironmentProvider.isOnline`).
 - `lib/domain/drink_draft.dart` — `DrinkDraft` : fiche proposée (type par **profil**, caractéristiques par **nom**, retrouvés dans la classification de l'utilisateur) ; `DrinkFormScreen(draft:)` la pré-remplit, rien n'est enregistré sans validation.
+- `lib/domain/similarity.dart` — **doublons** (5e) : `similarityScore` (mots sans accents ni petits mots, abréviations « Ch. », « Dom. », « St »… développées, millésimes et volumes retirés, une faute de frappe tolérée sur les mots de 5 lettres et plus, coefficient de Dice ; compare aussi nom + producteur), seuil `similarityThreshold` = 0,66. Ne fait que **proposer** : l'import, lui, garde un rapprochement exact (`compactKey`).
+- `CaveQueries.similarDrinks` — références proches (autre profil écarté), utilisée par le formulaire de création (`_askSimilar` : ajouter les bouteilles à la référence existante via `addToExistingDrink`, créer quand même, ou revenir) et par la fiche « Code inconnu » (`_lookUp` dans `scan_flow.dart`).
 - `lib/domain/label_parsing.dart` — `parseVolumeMl` (« 75 cl », « 0,75 L », « 6 x 33 cl »), `parseAbv` ; resserviront à la lecture des étiquettes (5c).
 
 ## Conventions
@@ -182,3 +185,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 5a : scan de code-barres / QR (ML Kit embarqué, hors ligne), lampe torche, saisie manuelle ; code connu → « −1 » / « Ajouter » / nouveau lot ; code inconnu → nouvelle référence ou association à un lot. 224 tests verts ; APK 82 Mo (+16 Mo de lecteur, toutes architectures).
 - 2026-10-06 — Lot 5a vérifié sur le téléphone par le porteur (scan, lampe, association, « −1 »).
 - 2026-10-06 — Lot 5b : Open Food Facts pour les codes inconnus (fiche pré-remplie : nom, producteur, degré, volume, type et caractéristiques), envoi du code signalé, jamais de QR code envoyé, hors ligne sans requête. 238 tests verts.
+- 2026-10-06 — Lot 5e (avancé avant 5c) : détection des doublons à la création d'une référence (ajout des bouteilles à la référence proche, ou création quand même) et « Déjà dans votre cave ? » dans la fiche « Code inconnu » quand Open Food Facts trouve le produit. 255 tests verts.

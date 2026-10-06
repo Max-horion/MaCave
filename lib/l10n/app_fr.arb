@@ -1570,5 +1570,29 @@
   "offUnavailable": "Open Food Facts ne répond pas : fiche à remplir, le code sera mémorisé.",
   "@offUnavailable": {
     "description": "Résultat : service indisponible."
+  },
+  "scanMaybeTitle": "Déjà dans votre cave ?",
+  "@scanMaybeTitle": {
+    "description": "Titre : références proches du produit trouvé."
+  },
+  "scanMaybeHelp": "Touchez une référence pour lui associer ce code.",
+  "@scanMaybeHelp": {
+    "description": "Aide sous les références proches."
+  },
+  "similarTitle": "Référence proche déjà dans la cave",
+  "@similarTitle": {
+    "description": "Titre de l'avertissement de doublon à la création."
+  },
+  "similarMessage": "Ajouter les bouteilles à l'une de ces références plutôt que d'en créer une nouvelle ? Sa fiche n'est pas modifiée.",
+  "@similarMessage": {
+    "description": "Explication de l'avertissement de doublon."
+  },
+  "similarCreateAnyway": "Créer une nouvelle référence",
+  "@similarCreateAnyway": {
+    "description": "Bouton : ignorer l'avertissement de doublon."
+  },
+  "similarBack": "Revenir au formulaire",
+  "@similarBack": {
+    "description": "Bouton : fermer l'avertissement de doublon pour modifier la saisie."
   }
 }
