@@ -31,6 +31,9 @@ class FakeRecognizer implements LabelRecognizer {
   final String name;
 
   @override
+  String? get lastNote => null;
+
+  @override
   Future<List<LabelLine>> recognize(String imagePath) async {
     read.add(imagePath);
     return lines;

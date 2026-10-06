@@ -1,5 +1,9 @@
 package fr.bouthon.cave
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import com.googlecode.tesseract.android.TessBaseAPI
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -60,10 +64,63 @@ class MainActivity : FlutterActivity() {
             tessKey = key
         }
         api.pageSegMode = psm
-        api.setImage(File(imagePath))
-        val hocr = api.getHOCRText(0) ?: ""
-        api.clear()
-        return hocr
+        val image = loadUpright(imagePath)
+        try {
+            api.setImage(image)
+            val hocr = api.getHOCRText(0) ?: ""
+            api.clear()
+            return hocr
+        } finally {
+            image.recycle()
+        }
+    }
+
+    /// Photo remise à l'endroit et réduite. Le téléphone enregistre souvent
+    /// l'image « couchée » avec une simple indication de rotation (EXIF) :
+    /// ML Kit en tient compte, Tesseract non, et ne lit alors rien d'une
+    /// étiquette tournée d'un quart de tour. La réduction (au plus
+    /// [MAX_SIDE] pixels de côté) accélère la lecture sans perdre le texte.
+    private fun loadUpright(path: String): Bitmap {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(path, bounds)
+        var sample = 1
+        while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= MAX_SIDE) {
+            sample *= 2
+        }
+        val decoded = BitmapFactory.decodeFile(
+            path,
+            BitmapFactory.Options().apply { inSampleSize = sample },
+        ) ?: throw IllegalArgumentException("Image illisible : $path")
+
+        val matrix = Matrix()
+        when (ExifInterface(path).getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL,
+        )) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.postRotate(90f)
+                matrix.postScale(-1f, 1f)
+            }
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.postRotate(270f)
+                matrix.postScale(-1f, 1f)
+            }
+            else -> return decoded
+        }
+        val upright = Bitmap.createBitmap(
+            decoded, 0, 0, decoded.width, decoded.height, matrix, true,
+        )
+        if (upright !== decoded) decoded.recycle()
+        return upright
+    }
+
+    companion object {
+        private const val MAX_SIDE = 2000
     }
 
     override fun onDestroy() {

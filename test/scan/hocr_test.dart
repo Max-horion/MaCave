@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cave/scan/label_recognizer.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -32,6 +34,36 @@ void main() {
     expect(lines.map((l) => l.text), ['CHÂTEAU DES&LUNES', '2019', '14% vol.']);
     // x_size quand il est donné, sinon la hauteur du cadre.
     expect(lines.map((l) => l.height), [82, 30, 30]);
+  });
+
+  test('diagnostic : mots gardés et écartés', () {
+    final r = readHocr(_hocr);
+    expect((r.kept, r.dropped), (5, 2));
+  });
+
+  test('tous les mots peu sûrs : gardés quand même', () {
+    const doubtful = '''
+<span class='ocr_line' id='line_1_1' title="bbox 0 0 100 40; x_size 30">
+ <span class='ocrx_word' id='word_1_1' title='bbox 0 0 50 40; x_wconf 22'>CHATEAV</span>
+ <span class='ocrx_word' id='word_1_2' title='bbox 55 0 100 40; x_wconf 18'>LUNE5</span>
+</span>''';
+    final r = readHocr(doubtful);
+    expect(r.lines.single.text, 'CHATEAV LUNE5');
+    expect(r.kept, 2);
+  });
+
+  test('vrai résultat de Tesseract 5 (étiquette inventée, photo droite)', () {
+    // test/fixtures/etiquette_tesseract5.hocr : produit par Tesseract 5.5 et
+    // le dictionnaire de l'appli, sur une étiquette fabriquée pour le test.
+    final hocr = File(
+      'test/fixtures/etiquette_tesseract5.hocr',
+    ).readAsStringSync();
+    final lines = parseHocr(hocr);
+    expect(lines.map((l) => l.text), contains('CHÂTEAU DES LUNES'));
+    expect(lines.map((l) => l.text), contains('14% vol.'));
+    // Le nom, écrit le plus gros, a la plus grande hauteur.
+    final tallest = lines.reduce((a, b) => a.height >= b.height ? a : b);
+    expect(tallest.text, 'CHÂTEAU DES LUNES');
   });
 
   test('résultat vide', () {

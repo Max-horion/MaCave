@@ -168,6 +168,7 @@ class EngineResult {
     required this.took,
     this.reading,
     this.error,
+    this.note,
   });
 
   final OcrEngine engine;
@@ -175,6 +176,9 @@ class EngineResult {
   final Duration took;
   final LabelReading? reading;
   final Object? error;
+
+  /// Diagnostic technique du moteur (bêta).
+  final String? note;
 }
 
 Future<EngineResult> _readWith(
@@ -191,6 +195,7 @@ Future<EngineResult> _readWith(
       name: recognizer.name,
       took: watch.elapsed,
       reading: readLabel(lines, index, currentYear: DateTime.now().year),
+      note: recognizer.lastNote,
     );
   } catch (e) {
     return EngineResult(
@@ -243,6 +248,8 @@ class LabelCompareScreen extends ConsumerWidget {
                       '${result.name} · ${seconds(result.took)}',
                       style: theme.textTheme.titleLarge,
                     ),
+                    if (result.note != null)
+                      Text(result.note!, style: theme.textTheme.bodySmall),
                     const SizedBox(height: 8),
                     if (result.reading == null)
                       Text(

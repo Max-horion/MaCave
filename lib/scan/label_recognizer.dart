@@ -17,6 +17,10 @@ abstract class LabelRecognizer {
   /// Lignes de texte de l'image [imagePath], dans l'ordre de lecture.
   Future<List<LabelLine>> recognize(String imagePath);
 
+  /// Diagnostic de la dernière lecture, affiché en mode comparaison (bêta),
+  /// ou null.
+  String? get lastNote;
+
   Future<void> close();
 }
 
@@ -26,6 +30,9 @@ class MlKitLabelRecognizer implements LabelRecognizer {
 
   @override
   String get name => 'ML Kit';
+
+  @override
+  String? get lastNote => null;
 
   @override
   Future<List<LabelLine>> recognize(String imagePath) async {
@@ -59,6 +66,9 @@ class TesseractLabelRecognizer implements LabelRecognizer {
   String get name => 'Tesseract';
 
   @override
+  String? lastNote;
+
+  @override
   Future<List<LabelLine>> recognize(String imagePath) async {
     final hocr = await _channel.invokeMethod<String>('hocr', {
       'dataPath': await _dataPath(),
@@ -66,7 +76,9 @@ class TesseractLabelRecognizer implements LabelRecognizer {
       'imagePath': imagePath,
       'psm': pageSegmentation,
     });
-    return parseHocr(hocr ?? '');
+    final result = readHocr(hocr ?? '');
+    lastNote = result.note;
+    return result.lines;
   }
 
   /// Dossier privé contenant `tessdata/` : Tesseract ne lit pas les
@@ -95,10 +107,37 @@ class TesseractLabelRecognizer implements LabelRecognizer {
 /// c'est presque toujours un motif de l'étiquette pris pour du texte.
 const tesseractMinConfidence = 40;
 
+/// Lecture d'un résultat hOCR : les lignes, et combien de mots ont été
+/// gardés ou écartés (diagnostic de la bêta).
+class HocrResult {
+  const HocrResult(this.lines, {required this.kept, required this.dropped});
+
+  final List<LabelLine> lines;
+  final int kept;
+  final int dropped;
+
+  /// « 42 mots lus, 7 écartés (confiance < 40) » : ce n'est pas un texte de
+  /// l'interface, mais une information technique pour la bêta.
+  String get note =>
+      'hOCR : $kept mots gardés, $dropped écartés '
+      '(confiance < $tesseractMinConfidence)';
+}
+
+/// Lignes d'un résultat hOCR de Tesseract (voir [readHocr]).
+List<LabelLine> parseHocr(String hocr) => readHocr(hocr).lines;
+
 /// Lignes d'un résultat hOCR de Tesseract, avec leur hauteur de lettres
 /// (`x_size`, à défaut la hauteur du cadre de la ligne). Les mots peu sûrs
-/// sont écartés.
-List<LabelLine> parseHocr(String hocr) {
+/// sont écartés ; si **tous** le sont (photo difficile), ils sont gardés
+/// quand même : mieux vaut un texte approximatif que rien.
+HocrResult readHocr(String hocr) {
+  final strict = _readHocr(hocr, tesseractMinConfidence);
+  if (strict.kept > 0 || strict.dropped == 0) return strict;
+  final all = _readHocr(hocr, 0);
+  return HocrResult(all.lines, kept: all.kept, dropped: 0);
+}
+
+HocrResult _readHocr(String hocr, int minConfidence) {
   final lineStart = RegExp(
     r'''<span class=['"](ocr_line|ocr_header|ocr_textfloat|ocr_caption)['"][^>]*title=['"]([^'"]*)['"][^>]*>''',
   );
@@ -108,17 +147,23 @@ List<LabelLine> parseHocr(String hocr) {
   );
   final starts = lineStart.allMatches(hocr).toList();
   final lines = <LabelLine>[];
+  var kept = 0, dropped = 0;
   for (final (i, start) in starts.indexed) {
     final end = i + 1 < starts.length ? starts[i + 1].start : hocr.length;
     final segment = hocr.substring(start.end, end);
     final words = <String>[];
     for (final w in word.allMatches(segment)) {
+      final text = _unescape(w.group(2)!.replaceAll(RegExp(r'<[^>]+>'), ''));
+      if (text.trim().isEmpty) continue;
       final confidence = int.tryParse(
         RegExp(r'x_wconf (\d+)').firstMatch(w.group(1)!)?.group(1) ?? '',
       );
-      if (confidence != null && confidence < tesseractMinConfidence) continue;
-      final text = _unescape(w.group(2)!.replaceAll(RegExp(r'<[^>]+>'), ''));
-      if (text.trim().isNotEmpty) words.add(text.trim());
+      if (confidence != null && confidence < minConfidence) {
+        dropped++;
+        continue;
+      }
+      kept++;
+      words.add(text.trim());
     }
     if (words.isEmpty) continue;
     final title = start.group(2)!;
@@ -133,7 +178,7 @@ List<LabelLine> parseHocr(String hocr) {
             : double.parse(box.group(4)!) - double.parse(box.group(2)!));
     lines.add(LabelLine(words.join(' '), height: height));
   }
-  return lines;
+  return HocrResult(lines, kept: kept, dropped: dropped);
 }
 
 String _unescape(String text) => text

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <meta name='ocr-system' content='tesseract 5.5.0' />
+  <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word ocrp_dir ocrp_lang ocrp_wconf'/>
+ </head>
+ <body>
+  <div class='ocr_page' id='page_1' title='image "label_up.jpg"; bbox 0 0 1080 1440; ppageno 0; scan_res 70 70'>
+   <div class='ocr_carea' id='block_1_1' title="bbox 228 208 854 238">
+    <p class='ocr_par' id='par_1_1' lang='fra' title="bbox 228 208 854 238">
+     <span class='ocr_line' id='line_1_1' title="bbox 228 208 854 238; baseline 0 0; x_size 39.416668; x_descenders 9.854167; x_ascenders 9.854167">
+      <span class='ocrx_word' id='word_1_1' title='bbox 228 208 394 238; x_wconf 96'>GRAND</span>
+      <span class='ocrx_word' id='word_1_2' title='bbox 410 209 495 238; x_wconf 96'>VIN</span>
+      <span class='ocrx_word' id='word_1_3' title='bbox 512 209 573 238; x_wconf 92'>DE</span>
+      <span class='ocrx_word' id='word_1_4' title='bbox 591 208 854 238; x_wconf 91'>BORDFAUX</span>
+     </span>
+    </p>
+   </div>
+   <div class='ocr_carea' id='block_1_2' title="bbox 0 402 1080 578">
+    <p class='ocr_par' id='par_1_2' lang='fra' title="bbox 0 402 1080 578">
+     <span class='ocr_line' id='line_1_2' title="bbox 0 402 1080 486; baseline 0 -1; x_size 93.421051; x_descenders 10.421052; x_ascenders 17">
+      <span class='ocrx_word' id='word_1_5' title='bbox 0 402 478 486; x_wconf 95'>CHÂTEAU</span>
+      <span class='ocrx_word' id='word_1_6' title='bbox 515 418 717 486; x_wconf 92'>DES</span>
+      <span class='ocrx_word' id='word_1_7' title='bbox 758 418 1080 486; x_wconf 90'>LUNES</span>
+     </span>
+     <span class='ocr_line' id='line_1_3' title="bbox 461 532 620 578; baseline 0.006 -1; x_size 51.75; x_descenders 5.75; x_ascenders 9.583333">
+      <span class='ocrx_word' id='word_1_8' title='bbox 461 532 620 578; x_wconf 94'>2019</span>
+     </span>
+    </p>
+   </div>
+   <div class='ocr_carea' id='block_1_3' title="bbox 128 701 955 748">
+    <p class='ocr_par' id='par_1_3' lang='fra' title="bbox 128 701 955 748">
+     <span class='ocr_line' id='line_1_4' title="bbox 128 701 955 748; baseline 0 -1; x_size 48.844444; x_descenders 12.211111; x_ascenders 12.211111">
+      <span class='ocrx_word' id='word_1_9' title='bbox 128 701 582 748; x_wconf 89'>SAINT-ÉMILION</span>
+      <span class='ocrx_word' id='word_1_10' title='bbox 603 710 810 748; x_wconf 96'>GRAND</span>
+      <span class='ocrx_word' id='word_1_11' title='bbox 832 710 955 748; x_wconf 96'>CRU</span>
+     </span>
+    </p>
+   </div>
+   <div class='ocr_carea' id='block_1_4' title="bbox 474 1206 608 1289">
+    <p class='ocr_par' id='par_1_4' lang='fra' title="bbox 474 1206 608 1289">
+     <span class='ocr_line' id='line_1_5' title="bbox 474 1206 608 1229; baseline 0 0; x_size 28.32258; x_descenders 5.3225803; x_ascenders 8">
+      <span class='ocrx_word' id='word_1_12' title='bbox 474 1207 540 1229; x_wconf 96'>14%</span>
+      <span class='ocrx_word' id='word_1_13' title='bbox 550 1206 608 1229; x_wconf 96'>vol.</span>
+     </span>
+     <span class='ocr_line' id='line_1_6' title="bbox 484 1266 598 1289; baseline 0 0; x_size 29.5; x_descenders 5.5; x_ascenders 8.5">
+      <span class='ocrx_word' id='word_1_14' title='bbox 484 1267 543 1289; x_wconf 95'>750</span>
+      <span class='ocrx_word' id='word_1_15' title='bbox 556 1266 598 1289; x_wconf 94'>ml</span>
+     </span>
+    </p>
+   </div>
+  </div>
+ </body>
+</html>
