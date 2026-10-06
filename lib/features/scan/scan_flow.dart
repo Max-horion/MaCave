@@ -12,6 +12,7 @@ import '../../scan/providers.dart';
 import '../../ui/formats.dart';
 import '../drink/drink_detail_screen.dart';
 import '../drink/drink_form_screen.dart';
+import '../label/label_flow.dart';
 import '../stock_actions.dart';
 import 'scan_screen.dart';
 
@@ -24,14 +25,22 @@ import 'scan_screen.dart';
 // Les actions s'exécutent dans le contexte de l'écran appelant (la liste),
 // pour que le bandeau « Annuler » reste visible une fois le scan fermé.
 
-/// Ouvre le scan, puis traite le code lu.
+/// Ouvre le scan, puis traite le code lu (ou la photo de l'étiquette, pour
+/// une bouteille sans code-barres).
 Future<void> startScan(BuildContext context, WidgetRef ref) async {
-  final code = await Navigator.push<String>(
+  final result = await Navigator.push<ScanResult>(
     context,
     MaterialPageRoute(builder: (_) => const ScanScreen()),
   );
-  if (code == null || !context.mounted) return;
-  await handleScannedCode(context, ref, code);
+  if (result == null || !context.mounted) return;
+  switch (result) {
+    case ScannedCode(:final code):
+      await handleScannedCode(context, ref, code);
+    case LabelRequested():
+      final outcome = await readLabelWithCamera(context, ref);
+      if (outcome == null || !context.mounted) return;
+      await continueAfterLabel(context, ref, outcome);
+  }
 }
 
 /// Cherche [code] dans la cave et propose les actions possibles.
@@ -84,6 +93,16 @@ Future<void> handleScannedCode(
       );
     case _Associate(:final drink):
       await _associate(context, ref, normalized, drink: drink);
+    case _ReadLabel(:final draft):
+      final outcome = await readLabelWithCamera(context, ref);
+      if (outcome == null || !context.mounted) return;
+      await continueAfterLabel(
+        context,
+        ref,
+        outcome,
+        barcode: normalized,
+        base: draft,
+      );
     case _ScanAgain():
       await startScan(context, ref);
   }
@@ -147,6 +166,13 @@ Future<_Lookup> _lookUp(WidgetRef ref, String code) async {
             profile: draft.profile,
           ),
   );
+}
+
+class _ReadLabel extends _ScanChoice {
+  const _ReadLabel([this.draft]);
+
+  /// Fiche d'Open Food Facts, complétée par l'étiquette.
+  final DrinkDraft? draft;
 }
 
 class _ScanAgain extends _ScanChoice {
@@ -345,6 +371,12 @@ class _UnknownCodeSheet extends StatelessWidget {
                   label: Text(
                     draft != null ? l10n.offUseDraft : l10n.scanNewDrink,
                   ),
+                ),
+                const SizedBox(height: 8),
+                FilledButton.tonalIcon(
+                  onPressed: () => Navigator.pop(context, _ReadLabel(draft)),
+                  icon: const Icon(Icons.document_scanner_outlined),
+                  label: Text(l10n.scanUnknownPhoto),
                 ),
                 const SizedBox(height: 8),
                 FilledButton.tonalIcon(

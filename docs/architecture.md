@@ -18,7 +18,7 @@ Versions vérifiées sur pub.dev le 5 octobre 2026. Toutes gratuites et open sou
 | Réseau disponible ? | **connectivity_plus** | Distinguer « en attente » (pas de réseau, pas une erreur) d'une vraie erreur. | 4 |
 | Scan codes-barres / QR | **mobile_scanner** | Lecture en direct avec ML Kit (version embarquée : pas de réseau nécessaire, +3 à 10 Mo par architecture), lampe torche intégrée, bien maintenu. | 5 |
 | Photo d'étiquette | **camera** | Prise de vue dans l'appli avec contrôle de la lampe torche. | 5 |
-| Reconnaissance de texte | **google_mlkit_text_recognition** et **flutter_tesseract_ocr** derrière une interface commune `TextRecognizer` | Moteur interchangeable + mode comparaison (CDC §10). Tesseract nécessite d'embarquer le dictionnaire français (quelques Mo dans l'APK). | 5 |
+| Reconnaissance de texte | **google_mlkit_text_recognition** (fait, 5c) et **flutter_tesseract_ocr** (5d) derrière une interface commune `LabelRecognizer` | Moteur interchangeable + mode comparaison (CDC §10). ML Kit : modèle latin embarqué, hors ligne. Tesseract nécessite d'embarquer le dictionnaire français (quelques Mo dans l'APK). | 5 |
 | Open Food Facts | **http** (appel direct à l'API) | Un seul appel « produit par code-barres » : le paquet officiel serait surdimensionné. | 5 |
 | Requêtes HTTP | **http** | Base du client WebDAV maison. | 4 |
 | Fichiers | **path_provider**, **file_picker**, **share_plus**, **csv** | Emplacement de la base, choix du fichier à importer / dossier de sauvegarde, partage d'un export. | 3–4 |
@@ -87,7 +87,7 @@ Points clés :
 - **Photos (V2)** : seulement un chemin de fichier, jamais l'image dans la base.
 - **Second utilisateur** : `updated_by` / `device_id` suffisent à le préparer sans refonte.
 - **Données propres à l'appareil** (ETag connu, identifiant d'appareil, thème, journal des erreurs) : hors de la base synchronisée (préférences locales), pour que le fichier partagé soit identique d'un appareil à l'autre. Le mot de passe va dans le coffre sécurisé.
-- **Appellations INAO** : fichier embarqué dans `assets/`, en lecture seule, pas dans la base.
+- **Appellations INAO** : fichier embarqué `assets/appellations.txt` (une par ligne), en lecture seule, pas dans la base. Construit par `tool/build_appellations.py` à partir des jeux « Aires et produits AOC/AOP et IGP » et « Délimitation parcellaire des AOC viticoles » de l'INAO (data.gouv.fr, **Licence Ouverte** : la source sera citée dans l'écran « À propos », lot 6).
 
 ## 4. Principe de synchronisation (lot 4)
 

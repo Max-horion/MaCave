@@ -1917,6 +1917,150 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Revenir au formulaire'**
   String get similarBack;
+
+  /// Bouton : photographier l'étiquette pour pré-remplir la fiche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire l\'étiquette'**
+  String get labelButton;
+
+  /// Bouton de l'écran de scan : passer à la photo de l'étiquette.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de code-barres ? Photo de l\'étiquette'**
+  String get labelScanInstead;
+
+  /// Titre de l'écran de prise de vue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo de l\'étiquette'**
+  String get labelTitle;
+
+  /// Consigne de prise de vue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cadrez l\'étiquette entière, bien à plat, sans reflet.'**
+  String get labelHint;
+
+  /// Bouton : prendre la photo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photographier'**
+  String get labelTake;
+
+  /// Erreur : pas de caméra.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun appareil photo disponible.'**
+  String get labelNoCamera;
+
+  /// Pendant la reconnaissance du texte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture de l\'étiquette…'**
+  String get labelReading;
+
+  /// Message : rien n'a été reconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun texte lu sur la photo. Réessayez plus près, avec la lampe si besoin.'**
+  String get labelNothingRead;
+
+  /// Titre de l'écran des informations lues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture de l\'étiquette'**
+  String get labelReadTitle;
+
+  /// Explication de l'écran de lecture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifiez les informations lues. Touchez une ligne de texte plus bas pour l\'utiliser comme nom, producteur ou appellation.'**
+  String get labelReadHelp;
+
+  /// Champ que la lecture n'a pas trouvé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non trouvé'**
+  String get labelNotFound;
+
+  /// Infobulle : effacer une suggestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacer'**
+  String get labelClear;
+
+  /// Type deviné : vin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vin'**
+  String get labelTypeWine;
+
+  /// Type deviné : bière.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bière'**
+  String get labelTypeBeer;
+
+  /// Type deviné : spiritueux.
+  ///
+  /// In fr, this message translates to:
+  /// **'Spiritueux'**
+  String get labelTypeSpirit;
+
+  /// Type deviné : soft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soft'**
+  String get labelTypeSoft;
+
+  /// Aide sous les références proches, après lecture d'une étiquette.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez une référence pour lui ajouter des bouteilles.'**
+  String get labelMaybeHelp;
+
+  /// Bouton : ouvrir le formulaire pré-rempli.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec ces informations'**
+  String get labelContinue;
+
+  /// Titre de la liste des lignes reconnues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte lu'**
+  String get labelLinesTitle;
+
+  /// Aide sous la liste des lignes reconnues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez une ligne pour l\'attribuer à un champ.'**
+  String get labelLinesHelp;
+
+  /// Choix : la ligne devient le nom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser comme nom'**
+  String get labelUseAsName;
+
+  /// Choix : la ligne devient le producteur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser comme producteur'**
+  String get labelUseAsProducer;
+
+  /// Choix : la ligne devient l'appellation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser comme appellation'**
+  String get labelUseAsAppellation;
+
+  /// Bouton de la fiche « Code inconnu » : lire l'étiquette.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photographier l\'étiquette'**
+  String get scanUnknownPhoto;
 }
 
 class _AppLocalizationsDelegate

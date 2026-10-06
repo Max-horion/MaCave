@@ -11,6 +11,8 @@ class DrinkDraft {
   const DrinkDraft({
     this.name,
     this.producer,
+    this.appellation,
+    this.country,
     this.abv,
     this.volumeMl,
     this.vintage,
@@ -20,6 +22,8 @@ class DrinkDraft {
 
   final String? name;
   final String? producer;
+  final String? appellation;
+  final String? country;
   final double? abv;
   final int? volumeMl;
   final int? vintage;
@@ -34,8 +38,25 @@ class DrinkDraft {
   bool get isEmpty =>
       name == null &&
       producer == null &&
+      appellation == null &&
       abv == null &&
       volumeMl == null &&
       vintage == null &&
       profile == null;
+
+  /// Complète cette fiche avec [other] : seuls les champs vides sont pris
+  /// (une fiche d'Open Food Facts complétée par la photo de l'étiquette).
+  DrinkDraft fillWith(DrinkDraft other) => DrinkDraft(
+    name: name ?? other.name,
+    producer: producer ?? other.producer,
+    appellation: appellation ?? other.appellation,
+    country: country ?? other.country,
+    abv: abv ?? other.abv,
+    volumeMl: volumeMl ?? other.volumeMl,
+    vintage: vintage ?? other.vintage,
+    profile: profile ?? other.profile,
+    characteristics: characteristics.isEmpty
+        ? other.characteristics
+        : characteristics,
+  );
 }

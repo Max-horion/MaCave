@@ -4,9 +4,26 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../l10n/app_localizations.dart';
 
+/// Ce que l'écran de scan retourne.
+sealed class ScanResult {
+  const ScanResult();
+}
+
+/// Code lu, ou tapé à la main.
+class ScannedCode extends ScanResult {
+  const ScannedCode(this.code);
+  final String code;
+}
+
+/// Pas de code-barres : l'utilisateur veut photographier l'étiquette.
+class LabelRequested extends ScanResult {
+  const LabelRequested();
+}
+
 /// Écran de scan d'un code-barres ou d'un QR code (CDC §6.2, §6.3), avec la
-/// lampe torche (cave peu éclairée). Retourne le premier code lu, ou celui
-/// tapé à la main ; null si l'utilisateur ferme l'écran.
+/// lampe torche (cave peu éclairée). Retourne le premier code lu, celui tapé
+/// à la main, ou la demande de photo d'étiquette ; null si l'utilisateur
+/// ferme l'écran.
 ///
 /// La lecture se fait entièrement sur le téléphone (ML Kit embarqué) : pas
 /// besoin de réseau dans la cave.
@@ -36,7 +53,7 @@ class _ScanScreenState extends State<ScanScreen> {
     if (_done || code.trim().isEmpty) return;
     _done = true;
     HapticFeedback.mediumImpact();
-    Navigator.pop(context, code.trim());
+    Navigator.pop(context, ScannedCode(code.trim()));
   }
 
   Future<void> _typeCode() async {
@@ -150,6 +167,13 @@ class _ScanScreenState extends State<ScanScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    onPressed: () =>
+                        Navigator.pop(context, const LabelRequested()),
+                    icon: const Icon(Icons.document_scanner_outlined),
+                    label: Text(l10n.labelScanInstead),
                   ),
                 ],
               ),

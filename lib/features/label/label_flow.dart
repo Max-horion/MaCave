@@ -1,0 +1,359 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/cave_queries.dart';
+import '../../data/database.dart';
+import '../../data/providers.dart';
+import '../../domain/drink_draft.dart';
+import '../../domain/enums.dart';
+import '../../domain/label_reading.dart';
+import '../../l10n/app_localizations.dart';
+import '../../scan/providers.dart';
+import '../../ui/formats.dart';
+import '../drink/drink_detail_screen.dart';
+import '../drink/drink_form_screen.dart';
+import '../stock_actions.dart';
+import 'label_capture_screen.dart';
+
+// Photo de l'étiquette (CDC §6.2) : prise de vue, reconnaissance du texte
+// sur le téléphone, puis écran de lecture où l'utilisateur valide ou corrige
+// les suggestions. La photo est supprimée dès la lecture faite (V1).
+
+/// Ce que l'utilisateur a décidé après la lecture.
+sealed class LabelOutcome {
+  const LabelOutcome(this.draft);
+
+  /// Ce qui a été lu et validé.
+  final DrinkDraft draft;
+}
+
+/// Créer une référence avec ces informations (formulaire pré-rempli).
+class LabelUseDraft extends LabelOutcome {
+  const LabelUseDraft(super.draft);
+}
+
+/// Ajouter des bouteilles à une référence existante (doublon reconnu).
+class LabelAddToExisting extends LabelOutcome {
+  const LabelAddToExisting(this.drink, super.draft);
+  final Drink drink;
+}
+
+/// Prise de vue de l'étiquette : retourne le chemin de la photo. Remplacée
+/// dans les tests (pas d'appareil photo).
+final labelPhotoProvider = Provider<Future<String?> Function(BuildContext)>(
+  (ref) =>
+      (context) => Navigator.push<String>(
+        context,
+        MaterialPageRoute(builder: (_) => const LabelCaptureScreen()),
+      ),
+);
+
+/// Photographie et lit une étiquette. Null si l'utilisateur abandonne ou si
+/// aucun texte n'est lu (un message le dit).
+Future<LabelOutcome?> readLabelWithCamera(
+  BuildContext context,
+  WidgetRef ref,
+) async {
+  final path = await ref.read(labelPhotoProvider)(context);
+  if (path == null || !context.mounted) return null;
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+
+  final LabelReading reading;
+  final navigator = Navigator.of(context);
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => PopScope(
+      canPop: false,
+      child: AlertDialog(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Expanded(child: Text(l10n.labelReading)),
+          ],
+        ),
+      ),
+    ),
+  );
+  try {
+    final lines = await ref.read(labelRecognizerProvider).recognize(path);
+    final index = await ref.read(appellationIndexProvider.future);
+    reading = readLabel(lines, index, currentYear: DateTime.now().year);
+  } catch (e) {
+    navigator.pop();
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.errorGeneric('$e')), persist: false),
+    );
+    return null;
+  } finally {
+    // La photo n'est pas conservée en V1 (CDC §6.2).
+    final file = File(path);
+    if (file.existsSync()) file.deleteSync();
+  }
+  navigator.pop();
+  if (reading.lines.isEmpty) {
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.labelNothingRead), persist: false),
+    );
+    return null;
+  }
+  if (!context.mounted) return null;
+  return Navigator.push<LabelOutcome>(
+    context,
+    MaterialPageRoute(builder: (_) => LabelReadingScreen(reading: reading)),
+  );
+}
+
+/// Ajoute des bouteilles à la référence reconnue, millésime et volume
+/// pré-remplis d'après l'étiquette. Retourne true si des bouteilles ont été
+/// ajoutées.
+Future<bool> addToExistingFromLabel(
+  BuildContext context,
+  WidgetRef ref,
+  LabelAddToExisting outcome, {
+  String? barcode,
+}) {
+  final classification = ref.read(classificationProvider).value;
+  return showNewLotDialog(
+    context,
+    ref,
+    drinkId: outcome.drink.id,
+    type: classification?.type(outcome.drink.typeId),
+    barcode: barcode,
+    vintage: outcome.draft.vintage,
+    volumeMl: outcome.draft.volumeMl,
+  );
+}
+
+/// Suite d'une lecture lancée hors du formulaire (scan, code inconnu) :
+/// formulaire pré-rempli, ou bouteilles ajoutées à la référence reconnue
+/// puis sa fiche. [base] : fiche déjà connue (Open Food Facts), complétée
+/// par l'étiquette.
+Future<void> continueAfterLabel(
+  BuildContext context,
+  WidgetRef ref,
+  LabelOutcome outcome, {
+  String? barcode,
+  DrinkDraft? base,
+}) async {
+  switch (outcome) {
+    case LabelUseDraft(:final draft):
+      await Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+          builder: (_) => DrinkFormScreen(
+            barcode: barcode,
+            draft: base == null ? draft : draft.fillWith(base),
+          ),
+        ),
+      );
+    case LabelAddToExisting(:final drink):
+      final added = await addToExistingFromLabel(
+        context,
+        ref,
+        outcome,
+        barcode: barcode,
+      );
+      if (!added || !context.mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+          builder: (_) => DrinkDetailScreen(drinkId: drink.id),
+        ),
+      );
+  }
+}
+
+/// Ce qui a été lu sur l'étiquette : suggestions à valider, lignes à
+/// attribuer d'un toucher, références proches de la cave.
+class LabelReadingScreen extends ConsumerStatefulWidget {
+  const LabelReadingScreen({super.key, required this.reading});
+
+  final LabelReading reading;
+
+  @override
+  ConsumerState<LabelReadingScreen> createState() => _LabelReadingScreenState();
+}
+
+/// Champ auquel attribuer une ligne.
+enum _Field { name, producer, appellation }
+
+class _LabelReadingScreenState extends ConsumerState<LabelReadingScreen> {
+  late LabelReading _reading = widget.reading;
+  late Future<List<SimilarDrink>> _similar = _findSimilar();
+
+  Future<List<SimilarDrink>> _findSimilar() {
+    final name = _reading.name;
+    if (name == null) return Future.value(const []);
+    return ref
+        .read(caveQueriesProvider)
+        .similarDrinks(
+          name: name,
+          producer: _reading.producer,
+          profile: _reading.toDraft().profile,
+        );
+  }
+
+  void _set(_Field field, String? value) {
+    setState(() {
+      _reading = switch (field) {
+        _Field.name => _reading.copyWith(name: () => value),
+        _Field.producer => _reading.copyWith(producer: () => value),
+        _Field.appellation => _reading.copyWith(appellation: () => value),
+      };
+      if (field != _Field.appellation) _similar = _findSimilar();
+    });
+  }
+
+  Future<void> _assign(String line) async {
+    final l10n = AppLocalizations.of(context);
+    final field = await showModalBottomSheet<_Field>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                line,
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 8),
+            for (final (field, label) in [
+              (_Field.name, l10n.labelUseAsName),
+              (_Field.producer, l10n.labelUseAsProducer),
+              (_Field.appellation, l10n.labelUseAsAppellation),
+            ])
+              ListTile(
+                minTileHeight: 56,
+                title: Text(label),
+                onTap: () => Navigator.pop(context, field),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (field != null) _set(field, line.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final formats = Formats.of(context);
+    final l10n = formats.l10n;
+    final theme = Theme.of(context);
+    final r = _reading;
+    final draft = r.toDraft();
+
+    Widget field(String label, String? value, {_Field? editable}) => ListTile(
+      contentPadding: EdgeInsets.zero,
+      minTileHeight: 56,
+      title: Text(label, style: theme.textTheme.bodySmall),
+      subtitle: Text(
+        value ?? l10n.labelNotFound,
+        style: value == null
+            ? TextStyle(color: theme.colorScheme.onSurfaceVariant)
+            : theme.textTheme.titleMedium,
+      ),
+      trailing: editable != null && value != null
+          ? IconButton(
+              tooltip: l10n.labelClear,
+              icon: const Icon(Icons.clear),
+              onPressed: () => _set(editable, null),
+            )
+          : null,
+    );
+
+    final type = switch (draft.profile) {
+      FieldProfile.wine => l10n.labelTypeWine,
+      FieldProfile.beer => l10n.labelTypeBeer,
+      FieldProfile.spirit => l10n.labelTypeSpirit,
+      FieldProfile.soft => l10n.labelTypeSoft,
+      null => null,
+    };
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.labelReadTitle)),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+        children: [
+          Text(l10n.labelReadHelp),
+          const SizedBox(height: 8),
+          field(l10n.fieldName, r.name, editable: _Field.name),
+          field(l10n.fieldProducer, r.producer, editable: _Field.producer),
+          field(
+            l10n.fieldAppellation,
+            r.appellation,
+            editable: _Field.appellation,
+          ),
+          field(l10n.fieldVintage, r.vintage?.toString()),
+          field(l10n.fieldAbv, r.abv == null ? null : formats.abv(r.abv!)),
+          field(
+            l10n.fieldVolume,
+            r.volumeMl == null ? null : formats.volume(r.volumeMl!),
+          ),
+          field(
+            l10n.fieldType,
+            type == null ? null : [type, ...draft.characteristics].join(' · '),
+          ),
+          FutureBuilder<List<SimilarDrink>>(
+            future: _similar,
+            builder: (context, snapshot) {
+              final similar = snapshot.data ?? const [];
+              if (similar.isEmpty) return const SizedBox.shrink();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 16),
+                  Text(l10n.scanMaybeTitle, style: theme.textTheme.titleMedium),
+                  Text(l10n.labelMaybeHelp, style: theme.textTheme.bodySmall),
+                  for (final s in similar)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      minTileHeight: 64,
+                      title: Text(s.drink.name),
+                      subtitle: Text(
+                        [
+                          ?s.drink.producer,
+                          l10n.bottleCount(s.bottles),
+                        ].join(' · '),
+                      ),
+                      trailing: const Icon(Icons.add_circle_outline),
+                      onTap: () => Navigator.pop(
+                        context,
+                        LabelAddToExisting(s.drink, draft),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: () => Navigator.pop(context, LabelUseDraft(draft)),
+            icon: const Icon(Icons.check),
+            label: Text(l10n.labelContinue),
+          ),
+          const SizedBox(height: 24),
+          Text(l10n.labelLinesTitle, style: theme.textTheme.titleMedium),
+          Text(l10n.labelLinesHelp, style: theme.textTheme.bodySmall),
+          for (final line in r.lines)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              minTileHeight: 48,
+              title: Text(line),
+              trailing: const Icon(Icons.touch_app_outlined),
+              onTap: () => _assign(line),
+            ),
+        ],
+      ),
+    );
+  }
+}

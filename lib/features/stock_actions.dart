@@ -195,20 +195,26 @@ Future<void> showRemoveDialog(
 /// Nouveau lot sur une référence existante : autre millésime ou volume
 /// (CDC §6.2). Si le lot existe déjà, les bouteilles s'y ajoutent.
 ///
-/// [barcode] : code scanné, mémorisé sur le lot.
-Future<void> showNewLotDialog(
+/// [barcode] : code scanné, mémorisé sur le lot. [vintage] et [volumeMl] :
+/// valeurs proposées (lues sur l'étiquette). Retourne true si des
+/// bouteilles ont été ajoutées.
+Future<bool> showNewLotDialog(
   BuildContext context,
   WidgetRef ref, {
   required String drinkId,
   required DrinkType? type,
   String? barcode,
+  int? vintage,
+  int? volumeMl,
 }) async {
   final l10n = AppLocalizations.of(context);
   final result = await showDialog<LotDraft>(
     context: context,
-    builder: (context) => _NewLotDialog(type: type),
+    builder: (context) =>
+        _NewLotDialog(type: type, vintage: vintage, volumeMl: volumeMl),
   );
-  if (result == null || !context.mounted) return;
+  if (result == null || !context.mounted) return false;
+  var added = false;
   await _run(context, () async {
     final repo = ref.read(caveRepositoryProvider);
     final lotId = await repo.findOrCreateLot(
@@ -218,10 +224,12 @@ Future<void> showNewLotDialog(
       barcode: barcode,
     );
     final id = await repo.addEntry(lotId, result.quantity);
+    added = true;
     if (context.mounted) {
       _showUndo(context, ref, l10n.bottlesAdded(result.quantity), id);
     }
   });
+  return added;
 }
 
 /// Millésime, volume et quantité saisis pour un lot.
@@ -238,9 +246,13 @@ class LotDraft {
 }
 
 class _NewLotDialog extends StatefulWidget {
-  const _NewLotDialog({required this.type});
+  const _NewLotDialog({required this.type, this.vintage, this.volumeMl});
 
   final DrinkType? type;
+
+  /// Valeurs proposées.
+  final int? vintage;
+  final int? volumeMl;
 
   @override
   State<_NewLotDialog> createState() => _NewLotDialogState();
@@ -248,8 +260,10 @@ class _NewLotDialog extends StatefulWidget {
 
 class _NewLotDialogState extends State<_NewLotDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _vintage = TextEditingController();
-  late int _volumeMl = widget.type?.defaultVolumeMl ?? 750;
+  late final _vintage = TextEditingController(
+    text: widget.vintage?.toString() ?? '',
+  );
+  late int _volumeMl = widget.volumeMl ?? widget.type?.defaultVolumeMl ?? 750;
   int _quantity = 1;
 
   @override

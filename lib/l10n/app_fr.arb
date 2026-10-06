@@ -1594,5 +1594,101 @@
   "similarBack": "Revenir au formulaire",
   "@similarBack": {
     "description": "Bouton : fermer l'avertissement de doublon pour modifier la saisie."
+  },
+  "labelButton": "Lire l'étiquette",
+  "@labelButton": {
+    "description": "Bouton : photographier l'étiquette pour pré-remplir la fiche."
+  },
+  "labelScanInstead": "Pas de code-barres ? Photo de l'étiquette",
+  "@labelScanInstead": {
+    "description": "Bouton de l'écran de scan : passer à la photo de l'étiquette."
+  },
+  "labelTitle": "Photo de l'étiquette",
+  "@labelTitle": {
+    "description": "Titre de l'écran de prise de vue."
+  },
+  "labelHint": "Cadrez l'étiquette entière, bien à plat, sans reflet.",
+  "@labelHint": {
+    "description": "Consigne de prise de vue."
+  },
+  "labelTake": "Photographier",
+  "@labelTake": {
+    "description": "Bouton : prendre la photo."
+  },
+  "labelNoCamera": "Aucun appareil photo disponible.",
+  "@labelNoCamera": {
+    "description": "Erreur : pas de caméra."
+  },
+  "labelReading": "Lecture de l'étiquette…",
+  "@labelReading": {
+    "description": "Pendant la reconnaissance du texte."
+  },
+  "labelNothingRead": "Aucun texte lu sur la photo. Réessayez plus près, avec la lampe si besoin.",
+  "@labelNothingRead": {
+    "description": "Message : rien n'a été reconnu."
+  },
+  "labelReadTitle": "Lecture de l'étiquette",
+  "@labelReadTitle": {
+    "description": "Titre de l'écran des informations lues."
+  },
+  "labelReadHelp": "Vérifiez les informations lues. Touchez une ligne de texte plus bas pour l'utiliser comme nom, producteur ou appellation.",
+  "@labelReadHelp": {
+    "description": "Explication de l'écran de lecture."
+  },
+  "labelNotFound": "Non trouvé",
+  "@labelNotFound": {
+    "description": "Champ que la lecture n'a pas trouvé."
+  },
+  "labelClear": "Effacer",
+  "@labelClear": {
+    "description": "Infobulle : effacer une suggestion."
+  },
+  "labelTypeWine": "Vin",
+  "@labelTypeWine": {
+    "description": "Type deviné : vin."
+  },
+  "labelTypeBeer": "Bière",
+  "@labelTypeBeer": {
+    "description": "Type deviné : bière."
+  },
+  "labelTypeSpirit": "Spiritueux",
+  "@labelTypeSpirit": {
+    "description": "Type deviné : spiritueux."
+  },
+  "labelTypeSoft": "Soft",
+  "@labelTypeSoft": {
+    "description": "Type deviné : soft."
+  },
+  "labelMaybeHelp": "Touchez une référence pour lui ajouter des bouteilles.",
+  "@labelMaybeHelp": {
+    "description": "Aide sous les références proches, après lecture d'une étiquette."
+  },
+  "labelContinue": "Continuer avec ces informations",
+  "@labelContinue": {
+    "description": "Bouton : ouvrir le formulaire pré-rempli."
+  },
+  "labelLinesTitle": "Texte lu",
+  "@labelLinesTitle": {
+    "description": "Titre de la liste des lignes reconnues."
+  },
+  "labelLinesHelp": "Touchez une ligne pour l'attribuer à un champ.",
+  "@labelLinesHelp": {
+    "description": "Aide sous la liste des lignes reconnues."
+  },
+  "labelUseAsName": "Utiliser comme nom",
+  "@labelUseAsName": {
+    "description": "Choix : la ligne devient le nom."
+  },
+  "labelUseAsProducer": "Utiliser comme producteur",
+  "@labelUseAsProducer": {
+    "description": "Choix : la ligne devient le producteur."
+  },
+  "labelUseAsAppellation": "Utiliser comme appellation",
+  "@labelUseAsAppellation": {
+    "description": "Choix : la ligne devient l'appellation."
+  },
+  "scanUnknownPhoto": "Photographier l'étiquette",
+  "@scanUnknownPhoto": {
+    "description": "Bouton de la fiche « Code inconnu » : lire l'étiquette."
   }
 }

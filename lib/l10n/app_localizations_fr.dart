@@ -1303,4 +1303,81 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get similarBack => 'Revenir au formulaire';
+
+  @override
+  String get labelButton => 'Lire l\'étiquette';
+
+  @override
+  String get labelScanInstead => 'Pas de code-barres ? Photo de l\'étiquette';
+
+  @override
+  String get labelTitle => 'Photo de l\'étiquette';
+
+  @override
+  String get labelHint =>
+      'Cadrez l\'étiquette entière, bien à plat, sans reflet.';
+
+  @override
+  String get labelTake => 'Photographier';
+
+  @override
+  String get labelNoCamera => 'Aucun appareil photo disponible.';
+
+  @override
+  String get labelReading => 'Lecture de l\'étiquette…';
+
+  @override
+  String get labelNothingRead =>
+      'Aucun texte lu sur la photo. Réessayez plus près, avec la lampe si besoin.';
+
+  @override
+  String get labelReadTitle => 'Lecture de l\'étiquette';
+
+  @override
+  String get labelReadHelp =>
+      'Vérifiez les informations lues. Touchez une ligne de texte plus bas pour l\'utiliser comme nom, producteur ou appellation.';
+
+  @override
+  String get labelNotFound => 'Non trouvé';
+
+  @override
+  String get labelClear => 'Effacer';
+
+  @override
+  String get labelTypeWine => 'Vin';
+
+  @override
+  String get labelTypeBeer => 'Bière';
+
+  @override
+  String get labelTypeSpirit => 'Spiritueux';
+
+  @override
+  String get labelTypeSoft => 'Soft';
+
+  @override
+  String get labelMaybeHelp =>
+      'Touchez une référence pour lui ajouter des bouteilles.';
+
+  @override
+  String get labelContinue => 'Continuer avec ces informations';
+
+  @override
+  String get labelLinesTitle => 'Texte lu';
+
+  @override
+  String get labelLinesHelp =>
+      'Touchez une ligne pour l\'attribuer à un champ.';
+
+  @override
+  String get labelUseAsName => 'Utiliser comme nom';
+
+  @override
+  String get labelUseAsProducer => 'Utiliser comme producteur';
+
+  @override
+  String get labelUseAsAppellation => 'Utiliser comme appellation';
+
+  @override
+  String get scanUnknownPhoto => 'Photographier l\'étiquette';
 }

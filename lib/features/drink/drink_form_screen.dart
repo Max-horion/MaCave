@@ -11,6 +11,7 @@ import '../../domain/field_rules.dart';
 import '../../domain/text.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/widgets.dart';
+import '../label/label_flow.dart';
 import '../stock_actions.dart';
 import 'drink_detail_screen.dart';
 
@@ -109,36 +110,85 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
     });
   }
 
-  /// Pré-remplit le formulaire avec [DrinkDraft] (une seule fois, au premier
-  /// affichage). Le type est le premier du profil proposé ; les
-  /// caractéristiques sont retrouvées par leur nom dans ce type.
+  /// Pré-remplit le formulaire avec la fiche proposée à l'ouverture (une
+  /// seule fois, au premier affichage).
   void _applyDraft(Classification classification) {
     _draftApplied = true;
     final draft = widget.draft;
-    if (draft == null) return;
-    _name.text = draft.name ?? '';
-    _producer.text = draft.producer ?? '';
-    final abv = draft.abv;
-    if (abv != null) {
-      _abv.text = abv == abv.roundToDouble()
-          ? '${abv.toInt()}'
-          : '$abv'.replaceAll('.', ',');
+    if (draft != null) _fill(classification, draft, onlyEmpty: false);
+  }
+
+  /// Remplit le formulaire avec [draft]. Avec [onlyEmpty], les champs déjà
+  /// saisis sont gardés (étiquette lue après une saisie à la main). Le type
+  /// est le premier du profil proposé ; les caractéristiques sont retrouvées
+  /// par leur nom dans ce type.
+  void _fill(
+    Classification classification,
+    DrinkDraft draft, {
+    required bool onlyEmpty,
+  }) {
+    void put(TextEditingController c, String? value) {
+      if (value == null || (onlyEmpty && c.text.trim().isNotEmpty)) return;
+      c.text = value;
     }
-    if (draft.vintage != null) _vintage.text = '${draft.vintage}';
+
+    put(_name, draft.name);
+    put(_producer, draft.producer);
+    put(_appellation, draft.appellation);
+    put(_country, draft.country);
+    final abv = draft.abv;
+    put(
+      _abv,
+      abv == null
+          ? null
+          : abv == abv.roundToDouble()
+          ? '${abv.toInt()}'
+          : '$abv'.replaceAll('.', ','),
+    );
+    put(_vintage, draft.vintage?.toString());
     final type = classification.types
         .where((t) => t.fieldProfile == draft.profile)
         .firstOrNull;
     if (type != null) {
-      _typeId = type.id;
-      _volumeMl = type.defaultVolumeMl;
+      if (_typeId != type.id) {
+        _typeId = type.id;
+        _volumeMl = type.defaultVolumeMl;
+        _characteristicIds = {};
+      }
       final wanted = draft.characteristics.map(fold).toSet();
       _characteristicIds = {
+        ..._characteristicIds,
         for (final id in classification.characteristicIdsOf(type.id))
           if (wanted.contains(fold(classification.characteristic(id)!.name)))
             id,
       };
     }
     if (draft.volumeMl != null) _volumeMl = draft.volumeMl;
+  }
+
+  /// « Lire l'étiquette » depuis le formulaire : complète les champs vides,
+  /// ou ajoute les bouteilles à la référence reconnue (doublon).
+  Future<void> _readLabel(Classification classification) async {
+    final outcome = await readLabelWithCamera(context, ref);
+    if (outcome == null || !mounted) return;
+    switch (outcome) {
+      case LabelUseDraft(:final draft):
+        setState(() => _fill(classification, draft, onlyEmpty: true));
+      case LabelAddToExisting(:final drink):
+        final added = await addToExistingFromLabel(
+          context,
+          ref,
+          outcome,
+          barcode: widget.barcode,
+        );
+        if (!added || !mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (_) => DrinkDetailScreen(drinkId: drink.id),
+          ),
+        );
+    }
   }
 
   double? _parseAbv() => double.tryParse(_abv.text.trim().replaceAll(',', '.'));
@@ -350,6 +400,14 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (_isNew) ...[
+                OutlinedButton.icon(
+                  onPressed: _saving ? null : () => _readLabel(classification),
+                  icon: const Icon(Icons.document_scanner_outlined),
+                  label: Text(l10n.labelButton),
+                ),
+                const SizedBox(height: 16),
+              ],
               Text(l10n.fieldType, style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               Wrap(

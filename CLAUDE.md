@@ -50,7 +50,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a, 5b, 5e terminées) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a, 5b, 5e terminées ; 5c faite, à vérifier sur le téléphone) |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -137,6 +137,9 @@ Pièges rencontrés :
 - Purge automatique : un lot purgé ici puis réapprovisionné hors ligne sur un autre appareil avant la synchro resterait supprimé (mouvement rattaché à un lot supprimé). Cas rare, non traité.
 - Tests d'écran d'un déroulé qui lit la base puis ouvre une fenêtre : faire chaque `tap` dans `tester.runAsync` puis `settle`, sinon la fenêtre n'apparaît jamais.
 - Réglage « recherche Open Food Facts activée ou non » (CDC §7) : pas encore fait, à mettre dans l'écran des paramètres (lot 6). En attendant la recherche est toujours active (signalée à l'écran).
+- R8 (APK release) refuse les références de ML Kit aux modèles chinois/japonais/coréen/devanagari non embarqués : `-dontwarn` dans `android/app/proguard-rules.pro`.
+- Écran en `ListView` dans un test : les éléments hors écran ne sont pas construits → `scrollUntilVisible`, puis `pumpAndSettle` après `ensureVisible` avant de toucher.
+- APK release 114 Mo (ML Kit texte + code-barres pour 3 architectures). Si besoin : `--target-platform android-arm64` (le téléphone du porteur) le réduirait nettement.
 - La caméra n'existe pas en test : tester `handleScannedCode` directement (`test/scan_flow_test.dart`).
 - Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
 
@@ -150,6 +153,10 @@ Pièges rencontrés :
 - `lib/domain/drink_draft.dart` — `DrinkDraft` : fiche proposée (type par **profil**, caractéristiques par **nom**, retrouvés dans la classification de l'utilisateur) ; `DrinkFormScreen(draft:)` la pré-remplit, rien n'est enregistré sans validation.
 - `lib/domain/similarity.dart` — **doublons** (5e) : `similarityScore` (mots sans accents ni petits mots, abréviations « Ch. », « Dom. », « St »… développées, millésimes et volumes retirés, une faute de frappe tolérée sur les mots de 5 lettres et plus, coefficient de Dice ; compare aussi nom + producteur), seuil `similarityThreshold` = 0,66. Ne fait que **proposer** : l'import, lui, garde un rapprochement exact (`compactKey`).
 - `CaveQueries.similarDrinks` — références proches (autre profil écarté), utilisée par le formulaire de création (`_askSimilar` : ajouter les bouteilles à la référence existante via `addToExistingDrink`, créer quand même, ou revenir) et par la fiche « Code inconnu » (`_lookUp` dans `scan_flow.dart`).
+- `lib/domain/label_reading.dart` — **lecture d'étiquette** (5c), logique pure : `readLabel(lignes, AppellationIndex)` → millésime (année plausible, jamais « depuis 1850 »), degré, volume, appellation INAO la plus précise (pays « France » alors rempli), profil et caractéristiques d'après les mots, nom suggéré (ligne au plus gros texte, hors mentions légales), producteur (« mis en bouteille par… », « Brasserie… »). `LabelReading.toDraft()`.
+- `assets/appellations.txt` — 1 659 appellations françaises de vins et spiritueux, **construit par `tool/build_appellations.py`** à partir de deux jeux de données de l'INAO sur data.gouv.fr (Licence Ouverte, citer la source). Le script télécharge tout lui-même (le .dbf de l'archive parcellaire est lu à distance, sans les 267 Mo) ; relire `--show-excluded` après une mise à jour.
+- `lib/scan/label_recognizer.dart` — interface `LabelRecognizer` (moteur interchangeable, CDC §10) ; `MlKitLabelRecognizer` (lettres latines, embarqué). `labelRecognizerProvider`, `appellationIndexProvider` dans `lib/scan/providers.dart`.
+- `lib/features/label/` — `LabelCaptureScreen` (package `camera`, lampe torche) ; `label_flow.dart` : `readLabelWithCamera` (photo **supprimée** après lecture, CDC §6.2), `LabelReadingScreen` (suggestions, lignes à toucher pour nom / producteur / appellation, « Déjà dans votre cave ? »), `continueAfterLabel`, `addToExistingFromLabel` (fenêtre « nouveau lot » pré-remplie). Points d'entrée : bouton « Lire l'étiquette » du formulaire de création (ne remplit que les champs vides), fiche « Code inconnu » (complète Open Food Facts), écran de scan (« Pas de code-barres ? »). `labelPhotoProvider` remplaçable dans les tests.
 - `lib/domain/label_parsing.dart` — `parseVolumeMl` (« 75 cl », « 0,75 L », « 6 x 33 cl »), `parseAbv` ; resserviront à la lecture des étiquettes (5c).
 
 ## Conventions
@@ -187,3 +194,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 5b : Open Food Facts pour les codes inconnus (fiche pré-remplie : nom, producteur, degré, volume, type et caractéristiques), envoi du code signalé, jamais de QR code envoyé, hors ligne sans requête. 238 tests verts.
 - 2026-10-06 — Lot 5e (avancé avant 5c) : détection des doublons à la création d'une référence (ajout des bouteilles à la référence proche, ou création quand même) et « Déjà dans votre cave ? » dans la fiche « Code inconnu » quand Open Food Facts trouve le produit. 255 tests verts.
 - 2026-10-06 — Lots 5b et 5e vérifiés sur le téléphone par le porteur (Open Food Facts, hors ligne, doublons à la saisie et au scan).
+- 2026-10-06 — Lot 5c : photo d'étiquette + ML Kit (millésime, degré, volume, appellation INAO, type, nom et producteur suggérés, lignes à attribuer d'un toucher, doublons), depuis le formulaire, la fiche « Code inconnu » et l'écran de scan ; liste INAO embarquée (1 659 noms, script de construction). 270 tests verts ; APK 114 Mo.
