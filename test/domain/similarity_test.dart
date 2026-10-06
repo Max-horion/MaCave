@@ -56,4 +56,81 @@ void main() {
       expect(score('', 'Limonade'), 0);
     });
   });
+
+  group('texte lu sur une étiquette (erreurs de reconnaissance)', () {
+    bool onLabel(String drink, List<String> lines, {String? producer}) =>
+        labelMatchScore(
+          labelText: lines.join('\n'),
+          drinkName: drink,
+          drinkProducer: producer,
+        ) >=
+        labelMatchThreshold;
+
+    test('chiffres pris pour des lettres : 0/O, 1/I/l, 5/S', () {
+      expect(onLabel('Château Figeac', ['CHATEAU F1GEAC', '2019']), isTrue);
+      expect(onLabel('Domaine des Loups', ['D0MAINE DES L0UPS']), isTrue);
+      expect(onLabel('Les Sables', ['LES 5ABLES']), isTrue);
+    });
+
+    test('« rn » lu pour « m »', () {
+      expect(onLabel('Château Marmont', ['CHATEAU MARRNONT']), isTrue);
+    });
+
+    test('deux lettres fausses dans un mot long', () {
+      expect(
+        onLabel('Domaine des Lunes Argentées', [
+          'DOMAINE DES LUNES',
+          'ARGENIFES',
+        ]),
+        isTrue,
+      );
+    });
+
+    test('nom ailleurs que sur la ligne du nom, sur plusieurs lignes', () {
+      expect(
+        onLabel('Clos des Brumes Hautes', [
+          'GRAND VIN',
+          'CLOS DES',
+          'BRUMES',
+          'HAUTES',
+          '13% vol',
+        ]),
+        isTrue,
+      );
+    });
+
+    test('mots collés ou coupés', () {
+      expect(onLabel('Château Figeac', ['CHATEAUFIGEAC']), isTrue);
+      expect(onLabel('Château Figeac', ['CHATEAU FIG EAC']), isTrue);
+    });
+
+    test('marque dans le producteur', () {
+      expect(
+        onLabel('Blonde', ['LEFFE', 'BL0NDE', '6,6% vol'], producer: 'Leffe'),
+        isTrue,
+      );
+    });
+
+    test('pas de fausse alerte', () {
+      // Même marque, autre bière.
+      expect(onLabel('Leffe Blonde', ['LEFFE', 'BRUNE']), isFalse);
+      // Seulement les mots courants (« Château », « Grand Vin »).
+      expect(
+        onLabel('Château Pavie', ['CHATEAU FIGEAC', 'GRAND VIN']),
+        isFalse,
+      );
+      // Un seul mot sur trois.
+      expect(
+        onLabel('Domaine des Lunes Argentées', ['LUNES', 'BORDEAUX']),
+        isFalse,
+      );
+      // Mot court mal lu : pas de tolérance.
+      expect(onLabel('Gin Bio', ['GIN RIO']), isFalse);
+    });
+
+    test('la saisie à la main garde la comparaison stricte', () {
+      expect(similar('Château F1geac', 'Château Pavie'), isFalse);
+      expect(similar('Leffe Blonde', 'Leffe Brune'), isFalse);
+    });
+  });
 }

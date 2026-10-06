@@ -189,10 +189,7 @@ void main() {
 
     expect(find.text('Déjà dans votre cave ?'), findsOneWidget);
     // La référence existante (sous « Déjà dans votre cave ? »).
-    await tap(
-      tester,
-      find.widgetWithIcon(ListTile, Icons.add_circle_outline),
-    );
+    await tap(tester, find.widgetWithIcon(ListTile, Icons.add_circle_outline));
     // Fenêtre « nouveau lot » : millésime lu sur l'étiquette.
     final vintage = tester.widget<TextFormField>(
       find.byKey(const Key('field-vintage')).last,
@@ -206,6 +203,32 @@ void main() {
       (await tester.runAsync(() => db.select(db.drinks).get()))!,
       hasLength(1),
     );
+  });
+
+  testWidgets('étiquette mal lue : la référence de la cave est proposée', (
+    tester,
+  ) async {
+    await tester.runAsync(() async {
+      final types = await repo.drinkTypes();
+      await repo.addNewDrink(
+        drink: DrinkInput(name: 'Château des Lunes', typeId: types.first.id),
+        volumeMl: 750,
+        quantity: 2,
+      );
+    });
+    await open(
+      tester,
+      lines: const [
+        // Le plus gros texte n'est pas le nom, et le nom est mal lu.
+        LabelLine('GRAND VIN', height: 90),
+        LabelLine('CHATEAU DE5 LUNE5', height: 40),
+        LabelLine('2019', height: 20),
+      ],
+    );
+    await tap(tester, find.text('Lire l\'étiquette'));
+
+    expect(find.text('Déjà dans votre cave ?'), findsOneWidget);
+    expect(find.text('Château des Lunes'), findsOneWidget);
   });
 
   testWidgets('rien de lu : message, formulaire inchangé', (tester) async {

@@ -186,13 +186,14 @@ class _LabelReadingScreenState extends ConsumerState<LabelReadingScreen> {
   late LabelReading _reading = widget.reading;
   late Future<List<SimilarDrink>> _similar = _findSimilar();
 
+  /// Références de la cave retrouvées dans tout le texte lu (pas seulement
+  /// le nom, qui peut être mal lu ou mal choisi), ou proches du nom retenu.
   Future<List<SimilarDrink>> _findSimilar() {
-    final name = _reading.name;
-    if (name == null) return Future.value(const []);
     return ref
         .read(caveQueriesProvider)
-        .similarDrinks(
-          name: name,
+        .drinksOnLabel(
+          labelText: _reading.lines.join('\n'),
+          name: _reading.name,
           producer: _reading.producer,
           profile: _reading.toDraft().profile,
         );

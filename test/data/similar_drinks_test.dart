@@ -90,4 +90,18 @@ void main() {
       (null, 5, '3760000000017'),
     ]);
   });
+
+  test(
+    'étiquette mal lue : la référence est retrouvée dans le texte',
+    () async {
+      await drink('Château Figeac', bottles: 3);
+      await drink('Château Pavie');
+      final found = await queries.drinksOnLabel(
+        labelText: 'GRAND VIN\nCHATEAU F1GEAC\nSAINT-EMILION\n2019',
+        // Nom mal choisi par la lecture : la recherche ne s'y limite pas.
+        name: 'Grand Vin',
+      );
+      expect(found.map((s) => s.drink.name), ['Château Figeac']);
+    },
+  );
 }

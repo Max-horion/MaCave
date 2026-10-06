@@ -112,7 +112,7 @@ class SimilarDrink {
 
   final Drink drink;
 
-  /// Ressemblance, de [similarityThreshold] à 1.
+  /// Ressemblance, de 0 à 1 (au moins le seuil de la comparaison utilisée).
   final double score;
 
   /// Bouteilles en stock (pour reconnaître la référence d'un coup d'œil).
@@ -136,6 +136,65 @@ class CaveQueries {
     int limit = 3,
   }) async {
     if (similarityWords(name).isEmpty) return const [];
+    return _rankDrinks(
+      profile: profile,
+      excludeId: excludeId,
+      limit: limit,
+      score: (drink) {
+        final s = similarityScore(
+          name: name,
+          producer: producer,
+          otherName: drink.name,
+          otherProducer: drink.producer,
+        );
+        return s >= similarityThreshold ? s : null;
+      },
+    );
+  }
+
+  /// Références de la cave qui se retrouvent sur une étiquette photographiée
+  /// (texte lu [labelText], erreurs de reconnaissance tolérées), ou dont le
+  /// nom ressemble au nom retenu [name] (doublons, CDC §6.2).
+  Future<List<SimilarDrink>> drinksOnLabel({
+    required String labelText,
+    String? name,
+    String? producer,
+    FieldProfile? profile,
+    int limit = 3,
+  }) {
+    return _rankDrinks(
+      profile: profile,
+      limit: limit,
+      score: (drink) {
+        final onLabel = labelMatchScore(
+          labelText: labelText,
+          drinkName: drink.name,
+          drinkProducer: drink.producer,
+        );
+        final byName = name == null
+            ? 0.0
+            : similarityScore(
+                name: name,
+                producer: producer,
+                otherName: drink.name,
+                otherProducer: drink.producer,
+              );
+        final best = onLabel > byName ? onLabel : byName;
+        return onLabel >= labelMatchThreshold || byName >= similarityThreshold
+            ? best
+            : null;
+      },
+    );
+  }
+
+  /// Références actives notées par [score] (null : écartée), de la mieux
+  /// notée à la moins bien notée, puis par stock.
+  Future<List<SimilarDrink>> _rankDrinks({
+    required double? Function(Drink drink) score,
+    FieldProfile? profile,
+    String? excludeId,
+    required int limit,
+  }) async {
     final rows = await _db
         .customSelect(
           'SELECT d.*, t.field_profile AS profile, '
@@ -154,17 +213,12 @@ class CaveQueries {
       final other = FieldProfile.values
           .asNameMap()[row.readNullable<String>('profile')];
       if (profile != null && other != null && other != profile) continue;
-      final score = similarityScore(
-        name: name,
-        producer: producer,
-        otherName: drink.name,
-        otherProducer: drink.producer,
-      );
-      if (score >= similarityThreshold) {
+      final value = score(drink);
+      if (value != null) {
         found.add(
           SimilarDrink(
             drink: drink,
-            score: score,
+            score: value,
             bottles: row.read<int>('bottles'),
           ),
         );
