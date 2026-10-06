@@ -118,6 +118,35 @@ Future<void> snapshotDatabase(CaveDatabase db, String path) async {
   await db.customStatement('VACUUM INTO ?', [path]);
 }
 
+/// Empreinte du contenu de la cave : change à chaque modification (somme des
+/// dates de modification et nombre de lignes), sans relire toute la base. Sert
+/// à savoir si la cave a changé depuis la dernière sauvegarde ou
+/// synchronisation.
+///
+/// Une somme plutôt que la date la plus récente : une modification datée par
+/// une horloge en retard sur celle d'un autre appareil doit compter aussi.
+Future<String> contentFingerprint(CaveDatabase db) async {
+  const tables = [
+    'drink_types',
+    'characteristic_families',
+    'characteristics',
+    'drinks',
+    'drink_characteristics',
+    'lots',
+    'movements',
+    'settings',
+  ];
+  final sum = tables
+      .map((t) => '(SELECT COALESCE(SUM(updated_at), 0) FROM $t)')
+      .join(' + ');
+  final count = tables.map((t) => '(SELECT COUNT(*) FROM $t)').join(' + ');
+  final row = await db
+      .customSelect('SELECT $sum AS s, $count AS n')
+      .getSingle();
+  final caveId = await db.caveId();
+  return '$caveId:${row.read<int>('s')}:${row.read<int>('n')}';
+}
+
 /// Copie [source] dans [copyPath] et la met à niveau vers le schéma actuel
 /// (migrations drift habituelles). Le fichier d'origine n'est pas modifié.
 /// [source] doit avoir été vérifié par [inspectCaveFile].

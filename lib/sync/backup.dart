@@ -135,7 +135,7 @@ class BackupService {
       date = date.add(const Duration(seconds: 1));
     }
     final set = BackupSet(date: date, database: File(_databasePath(dir, date)));
-    final fingerprint = await _fingerprint();
+    final fingerprint = await contentFingerprint(_db);
 
     // La copie est faite dans le dossier temporaire de l'appli, puis copiée :
     // SQLite écrit plus sûrement dans un dossier privé que dans un dossier
@@ -204,7 +204,7 @@ class BackupService {
     try {
       final last = await lastBackupAt();
       if (last != null && _clock().difference(last) < every) return null;
-      final fingerprint = await _fingerprint();
+      final fingerprint = await contentFingerprint(_db);
       if (fingerprint == await _store.getString(_lastFingerprintKey)) {
         return null;
       }
@@ -256,30 +256,6 @@ class BackupService {
 
   String _databasePath(Directory dir, DateTime date) =>
       '${dir.path}/cave_${_stampFormat.format(date)}.sqlite';
-
-  /// Empreinte du contenu : change à chaque modification (dates de
-  /// modification et nombre de lignes), sans relire toute la base.
-  Future<String> _fingerprint() async {
-    const tables = [
-      'drink_types',
-      'characteristic_families',
-      'characteristics',
-      'drinks',
-      'drink_characteristics',
-      'lots',
-      'movements',
-      'settings',
-    ];
-    final max = tables
-        .map((t) => '(SELECT COALESCE(MAX(updated_at), 0) FROM $t)')
-        .join(', ');
-    final count = tables.map((t) => '(SELECT COUNT(*) FROM $t)').join(' + ');
-    final row = await _db
-        .customSelect('SELECT MAX($max) AS m, $count AS n')
-        .getSingle();
-    final caveId = await _db.caveId();
-    return '$caveId:${row.read<int>('m')}:${row.read<int>('n')}';
-  }
 
   /// Cave neuve (aucune référence ni mouvement) : rien à sauvegarder.
   Future<bool> _isEmpty() async {

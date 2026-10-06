@@ -20,6 +20,7 @@ Versions vérifiées sur pub.dev le 5 octobre 2026. Toutes gratuites et open sou
 | Photo d'étiquette | **camera** | Prise de vue dans l'appli avec contrôle de la lampe torche. | 5 |
 | Reconnaissance de texte | **google_mlkit_text_recognition** et **flutter_tesseract_ocr** derrière une interface commune `TextRecognizer` | Moteur interchangeable + mode comparaison (CDC §10). Tesseract nécessite d'embarquer le dictionnaire français (quelques Mo dans l'APK). | 5 |
 | Open Food Facts | **http** (appel direct à l'API) | Un seul appel « produit par code-barres » : le paquet officiel serait surdimensionné. | 5 |
+| Requêtes HTTP | **http** | Base du client WebDAV maison. | 4 |
 | Fichiers | **path_provider**, **file_picker**, **share_plus**, **csv** | Emplacement de la base, choix du fichier à importer / dossier de sauvegarde, partage d'un export. | 3–4 |
 | Traductions | **flutter_localizations** + **intl** (`gen-l10n`) | Déjà en place (lot 0). | 0 |
 
@@ -109,6 +110,8 @@ Le serveur contient un seul fichier, `cave.sqlite`, dans le dossier choisi. Aucu
    - `PUT` avec `If-Match: <ETag lu à l'étape 1>` : le serveur refuse (« 412 ») si quelqu'un a écrit entre-temps → **on n'écrase jamais**, on recommence au début du cycle (3 essais maximum, puis nouvelle tentative plus tard) ;
    - premier envoi : `If-None-Match: *` (refusé si un fichier est apparu entre-temps).
 5. **Mémoriser le nouvel ETag** (relu par `PROPFIND` si le serveur ne le renvoie pas après le `PUT`).
+
+Fait au lot 4c (`lib/sync/webdav.dart`, `lib/sync/sync_service.dart`). Après un « 304 inchangé », l'appli sait s'il faut envoyer en comparant l'empreinte de la base à celle mémorisée lors de la dernière synchro réussie. L'ETag est mémorisé dès la fusion faite : si l'envoi échoue, le cycle suivant n'a pas à retélécharger. Si le dossier n'existe pas au premier envoi, il est créé (`MKCOL`).
 
 ### Quand et comment
 
