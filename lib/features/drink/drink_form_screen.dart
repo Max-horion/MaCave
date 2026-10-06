@@ -15,10 +15,13 @@ import 'drink_detail_screen.dart';
 /// Formulaire de création (avec le premier lot) ou de modification d'une
 /// référence. Les champs affichés dépendent du type (CDC §4.1).
 class DrinkFormScreen extends ConsumerStatefulWidget {
-  const DrinkFormScreen({super.key, this.drinkId});
+  const DrinkFormScreen({super.key, this.drinkId, this.barcode});
 
   /// Null : création.
   final String? drinkId;
+
+  /// Création depuis le scan d'un code inconnu : mémorisé sur le premier lot.
+  final String? barcode;
 
   @override
   ConsumerState<DrinkFormScreen> createState() => _DrinkFormScreenState();
@@ -133,6 +136,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
           volumeMl: _volumeMl ?? type?.defaultVolumeMl ?? 750,
           vintage: int.tryParse(_vintage.text.trim()),
           quantity: _quantity,
+          barcode: widget.barcode,
         );
         if (!mounted) return;
         // Affiche directement la fiche créée.
@@ -325,6 +329,13 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
                   quantity: _quantity,
                   onQuantityChanged: (q) => setState(() => _quantity = q),
                 ),
+                if (widget.barcode != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.drinkFormBarcode(widget.barcode!),
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
                 const SizedBox(height: 24),
               ],
               Text(l10n.fieldRating, style: theme.textTheme.titleMedium),

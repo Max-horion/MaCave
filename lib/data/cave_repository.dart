@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../domain/barcode.dart';
 import '../domain/enums.dart';
 import '../domain/field_rules.dart';
 import '../domain/stock.dart';
@@ -151,12 +152,14 @@ class CaveRepository {
 
   /// Crée une référence complète en une seule transaction : fiche,
   /// caractéristiques, premier lot et ses bouteilles (formulaire d'ajout).
+  /// [barcode] : code scanné, mémorisé sur le lot pour la prochaine fois.
   Future<({String drinkId, String lotId})> addNewDrink({
     required DrinkInput drink,
     Set<String> characteristicIds = const {},
     required int volumeMl,
     int? vintage,
     required int quantity,
+    String? barcode,
   }) {
     return _db.transaction(() async {
       final drinkId = await createDrink(drink);
@@ -165,6 +168,7 @@ class CaveRepository {
         drinkId: drinkId,
         volumeMl: volumeMl,
         vintage: vintage,
+        barcode: barcode,
       );
       await addEntry(lotId, quantity);
       return (drinkId: drinkId, lotId: lotId);
@@ -292,6 +296,7 @@ class CaveRepository {
     if (volumeMl <= 0) {
       throw ArgumentError.value(volumeMl, 'volumeMl', 'Volume positif');
     }
+    barcode = normalizeBarcode(barcode);
     return _db.transaction(() async {
       final query = _db.select(_db.lots)
         ..where(
@@ -336,6 +341,49 @@ class CaveRepository {
           );
       return lotId;
     });
+  }
+
+  /// Lots actifs (référence active) qui portent ce code-barres, toutes
+  /// références confondues : un même code peut désigner plusieurs lots
+  /// (CDC §6.2). Par référence, puis du millésime le plus ancien au plus
+  /// récent, lots sans millésime en dernier (CDC §6.3).
+  Future<List<({Drink drink, Lot lot})>> lotsByBarcode(String code) async {
+    final normalized = normalizeBarcode(code);
+    if (normalized == null) return const [];
+    final query =
+        _db.select(_db.lots).join([
+            innerJoin(_db.drinks, _db.drinks.id.equalsExp(_db.lots.drinkId)),
+          ])
+          ..where(
+            _db.lots.barcode.equals(normalized) &
+                _db.lots.deletedAt.isNull() &
+                _db.drinks.deletedAt.isNull(),
+          )
+          ..orderBy([
+            OrderingTerm(expression: _db.drinks.name),
+            OrderingTerm(expression: _db.lots.vintage, nulls: NullsOrder.last),
+            OrderingTerm(expression: _db.lots.volumeMl),
+          ]);
+    return (await query.get())
+        .map(
+          (row) =>
+              (drink: row.readTable(_db.drinks), lot: row.readTable(_db.lots)),
+        )
+        .toList();
+  }
+
+  /// Associe un code-barres à un lot (code inconnu lu au scan, CDC §6.3) ;
+  /// remplace son code précédent s'il en avait un.
+  Future<void> setLotBarcode(String lotId, String code) async {
+    final normalized = normalizeBarcode(code);
+    if (normalized == null) throw ArgumentError.value(code, 'code', 'Vide');
+    await (_db.update(_db.lots)..where((t) => t.id.equals(lotId))).write(
+      LotsCompanion(
+        barcode: Value(normalized),
+        updatedAt: Value(_ctx.now()),
+        updatedBy: Value(_ctx.deviceId),
+      ),
+    );
   }
 
   /// Supprime un lot (suppression logique) ; ses mouvements sont conservés

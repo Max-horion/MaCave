@@ -194,11 +194,14 @@ Future<void> showRemoveDialog(
 
 /// Nouveau lot sur une référence existante : autre millésime ou volume
 /// (CDC §6.2). Si le lot existe déjà, les bouteilles s'y ajoutent.
+///
+/// [barcode] : code scanné, mémorisé sur le lot.
 Future<void> showNewLotDialog(
   BuildContext context,
   WidgetRef ref, {
   required String drinkId,
   required DrinkType? type,
+  String? barcode,
 }) async {
   final l10n = AppLocalizations.of(context);
   final result = await showDialog<LotDraft>(
@@ -212,6 +215,7 @@ Future<void> showNewLotDialog(
       drinkId: drinkId,
       volumeMl: result.volumeMl,
       vintage: result.vintage,
+      barcode: barcode,
     );
     final id = await repo.addEntry(lotId, result.quantity);
     if (context.mounted) {

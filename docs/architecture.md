@@ -16,7 +16,7 @@ Versions vérifiées sur pub.dev le 5 octobre 2026. Toutes gratuites et open sou
 | Mot de passe serveur | **flutter_secure_storage** | Coffre sécurisé Android (Keystore), jamais en clair (CDC §9). | 4 |
 | ~~Tâches de fond~~ | ~~workmanager + flutter_local_notifications~~ | **Abandonné en V1** (décision du 05/10/2026) : tout se fait appli ouverte ; une erreur de plus de 24 h est signalée dans l'appli (indicateur rouge). | — |
 | Réseau disponible ? | **connectivity_plus** | Distinguer « en attente » (pas de réseau, pas une erreur) d'une vraie erreur. | 4 |
-| Scan codes-barres / QR | **mobile_scanner** | Lecture en direct avec ML Kit, lampe torche intégrée, bien maintenu. | 5 |
+| Scan codes-barres / QR | **mobile_scanner** | Lecture en direct avec ML Kit (version embarquée : pas de réseau nécessaire, +3 à 10 Mo par architecture), lampe torche intégrée, bien maintenu. | 5 |
 | Photo d'étiquette | **camera** | Prise de vue dans l'appli avec contrôle de la lampe torche. | 5 |
 | Reconnaissance de texte | **google_mlkit_text_recognition** et **flutter_tesseract_ocr** derrière une interface commune `TextRecognizer` | Moteur interchangeable + mode comparaison (CDC §10). Tesseract nécessite d'embarquer le dictionnaire français (quelques Mo dans l'APK). | 5 |
 | Open Food Facts | **http** (appel direct à l'API) | Un seul appel « produit par code-barres » : le paquet officiel serait surdimensionné. | 5 |

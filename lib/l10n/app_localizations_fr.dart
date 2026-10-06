@@ -1176,4 +1176,86 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get scanButton => 'Scanner';
+
+  @override
+  String get scanTitle => 'Scanner un code';
+
+  @override
+  String get scanHint => 'Visez le code-barres ou le QR code de la bouteille.';
+
+  @override
+  String get scanTorchOn => 'Allumer la lampe';
+
+  @override
+  String get scanTorchOff => 'Éteindre la lampe';
+
+  @override
+  String get scanManualEntry => 'Saisir le code';
+
+  @override
+  String get scanManualLabel => 'Code-barres';
+
+  @override
+  String get scanCameraDenied =>
+      'L\'appareil photo n\'est pas autorisé. Autorisez-le dans les paramètres d\'Android pour scanner, ou saisissez le code.';
+
+  @override
+  String scanCameraError(String detail) {
+    return 'Appareil photo indisponible ($detail). Vous pouvez saisir le code.';
+  }
+
+  @override
+  String scanCode(String code) {
+    return 'Code : $code';
+  }
+
+  @override
+  String get scanRemoveOne => '−1';
+
+  @override
+  String get scanAdd => 'Ajouter';
+
+  @override
+  String get scanNewLot => 'Nouveau lot sur cette référence';
+
+  @override
+  String get scanOpenDrink => 'Voir la fiche';
+
+  @override
+  String get scanAgain => 'Scanner un autre code';
+
+  @override
+  String get scanUnknownTitle => 'Code inconnu';
+
+  @override
+  String get scanUnknownMessage =>
+      'Ce code n\'est associé à aucune bouteille de la cave.';
+
+  @override
+  String get scanNewDrink => 'Nouvelle référence avec ce code';
+
+  @override
+  String get scanAssociate => 'Associer à une référence existante';
+
+  @override
+  String get scanPickDrinkTitle => 'Choisir la référence';
+
+  @override
+  String get scanPickLotTitle => 'Associer le code à quel lot ?';
+
+  @override
+  String scanAssociated(String lot) {
+    return 'Code associé à $lot';
+  }
+
+  @override
+  String drinkFormBarcode(String code) {
+    return 'Code-barres : $code';
+  }
+
+  @override
+  String get actionOk => 'Valider';
 }

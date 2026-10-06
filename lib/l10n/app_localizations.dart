@@ -1695,6 +1695,150 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, =0{Aucun lot supprimé} =1{1 lot supprimé} other{{count} lots supprimés}}'**
   String storageAutoDone(int count);
+
+  /// Bouton de la liste : ouvrir le scan de code-barres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner'**
+  String get scanButton;
+
+  /// Titre de l'écran de scan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner un code'**
+  String get scanTitle;
+
+  /// Consigne affichée sur l'image de l'appareil photo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visez le code-barres ou le QR code de la bouteille.'**
+  String get scanHint;
+
+  /// Bouton : allumer la lampe torche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Allumer la lampe'**
+  String get scanTorchOn;
+
+  /// Bouton : éteindre la lampe torche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Éteindre la lampe'**
+  String get scanTorchOff;
+
+  /// Bouton : taper le code-barres à la main.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisir le code'**
+  String get scanManualEntry;
+
+  /// Champ : code-barres tapé à la main.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres'**
+  String get scanManualLabel;
+
+  /// Erreur : autorisation de l'appareil photo refusée.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'appareil photo n\'est pas autorisé. Autorisez-le dans les paramètres d\'Android pour scanner, ou saisissez le code.'**
+  String get scanCameraDenied;
+
+  /// Erreur : l'appareil photo ne démarre pas.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appareil photo indisponible ({detail}). Vous pouvez saisir le code.'**
+  String scanCameraError(String detail);
+
+  /// Code lu, affiché sous le résultat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code : {code}'**
+  String scanCode(String code);
+
+  /// Bouton du résultat du scan : retirer une bouteille de ce lot.
+  ///
+  /// In fr, this message translates to:
+  /// **'−1'**
+  String get scanRemoveOne;
+
+  /// Bouton du résultat du scan : ajouter des bouteilles à ce lot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get scanAdd;
+
+  /// Bouton : autre millésime ou volume pour la même référence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau lot sur cette référence'**
+  String get scanNewLot;
+
+  /// Bouton : ouvrir la fiche de la référence trouvée.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la fiche'**
+  String get scanOpenDrink;
+
+  /// Bouton : relancer le scan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner un autre code'**
+  String get scanAgain;
+
+  /// Titre : le code lu n'est dans aucun lot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code inconnu'**
+  String get scanUnknownTitle;
+
+  /// Explication : code inconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce code n\'est associé à aucune bouteille de la cave.'**
+  String get scanUnknownMessage;
+
+  /// Bouton : créer une référence, code pré-rempli.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle référence avec ce code'**
+  String get scanNewDrink;
+
+  /// Bouton : rattacher le code à un lot existant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer à une référence existante'**
+  String get scanAssociate;
+
+  /// Titre de l'écran de choix d'une référence pour y associer un code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir la référence'**
+  String get scanPickDrinkTitle;
+
+  /// Titre du choix du lot pour y associer un code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer le code à quel lot ?'**
+  String get scanPickLotTitle;
+
+  /// Message : code-barres mémorisé sur un lot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code associé à {lot}'**
+  String scanAssociated(String lot);
+
+  /// Rappel dans le formulaire d'ajout : code scanné, mémorisé sur le lot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres : {code}'**
+  String drinkFormBarcode(String code);
+
+  /// Bouton : valider une saisie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get actionOk;
 }
 
 class _AppLocalizationsDelegate

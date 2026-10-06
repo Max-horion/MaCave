@@ -11,6 +11,7 @@ import '../backup/backup_screen.dart';
 import '../drink/drink_detail_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../inventory/inventory_screen.dart';
+import '../scan/scan_flow.dart';
 import '../stats/stats_screen.dart';
 import '../storage/storage_screen.dart';
 import '../sync/sync_indicator.dart';
@@ -101,13 +102,28 @@ class CellarScreen extends ConsumerWidget {
                 );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute<void>(builder: (_) => const DrinkFormScreen()),
-        ),
-        icon: const Icon(Icons.add),
-        label: Text(l10n.addDrinkButton),
+      // Scanner au-dessus d'Ajouter : les deux à portée du pouce.
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: 'scan',
+            onPressed: () => startScan(context, ref),
+            icon: const Icon(Icons.qr_code_scanner),
+            label: Text(l10n.scanButton),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton.extended(
+            heroTag: 'add',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(builder: (_) => const DrinkFormScreen()),
+            ),
+            icon: const Icon(Icons.add),
+            label: Text(l10n.addDrinkButton),
+          ),
+        ],
       ),
     );
   }
@@ -291,8 +307,8 @@ class _DrinkList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      // Laisse la place au bouton « Ajouter » en bas de la liste.
-      padding: const EdgeInsets.only(bottom: 96),
+      // Laisse la place aux boutons « Scanner » et « Ajouter ».
+      padding: const EdgeInsets.only(bottom: 160),
       itemCount: items.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, i) => DrinkTile(item: items[i]),

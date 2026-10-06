@@ -1426,5 +1426,121 @@
         "type": "int"
       }
     }
+  },
+  "scanButton": "Scanner",
+  "@scanButton": {
+    "description": "Bouton de la liste : ouvrir le scan de code-barres."
+  },
+  "scanTitle": "Scanner un code",
+  "@scanTitle": {
+    "description": "Titre de l'écran de scan."
+  },
+  "scanHint": "Visez le code-barres ou le QR code de la bouteille.",
+  "@scanHint": {
+    "description": "Consigne affichée sur l'image de l'appareil photo."
+  },
+  "scanTorchOn": "Allumer la lampe",
+  "@scanTorchOn": {
+    "description": "Bouton : allumer la lampe torche."
+  },
+  "scanTorchOff": "Éteindre la lampe",
+  "@scanTorchOff": {
+    "description": "Bouton : éteindre la lampe torche."
+  },
+  "scanManualEntry": "Saisir le code",
+  "@scanManualEntry": {
+    "description": "Bouton : taper le code-barres à la main."
+  },
+  "scanManualLabel": "Code-barres",
+  "@scanManualLabel": {
+    "description": "Champ : code-barres tapé à la main."
+  },
+  "scanCameraDenied": "L'appareil photo n'est pas autorisé. Autorisez-le dans les paramètres d'Android pour scanner, ou saisissez le code.",
+  "@scanCameraDenied": {
+    "description": "Erreur : autorisation de l'appareil photo refusée."
+  },
+  "scanCameraError": "Appareil photo indisponible ({detail}). Vous pouvez saisir le code.",
+  "@scanCameraError": {
+    "description": "Erreur : l'appareil photo ne démarre pas.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "scanCode": "Code : {code}",
+  "@scanCode": {
+    "description": "Code lu, affiché sous le résultat.",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanRemoveOne": "−1",
+  "@scanRemoveOne": {
+    "description": "Bouton du résultat du scan : retirer une bouteille de ce lot."
+  },
+  "scanAdd": "Ajouter",
+  "@scanAdd": {
+    "description": "Bouton du résultat du scan : ajouter des bouteilles à ce lot."
+  },
+  "scanNewLot": "Nouveau lot sur cette référence",
+  "@scanNewLot": {
+    "description": "Bouton : autre millésime ou volume pour la même référence."
+  },
+  "scanOpenDrink": "Voir la fiche",
+  "@scanOpenDrink": {
+    "description": "Bouton : ouvrir la fiche de la référence trouvée."
+  },
+  "scanAgain": "Scanner un autre code",
+  "@scanAgain": {
+    "description": "Bouton : relancer le scan."
+  },
+  "scanUnknownTitle": "Code inconnu",
+  "@scanUnknownTitle": {
+    "description": "Titre : le code lu n'est dans aucun lot."
+  },
+  "scanUnknownMessage": "Ce code n'est associé à aucune bouteille de la cave.",
+  "@scanUnknownMessage": {
+    "description": "Explication : code inconnu."
+  },
+  "scanNewDrink": "Nouvelle référence avec ce code",
+  "@scanNewDrink": {
+    "description": "Bouton : créer une référence, code pré-rempli."
+  },
+  "scanAssociate": "Associer à une référence existante",
+  "@scanAssociate": {
+    "description": "Bouton : rattacher le code à un lot existant."
+  },
+  "scanPickDrinkTitle": "Choisir la référence",
+  "@scanPickDrinkTitle": {
+    "description": "Titre de l'écran de choix d'une référence pour y associer un code."
+  },
+  "scanPickLotTitle": "Associer le code à quel lot ?",
+  "@scanPickLotTitle": {
+    "description": "Titre du choix du lot pour y associer un code."
+  },
+  "scanAssociated": "Code associé à {lot}",
+  "@scanAssociated": {
+    "description": "Message : code-barres mémorisé sur un lot.",
+    "placeholders": {
+      "lot": {
+        "type": "String"
+      }
+    }
+  },
+  "drinkFormBarcode": "Code-barres : {code}",
+  "@drinkFormBarcode": {
+    "description": "Rappel dans le formulaire d'ajout : code scanné, mémorisé sur le lot.",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "actionOk": "Valider",
+  "@actionOk": {
+    "description": "Bouton : valider une saisie."
   }
 }
