@@ -64,6 +64,18 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
 
+## À reprendre (prochaine séance)
+
+1. Vérification par le porteur sur le téléphone : 5d (Tesseract, mode comparaison) et code-barres dans les deux sens (formulaire, lots existants). Si OK : lot 5 **terminé** dans le tableau.
+2. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
+3. Lot 6, points déjà repérés :
+   - écran des paramètres (CDC §7) : y déplacer « Espace disque » (purges) et le choix du moteur de lecture ; ajouter le réglage « recherche Open Food Facts activée ou non », la durée du bandeau « Annuler » (`undoDuration`), thème, tri par défaut, volumes par défaut, gestion de la classification ;
+   - écran « À propos » : licences et sources à citer (INAO / Licence Ouverte, Tesseract et tessdata_best / Apache 2.0, ML Kit, Open Food Facts) ; fichier `LICENSE` (GPL v3 + exception ML Kit) avant toute diffusion ;
+   - premier lancement en 3 étapes (CDC §6.8), alerte « données seulement sur l'appareil » en mode local (CDC §8.4) ;
+   - Android 8 à 10 : autorisation d'écriture dans Documents pour les sauvegardes ;
+   - nouvelle version du CDC (v0.6) reportant les décisions des lots 4 et 5 (voir « Décisions du porteur » et le journal).
+4. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
+
 ## Où trouver quoi (lot 1)
 
 - `lib/domain/` — logique pure : `enums.dart` (valeurs stockées en base, ne jamais renommer), `stock.dart` (calcul du stock), `field_rules.dart` (champs par type, marqueur « à compléter »), `initial_classification.dart` (CDC §6.1).
