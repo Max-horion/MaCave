@@ -6,7 +6,9 @@ import '../../data/cave_queries.dart';
 import '../../data/cave_repository.dart';
 import '../../data/database.dart';
 import '../../data/providers.dart';
+import '../../domain/drink_draft.dart';
 import '../../domain/field_rules.dart';
+import '../../domain/text.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/widgets.dart';
 import '../stock_actions.dart';
@@ -15,13 +17,16 @@ import 'drink_detail_screen.dart';
 /// Formulaire de création (avec le premier lot) ou de modification d'une
 /// référence. Les champs affichés dépendent du type (CDC §4.1).
 class DrinkFormScreen extends ConsumerStatefulWidget {
-  const DrinkFormScreen({super.key, this.drinkId, this.barcode});
+  const DrinkFormScreen({super.key, this.drinkId, this.barcode, this.draft});
 
   /// Null : création.
   final String? drinkId;
 
   /// Création depuis le scan d'un code inconnu : mémorisé sur le premier lot.
   final String? barcode;
+
+  /// Création : champs pré-remplis (Open Food Facts, étiquette), à valider.
+  final DrinkDraft? draft;
 
   @override
   ConsumerState<DrinkFormScreen> createState() => _DrinkFormScreenState();
@@ -46,6 +51,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
   int? _volumeMl;
   int _quantity = 1;
   bool _loaded = false;
+  bool _draftApplied = false;
   bool _saving = false;
 
   bool get _isNew => widget.drinkId == null;
@@ -101,6 +107,38 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
       );
       if (_isNew) _volumeMl = type.defaultVolumeMl;
     });
+  }
+
+  /// Pré-remplit le formulaire avec [DrinkDraft] (une seule fois, au premier
+  /// affichage). Le type est le premier du profil proposé ; les
+  /// caractéristiques sont retrouvées par leur nom dans ce type.
+  void _applyDraft(Classification classification) {
+    _draftApplied = true;
+    final draft = widget.draft;
+    if (draft == null) return;
+    _name.text = draft.name ?? '';
+    _producer.text = draft.producer ?? '';
+    final abv = draft.abv;
+    if (abv != null) {
+      _abv.text = abv == abv.roundToDouble()
+          ? '${abv.toInt()}'
+          : '$abv'.replaceAll('.', ',');
+    }
+    if (draft.vintage != null) _vintage.text = '${draft.vintage}';
+    final type = classification.types
+        .where((t) => t.fieldProfile == draft.profile)
+        .firstOrNull;
+    if (type != null) {
+      _typeId = type.id;
+      _volumeMl = type.defaultVolumeMl;
+      final wanted = draft.characteristics.map(fold).toSet();
+      _characteristicIds = {
+        for (final id in classification.characteristicIdsOf(type.id))
+          if (wanted.contains(fold(classification.characteristic(id)!.name)))
+            id,
+      };
+    }
+    if (draft.volumeMl != null) _volumeMl = draft.volumeMl;
   }
 
   double? _parseAbv() => double.tryParse(_abv.text.trim().replaceAll(',', '.'));
@@ -173,6 +211,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
       );
     }
 
+    if (_isNew && !_draftApplied) _applyDraft(classification);
     // En création, le premier type (Vin) est choisi par défaut.
     if (_isNew && _typeId == null && classification.types.isNotEmpty) {
       _typeId = classification.types.first.id;

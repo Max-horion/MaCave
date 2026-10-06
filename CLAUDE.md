@@ -50,7 +50,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes : 5a scan + lampe, 5b Open Food Facts, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison, 5e doublons | **en cours** (5a terminée) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes : 5a scan + lampe, 5b Open Food Facts, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison, 5e doublons | **en cours** (5a terminée, 5b faite, à vérifier sur le téléphone) |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -135,6 +135,7 @@ Pièges rencontrés :
 - Purge manuelle : un mouvement fait hors ligne sur un autre appareil, **daté d'avant la purge** et pas encore synchronisé, serait ignoré (le report de stock ne le connaît pas). D'où la date limite à aujourd'hui − 30 jours (choix technique, `StorageScreen.minimumAge`).
 - Purge automatique : un lot purgé ici puis réapprovisionné hors ligne sur un autre appareil avant la synchro resterait supprimé (mouvement rattaché à un lot supprimé). Cas rare, non traité.
 - Tests d'écran d'un déroulé qui lit la base puis ouvre une fenêtre : faire chaque `tap` dans `tester.runAsync` puis `settle`, sinon la fenêtre n'apparaît jamais.
+- Réglage « recherche Open Food Facts activée ou non » (CDC §7) : pas encore fait, à mettre dans l'écran des paramètres (lot 6). En attendant la recherche est toujours active (signalée à l'écran).
 - La caméra n'existe pas en test : tester `handleScannedCode` directement (`test/scan_flow_test.dart`).
 - Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
 
@@ -144,6 +145,9 @@ Pièges rencontrés :
 - `lib/features/scan/scan_screen.dart` — écran de scan (`mobile_scanner`, ML Kit **embarqué** : fonctionne sans réseau), lampe torche, saisie du code à la main ; retourne le code lu.
 - `lib/features/scan/scan_flow.dart` — `startScan` / `handleScannedCode` : code connu → lots avec « −1 » / « Ajouter » / nouveau lot / fiche (le scan ne retire jamais rien seul) ; code inconnu → nouvelle référence (`DrinkFormScreen(barcode:)`) ou association à un lot existant (`DrinkPickerScreen`). Les actions s'exécutent dans le contexte de la liste, pour que le bandeau « Annuler » reste visible.
 - Bouton « Scanner » au-dessus d'« Ajouter » sur la liste.
+- `lib/scan/open_food_facts.dart` — recherche d'un code inconnu (5b) : `OpenFoodFacts.lookUp` → `OffFound(DrinkDraft)` / `OffNotFound` / `OffOffline` (aucune requête) / `OffUnavailable`. **Seuls les codes de 8 à 14 chiffres sont envoyés** (jamais le contenu d'un QR code), avec un User-Agent sans adresse personnelle. `draftFromProduct` : nom, marque → producteur, degré, volume, catégories (`en:red-wines`…) → profil + noms de caractéristiques. `openFoodFactsProvider` (`lib/scan/providers.dart`, réseau via `syncEnvironmentProvider.isOnline`).
+- `lib/domain/drink_draft.dart` — `DrinkDraft` : fiche proposée (type par **profil**, caractéristiques par **nom**, retrouvés dans la classification de l'utilisateur) ; `DrinkFormScreen(draft:)` la pré-remplit, rien n'est enregistré sans validation.
+- `lib/domain/label_parsing.dart` — `parseVolumeMl` (« 75 cl », « 0,75 L », « 6 x 33 cl »), `parseAbv` ; resserviront à la lecture des étiquettes (5c).
 
 ## Conventions
 
@@ -177,3 +181,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 4e vérifié sur le téléphone (écran Espace disque, chiffres justes). **Lot 4 terminé.** À reporter dans le CDC v0.6 : pas de tâches de fond, sauvegardes téléphone + serveur, purge manuelle limitée aux mouvements de plus de 30 jours.
 - 2026-10-06 — Lot 5a : scan de code-barres / QR (ML Kit embarqué, hors ligne), lampe torche, saisie manuelle ; code connu → « −1 » / « Ajouter » / nouveau lot ; code inconnu → nouvelle référence ou association à un lot. 224 tests verts ; APK 82 Mo (+16 Mo de lecteur, toutes architectures).
 - 2026-10-06 — Lot 5a vérifié sur le téléphone par le porteur (scan, lampe, association, « −1 »).
+- 2026-10-06 — Lot 5b : Open Food Facts pour les codes inconnus (fiche pré-remplie : nom, producteur, degré, volume, type et caractéristiques), envoi du code signalé, jamais de QR code envoyé, hors ligne sans requête. 238 tests verts.

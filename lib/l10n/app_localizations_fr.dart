@@ -1258,4 +1258,29 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get actionOk => 'Valider';
+
+  @override
+  String get offSearching =>
+      'Recherche sur Open Food Facts… (le code-barres est envoyé à ce service)';
+
+  @override
+  String get offSource => 'Open Food Facts';
+
+  @override
+  String get offUnnamed => 'Produit sans nom';
+
+  @override
+  String get offUseDraft => 'Nouvelle référence avec ces informations';
+
+  @override
+  String get offNotFound =>
+      'Inconnu d\'Open Food Facts : fiche à remplir, le code sera mémorisé.';
+
+  @override
+  String get offOffline =>
+      'Hors ligne : pas de recherche sur Open Food Facts. Le code sera mémorisé.';
+
+  @override
+  String get offUnavailable =>
+      'Open Food Facts ne répond pas : fiche à remplir, le code sera mémorisé.';
 }

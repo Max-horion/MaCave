@@ -1839,6 +1839,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Valider'**
   String get actionOk;
+
+  /// Recherche en cours ; signale l'envoi du code (CDC §9).
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche sur Open Food Facts… (le code-barres est envoyé à ce service)'**
+  String get offSearching;
+
+  /// Source des informations pré-remplies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Open Food Facts'**
+  String get offSource;
+
+  /// Produit trouvé sur Open Food Facts mais sans nom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Produit sans nom'**
+  String get offUnnamed;
+
+  /// Bouton : formulaire pré-rempli avec le produit trouvé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle référence avec ces informations'**
+  String get offUseDraft;
+
+  /// Résultat : produit introuvable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inconnu d\'Open Food Facts : fiche à remplir, le code sera mémorisé.'**
+  String get offNotFound;
+
+  /// Résultat : pas de réseau.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne : pas de recherche sur Open Food Facts. Le code sera mémorisé.'**
+  String get offOffline;
+
+  /// Résultat : service indisponible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Open Food Facts ne répond pas : fiche à remplir, le code sera mémorisé.'**
+  String get offUnavailable;
 }
 
 class _AppLocalizationsDelegate

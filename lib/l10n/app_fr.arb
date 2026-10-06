@@ -1542,5 +1542,33 @@
   "actionOk": "Valider",
   "@actionOk": {
     "description": "Bouton : valider une saisie."
+  },
+  "offSearching": "Recherche sur Open Food Facts… (le code-barres est envoyé à ce service)",
+  "@offSearching": {
+    "description": "Recherche en cours ; signale l'envoi du code (CDC §9)."
+  },
+  "offSource": "Open Food Facts",
+  "@offSource": {
+    "description": "Source des informations pré-remplies."
+  },
+  "offUnnamed": "Produit sans nom",
+  "@offUnnamed": {
+    "description": "Produit trouvé sur Open Food Facts mais sans nom."
+  },
+  "offUseDraft": "Nouvelle référence avec ces informations",
+  "@offUseDraft": {
+    "description": "Bouton : formulaire pré-rempli avec le produit trouvé."
+  },
+  "offNotFound": "Inconnu d'Open Food Facts : fiche à remplir, le code sera mémorisé.",
+  "@offNotFound": {
+    "description": "Résultat : produit introuvable."
+  },
+  "offOffline": "Hors ligne : pas de recherche sur Open Food Facts. Le code sera mémorisé.",
+  "@offOffline": {
+    "description": "Résultat : pas de réseau."
+  },
+  "offUnavailable": "Open Food Facts ne répond pas : fiche à remplir, le code sera mémorisé.",
+  "@offUnavailable": {
+    "description": "Résultat : service indisponible."
   }
 }

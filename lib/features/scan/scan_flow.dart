@@ -5,8 +5,10 @@ import '../../data/cave_queries.dart';
 import '../../data/database.dart';
 import '../../data/providers.dart';
 import '../../domain/barcode.dart';
+import '../../domain/drink_draft.dart';
 import '../../domain/drink_filter.dart';
-import '../../l10n/app_localizations.dart';
+import '../../scan/open_food_facts.dart';
+import '../../scan/providers.dart';
 import '../../ui/formats.dart';
 import '../drink/drink_detail_screen.dart';
 import '../drink/drink_form_screen.dart';
@@ -43,7 +45,14 @@ Future<void> handleScannedCode(
   final matches = await ref.read(caveRepositoryProvider).lotsByBarcode(code);
   if (!context.mounted) return;
   final choice = matches.isEmpty
-      ? await _showUnknown(context, normalized)
+      ? await _showUnknown(
+          context,
+          normalized,
+          // Recherche lancée tout de suite, pendant l'affichage de la fiche.
+          OpenFoodFacts.canLookUp(normalized)
+              ? ref.read(openFoodFactsProvider).lookUp(normalized)
+              : null,
+        )
       : await _showKnown(context, normalized, matches);
   if (choice == null || !context.mounted) return;
 
@@ -68,11 +77,11 @@ Future<void> handleScannedCode(
           builder: (_) => DrinkDetailScreen(drinkId: drink.id),
         ),
       );
-    case _NewDrink():
+    case _NewDrink(:final draft):
       await Navigator.push(
         context,
         MaterialPageRoute<void>(
-          builder: (_) => DrinkFormScreen(barcode: normalized),
+          builder: (_) => DrinkFormScreen(barcode: normalized, draft: draft),
         ),
       );
     case _Associate():
@@ -108,7 +117,10 @@ class _OpenDrink extends _ScanChoice {
 }
 
 class _NewDrink extends _ScanChoice {
-  const _NewDrink();
+  const _NewDrink([this.draft]);
+
+  /// Fiche trouvée sur Open Food Facts, à valider.
+  final DrinkDraft? draft;
 }
 
 class _Associate extends _ScanChoice {
@@ -202,49 +214,115 @@ Future<_ScanChoice?> _showKnown(
   );
 }
 
-/// Code inconnu : créer une référence ou associer le code à un lot.
-Future<_ScanChoice?> _showUnknown(BuildContext context, String code) {
+/// Code inconnu : créer une référence (pré-remplie si Open Food Facts la
+/// connaît) ou associer le code à un lot.
+Future<_ScanChoice?> _showUnknown(
+  BuildContext context,
+  String code,
+  Future<OffResult>? lookup,
+) {
   return showModalBottomSheet<_ScanChoice>(
     context: context,
     showDragHandle: true,
-    builder: (context) {
-      final l10n = AppLocalizations.of(context);
-      final theme = Theme.of(context);
-      return SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l10n.scanUnknownTitle, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 4),
-              Text(l10n.scanUnknownMessage),
-              Text(l10n.scanCode(code), style: theme.textTheme.bodySmall),
-              const SizedBox(height: 16),
-              FilledButton.icon(
-                onPressed: () => Navigator.pop(context, const _NewDrink()),
-                icon: const Icon(Icons.add),
-                label: Text(l10n.scanNewDrink),
-              ),
-              const SizedBox(height: 8),
-              FilledButton.tonalIcon(
-                onPressed: () => Navigator.pop(context, const _Associate()),
-                icon: const Icon(Icons.link),
-                label: Text(l10n.scanAssociate),
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () => Navigator.pop(context, const _ScanAgain()),
-                icon: const Icon(Icons.qr_code_scanner),
-                label: Text(l10n.scanAgain),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
+    isScrollControlled: true,
+    builder: (context) => _UnknownCodeSheet(code: code, lookup: lookup),
   );
+}
+
+class _UnknownCodeSheet extends StatelessWidget {
+  const _UnknownCodeSheet({required this.code, required this.lookup});
+
+  final String code;
+
+  /// Null : pas de recherche (QR code, contenu non numérique).
+  final Future<OffResult>? lookup;
+
+  @override
+  Widget build(BuildContext context) {
+    final formats = Formats.of(context);
+    final l10n = formats.l10n;
+    final theme = Theme.of(context);
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: FutureBuilder<OffResult>(
+          future: lookup,
+          builder: (context, snapshot) {
+            final result = snapshot.data;
+            final searching =
+                lookup != null &&
+                snapshot.connectionState != ConnectionState.done;
+            final draft = result is OffFound ? result.draft : null;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(l10n.scanUnknownTitle, style: theme.textTheme.titleLarge),
+                const SizedBox(height: 4),
+                Text(l10n.scanUnknownMessage),
+                Text(l10n.scanCode(code), style: theme.textTheme.bodySmall),
+                const SizedBox(height: 12),
+                if (searching)
+                  Row(
+                    children: [
+                      const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(l10n.offSearching)),
+                    ],
+                  )
+                else if (draft != null)
+                  Card(
+                    margin: EdgeInsets.zero,
+                    child: ListTile(
+                      title: Text(draft.name ?? l10n.offUnnamed),
+                      subtitle: Text(
+                        [
+                          ?draft.producer,
+                          if (draft.volumeMl != null)
+                            formats.volume(draft.volumeMl!),
+                          if (draft.abv != null) formats.abv(draft.abv!),
+                          l10n.offSource,
+                        ].join(' · '),
+                      ),
+                    ),
+                  )
+                else if (result != null)
+                  Text(switch (result) {
+                    OffNotFound() => l10n.offNotFound,
+                    OffOffline() => l10n.offOffline,
+                    OffUnavailable() => l10n.offUnavailable,
+                    OffFound() => '',
+                  }, style: theme.textTheme.bodySmall),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: () => Navigator.pop(context, _NewDrink(draft)),
+                  icon: const Icon(Icons.add),
+                  label: Text(
+                    draft != null ? l10n.offUseDraft : l10n.scanNewDrink,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FilledButton.tonalIcon(
+                  onPressed: () => Navigator.pop(context, const _Associate()),
+                  icon: const Icon(Icons.link),
+                  label: Text(l10n.scanAssociate),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.pop(context, const _ScanAgain()),
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: Text(l10n.scanAgain),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 /// Associe [code] à un lot d'une référence choisie, puis affiche le résultat

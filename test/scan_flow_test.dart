@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
 import 'package:cave/data/providers.dart';
 import 'package:cave/features/scan/scan_flow.dart';
 import 'package:cave/l10n/app_localizations.dart';
 import 'package:cave/theme/app_theme.dart';
+import 'package:cave/scan/open_food_facts.dart';
+import 'package:cave/scan/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 import 'helpers.dart';
 
@@ -36,13 +42,33 @@ void main() {
   }
 
   /// Un écran avec un bouton « Code lu » qui simule le scan de [scanned].
-  Future<void> open(WidgetTester tester, String scanned) async {
+  /// [product] : réponse d'Open Food Facts (sinon : hors ligne).
+  Future<void> open(
+    WidgetTester tester,
+    String scanned, {
+    Map<String, Object?>? product,
+  }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           databaseProvider.overrideWithValue(db),
           writeContextProvider.overrideWithValue(ctx),
           localSyncEnvironment(db, ctx),
+          if (product != null)
+            openFoodFactsProvider.overrideWithValue(
+              OpenFoodFacts(
+                isOnline: () async => true,
+                client: MockClient(
+                  (_) async => http.Response(
+                    jsonEncode({'status': 1, 'product': product}),
+                    200,
+                    headers: {
+                      'content-type': 'application/json; charset=utf-8',
+                    },
+                  ),
+                ),
+              ),
+            ),
         ],
         child: MaterialApp(
           theme: AppTheme.light,
@@ -161,6 +187,63 @@ void main() {
     expect(found.single.drink.name, 'Nouvelle bière');
   });
 
+  testWidgets('code inconnu, hors ligne : on le dit, fiche vide', (
+    tester,
+  ) async {
+    await open(tester, code);
+    await scan(tester);
+    expect(
+      find.textContaining('Hors ligne : pas de recherche sur Open Food Facts'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('code connu d\'Open Food Facts : fiche pré-remplie', (
+    tester,
+  ) async {
+    await open(
+      tester,
+      code,
+      product: {
+        'product_name': 'IPA Imaginaire',
+        'brands': 'Brasserie Inventée',
+        'quantity': '33 cl',
+        'categories_tags': ['en:beers', 'en:india-pale-ales'],
+        'nutriments': {'alcohol': 6.5},
+      },
+    );
+    await scan(tester);
+
+    expect(find.text('IPA Imaginaire'), findsOneWidget);
+    expect(find.textContaining('Brasserie Inventée'), findsOneWidget);
+    await tester.runAsync(
+      () async =>
+          tester.tap(find.text('Nouvelle référence avec ces informations')),
+    );
+    await settle(tester);
+
+    // Le formulaire est pré-rempli : il suffit de valider.
+    expect(find.text('IPA Imaginaire'), findsOneWidget);
+    expect(find.text('6,5'), findsOneWidget);
+    final save = find.text('Enregistrer');
+    await tester.ensureVisible(save);
+    await tester.runAsync(() async => tester.tap(save));
+    await settle(tester);
+
+    final found = (await tester.runAsync(() => repo.lotsByBarcode(code)))!;
+    final drink = found.single.drink;
+    expect(drink.name, 'IPA Imaginaire');
+    expect(drink.producer, 'Brasserie Inventée');
+    expect(drink.abv, 6.5);
+    expect(found.single.lot.volumeMl, 330);
+    final types = (await tester.runAsync(() => repo.drinkTypes()))!;
+    expect(drink.typeId, types[1].id, reason: 'type Bière');
+    final characteristics = (await tester.runAsync(
+      () => repo.drinkCharacteristicIds(drink.id),
+    ))!;
+    expect(characteristics, hasLength(1), reason: 'IPA');
+  });
+
   testWidgets('code inconnu : associé à un lot existant, puis « −1 »', (
     tester,
   ) async {
@@ -175,7 +258,9 @@ void main() {
     await tester.runAsync(() async => tester.tap(find.text('Bière Test')));
     await settle(tester);
     expect(find.text('Associer le code à quel lot ?'), findsOneWidget);
-    await tester.runAsync(() async => tester.tap(find.textContaining('33 cl').last));
+    await tester.runAsync(
+      () async => tester.tap(find.textContaining('33 cl').last),
+    );
     await settle(tester);
 
     // Le résultat s'affiche comme pour un code connu.
