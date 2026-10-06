@@ -49,7 +49,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
-| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** (4e à vérifier sur le téléphone) |
+| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
@@ -165,3 +165,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 4d : écran Synchronisation (Nextcloud ou WebDAV, mot de passe dans le coffre, choix « autre cave »), indicateur d'état, synchro automatique appli ouverte, nouvelles tentatives, journal, sauvegardes copiées sur le serveur ; autorisation INTERNET ajoutée (manquait en release). 193 tests verts ; APK release 64,5 Mo. **Pas encore essayé avec le vrai Nextcloud du porteur.**
 - 2026-10-06 — Lot 4d vérifié sur le téléphone avec le vrai Nextcloud du porteur : activation, `cave.sqlite` et `Sauvegardes` sur le serveur, envoi automatique après « −1 », mode avion (« en attente » puis reprise), réouverture.
 - 2026-10-06 — Lot 4e : purge manuelle de l'historique (report de stock, propagée par la synchro, jamais annulée par un autre appareil ni par un import) et purge automatique des lots épuisés ; écran « Espace disque ». 209 tests verts. **Lot 4 terminé** (purges à vérifier sur le téléphone).
+- 2026-10-06 — Lot 4e vérifié sur le téléphone (écran Espace disque, chiffres justes). **Lot 4 terminé.** À reporter dans le CDC v0.6 : pas de tâches de fond, sauvegardes téléphone + serveur, purge manuelle limitée aux mouvements de plus de 30 jours.
