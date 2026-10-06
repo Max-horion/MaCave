@@ -50,7 +50,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a, 5b, 5e terminées ; 5c faite, à vérifier sur le téléphone) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a, 5b, 5e, 5c terminées) |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -200,3 +200,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 5c testé par le porteur : lecture fonctionnelle mais approximative (beaucoup d'erreurs sur les mots), correction par les lignes OK, scan → photo OK ; **« Déjà dans votre cave ? » n'a pas reconnu une bouteille existante** (texte lu trop éloigné du nom). Réglage d'une ressemblance tolérante aux erreurs de reconnaissance, sur exemples inventés ; le porteur remontera au prochain essai des paires « référence lue / référence réelle ».
 - 2026-10-06 — Ressemblance tolérante aux erreurs de reconnaissance pour « Déjà dans votre cave ? » après une photo (texte entier, confusions de caractères, mots collés/coupés) ; 8 cas d'erreurs inventés + pièges (« Leffe Brune » ≠ « Leffe Blonde »). 280 tests verts. À valider sur les paires réelles remontées par le porteur.
 - 2026-10-06 — Retour du porteur : « Déjà dans votre cave ? » nettement mieux ; erreurs restantes dues aux étiquettes courbes et aux typographies, **à optimiser plus tard** (décision du porteur). Bug corrigé : Scanner → « Pas de code-barres ? » figeait l'écran photo (caméra encore tenue par le scan).
+- 2026-10-06 — Lot 5c vérifié sur le téléphone (dont Scanner → photo d'étiquette, plus de blocage).
