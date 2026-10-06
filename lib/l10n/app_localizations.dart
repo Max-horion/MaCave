@@ -2121,6 +2121,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Garder le résultat de {engine}'**
   String labelCompareKeep(String engine);
+
+  /// Menu d'un lot : scanner son code-barres pour la prochaine fois.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer un code-barres'**
+  String get lotScanBarcode;
+
+  /// Menu d'un lot qui a déjà un code-barres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le code-barres'**
+  String get lotChangeBarcode;
+
+  /// Bouton du formulaire de création : lire le code de la bouteille.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner le code-barres'**
+  String get formScanBarcode;
+
+  /// Titre : le code scanné est déjà associé à une référence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code déjà dans la cave'**
+  String get formBarcodeKnownTitle;
+
+  /// Explication : code déjà connu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce code-barres est déjà associé à « {name} ». Un même code peut servir à plusieurs lots : vous pouvez continuer, ou ouvrir cette référence pour lui ajouter des bouteilles.'**
+  String formBarcodeKnownMessage(String name);
+
+  /// Bouton : associer quand même le code à la nouvelle référence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec ce code'**
+  String get formBarcodeKeep;
+
+  /// Bouton : ouvrir la référence qui porte déjà ce code.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la référence'**
+  String get formBarcodeOpen;
+
+  /// Message : le formulaire a été complété grâce au code-barres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Champs vides complétés avec Open Food Facts'**
+  String get formOffFilled;
 }
 
 class _AppLocalizationsDelegate

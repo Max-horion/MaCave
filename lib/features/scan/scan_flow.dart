@@ -43,6 +43,39 @@ Future<void> startScan(BuildContext context, WidgetRef ref) async {
   }
 }
 
+/// Scanne un code-barres à associer (formulaire, lot existant) : le code
+/// lu, sous sa forme enregistrée, ou null. Remplaçable dans les tests (pas
+/// de caméra).
+final barcodeScannerProvider = Provider<Future<String?> Function(BuildContext)>(
+  (ref) => (context) async {
+    final result = await Navigator.push<ScanResult>(
+      context,
+      MaterialPageRoute(builder: (_) => const ScanScreen(offerLabel: false)),
+    );
+    return result is ScannedCode ? normalizeBarcode(result.code) : null;
+  },
+);
+
+/// Associe un code-barres scanné à [lot] (lot créé avant le scan, import
+/// Vivino…), avec un message.
+Future<void> scanBarcodeForLot(
+  BuildContext context,
+  WidgetRef ref,
+  Lot lot,
+) async {
+  final code = await ref.read(barcodeScannerProvider)(context);
+  if (code == null || !context.mounted) return;
+  await ref.read(caveRepositoryProvider).setLotBarcode(lot.id, code);
+  if (!context.mounted) return;
+  final formats = Formats.of(context);
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(formats.l10n.scanAssociated(formats.lotExplicit(lot))),
+      persist: false,
+    ),
+  );
+}
+
 /// Cherche [code] dans la cave et propose les actions possibles.
 Future<void> handleScannedCode(
   BuildContext context,

@@ -28,7 +28,11 @@ class LabelRequested extends ScanResult {
 /// La lecture se fait entièrement sur le téléphone (ML Kit embarqué) : pas
 /// besoin de réseau dans la cave.
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({super.key});
+  const ScanScreen({super.key, this.offerLabel = true});
+
+  /// Propose « Pas de code-barres ? Photo de l'étiquette » (pas quand on
+  /// cherche seulement un code à associer).
+  final bool offerLabel;
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -178,12 +182,14 @@ class _ScanScreenState extends State<ScanScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  TextButton.icon(
-                    onPressed: () => _close(const LabelRequested()),
-                    icon: const Icon(Icons.document_scanner_outlined),
-                    label: Text(l10n.labelScanInstead),
-                  ),
+                  if (widget.offerLabel) ...[
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: () => _close(const LabelRequested()),
+                      icon: const Icon(Icons.document_scanner_outlined),
+                      label: Text(l10n.labelScanInstead),
+                    ),
+                  ],
                 ],
               ),
             ),

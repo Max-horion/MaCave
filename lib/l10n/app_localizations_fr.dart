@@ -1426,4 +1426,30 @@ class AppLocalizationsFr extends AppLocalizations {
   String labelCompareKeep(String engine) {
     return 'Garder le résultat de $engine';
   }
+
+  @override
+  String get lotScanBarcode => 'Associer un code-barres';
+
+  @override
+  String get lotChangeBarcode => 'Changer le code-barres';
+
+  @override
+  String get formScanBarcode => 'Scanner le code-barres';
+
+  @override
+  String get formBarcodeKnownTitle => 'Code déjà dans la cave';
+
+  @override
+  String formBarcodeKnownMessage(String name) {
+    return 'Ce code-barres est déjà associé à « $name ». Un même code peut servir à plusieurs lots : vous pouvez continuer, ou ouvrir cette référence pour lui ajouter des bouteilles.';
+  }
+
+  @override
+  String get formBarcodeKeep => 'Continuer avec ce code';
+
+  @override
+  String get formBarcodeOpen => 'Voir la référence';
+
+  @override
+  String get formOffFilled => 'Champs vides complétés avec Open Food Facts';
 }

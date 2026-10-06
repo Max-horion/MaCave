@@ -10,8 +10,11 @@ import '../../domain/drink_draft.dart';
 import '../../domain/field_rules.dart';
 import '../../domain/text.dart';
 import '../../l10n/app_localizations.dart';
+import '../../scan/open_food_facts.dart';
+import '../../scan/providers.dart';
 import '../../ui/widgets.dart';
 import '../label/label_flow.dart';
+import '../scan/scan_flow.dart';
 import '../stock_actions.dart';
 import 'drink_detail_screen.dart';
 
@@ -53,6 +56,11 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
   int _quantity = 1;
   bool _loaded = false;
   bool _draftApplied = false;
+
+  /// Code-barres mémorisé sur le premier lot : venu du scan, ou scanné
+  /// depuis le formulaire (dans les deux sens : étiquette puis code, ou
+  /// l'inverse).
+  late String? _barcode = widget.barcode;
   bool _saving = false;
 
   bool get _isNew => widget.drinkId == null;
@@ -166,6 +174,61 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
     if (draft.volumeMl != null) _volumeMl = draft.volumeMl;
   }
 
+  /// « Scanner le code-barres » depuis le formulaire : le code sera
+  /// mémorisé sur le lot. S'il est déjà dans la cave, l'utilisateur choisit ;
+  /// s'Open Food Facts le connaît, les champs encore vides sont complétés.
+  Future<void> _scanBarcode(Classification classification) async {
+    final l10n = AppLocalizations.of(context);
+    final code = await ref.read(barcodeScannerProvider)(context);
+    if (code == null || !mounted) return;
+
+    final known = await ref.read(caveRepositoryProvider).lotsByBarcode(code);
+    if (!mounted) return;
+    if (known.isNotEmpty) {
+      final drink = known.first.drink;
+      final choice = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.formBarcodeKnownTitle),
+          content: Text(l10n.formBarcodeKnownMessage(drink.name)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.actionCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.formBarcodeOpen),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.formBarcodeKeep),
+            ),
+          ],
+        ),
+      );
+      if (!mounted || choice == null) return;
+      if (!choice) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (_) => DrinkDetailScreen(drinkId: drink.id),
+          ),
+        );
+        return;
+      }
+    }
+    setState(() => _barcode = code);
+
+    if (!OpenFoodFacts.canLookUp(code)) return;
+    final result = await ref.read(openFoodFactsProvider).lookUp(code);
+    if (result is! OffFound || !mounted) return;
+    setState(() => _fill(classification, result.draft, onlyEmpty: true));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.formOffFilled), persist: false));
+  }
+
   /// « Lire l'étiquette » depuis le formulaire : complète les champs vides,
   /// ou ajoute les bouteilles à la référence reconnue (doublon).
   Future<void> _readLabel(Classification classification) async {
@@ -179,7 +242,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
           context,
           ref,
           outcome,
-          barcode: widget.barcode,
+          barcode: _barcode,
         );
         if (!added || !mounted) return;
         Navigator.pushReplacement(
@@ -241,7 +304,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
               volumeMl: _volumeMl ?? type?.defaultVolumeMl ?? 750,
               vintage: int.tryParse(_vintage.text.trim()),
               quantity: _quantity,
-              barcode: widget.barcode,
+              barcode: _barcode,
             );
             if (!mounted) return;
             Navigator.pushReplacement(
@@ -259,7 +322,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
           volumeMl: _volumeMl ?? type?.defaultVolumeMl ?? 750,
           vintage: int.tryParse(_vintage.text.trim()),
           quantity: _quantity,
-          barcode: widget.barcode,
+          barcode: _barcode,
         );
         if (!mounted) return;
         // Affiche directement la fiche créée.
@@ -406,6 +469,23 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
                   icon: const Icon(Icons.document_scanner_outlined),
                   label: Text(l10n.labelButton),
                 ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: _saving
+                      ? null
+                      : () => _scanBarcode(classification),
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: Text(l10n.formScanBarcode),
+                ),
+                if (_barcode != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      l10n.drinkFormBarcode(_barcode!),
+                      style: theme.textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 const SizedBox(height: 16),
               ],
               Text(l10n.fieldType, style: theme.textTheme.titleMedium),
@@ -508,13 +588,6 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
                   quantity: _quantity,
                   onQuantityChanged: (q) => setState(() => _quantity = q),
                 ),
-                if (widget.barcode != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.drinkFormBarcode(widget.barcode!),
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ],
                 const SizedBox(height: 24),
               ],
               Text(l10n.fieldRating, style: theme.textTheme.titleMedium),

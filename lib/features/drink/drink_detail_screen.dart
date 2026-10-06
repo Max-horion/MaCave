@@ -7,6 +7,7 @@ import '../../domain/enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../scan/scan_flow.dart';
 import '../stock_actions.dart';
 import 'drink_form_screen.dart';
 
@@ -262,6 +263,11 @@ class _LotCard extends ConsumerWidget {
                     l10n.addedOn(formats.date(lot.createdAt)),
                     style: theme.textTheme.bodySmall,
                   ),
+                  if (lot.barcode != null)
+                    Text(
+                      l10n.drinkFormBarcode(lot.barcode!),
+                      style: theme.textTheme.bodySmall,
+                    ),
                 ],
               ),
             ),
@@ -290,6 +296,14 @@ class _LotCard extends ConsumerWidget {
                 PopupMenuItem(
                   onTap: () => showCorrectStockDialog(context, ref, lot),
                   child: Text(l10n.correctStock),
+                ),
+                PopupMenuItem(
+                  onTap: () => scanBarcodeForLot(context, ref, lot),
+                  child: Text(
+                    lot.barcode == null
+                        ? l10n.lotScanBarcode
+                        : l10n.lotChangeBarcode,
+                  ),
                 ),
                 PopupMenuItem(
                   onTap: () => _confirmDeleteLot(context, ref),

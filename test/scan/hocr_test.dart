@@ -55,9 +55,8 @@ void main() {
   test('vrai résultat de Tesseract 5 (étiquette inventée, photo droite)', () {
     // test/fixtures/etiquette_tesseract5.hocr : produit par Tesseract 5.5 et
     // le dictionnaire de l'appli, sur une étiquette fabriquée pour le test.
-    final hocr = File(
-      'test/fixtures/etiquette_tesseract5.hocr',
-    ).readAsStringSync();
+    final hocr = File('test/fixtures/etiquette_tesseract5.hocr')
+        .readAsStringSync();
     final lines = parseHocr(hocr);
     expect(lines.map((l) => l.text), contains('CHÂTEAU DES LUNES'));
     expect(lines.map((l) => l.text), contains('14% vol.'));

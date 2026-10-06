@@ -1753,5 +1753,42 @@
         "type": "String"
       }
     }
+  },
+  "lotScanBarcode": "Associer un code-barres",
+  "@lotScanBarcode": {
+    "description": "Menu d'un lot : scanner son code-barres pour la prochaine fois."
+  },
+  "lotChangeBarcode": "Changer le code-barres",
+  "@lotChangeBarcode": {
+    "description": "Menu d'un lot qui a déjà un code-barres."
+  },
+  "formScanBarcode": "Scanner le code-barres",
+  "@formScanBarcode": {
+    "description": "Bouton du formulaire de création : lire le code de la bouteille."
+  },
+  "formBarcodeKnownTitle": "Code déjà dans la cave",
+  "@formBarcodeKnownTitle": {
+    "description": "Titre : le code scanné est déjà associé à une référence."
+  },
+  "formBarcodeKnownMessage": "Ce code-barres est déjà associé à « {name} ». Un même code peut servir à plusieurs lots : vous pouvez continuer, ou ouvrir cette référence pour lui ajouter des bouteilles.",
+  "@formBarcodeKnownMessage": {
+    "description": "Explication : code déjà connu.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "formBarcodeKeep": "Continuer avec ce code",
+  "@formBarcodeKeep": {
+    "description": "Bouton : associer quand même le code à la nouvelle référence."
+  },
+  "formBarcodeOpen": "Voir la référence",
+  "@formBarcodeOpen": {
+    "description": "Bouton : ouvrir la référence qui porte déjà ce code."
+  },
+  "formOffFilled": "Champs vides complétés avec Open Food Facts",
+  "@formOffFilled": {
+    "description": "Message : le formulaire a été complété grâce au code-barres."
   }
 }
