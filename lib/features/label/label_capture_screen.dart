@@ -47,8 +47,11 @@ class _LabelCaptureScreenState extends State<LabelCaptureScreen>
     }
   }
 
-  Future<void> _start() async {
+  /// [retry] : la caméra peut être encore en cours de libération par un
+  /// autre écran (le scan) : un second essai, un peu plus tard.
+  Future<void> _start({bool retry = true}) async {
     final l10n = AppLocalizations.of(context);
+    CameraController? created;
     try {
       final cameras = await availableCameras();
       final back = cameras.where(
@@ -58,7 +61,7 @@ class _LabelCaptureScreenState extends State<LabelCaptureScreen>
         setState(() => _error = l10n.labelNoCamera);
         return;
       }
-      final controller = CameraController(
+      final controller = created = CameraController(
         back.isNotEmpty ? back.first : cameras.first,
         // Assez fin pour les petites mentions (degré, volume).
         ResolutionPreset.veryHigh,
@@ -76,7 +79,13 @@ class _LabelCaptureScreenState extends State<LabelCaptureScreen>
         _error = null;
       });
     } on CameraException catch (e) {
+      await created?.dispose();
       if (!mounted) return;
+      if (retry && !e.code.contains('AccessDenied')) {
+        await Future<void>.delayed(const Duration(milliseconds: 600));
+        if (mounted) await _start(retry: false);
+        return;
+      }
       setState(
         () => _error = e.code.contains('AccessDenied')
             ? l10n.scanCameraDenied

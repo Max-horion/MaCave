@@ -51,9 +51,19 @@ class _ScanScreenState extends State<ScanScreen> {
 
   void _found(String code) {
     if (_done || code.trim().isEmpty) return;
-    _done = true;
     HapticFeedback.mediumImpact();
-    Navigator.pop(context, ScannedCode(code.trim()));
+    _close(ScannedCode(code.trim()));
+  }
+
+  /// Ferme l'écran après avoir **arrêté** le lecteur : la caméra est ainsi
+  /// libérée tout de suite. Sinon elle ne l'est qu'à la fin de l'animation de
+  /// fermeture, et l'écran de photo d'étiquette, ouvert aussitôt, la trouve
+  /// occupée (image figée, boutons sans effet).
+  Future<void> _close(ScanResult result) async {
+    if (_done) return;
+    _done = true;
+    await _controller.stop();
+    if (mounted) Navigator.pop(context, result);
   }
 
   Future<void> _typeCode() async {
@@ -170,8 +180,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   ),
                   const SizedBox(height: 8),
                   TextButton.icon(
-                    onPressed: () =>
-                        Navigator.pop(context, const LabelRequested()),
+                    onPressed: () => _close(const LabelRequested()),
                     icon: const Icon(Icons.document_scanner_outlined),
                     label: Text(l10n.labelScanInstead),
                   ),

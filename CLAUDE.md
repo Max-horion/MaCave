@@ -140,6 +140,7 @@ Pièges rencontrés :
 - R8 (APK release) refuse les références de ML Kit aux modèles chinois/japonais/coréen/devanagari non embarqués : `-dontwarn` dans `android/app/proguard-rules.pro`.
 - Écran en `ListView` dans un test : les éléments hors écran ne sont pas construits → `scrollUntilVisible`, puis `pumpAndSettle` après `ensureVisible` avant de toucher.
 - APK release 114 Mo (ML Kit texte + code-barres pour 3 architectures). Si besoin : `--target-platform android-arm64` (le téléphone du porteur) le réduirait nettement.
+- Deux bibliothèques utilisent la caméra (`mobile_scanner` pour le scan, `camera` pour la photo) : **arrêter le lecteur (`controller.stop()`) avant de fermer l'écran de scan**, sinon la caméra n'est libérée qu'après l'animation et l'écran photo ouvert aussitôt reste figé (bug trouvé par le porteur). L'écran photo réessaie aussi une fois au démarrage.
 - La caméra n'existe pas en test : tester `handleScannedCode` directement (`test/scan_flow_test.dart`).
 - Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
 
@@ -198,3 +199,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 5c : photo d'étiquette + ML Kit (millésime, degré, volume, appellation INAO, type, nom et producteur suggérés, lignes à attribuer d'un toucher, doublons), depuis le formulaire, la fiche « Code inconnu » et l'écran de scan ; liste INAO embarquée (1 659 noms, script de construction). 270 tests verts ; APK 114 Mo.
 - 2026-10-06 — Lot 5c testé par le porteur : lecture fonctionnelle mais approximative (beaucoup d'erreurs sur les mots), correction par les lignes OK, scan → photo OK ; **« Déjà dans votre cave ? » n'a pas reconnu une bouteille existante** (texte lu trop éloigné du nom). Réglage d'une ressemblance tolérante aux erreurs de reconnaissance, sur exemples inventés ; le porteur remontera au prochain essai des paires « référence lue / référence réelle ».
 - 2026-10-06 — Ressemblance tolérante aux erreurs de reconnaissance pour « Déjà dans votre cave ? » après une photo (texte entier, confusions de caractères, mots collés/coupés) ; 8 cas d'erreurs inventés + pièges (« Leffe Brune » ≠ « Leffe Blonde »). 280 tests verts. À valider sur les paires réelles remontées par le porteur.
+- 2026-10-06 — Retour du porteur : « Déjà dans votre cave ? » nettement mieux ; erreurs restantes dues aux étiquettes courbes et aux typographies, **à optimiser plus tard** (décision du porteur). Bug corrigé : Scanner → « Pas de code-barres ? » figeait l'écran photo (caméra encore tenue par le scan).
