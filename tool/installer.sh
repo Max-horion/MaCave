@@ -11,7 +11,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 ADB="${ANDROID_HOME:-$HOME/Android/Sdk}/platform-tools/adb"
-APK=build/app/outputs/flutter-apk/app-release.apk
+# APK arm64 (voir plus bas).
+APK=build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
 PACKAGE=fr.bouthon.cave
 
 if ! "$ADB" get-state >/dev/null 2>&1; then
@@ -21,7 +22,12 @@ if ! "$ADB" get-state >/dev/null 2>&1; then
 fi
 
 if [[ "${1:-}" != "--no-build" ]]; then
-  flutter build apk --release
+  # Un APK par architecture ; on installe celui en arm64 : le téléphone du
+  # porteur (et tout téléphone récent). Il est plus de deux fois plus léger
+  # que l'APK universel (code natif de ML Kit et Tesseract). Un simple
+  # --target-platform ne suffit pas : il ne filtre pas le code natif des
+  # bibliothèques.
+  flutter build apk --release --split-per-abi
 fi
 
 first_install() {

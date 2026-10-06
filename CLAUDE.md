@@ -27,7 +27,7 @@ dart run drift_dev make-migrations   # après tout changement de schéma : photo
 flutter analyze                      # analyse statique : doit afficher « No issues found »
 flutter test                         # tests automatiques
 tool/installer.sh                    # compile et installe sur le téléphone EN GARDANT LES DONNÉES
-flutter build apk --release          # APK seul (installation : tool/installer.sh --no-build)
+flutter build apk --release --split-per-abi   # APK seuls, un par architecture (installation : tool/installer.sh --no-build, prend l'arm64)
 ```
 
 > ⚠️ **Ne jamais utiliser `flutter install`** sur le téléphone du porteur : il désinstalle l'appli avant de la réinstaller, ce qui **efface sa base**. Utiliser `tool/installer.sh` (`adb install -r`, mise à jour sur place, avec vérification). `flutter run` est acceptable (il ne désinstalle qu'en cas de conflit de signature), mais l'éviter quand le téléphone contient des données réelles. La sauvegarde Android est désactivée sur ce téléphone : rien ne permet de récupérer une base effacée avant le lot 4.
@@ -139,7 +139,7 @@ Pièges rencontrés :
 - Réglage « recherche Open Food Facts activée ou non » (CDC §7) : pas encore fait, à mettre dans l'écran des paramètres (lot 6). En attendant la recherche est toujours active (signalée à l'écran).
 - R8 (APK release) refuse les références de ML Kit aux modèles chinois/japonais/coréen/devanagari non embarqués : `-dontwarn` dans `android/app/proguard-rules.pro`.
 - Écran en `ListView` dans un test : les éléments hors écran ne sont pas construits → `scrollUntilVisible`, puis `pumpAndSettle` après `ensureVisible` avant de toucher.
-- APK release **141 Mo** (ML Kit texte + code-barres + Tesseract, ~46 Mo de code natif **par architecture**, 3 architectures). `--target-platform android-arm64` (le téléphone du porteur) le ramènerait vers 55 Mo.
+- APK : **seul l'APK arm64 est installé** (`tool/installer.sh` : `--split-per-abi`, puis `app-arm64-v8a-release.apk`, décision du porteur du 2026-10-06). L'APK universel pèse 141 Mo (~46 Mo de code natif ML Kit + Tesseract par architecture). `--target-platform` seul ne suffit pas : il ne filtre pas le code natif des bibliothèques. ⚠️ L'APK arm64 a un numéro de version plus élevé (versionCode + 2000) que l'APK universel : **ne plus réinstaller l'APK universel** sur ce téléphone (Android le refuserait comme un retour en arrière, et le contourner par une désinstallation effacerait la base).
 - Deux bibliothèques utilisent la caméra (`mobile_scanner` pour le scan, `camera` pour la photo) : **arrêter le lecteur (`controller.stop()`) avant de fermer l'écran de scan**, sinon la caméra n'est libérée qu'après l'animation et l'écran photo ouvert aussitôt reste figé (bug trouvé par le porteur). L'écran photo réessaie aussi une fois au démarrage.
 - La caméra n'existe pas en test : tester `handleScannedCode` directement (`test/scan_flow_test.dart`).
 - Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
