@@ -50,7 +50,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a terminée ; 5b et 5e faites, à vérifier sur le téléphone) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a, 5b, 5e terminées) |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -186,3 +186,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 5a vérifié sur le téléphone par le porteur (scan, lampe, association, « −1 »).
 - 2026-10-06 — Lot 5b : Open Food Facts pour les codes inconnus (fiche pré-remplie : nom, producteur, degré, volume, type et caractéristiques), envoi du code signalé, jamais de QR code envoyé, hors ligne sans requête. 238 tests verts.
 - 2026-10-06 — Lot 5e (avancé avant 5c) : détection des doublons à la création d'une référence (ajout des bouteilles à la référence proche, ou création quand même) et « Déjà dans votre cave ? » dans la fiche « Code inconnu » quand Open Food Facts trouve le produit. 255 tests verts.
+- 2026-10-06 — Lots 5b et 5e vérifiés sur le téléphone par le porteur (Open Food Facts, hors ligne, doublons à la saisie et au scan).
