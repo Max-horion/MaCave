@@ -99,6 +99,35 @@ class FakeWebDavServer {
         return _end(response, existed ? 204 : 201);
 
       case 'PROPFIND':
+        final dir = path.endsWith('/')
+            ? path.substring(0, path.length - 1)
+            : path;
+        if (folders.contains(dir)) {
+          // Liste du dossier (profondeur 1) : le dossier, puis ses fichiers.
+          final entries = StringBuffer(
+            '<d:response><d:href>$dir/</d:href><d:propstat><d:prop>'
+            '<d:resourcetype><d:collection/></d:resourcetype>'
+            '</d:prop></d:propstat></d:response>',
+          );
+          for (final file in files.keys.where(
+            (f) => f.substring(0, f.lastIndexOf('/')) == dir,
+          )) {
+            entries.write(
+              '<d:response><d:href>${Uri.encodeFull(file)}</d:href>'
+              '<d:propstat><d:prop><d:resourcetype/></d:prop></d:propstat>'
+              '</d:response>',
+            );
+          }
+          response.headers.contentType = ContentType('application', 'xml');
+          return _end(
+            response,
+            207,
+            utf8.encode(
+              '<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">'
+              '$entries</d:multistatus>',
+            ),
+          );
+        }
         final etag = _etags[path];
         if (etag == null) return _end(response, 404);
         response.headers.contentType = ContentType('application', 'xml');
@@ -112,6 +141,11 @@ class FakeWebDavServer {
             '</d:prop></d:propstat></d:response></d:multistatus>',
           ),
         );
+
+      case 'DELETE':
+        if (files.remove(path) == null) return _end(response, 404);
+        _etags.remove(path);
+        return _end(response, 204);
 
       case 'MOVE':
         final data = files.remove(path);

@@ -57,6 +57,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final l10n = formats.l10n;
     final theme = Theme.of(context);
     final overview = ref.watch(backupOverviewProvider);
+    final synced = ref.watch(syncControllerProvider).enabled;
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +78,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         data: (o) => ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
-            Text(l10n.backupHelp),
+            Text(synced ? l10n.backupHelpSynced : l10n.backupHelp),
             const SizedBox(height: 12),
             SelectableText(
               l10n.backupFolder(o.folder),

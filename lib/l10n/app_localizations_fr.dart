@@ -831,4 +831,196 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupKeepConfirm => 'Supprimer';
+
+  @override
+  String get backupHelpSynced =>
+      'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.';
+
+  @override
+  String get menuSync => 'Synchronisation';
+
+  @override
+  String get syncTitle => 'Synchronisation';
+
+  @override
+  String get syncIntro =>
+      'Votre cave est enregistrée uniquement sur ce téléphone. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.';
+
+  @override
+  String get syncKindNextcloud => 'Nextcloud';
+
+  @override
+  String get syncKindOther => 'Autre serveur WebDAV';
+
+  @override
+  String get syncServerLabel => 'Adresse du serveur';
+
+  @override
+  String get syncServerHint => 'cloud.exemple.fr';
+
+  @override
+  String get syncUrlLabel => 'Adresse du dossier WebDAV';
+
+  @override
+  String get syncUrlHint => 'https://nas.exemple.fr/webdav/cave';
+
+  @override
+  String get syncUserLabel => 'Identifiant';
+
+  @override
+  String get syncPasswordLabel => 'Mot de passe d\'application';
+
+  @override
+  String get syncPasswordHelp =>
+      'Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d\'application. Il est rangé dans le coffre sécurisé du téléphone.';
+
+  @override
+  String get syncPasswordKeep =>
+      'Laisser vide pour garder le mot de passe actuel.';
+
+  @override
+  String get syncFolderLabel => 'Dossier sur le serveur';
+
+  @override
+  String get syncFolderHelp => 'Créé automatiquement s\'il n\'existe pas.';
+
+  @override
+  String get syncFieldRequired => 'Obligatoire';
+
+  @override
+  String get syncInvalidAddress => 'Adresse invalide';
+
+  @override
+  String get syncActivate => 'Activer la synchronisation';
+
+  @override
+  String get syncSave => 'Enregistrer';
+
+  @override
+  String get syncActivated => 'Synchronisation activée';
+
+  @override
+  String get syncOtherCaveTitle => 'Une autre cave est sur le serveur';
+
+  @override
+  String get syncOtherCaveMessage =>
+      'Le serveur contient déjà une cave différente de celle de ce téléphone. Les deux ne sont jamais mélangées : choisissez celle à garder.';
+
+  @override
+  String get syncUseServer => 'Utiliser la cave du serveur';
+
+  @override
+  String get syncUseServerHelp =>
+      'La cave de ce téléphone est remplacée, après une sauvegarde automatique.';
+
+  @override
+  String get syncReplaceServer => 'Remplacer la cave du serveur par celle-ci';
+
+  @override
+  String get syncReplaceServerHelp =>
+      'Celle du serveur est d\'abord mise de côté sur le serveur (renommée), pas supprimée.';
+
+  @override
+  String get syncChooseCave => 'Choisir la cave à garder';
+
+  @override
+  String get syncStatusSynced => 'Synchronisé';
+
+  @override
+  String get syncStatusSyncing => 'Synchronisation en cours…';
+
+  @override
+  String get syncStatusWaiting =>
+      'En attente du réseau : les modifications seront envoyées à son retour.';
+
+  @override
+  String get syncStatusError => 'Erreur de synchronisation';
+
+  @override
+  String syncLastSuccess(String date) {
+    return 'Dernière synchronisation : $date';
+  }
+
+  @override
+  String get syncNever => 'Pas encore synchronisé';
+
+  @override
+  String syncServerLine(String address) {
+    return 'Dossier : $address';
+  }
+
+  @override
+  String get syncLongError => 'L\'erreur dure depuis plus de 24 heures.';
+
+  @override
+  String get syncProblemUnreachable =>
+      'Serveur injoignable. Les modifications restent sur le téléphone, rien n\'est perdu.';
+
+  @override
+  String get syncProblemUnauthorized =>
+      'Identifiant ou mot de passe refusé par le serveur.';
+
+  @override
+  String get syncProblemFolderNotFound =>
+      'Dossier introuvable sur le serveur : vérifiez l\'adresse.';
+
+  @override
+  String get syncProblemInsufficientStorage =>
+      'Espace insuffisant sur le serveur. Les modifications restent sur le téléphone.';
+
+  @override
+  String get syncProblemServer =>
+      'Le serveur a répondu de façon inattendue. Nouvel essai automatique.';
+
+  @override
+  String get syncProblemNewerVersion =>
+      'La cave du serveur a été enregistrée par une version plus récente de l\'application. Synchronisation suspendue : mettez l\'application à jour.';
+
+  @override
+  String get syncProblemOtherCave =>
+      'Le serveur contient une autre cave que celle de ce téléphone.';
+
+  @override
+  String get syncProblemConflict =>
+      'Le fichier du serveur changeait pendant l\'envoi. Nouvel essai automatique.';
+
+  @override
+  String syncSetAside(String name) {
+    return 'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « $name » et remplacé par la cave de ce téléphone.';
+  }
+
+  @override
+  String get syncRetry => 'Réessayer';
+
+  @override
+  String get syncNow => 'Synchroniser maintenant';
+
+  @override
+  String get syncOpenSettings => 'Paramètres de synchronisation';
+
+  @override
+  String get syncEdit => 'Modifier les paramètres';
+
+  @override
+  String get syncDeactivate => 'Désactiver la synchronisation';
+
+  @override
+  String get syncDeactivateMessage =>
+      'Ce téléphone garde sa cave et continue seul. La cave du serveur n\'est pas supprimée.';
+
+  @override
+  String get syncDeactivated => 'Synchronisation désactivée';
+
+  @override
+  String get syncLogTitle => 'Journal des erreurs';
+
+  @override
+  String get syncLogEmpty => 'Aucune erreur.';
+
+  @override
+  String get syncIndicatorTooltip => 'État de la synchronisation';
+
+  @override
+  String get syncBackupsNote =>
+      'Les sauvegardes sont aussi copiées dans le dossier « Sauvegardes » du serveur.';
 }

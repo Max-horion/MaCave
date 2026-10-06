@@ -78,6 +78,16 @@ class WebDavClient {
        _auth = 'Basic ${base64.encode(utf8.encode('$user:$password'))}',
        _http = httpClient ?? http.Client();
 
+  WebDavClient._child(WebDavClient parent, String name)
+    : folder = parent._uri('$name/'),
+      timeout = parent.timeout,
+      _auth = parent._auth,
+      _http = parent._http;
+
+  /// Client du sous-dossier [name] (mêmes identifiants, même connexion).
+  /// Ne pas le fermer : seul le client d'origine est fermé.
+  WebDavClient child(String name) => WebDavClient._child(this, name);
+
   /// Adresse du dossier, toujours terminée par « / ».
   final Uri folder;
 
@@ -87,7 +97,11 @@ class WebDavClient {
   final String _auth;
   final http.Client _http;
 
-  Uri _uri(String name) => folder.resolve(Uri.encodeComponent(name));
+  Uri _uri(String name) {
+    final slash = name.endsWith('/');
+    final base = slash ? name.substring(0, name.length - 1) : name;
+    return folder.resolve('${Uri.encodeComponent(base)}${slash ? '/' : ''}');
+  }
 
   /// Télécharge [name] dans [target]. Avec [ifNoneMatch] (dernier ETag connu),
   /// le serveur répond « inchangé » sans renvoyer le fichier.
@@ -168,6 +182,51 @@ class WebDavClient {
         .trim()
         .replaceAll('&quot;', '"')
         .replaceAll('&amp;', '&');
+  }
+
+  /// Noms des fichiers du dossier (PROPFIND, profondeur 1), sans les
+  /// sous-dossiers. Liste vide si le dossier n'existe pas.
+  Future<List<String>> list() async {
+    final request = http.Request('PROPFIND', folder)
+      ..headers['Depth'] = '1'
+      ..headers['Content-Type'] = 'application/xml; charset=utf-8'
+      ..body =
+          '<?xml version="1.0" encoding="utf-8"?>'
+          '<d:propfind xmlns:d="DAV:"><d:prop><d:resourcetype/></d:prop>'
+          '</d:propfind>';
+    final response = await _send(request);
+    if (response.statusCode == 404) {
+      await response.stream.drain<void>();
+      return const [];
+    }
+    if (response.statusCode != 207) throw await _failure(response);
+    final body = await response.stream.bytesToString();
+    final names = <String>[];
+    final responses = RegExp(
+      r'<(?:\w+:)?response[\s>].*?</(?:\w+:)?response>',
+      dotAll: true,
+    );
+    final href = RegExp(r'<(?:\w+:)?href[^>]*>([^<]*)</');
+    for (final match in responses.allMatches(body)) {
+      final block = match.group(0)!;
+      // Un dossier (le dossier lui-même, ou un sous-dossier) : ignoré.
+      if (RegExp(r'<(?:\w+:)?collection\s*/?>').hasMatch(block)) continue;
+      final path = href.firstMatch(block)?.group(1)?.trim();
+      if (path == null || path.endsWith('/')) continue;
+      final segments = Uri.parse(path.replaceAll('&amp;', '&')).pathSegments;
+      if (segments.isNotEmpty) names.add(segments.last);
+    }
+    return names;
+  }
+
+  /// Supprime [name]. Sans effet s'il n'existe pas.
+  Future<void> delete(String name) async {
+    final response = await _send(http.Request('DELETE', _uri(name)));
+    if (const {200, 204, 404}.contains(response.statusCode)) {
+      await response.stream.drain<void>();
+      return;
+    }
+    throw await _failure(response);
   }
 
   /// Renomme [from] en [to], dans le même dossier. Sans effet si [from]

@@ -77,6 +77,19 @@ class BackupService {
     r'^cave_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.sqlite$',
   );
 
+  /// Date d'une sauvegarde d'après le nom de sa base (`cave_<date>.sqlite`),
+  /// ou null si ce n'est pas une sauvegarde de l'application.
+  static DateTime? dateOfName(String name) {
+    final match = _namePattern.firstMatch(name);
+    return match == null ? null : _stampFormat.tryParseStrict(match.group(1)!);
+  }
+
+  /// Noms des trois fichiers d'une sauvegarde, d'après le nom de sa base.
+  static List<String> fileNamesOf(String databaseName) {
+    final stem = databaseName.replaceFirst(RegExp(r'\.sqlite$'), '');
+    return [databaseName, '${stem}_stock.csv', '${stem}_historique.csv'];
+  }
+
   /// Évite deux sauvegardes simultanées (automatique et manuelle).
   Future<void> _queue = Future.value();
 
@@ -100,9 +113,7 @@ class BackupService {
     final sets = <BackupSet>[];
     await for (final entity in dir.list()) {
       if (entity is! File) continue;
-      final match = _namePattern.firstMatch(entity.uri.pathSegments.last);
-      if (match == null) continue;
-      final date = _stampFormat.tryParseStrict(match.group(1)!);
+      final date = dateOfName(entity.uri.pathSegments.last);
       if (date == null) continue;
       try {
         sets.add(

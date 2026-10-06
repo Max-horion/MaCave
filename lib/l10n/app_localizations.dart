@@ -1197,6 +1197,342 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get backupKeepConfirm;
+
+  /// Explication en tête de l'écran des sauvegardes, quand la synchronisation est active.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.'**
+  String get backupHelpSynced;
+
+  /// Menu principal : ouvrir l'écran de synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation'**
+  String get menuSync;
+
+  /// Titre de l'écran de synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation'**
+  String get syncTitle;
+
+  /// Explication de l'écran de synchronisation en mode local.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.'**
+  String get syncIntro;
+
+  /// Type de serveur : Nextcloud (adresse simplifiée).
+  ///
+  /// In fr, this message translates to:
+  /// **'Nextcloud'**
+  String get syncKindNextcloud;
+
+  /// Type de serveur : tout autre serveur WebDAV (adresse complète).
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre serveur WebDAV'**
+  String get syncKindOther;
+
+  /// Champ : adresse du serveur Nextcloud.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse du serveur'**
+  String get syncServerLabel;
+
+  /// Exemple d'adresse de serveur Nextcloud.
+  ///
+  /// In fr, this message translates to:
+  /// **'cloud.exemple.fr'**
+  String get syncServerHint;
+
+  /// Champ : adresse complète du dossier, pour un autre serveur WebDAV.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse du dossier WebDAV'**
+  String get syncUrlLabel;
+
+  /// Exemple d'adresse de dossier WebDAV.
+  ///
+  /// In fr, this message translates to:
+  /// **'https://nas.exemple.fr/webdav/cave'**
+  String get syncUrlHint;
+
+  /// Champ : identifiant de connexion au serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identifiant'**
+  String get syncUserLabel;
+
+  /// Champ : mot de passe de connexion au serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe d\'application'**
+  String get syncPasswordLabel;
+
+  /// Aide sous le champ mot de passe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d\'application. Il est rangé dans le coffre sécurisé du téléphone.'**
+  String get syncPasswordHelp;
+
+  /// Aide sous le champ mot de passe, quand on modifie des paramètres existants.
+  ///
+  /// In fr, this message translates to:
+  /// **'Laisser vide pour garder le mot de passe actuel.'**
+  String get syncPasswordKeep;
+
+  /// Champ : dossier de la cave dans les fichiers Nextcloud.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier sur le serveur'**
+  String get syncFolderLabel;
+
+  /// Aide sous le champ dossier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créé automatiquement s\'il n\'existe pas.'**
+  String get syncFolderHelp;
+
+  /// Message d'erreur : champ obligatoire vide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Obligatoire'**
+  String get syncFieldRequired;
+
+  /// Message d'erreur : adresse du serveur incorrecte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse invalide'**
+  String get syncInvalidAddress;
+
+  /// Bouton : activer la synchronisation avec les paramètres saisis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer la synchronisation'**
+  String get syncActivate;
+
+  /// Bouton : enregistrer les paramètres modifiés.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get syncSave;
+
+  /// Message : la synchronisation vient d'être activée.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation activée'**
+  String get syncActivated;
+
+  /// Titre de la question : le serveur contient une cave différente.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une autre cave est sur le serveur'**
+  String get syncOtherCaveTitle;
+
+  /// Explication de la question « autre cave ».
+  ///
+  /// In fr, this message translates to:
+  /// **'Le serveur contient déjà une cave différente de celle de ce téléphone. Les deux ne sont jamais mélangées : choisissez celle à garder.'**
+  String get syncOtherCaveMessage;
+
+  /// Choix : remplacer la cave du téléphone par celle du serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser la cave du serveur'**
+  String get syncUseServer;
+
+  /// Explication du choix « Utiliser la cave du serveur ».
+  ///
+  /// In fr, this message translates to:
+  /// **'La cave de ce téléphone est remplacée, après une sauvegarde automatique.'**
+  String get syncUseServerHelp;
+
+  /// Choix : envoyer la cave du téléphone à la place de celle du serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer la cave du serveur par celle-ci'**
+  String get syncReplaceServer;
+
+  /// Explication du choix « Remplacer la cave du serveur ».
+  ///
+  /// In fr, this message translates to:
+  /// **'Celle du serveur est d\'abord mise de côté sur le serveur (renommée), pas supprimée.'**
+  String get syncReplaceServerHelp;
+
+  /// Bouton : rouvrir la question « autre cave ».
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir la cave à garder'**
+  String get syncChooseCave;
+
+  /// État : synchronisation à jour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisé'**
+  String get syncStatusSynced;
+
+  /// État : synchronisation en cours.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation en cours…'**
+  String get syncStatusSyncing;
+
+  /// État : pas de réseau (ce n'est pas une erreur).
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente du réseau : les modifications seront envoyées à son retour.'**
+  String get syncStatusWaiting;
+
+  /// État : la dernière synchronisation a échoué.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur de synchronisation'**
+  String get syncStatusError;
+
+  /// Date de la dernière synchronisation réussie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière synchronisation : {date}'**
+  String syncLastSuccess(String date);
+
+  /// Aucune synchronisation réussie sur cet appareil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore synchronisé'**
+  String get syncNever;
+
+  /// Adresse du dossier de la cave sur le serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier : {address}'**
+  String syncServerLine(String address);
+
+  /// Avertissement : erreur de synchronisation ancienne (remplace la notification).
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'erreur dure depuis plus de 24 heures.'**
+  String get syncLongError;
+
+  /// Erreur : serveur injoignable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Serveur injoignable. Les modifications restent sur le téléphone, rien n\'est perdu.'**
+  String get syncProblemUnreachable;
+
+  /// Erreur : identifiants refusés.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identifiant ou mot de passe refusé par le serveur.'**
+  String get syncProblemUnauthorized;
+
+  /// Erreur : dossier introuvable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier introuvable sur le serveur : vérifiez l\'adresse.'**
+  String get syncProblemFolderNotFound;
+
+  /// Erreur : plus de place sur le serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Espace insuffisant sur le serveur. Les modifications restent sur le téléphone.'**
+  String get syncProblemInsufficientStorage;
+
+  /// Erreur : réponse inattendue du serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le serveur a répondu de façon inattendue. Nouvel essai automatique.'**
+  String get syncProblemServer;
+
+  /// Erreur : base créée par une version plus récente.
+  ///
+  /// In fr, this message translates to:
+  /// **'La cave du serveur a été enregistrée par une version plus récente de l\'application. Synchronisation suspendue : mettez l\'application à jour.'**
+  String get syncProblemNewerVersion;
+
+  /// Erreur : autre cave sur le serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le serveur contient une autre cave que celle de ce téléphone.'**
+  String get syncProblemOtherCave;
+
+  /// Erreur : conflit d'écriture répété.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le fichier du serveur changeait pendant l\'envoi. Nouvel essai automatique.'**
+  String get syncProblemConflict;
+
+  /// Message : fichier du serveur endommagé, mis de côté.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « {name} » et remplacé par la cave de ce téléphone.'**
+  String syncSetAside(String name);
+
+  /// Bouton : relancer la synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get syncRetry;
+
+  /// Bouton : lancer une synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser maintenant'**
+  String get syncNow;
+
+  /// Bouton : ouvrir l'écran de synchronisation pour corriger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres de synchronisation'**
+  String get syncOpenSettings;
+
+  /// Bouton : modifier l'adresse, l'identifiant ou le mot de passe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier les paramètres'**
+  String get syncEdit;
+
+  /// Bouton : revenir au mode local.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactiver la synchronisation'**
+  String get syncDeactivate;
+
+  /// Confirmation de la désactivation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce téléphone garde sa cave et continue seul. La cave du serveur n\'est pas supprimée.'**
+  String get syncDeactivateMessage;
+
+  /// Message : retour au mode local.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation désactivée'**
+  String get syncDeactivated;
+
+  /// Titre de la liste des dernières erreurs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journal des erreurs'**
+  String get syncLogTitle;
+
+  /// Journal des erreurs vide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune erreur.'**
+  String get syncLogEmpty;
+
+  /// Infobulle de l'indicateur de synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'État de la synchronisation'**
+  String get syncIndicatorTooltip;
+
+  /// Rappel sur l'écran de synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les sauvegardes sont aussi copiées dans le dossier « Sauvegardes » du serveur.'**
+  String get syncBackupsNote;
 }
 
 class _AppLocalizationsDelegate

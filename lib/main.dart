@@ -18,7 +18,7 @@ Future<void> main() async {
           WriteContext(deviceId: deviceId),
         ),
       ],
-      child: const AutoBackup(child: CaveApp()),
+      child: const AutomaticTasks(child: CaveApp()),
     ),
   );
 }

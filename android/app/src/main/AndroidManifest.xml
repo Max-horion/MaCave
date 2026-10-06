@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Synchronisation WebDAV (lot 4). Flutter ne l'ajoute qu'en débogage. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- connectivity_plus : savoir si le réseau est disponible. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:label="Ma Cave"
         android:name="${applicationName}"

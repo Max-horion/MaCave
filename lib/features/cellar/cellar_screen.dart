@@ -12,6 +12,8 @@ import '../drink/drink_detail_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../inventory/inventory_screen.dart';
 import '../stats/stats_screen.dart';
+import '../sync/sync_indicator.dart';
+import '../sync/sync_screen.dart';
 import '../drink/drink_form_screen.dart';
 import '../stock_actions.dart';
 import 'filter_sheet.dart';
@@ -32,6 +34,7 @@ class CellarScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.appTitle),
         actions: [
+          const SyncIndicator(),
           _SortMenu(current: filter.sort),
           IconButton(
             tooltip: l10n.filtersTooltip,
@@ -109,9 +112,10 @@ class CellarScreen extends ConsumerWidget {
   }
 }
 
-enum _MenuAction { inventory, statistics, import, export, backups }
+enum _MenuAction { inventory, statistics, import, export, backups, sync }
 
-/// Menu « ⋮ » : inventaire, statistiques, import, export et sauvegardes.
+/// Menu « ⋮ » : inventaire, statistiques, import, export, sauvegardes et
+/// synchronisation.
 class _MainMenu extends ConsumerWidget {
   const _MainMenu();
 
@@ -130,6 +134,7 @@ class _MainMenu extends ConsumerWidget {
         _MenuAction.import => startImport(context, ref),
         _MenuAction.export => startExport(context, ref),
         _MenuAction.backups => open(const BackupScreen()),
+        _MenuAction.sync => open(const SyncScreen()),
       },
       itemBuilder: (_) => [
         PopupMenuItem(
@@ -166,6 +171,13 @@ class _MainMenu extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.save_outlined),
             title: Text(l10n.menuBackups),
+          ),
+        ),
+        PopupMenuItem(
+          value: _MenuAction.sync,
+          child: ListTile(
+            leading: const Icon(Icons.cloud_outlined),
+            title: Text(l10n.menuSync),
           ),
         ),
       ],

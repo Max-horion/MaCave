@@ -57,6 +57,7 @@ void main() {
         overrides: [
           databaseProvider.overrideWithValue(db),
           writeContextProvider.overrideWithValue(ctx),
+          localSyncEnvironment(db, ctx),
           backupServiceProvider.overrideWithValue(service),
         ],
         child: MaterialApp(
@@ -98,6 +99,7 @@ void main() {
         overrides: [
           databaseProvider.overrideWithValue(db),
           writeContextProvider.overrideWithValue(ctx),
+          localSyncEnvironment(db, ctx),
           backupServiceProvider.overrideWithValue(service),
         ],
         child: MaterialApp(

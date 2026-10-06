@@ -14,7 +14,7 @@ Versions vérifiées sur pub.dev le 5 octobre 2026. Toutes gratuites et open sou
 | Identifiants uniques | **uuid** (v7) | Identifiant de chaque fiche et mouvement, créé hors ligne sans risque de doublon ; la v7 est triable par date. | 1 |
 | WebDAV | **client maison sur `http`** | WebDAV ne demande que 5 verbes (PROPFIND, GET, PUT, MOVE, MKCOL). Le paquet `webdav_client` n'est plus maintenu (2024) ; écrire ~200 lignes nous donne la main sur les en-têtes `If-Match` / `If-None-Match` indispensables au contrôle de version, et c'est testable avec un faux serveur. | 4 |
 | Mot de passe serveur | **flutter_secure_storage** | Coffre sécurisé Android (Keystore), jamais en clair (CDC §9). | 4 |
-| Tâches de fond | **workmanager** + **flutter_local_notifications** | Sauvegarde automatique périodique, nouvelles tentatives de synchro, notification si erreur > 24 h. | 4 |
+| ~~Tâches de fond~~ | ~~workmanager + flutter_local_notifications~~ | **Abandonné en V1** (décision du 05/10/2026) : tout se fait appli ouverte ; une erreur de plus de 24 h est signalée dans l'appli (indicateur rouge). | — |
 | Réseau disponible ? | **connectivity_plus** | Distinguer « en attente » (pas de réseau, pas une erreur) d'une vraie erreur. | 4 |
 | Scan codes-barres / QR | **mobile_scanner** | Lecture en direct avec ML Kit, lampe torche intégrée, bien maintenu. | 5 |
 | Photo d'étiquette | **camera** | Prise de vue dans l'appli avec contrôle de la lampe torche. | 5 |
@@ -115,8 +115,9 @@ Fait au lot 4c (`lib/sync/webdav.dart`, `lib/sync/sync_service.dart`). Après un
 
 ### Quand et comment
 
-- À l'ouverture, quelques secondes après chaque modification (regroupées), sur le bouton « Synchroniser maintenant ».
-- Pas de réseau → état « en attente », sans message. Erreurs → nouvelles tentatives espacées (1 min, 5 min, 30 min…), puis à chaque ouverture ; notification seulement après 24 h.
+- À l'ouverture et au retour au premier plan, 10 secondes après une modification (regroupées), à la mise en arrière-plan si une modification attend, au retour du réseau, sur le bouton « Synchroniser maintenant » (`lib/sync/sync_controller.dart`). Appli ouverte seulement (pas de tâche de fond en V1).
+- Pas de réseau → état « en attente », sans message. Erreurs → nouvelles tentatives espacées (1 min, 5 min, 30 min), puis à chaque ouverture ; pas de nouvel essai automatique si seul l'utilisateur peut corriger (identifiants, dossier, version, autre cave). Après 24 h d'erreur, l'indicateur passe au rouge (pas de notification en V1).
+- Paramètres (adresse, identifiant, dossier) dans les préférences de l'appareil, mot de passe dans le coffre sécurisé ; ils ne sont enregistrés qu'après une première synchronisation réussie.
 - La base locale n'est modifiée qu'à l'étape 3, en transaction : une erreur réseau ne peut jamais l'abîmer.
 - Les horloges des appareils servent à départager les fiches : un téléphone synchronisé à l'heure réseau suffit pour un usage personnel.
 
@@ -130,7 +131,7 @@ Une purge doit aussi se propager, sinon la fusion ferait revenir les mouvements 
 
 ## 5. Sauvegardes (lot 4)
 
-Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées (3 par défaut, réglable). Mode synchronisé : dossier `Sauvegardes` du serveur (étape 4c/4d) ; mode local : `Documents/Cave/Sauvegardes` sur l'appareil.
+Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées (3 par défaut, réglable). Toujours dans `Documents/Cave/Sauvegardes` sur l'appareil ; en mode synchronisé, la plus récente est **aussi** copiée dans le dossier `Sauvegardes` du serveur, qui en garde le même nombre (décision du 06/10/2026, `lib/sync/server_backups.dart`).
 
 - **Fait au lot 4a** (`lib/sync/backup.dart`) : sauvegarde automatique appli ouverte (à l'ouverture et à la mise en arrière-plan, au plus une fois par jour, seulement si la base a changé), « Sauvegarder maintenant », partage, restauration avec vérification du fichier et sauvegarde de sécurité préalable.
 - **Pas de tâche de fond** (workmanager) en V1, décision du 5 octobre 2026.

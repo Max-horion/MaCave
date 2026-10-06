@@ -49,7 +49,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
-| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **en cours** (4a, 4b, 4c terminées) |
+| 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **en cours** (4a à 4d terminées, 4d à vérifier sur le téléphone) |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons | à faire |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
@@ -58,6 +58,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 - l'appellation est **facultative** pour le vin ; la région *ou* le pays restent obligatoires (2026-10-05).
 - **Pas de tâches de fond en V1** (2026-10-05) : sauvegarde et synchro se font appli ouverte (ouverture, mise en arrière-plan, après modification, bouton) ; pas de workmanager ni de notification « erreur > 24 h » (affichée dans l'appli à la place). Écart au CDC §8.3/§8.4 à reporter dans sa prochaine version.
 - Sauvegardes : **3 conservées par défaut**, nombre réglable sur l'écran Sauvegardes (2026-10-05).
+- En mode synchronisé, sauvegardes **sur le téléphone ET sur le serveur** (dossier `Sauvegardes` à côté de la cave, même nombre conservé) (2026-10-06). Le CDC §8.4 ne prévoyait que le serveur : écart à reporter.
 - Le marqueur « à compléter » est calculé à l'enregistrement de chaque fiche. **Ne jamais le recalculer en masse** silencieusement : le porteur s'en sert comme liste de fiches à revoir (ex. après un import).
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
@@ -109,6 +110,11 @@ Règles d'import :
 - `lib/sync/webdav.dart` — client WebDAV maison sur `http` (4c) : `download` (avec `If-None-Match` → 304), `upload` (`If-Match`, ou `If-None-Match: *` au premier envoi), `etag` (PROPFIND), `move`, `createFolder`. Erreurs → `WebDavProblem` (injoignable, identifiants, 412, introuvable, espace plein, serveur).
 - `lib/sync/sync_service.dart` — **cycle de synchro** (4c) : `sync()` (architecture §4 : GET conditionnel → vérification → `mergeCaveFile` → PUT conditionnel, 3 essais si 412), `useServerCave` / `replaceServerCave` (CDC §8.2), `forget()` (changement de serveur). Erreurs → `SyncException(SyncProblem…)`, une par message du CDC §8.3. Préférences locales : `sync_etag` (ETag connu) et `sync_fingerprint` (empreinte de la base quand elle était identique au serveur : sert à savoir s'il faut envoyer après un 304). **Pas encore branché dans l'appli** (4d : réglages, mot de passe, déclencheurs, indicateur).
 - `contentFingerprint` (`cave_file.dart`) — empreinte partagée par sauvegarde et synchro : **somme** des `updated_at` + nombre de lignes (pas le maximum : une modification datée par une horloge en retard ne le ferait pas bouger).
+- `lib/sync/sync_settings.dart` — paramètres de synchro propres à l'appareil (`SyncSettings` : Nextcloud = adresse du serveur → `…/remote.php/dav/files/<user>/<dossier>/`, ou adresse WebDAV complète), mot de passe dans le coffre (`SecureSecretStore`, `MemorySecretStore` pour les tests), `SyncSettingsStore`.
+- `lib/sync/sync_controller.dart` — `SyncController` (Riverpod) : état affiché (`SyncState` : off, synced, syncing, waiting, error + cause, `errorSince` → rouge après 24 h), `start` (ouverture), `localChanged` (regroupe 10 s), `paused`, `syncNow`, nouvelles tentatives 1, 5, 30 min (pas pour identifiants/dossier/version/autre cave), journal des 20 dernières erreurs, `activate` (paramètres enregistrés seulement si ça marche) puis `resolveOtherCave`, `deactivate`. Dépendances regroupées dans `SyncEnvironment` (`syncEnvironmentProvider`, remplacé dans les tests par `localSyncEnvironment` de `test/helpers.dart`).
+- `lib/sync/server_backups.dart` — `mirrorLatestBackup` : copie la dernière sauvegarde locale dans `Sauvegardes/` du serveur et n'y garde que les N plus récentes (règle commune à tous les appareils). Appelé après chaque synchro réussie.
+- `AutomaticTasks` (`lib/sync/providers.dart`, ex-`AutoBackup`) : synchro à l'ouverture (puis sauvegarde), au retour au premier plan, après modification ; sauvegarde + synchro en attente à la mise en arrière-plan.
+- `lib/features/sync/` — écran Synchronisation (formulaire, choix « autre cave », état, journal, désactivation), indicateur `SyncIndicator` dans la barre de la liste (invisible en mode local), textes communs `sync_messages.dart`.
 - `test/sync/fake_webdav_server.dart` — faux serveur WebDAV (vrai serveur HTTP local, règles d'ETag de Nextcloud) ; `test/sync/device.dart` — appareils simulés (base + horloge + ID préfixés).
 - `lib/sync/providers.dart` — dossier `Documents/Cave/Sauvegardes` (Android 11+ : écriture sans autorisation, vérifié sur le téléphone ; l'appli ne voit plus ses fichiers après une réinstallation → « Restaurer depuis un fichier »), widget `AutoBackup` (dans `main.dart`).
 - `lib/data/local_store.dart` — préférences propres à l'appareil (`PrefsLocalStore`, `MemoryLocalStore` pour les tests).
@@ -120,6 +126,9 @@ Pièges rencontrés :
 - Fusion : un appareil resté hors ligne longtemps qui ajoute un mouvement sur un lot entre-temps regroupé (doublon supprimé) le verra arriver sur le lot supprimé, donc non compté. Cas très rare (3 appareils hors ligne) ; à revoir si ça arrive.
 - Fusion : les ID des appareils de test doivent être distincts (`_DeviceContext` dans `test/sync/merge_test.dart`), sinon les `id-0001` se croisent.
 - Faux serveur HTTP : fixer `statusCode` **avant** d'écrire le contenu (sinon « Header already sent » et les tests se bloquent).
+- Tests d'écran qui font du vrai réseau : `HttpOverrides.global = null` dans `setUp` (Flutter remplace sinon toutes les requêtes par des réponses « 400 »).
+- `StreamController` simple jamais écouté : `close()` ne se termine jamais (test bloqué) → `.broadcast()`.
+- `AndroidManifest.xml` principal : l'autorisation INTERNET n'est ajoutée par Flutter qu'en débogage ; elle est déclarée à la main (vérifiable avec `aapt2 dump permissions`).
 - Ne pas lancer `pkill -f flutter_tester` dans une commande qui contient ce mot : elle se tue elle-même.
 - Android 8 à 10 : l'écriture dans Documents demandera une autorisation (pas encore gérée ; à voir au lot 6 avant toute diffusion).
 
@@ -149,3 +158,4 @@ Pièges rencontrés :
 - 2026-10-05 — Lot 4a : sauvegardes locales (base + CSV, 3 conservées, réglable), sauvegarde automatique, restauration ; 134 tests verts. Vérifié sur le téléphone : sauvegarde automatique à l'ouverture, fichiers lisibles dans Documents/Cave/Sauvegardes, restauration puis retour arrière par la sauvegarde de sécurité. APK 63 Mo (moteur SQLite pour lire les sauvegardes).
 - 2026-10-06 — Lot 4b : moteur de fusion (`lib/sync/merge.dart`), 17 tests (deux appareils simulés, fusion dans les deux sens, convergence vérifiée) ; 151 tests verts. Pas encore branché : il le sera par le cycle de synchro (4c).
 - 2026-10-06 — Lot 4c : client WebDAV (`http`) et cycle de synchro (fichier endommagé mis de côté, version plus récente, autre cave, conflit 412 → nouvel essai, dossier créé au premier envoi), « Utiliser / Remplacer la cave du serveur » ; empreinte de la base rendue insensible aux décalages d'horloge. 17 tests contre un faux serveur WebDAV ; 168 tests verts. Rien de visible dans l'appli avant le 4d.
+- 2026-10-06 — Lot 4d : écran Synchronisation (Nextcloud ou WebDAV, mot de passe dans le coffre, choix « autre cave »), indicateur d'état, synchro automatique appli ouverte, nouvelles tentatives, journal, sauvegardes copiées sur le serveur ; autorisation INTERNET ajoutée (manquait en release). 193 tests verts ; APK release 64,5 Mo. **Pas encore essayé avec le vrai Nextcloud du porteur.**

@@ -1016,5 +1016,244 @@
   "backupKeepConfirm": "Supprimer",
   "@backupKeepConfirm": {
     "description": "Bouton : confirmer la suppression des sauvegardes en trop."
+  },
+  "backupHelpSynced": "Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.",
+  "@backupHelpSynced": {
+    "description": "Explication en tête de l'écran des sauvegardes, quand la synchronisation est active."
+  },
+  "menuSync": "Synchronisation",
+  "@menuSync": {
+    "description": "Menu principal : ouvrir l'écran de synchronisation."
+  },
+  "syncTitle": "Synchronisation",
+  "@syncTitle": {
+    "description": "Titre de l'écran de synchronisation."
+  },
+  "syncIntro": "Votre cave est enregistrée uniquement sur ce téléphone. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.",
+  "@syncIntro": {
+    "description": "Explication de l'écran de synchronisation en mode local."
+  },
+  "syncKindNextcloud": "Nextcloud",
+  "@syncKindNextcloud": {
+    "description": "Type de serveur : Nextcloud (adresse simplifiée)."
+  },
+  "syncKindOther": "Autre serveur WebDAV",
+  "@syncKindOther": {
+    "description": "Type de serveur : tout autre serveur WebDAV (adresse complète)."
+  },
+  "syncServerLabel": "Adresse du serveur",
+  "@syncServerLabel": {
+    "description": "Champ : adresse du serveur Nextcloud."
+  },
+  "syncServerHint": "cloud.exemple.fr",
+  "@syncServerHint": {
+    "description": "Exemple d'adresse de serveur Nextcloud."
+  },
+  "syncUrlLabel": "Adresse du dossier WebDAV",
+  "@syncUrlLabel": {
+    "description": "Champ : adresse complète du dossier, pour un autre serveur WebDAV."
+  },
+  "syncUrlHint": "https://nas.exemple.fr/webdav/cave",
+  "@syncUrlHint": {
+    "description": "Exemple d'adresse de dossier WebDAV."
+  },
+  "syncUserLabel": "Identifiant",
+  "@syncUserLabel": {
+    "description": "Champ : identifiant de connexion au serveur."
+  },
+  "syncPasswordLabel": "Mot de passe d'application",
+  "@syncPasswordLabel": {
+    "description": "Champ : mot de passe de connexion au serveur."
+  },
+  "syncPasswordHelp": "Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d'application. Il est rangé dans le coffre sécurisé du téléphone.",
+  "@syncPasswordHelp": {
+    "description": "Aide sous le champ mot de passe."
+  },
+  "syncPasswordKeep": "Laisser vide pour garder le mot de passe actuel.",
+  "@syncPasswordKeep": {
+    "description": "Aide sous le champ mot de passe, quand on modifie des paramètres existants."
+  },
+  "syncFolderLabel": "Dossier sur le serveur",
+  "@syncFolderLabel": {
+    "description": "Champ : dossier de la cave dans les fichiers Nextcloud."
+  },
+  "syncFolderHelp": "Créé automatiquement s'il n'existe pas.",
+  "@syncFolderHelp": {
+    "description": "Aide sous le champ dossier."
+  },
+  "syncFieldRequired": "Obligatoire",
+  "@syncFieldRequired": {
+    "description": "Message d'erreur : champ obligatoire vide."
+  },
+  "syncInvalidAddress": "Adresse invalide",
+  "@syncInvalidAddress": {
+    "description": "Message d'erreur : adresse du serveur incorrecte."
+  },
+  "syncActivate": "Activer la synchronisation",
+  "@syncActivate": {
+    "description": "Bouton : activer la synchronisation avec les paramètres saisis."
+  },
+  "syncSave": "Enregistrer",
+  "@syncSave": {
+    "description": "Bouton : enregistrer les paramètres modifiés."
+  },
+  "syncActivated": "Synchronisation activée",
+  "@syncActivated": {
+    "description": "Message : la synchronisation vient d'être activée."
+  },
+  "syncOtherCaveTitle": "Une autre cave est sur le serveur",
+  "@syncOtherCaveTitle": {
+    "description": "Titre de la question : le serveur contient une cave différente."
+  },
+  "syncOtherCaveMessage": "Le serveur contient déjà une cave différente de celle de ce téléphone. Les deux ne sont jamais mélangées : choisissez celle à garder.",
+  "@syncOtherCaveMessage": {
+    "description": "Explication de la question « autre cave »."
+  },
+  "syncUseServer": "Utiliser la cave du serveur",
+  "@syncUseServer": {
+    "description": "Choix : remplacer la cave du téléphone par celle du serveur."
+  },
+  "syncUseServerHelp": "La cave de ce téléphone est remplacée, après une sauvegarde automatique.",
+  "@syncUseServerHelp": {
+    "description": "Explication du choix « Utiliser la cave du serveur »."
+  },
+  "syncReplaceServer": "Remplacer la cave du serveur par celle-ci",
+  "@syncReplaceServer": {
+    "description": "Choix : envoyer la cave du téléphone à la place de celle du serveur."
+  },
+  "syncReplaceServerHelp": "Celle du serveur est d'abord mise de côté sur le serveur (renommée), pas supprimée.",
+  "@syncReplaceServerHelp": {
+    "description": "Explication du choix « Remplacer la cave du serveur »."
+  },
+  "syncChooseCave": "Choisir la cave à garder",
+  "@syncChooseCave": {
+    "description": "Bouton : rouvrir la question « autre cave »."
+  },
+  "syncStatusSynced": "Synchronisé",
+  "@syncStatusSynced": {
+    "description": "État : synchronisation à jour."
+  },
+  "syncStatusSyncing": "Synchronisation en cours…",
+  "@syncStatusSyncing": {
+    "description": "État : synchronisation en cours."
+  },
+  "syncStatusWaiting": "En attente du réseau : les modifications seront envoyées à son retour.",
+  "@syncStatusWaiting": {
+    "description": "État : pas de réseau (ce n'est pas une erreur)."
+  },
+  "syncStatusError": "Erreur de synchronisation",
+  "@syncStatusError": {
+    "description": "État : la dernière synchronisation a échoué."
+  },
+  "syncLastSuccess": "Dernière synchronisation : {date}",
+  "@syncLastSuccess": {
+    "description": "Date de la dernière synchronisation réussie.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNever": "Pas encore synchronisé",
+  "@syncNever": {
+    "description": "Aucune synchronisation réussie sur cet appareil."
+  },
+  "syncServerLine": "Dossier : {address}",
+  "@syncServerLine": {
+    "description": "Adresse du dossier de la cave sur le serveur.",
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "syncLongError": "L'erreur dure depuis plus de 24 heures.",
+  "@syncLongError": {
+    "description": "Avertissement : erreur de synchronisation ancienne (remplace la notification)."
+  },
+  "syncProblemUnreachable": "Serveur injoignable. Les modifications restent sur le téléphone, rien n'est perdu.",
+  "@syncProblemUnreachable": {
+    "description": "Erreur : serveur injoignable."
+  },
+  "syncProblemUnauthorized": "Identifiant ou mot de passe refusé par le serveur.",
+  "@syncProblemUnauthorized": {
+    "description": "Erreur : identifiants refusés."
+  },
+  "syncProblemFolderNotFound": "Dossier introuvable sur le serveur : vérifiez l'adresse.",
+  "@syncProblemFolderNotFound": {
+    "description": "Erreur : dossier introuvable."
+  },
+  "syncProblemInsufficientStorage": "Espace insuffisant sur le serveur. Les modifications restent sur le téléphone.",
+  "@syncProblemInsufficientStorage": {
+    "description": "Erreur : plus de place sur le serveur."
+  },
+  "syncProblemServer": "Le serveur a répondu de façon inattendue. Nouvel essai automatique.",
+  "@syncProblemServer": {
+    "description": "Erreur : réponse inattendue du serveur."
+  },
+  "syncProblemNewerVersion": "La cave du serveur a été enregistrée par une version plus récente de l'application. Synchronisation suspendue : mettez l'application à jour.",
+  "@syncProblemNewerVersion": {
+    "description": "Erreur : base créée par une version plus récente."
+  },
+  "syncProblemOtherCave": "Le serveur contient une autre cave que celle de ce téléphone.",
+  "@syncProblemOtherCave": {
+    "description": "Erreur : autre cave sur le serveur."
+  },
+  "syncProblemConflict": "Le fichier du serveur changeait pendant l'envoi. Nouvel essai automatique.",
+  "@syncProblemConflict": {
+    "description": "Erreur : conflit d'écriture répété."
+  },
+  "syncSetAside": "Le fichier du serveur était endommagé : il a été mis de côté sous le nom « {name} » et remplacé par la cave de ce téléphone.",
+  "@syncSetAside": {
+    "description": "Message : fichier du serveur endommagé, mis de côté.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncRetry": "Réessayer",
+  "@syncRetry": {
+    "description": "Bouton : relancer la synchronisation."
+  },
+  "syncNow": "Synchroniser maintenant",
+  "@syncNow": {
+    "description": "Bouton : lancer une synchronisation."
+  },
+  "syncOpenSettings": "Paramètres de synchronisation",
+  "@syncOpenSettings": {
+    "description": "Bouton : ouvrir l'écran de synchronisation pour corriger."
+  },
+  "syncEdit": "Modifier les paramètres",
+  "@syncEdit": {
+    "description": "Bouton : modifier l'adresse, l'identifiant ou le mot de passe."
+  },
+  "syncDeactivate": "Désactiver la synchronisation",
+  "@syncDeactivate": {
+    "description": "Bouton : revenir au mode local."
+  },
+  "syncDeactivateMessage": "Ce téléphone garde sa cave et continue seul. La cave du serveur n'est pas supprimée.",
+  "@syncDeactivateMessage": {
+    "description": "Confirmation de la désactivation."
+  },
+  "syncDeactivated": "Synchronisation désactivée",
+  "@syncDeactivated": {
+    "description": "Message : retour au mode local."
+  },
+  "syncLogTitle": "Journal des erreurs",
+  "@syncLogTitle": {
+    "description": "Titre de la liste des dernières erreurs."
+  },
+  "syncLogEmpty": "Aucune erreur.",
+  "@syncLogEmpty": {
+    "description": "Journal des erreurs vide."
+  },
+  "syncIndicatorTooltip": "État de la synchronisation",
+  "@syncIndicatorTooltip": {
+    "description": "Infobulle de l'indicateur de synchronisation."
+  },
+  "syncBackupsNote": "Les sauvegardes sont aussi copiées dans le dossier « Sauvegardes » du serveur.",
+  "@syncBackupsNote": {
+    "description": "Rappel sur l'écran de synchronisation."
   }
 }

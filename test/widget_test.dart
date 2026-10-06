@@ -16,6 +16,7 @@ Widget testApp(CaveDatabase db, TestContext ctx) => ProviderScope(
   overrides: [
     databaseProvider.overrideWithValue(db),
     writeContextProvider.overrideWithValue(ctx),
+    localSyncEnvironment(db, ctx),
   ],
   child: const CaveApp(),
 );
