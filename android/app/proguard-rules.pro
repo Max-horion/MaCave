@@ -8,3 +8,7 @@
 -dontwarn com.google.mlkit.vision.text.devanagari.**
 -dontwarn com.google.mlkit.vision.text.japanese.**
 -dontwarn com.google.mlkit.vision.text.korean.**
+
+# Tesseract (lot 5d) : la bibliothèque native appelle ces classes par leur
+# nom (JNI) ; R8 ne doit ni les renommer ni les supprimer.
+-keep class com.googlecode.tesseract.android.** { *; }

@@ -2061,6 +2061,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Photographier l\'étiquette'**
   String get scanUnknownPhoto;
+
+  /// Titre du choix du moteur de reconnaissance de texte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moteur de lecture (bêta)'**
+  String get labelEngine;
+
+  /// Moteur ML Kit (Google).
+  ///
+  /// In fr, this message translates to:
+  /// **'ML Kit'**
+  String get labelEngineMlKit;
+
+  /// Moteur Tesseract.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tesseract'**
+  String get labelEngineTesseract;
+
+  /// Mode comparaison : les deux moteurs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparer'**
+  String get labelEngineCompare;
+
+  /// Titre de l'écran de comparaison ML Kit / Tesseract.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparaison des moteurs'**
+  String get labelCompareTitle;
+
+  /// Explication du mode comparaison.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux moteurs ont lu la même photo. Gardez le meilleur résultat : vos choix aideront à décider du moteur définitif.'**
+  String get labelCompareHelp;
+
+  /// Nombre de fois où chaque moteur a été préféré.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choix jusqu\'ici : ML Kit {mlKit}, Tesseract {tesseract}'**
+  String labelCompareTally(int mlKit, int tesseract);
+
+  /// Durée de lecture d'un moteur.
+  ///
+  /// In fr, this message translates to:
+  /// **'{seconds} s'**
+  String labelCompareSeconds(String seconds);
+
+  /// Nombre de lignes reconnues par un moteur.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune ligne lue} =1{1 ligne lue} other{{count} lignes lues}}'**
+  String labelCompareLines(int count);
+
+  /// Bouton : choisir le résultat d'un moteur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garder le résultat de {engine}'**
+  String labelCompareKeep(String engine);
 }
 
 class _AppLocalizationsDelegate

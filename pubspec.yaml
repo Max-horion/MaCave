@@ -80,6 +80,9 @@ flutter:
   # Appellations officielles (INAO, Licence Ouverte) : tool/build_appellations.py
   assets:
     - assets/appellations.txt
+    # Tesseract (lot 5d) : dictionnaire français « best » (Apache 2.0,
+    # github.com/tesseract-ocr/tessdata_best), copié au premier usage.
+    - assets/tessdata/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

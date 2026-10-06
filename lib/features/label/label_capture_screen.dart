@@ -1,19 +1,21 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../scan/ocr_engine.dart';
 
 /// Prise de vue d'une étiquette (CDC §6.2), avec la lampe torche (cave peu
 /// éclairée). Retourne le chemin de la photo, ou null si l'utilisateur
 /// ferme l'écran. La photo est supprimée par l'appelant après la lecture.
-class LabelCaptureScreen extends StatefulWidget {
+class LabelCaptureScreen extends ConsumerStatefulWidget {
   const LabelCaptureScreen({super.key});
 
   @override
-  State<LabelCaptureScreen> createState() => _LabelCaptureScreenState();
+  ConsumerState<LabelCaptureScreen> createState() => _LabelCaptureScreenState();
 }
 
-class _LabelCaptureScreenState extends State<LabelCaptureScreen>
+class _LabelCaptureScreenState extends ConsumerState<LabelCaptureScreen>
     with WidgetsBindingObserver {
   CameraController? _controller;
   String? _error;
@@ -161,6 +163,8 @@ class _LabelCaptureScreenState extends State<LabelCaptureScreen>
                 children: [
                   Text(l10n.labelHint, textAlign: TextAlign.center),
                   const SizedBox(height: 12),
+                  const _EngineChoice(),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -192,6 +196,49 @@ class _LabelCaptureScreenState extends State<LabelCaptureScreen>
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Choix du moteur de lecture pendant la bêta (CDC §10) : ML Kit, Tesseract
+/// ou les deux (comparaison). Retenu sur cet appareil.
+class _EngineChoice extends ConsumerWidget {
+  const _EngineChoice();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final engine = ref.watch(ocrPreferencesProvider).value?.engine;
+    if (engine == null) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          l10n.labelEngine,
+          style: Theme.of(context).textTheme.bodySmall,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 4),
+        SegmentedButton<OcrEngine>(
+          segments: [
+            ButtonSegment(
+              value: OcrEngine.mlKit,
+              label: Text(l10n.labelEngineMlKit),
+            ),
+            ButtonSegment(
+              value: OcrEngine.tesseract,
+              label: Text(l10n.labelEngineTesseract),
+            ),
+            ButtonSegment(
+              value: OcrEngine.compare,
+              label: Text(l10n.labelEngineCompare),
+            ),
+          ],
+          selected: {engine},
+          onSelectionChanged: (s) =>
+              ref.read(ocrPreferencesProvider.notifier).setEngine(s.single),
+        ),
+      ],
     );
   }
 }

@@ -2,13 +2,16 @@ import 'dart:io';
 
 import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
+import 'package:cave/data/local_store.dart';
 import 'package:cave/data/providers.dart';
 import 'package:cave/domain/label_reading.dart';
 import 'package:cave/features/drink/drink_form_screen.dart';
 import 'package:cave/features/label/label_flow.dart';
 import 'package:cave/l10n/app_localizations.dart';
 import 'package:cave/scan/label_recognizer.dart';
+import 'package:cave/scan/ocr_engine.dart';
 import 'package:cave/scan/providers.dart';
+import 'package:cave/sync/providers.dart';
 import 'package:cave/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,13 +22,13 @@ import 'helpers.dart';
 
 /// Moteur factice : rend toujours les mêmes lignes, et note les photos lues.
 class FakeRecognizer implements LabelRecognizer {
-  FakeRecognizer(this.lines);
+  FakeRecognizer(this.lines, {this.name = 'ML Kit'});
 
   final List<LabelLine> lines;
   final read = <String>[];
 
   @override
-  String get name => 'Faux';
+  final String name;
 
   @override
   Future<List<LabelLine>> recognize(String imagePath) async {
@@ -55,6 +58,8 @@ void main() {
   late Directory root;
   late File photo;
   late FakeRecognizer recognizer;
+  late FakeRecognizer tesseract;
+  late MemoryLocalStore store;
 
   setUp(() {
     db = memoryDatabase();
@@ -81,8 +86,12 @@ void main() {
   Future<void> open(
     WidgetTester tester, {
     List<LabelLine> lines = _label,
+    List<LabelLine>? tesseractLines,
+    OcrEngine engine = OcrEngine.mlKit,
   }) async {
     recognizer = FakeRecognizer(lines);
+    tesseract = FakeRecognizer(tesseractLines ?? lines, name: 'Tesseract');
+    store = MemoryLocalStore()..values['ocr_engine'] = engine.name;
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -90,6 +99,8 @@ void main() {
           writeContextProvider.overrideWithValue(ctx),
           localSyncEnvironment(db, ctx),
           labelRecognizerProvider.overrideWithValue(recognizer),
+          tesseractRecognizerProvider.overrideWithValue(tesseract),
+          localStoreProvider.overrideWithValue(store),
           labelPhotoProvider.overrideWithValue((_) async => photo.path),
         ],
         child: MaterialApp(
@@ -229,6 +240,38 @@ void main() {
 
     expect(find.text('Déjà dans votre cave ?'), findsOneWidget);
     expect(find.text('Château des Lunes'), findsOneWidget);
+  });
+
+  testWidgets('moteur Tesseract seul', (tester) async {
+    await open(tester, engine: OcrEngine.tesseract);
+    await tap(tester, find.text('Lire l\'étiquette'));
+
+    expect(tesseract.read, hasLength(1));
+    expect(recognizer.read, isEmpty);
+    expect(find.text('Lecture de l\'étiquette'), findsOneWidget);
+  });
+
+  testWidgets('mode comparaison : les deux moteurs, on garde le meilleur', (
+    tester,
+  ) async {
+    await open(
+      tester,
+      engine: OcrEngine.compare,
+      lines: const [LabelLine('CHATEAU DE5 LUNE5', height: 50)],
+      tesseractLines: _label,
+    );
+    await tap(tester, find.text('Lire l\'étiquette'));
+
+    expect(find.text('Comparaison des moteurs'), findsOneWidget);
+    expect(recognizer.read, hasLength(1));
+    expect(tesseract.read, hasLength(1));
+    // La photo est gardée le temps de la comparaison, puis supprimée.
+    await tap(tester, find.text('Garder le résultat de Tesseract'));
+
+    expect(find.text('Lecture de l\'étiquette'), findsOneWidget);
+    expect(find.text('Saint-Emilion grand cru'), findsOneWidget);
+    expect(photo.existsSync(), isFalse);
+    expect(store.values['ocr_chosen_tesseract'], '1');
   });
 
   testWidgets('rien de lu : message, formulaire inchangé', (tester) async {

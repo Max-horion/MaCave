@@ -53,3 +53,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Tesseract 5 (lot 5d), appelé par MainActivity.kt. Variante OpenMP :
+    // plusieurs cœurs, une seule instance à la fois.
+    implementation("cz.adaptech.tesseract4android:tesseract4android-openmp:4.9.0")
+}

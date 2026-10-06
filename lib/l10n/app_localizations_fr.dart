@@ -1380,4 +1380,50 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scanUnknownPhoto => 'Photographier l\'étiquette';
+
+  @override
+  String get labelEngine => 'Moteur de lecture (bêta)';
+
+  @override
+  String get labelEngineMlKit => 'ML Kit';
+
+  @override
+  String get labelEngineTesseract => 'Tesseract';
+
+  @override
+  String get labelEngineCompare => 'Comparer';
+
+  @override
+  String get labelCompareTitle => 'Comparaison des moteurs';
+
+  @override
+  String get labelCompareHelp =>
+      'Les deux moteurs ont lu la même photo. Gardez le meilleur résultat : vos choix aideront à décider du moteur définitif.';
+
+  @override
+  String labelCompareTally(int mlKit, int tesseract) {
+    return 'Choix jusqu\'ici : ML Kit $mlKit, Tesseract $tesseract';
+  }
+
+  @override
+  String labelCompareSeconds(String seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String labelCompareLines(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lignes lues',
+      one: '1 ligne lue',
+      zero: 'Aucune ligne lue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labelCompareKeep(String engine) {
+    return 'Garder le résultat de $engine';
+  }
 }

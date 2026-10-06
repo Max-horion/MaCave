@@ -10,6 +10,8 @@ import '../../domain/drink_draft.dart';
 import '../../domain/enums.dart';
 import '../../domain/label_reading.dart';
 import '../../l10n/app_localizations.dart';
+import '../../scan/label_recognizer.dart';
+import '../../scan/ocr_engine.dart';
 import '../../scan/providers.dart';
 import '../../ui/formats.dart';
 import '../drink/drink_detail_screen.dart';
@@ -61,8 +63,15 @@ Future<LabelOutcome?> readLabelWithCamera(
   final l10n = AppLocalizations.of(context);
   final messenger = ScaffoldMessenger.of(context);
 
-  final LabelReading reading;
+  late final LabelReading reading;
   final navigator = Navigator.of(context);
+  // La fenêtre « Lecture… » n'est fermée qu'une fois, quoi qu'il arrive.
+  var waiting = true;
+  void stopWaiting() {
+    if (waiting) navigator.pop();
+    waiting = false;
+  }
+
   showDialog<void>(
     context: context,
     barrierDismissible: false,
@@ -79,33 +88,228 @@ Future<LabelOutcome?> readLabelWithCamera(
       ),
     ),
   );
+  final List<EngineResult> results;
   try {
-    final lines = await ref.read(labelRecognizerProvider).recognize(path);
+    final engine = (await ref.read(ocrPreferencesProvider.future)).engine;
     final index = await ref.read(appellationIndexProvider.future);
-    reading = readLabel(lines, index, currentYear: DateTime.now().year);
+    results = [
+      for (final (kind, provider) in [
+        (OcrEngine.mlKit, labelRecognizerProvider),
+        (OcrEngine.tesseract, tesseractRecognizerProvider),
+      ])
+        if (engine == kind || engine == OcrEngine.compare)
+          await _readWith(ref.read(provider), kind, path, index),
+    ];
+    // La photo n'est plus utile : supprimée tout de suite (CDC §6.2), même
+    // si l'utilisateur prend son temps pour comparer ou corriger.
+    _deletePhoto(path);
+    final usable = results.where((r) => r.reading != null).toList();
+    if (usable.isEmpty) throw results.first.error!;
+    if (engine != OcrEngine.compare || usable.length == 1) {
+      reading = usable.first.reading!;
+    } else {
+      stopWaiting();
+      if (!context.mounted) return null;
+      final chosen = await Navigator.push<EngineResult>(
+        context,
+        MaterialPageRoute(builder: (_) => LabelCompareScreen(results: results)),
+      );
+      if (chosen == null || !context.mounted) return null;
+      await ref
+          .read(ocrPreferencesProvider.notifier)
+          .recordChoice(chosen.engine);
+      if (!context.mounted) return null;
+      return await _review(context, chosen.reading!, messenger, l10n);
+    }
   } catch (e) {
-    navigator.pop();
+    stopWaiting();
     messenger.showSnackBar(
       SnackBar(content: Text(l10n.errorGeneric('$e')), persist: false),
     );
     return null;
   } finally {
-    // La photo n'est pas conservée en V1 (CDC §6.2).
-    final file = File(path);
-    if (file.existsSync()) file.deleteSync();
+    // La photo n'est pas conservée en V1 (CDC §6.2), même après une erreur.
+    _deletePhoto(path);
   }
-  navigator.pop();
+  stopWaiting();
+  if (!context.mounted) return null;
+  return _review(context, reading, messenger, l10n);
+}
+
+void _deletePhoto(String path) {
+  final file = File(path);
+  if (file.existsSync()) file.deleteSync();
+}
+
+/// Écran de lecture, sauf si rien n'a été lu (un message le dit).
+Future<LabelOutcome?> _review(
+  BuildContext context,
+  LabelReading reading,
+  ScaffoldMessengerState messenger,
+  AppLocalizations l10n,
+) async {
   if (reading.lines.isEmpty) {
     messenger.showSnackBar(
       SnackBar(content: Text(l10n.labelNothingRead), persist: false),
     );
     return null;
   }
-  if (!context.mounted) return null;
   return Navigator.push<LabelOutcome>(
     context,
     MaterialPageRoute(builder: (_) => LabelReadingScreen(reading: reading)),
   );
+}
+
+/// Résultat d'un moteur sur une photo, avec sa durée (mode comparaison).
+class EngineResult {
+  const EngineResult({
+    required this.engine,
+    required this.name,
+    required this.took,
+    this.reading,
+    this.error,
+  });
+
+  final OcrEngine engine;
+  final String name;
+  final Duration took;
+  final LabelReading? reading;
+  final Object? error;
+}
+
+Future<EngineResult> _readWith(
+  LabelRecognizer recognizer,
+  OcrEngine engine,
+  String path,
+  AppellationIndex index,
+) async {
+  final watch = Stopwatch()..start();
+  try {
+    final lines = await recognizer.recognize(path);
+    return EngineResult(
+      engine: engine,
+      name: recognizer.name,
+      took: watch.elapsed,
+      reading: readLabel(lines, index, currentYear: DateTime.now().year),
+    );
+  } catch (e) {
+    return EngineResult(
+      engine: engine,
+      name: recognizer.name,
+      took: watch.elapsed,
+      error: e,
+    );
+  }
+}
+
+/// Mode comparaison (bêta, CDC §10) : ce que chaque moteur a lu sur la même
+/// photo ; l'utilisateur garde le meilleur résultat, et son choix est compté.
+class LabelCompareScreen extends ConsumerWidget {
+  const LabelCompareScreen({super.key, required this.results});
+
+  final List<EngineResult> results;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formats = Formats.of(context);
+    final l10n = formats.l10n;
+    final theme = Theme.of(context);
+    final prefs = ref.watch(ocrPreferencesProvider).value;
+
+    String seconds(Duration d) => l10n.labelCompareSeconds(
+      formats.number((d.inMilliseconds / 100).round() / 10),
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.labelCompareTitle)),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+        children: [
+          Text(l10n.labelCompareHelp),
+          if (prefs != null)
+            Text(
+              l10n.labelCompareTally(prefs.chosenMlKit, prefs.chosenTesseract),
+              style: theme.textTheme.bodySmall,
+            ),
+          for (final result in results)
+            Card(
+              margin: const EdgeInsets.only(top: 16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      '${result.name} · ${seconds(result.took)}',
+                      style: theme.textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    if (result.reading == null)
+                      Text(
+                        l10n.errorGeneric('${result.error}'),
+                        style: TextStyle(color: theme.colorScheme.error),
+                      )
+                    else ...[
+                      for (final (label, value) in _summary(
+                        formats,
+                        result.reading!,
+                      ))
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '$label : ',
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                                TextSpan(text: value ?? l10n.labelNotFound),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ExpansionTile(
+                        tilePadding: EdgeInsets.zero,
+                        title: Text(
+                          l10n.labelCompareLines(result.reading!.lines.length),
+                        ),
+                        children: [
+                          for (final line in result.reading!.lines)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(line),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(context, result),
+                        child: Text(l10n.labelCompareKeep(result.name)),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static List<(String, String?)> _summary(Formats formats, LabelReading r) {
+    final l10n = formats.l10n;
+    return [
+      (l10n.fieldName, r.name),
+      (l10n.fieldProducer, r.producer),
+      (l10n.fieldAppellation, r.appellation),
+      (l10n.fieldVintage, r.vintage?.toString()),
+      (l10n.fieldAbv, r.abv == null ? null : formats.abv(r.abv!)),
+      (
+        l10n.fieldVolume,
+        r.volumeMl == null ? null : formats.volume(r.volumeMl!),
+      ),
+    ];
+  }
 }
 
 /// Ajoute des bouteilles à la référence reconnue, millésime et volume

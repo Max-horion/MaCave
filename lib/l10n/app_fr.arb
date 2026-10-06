@@ -1690,5 +1690,68 @@
   "scanUnknownPhoto": "Photographier l'étiquette",
   "@scanUnknownPhoto": {
     "description": "Bouton de la fiche « Code inconnu » : lire l'étiquette."
+  },
+  "labelEngine": "Moteur de lecture (bêta)",
+  "@labelEngine": {
+    "description": "Titre du choix du moteur de reconnaissance de texte."
+  },
+  "labelEngineMlKit": "ML Kit",
+  "@labelEngineMlKit": {
+    "description": "Moteur ML Kit (Google)."
+  },
+  "labelEngineTesseract": "Tesseract",
+  "@labelEngineTesseract": {
+    "description": "Moteur Tesseract."
+  },
+  "labelEngineCompare": "Comparer",
+  "@labelEngineCompare": {
+    "description": "Mode comparaison : les deux moteurs."
+  },
+  "labelCompareTitle": "Comparaison des moteurs",
+  "@labelCompareTitle": {
+    "description": "Titre de l'écran de comparaison ML Kit / Tesseract."
+  },
+  "labelCompareHelp": "Les deux moteurs ont lu la même photo. Gardez le meilleur résultat : vos choix aideront à décider du moteur définitif.",
+  "@labelCompareHelp": {
+    "description": "Explication du mode comparaison."
+  },
+  "labelCompareTally": "Choix jusqu'ici : ML Kit {mlKit}, Tesseract {tesseract}",
+  "@labelCompareTally": {
+    "description": "Nombre de fois où chaque moteur a été préféré.",
+    "placeholders": {
+      "mlKit": {
+        "type": "int"
+      },
+      "tesseract": {
+        "type": "int"
+      }
+    }
+  },
+  "labelCompareSeconds": "{seconds} s",
+  "@labelCompareSeconds": {
+    "description": "Durée de lecture d'un moteur.",
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "labelCompareLines": "{count, plural, =0{Aucune ligne lue} =1{1 ligne lue} other{{count} lignes lues}}",
+  "@labelCompareLines": {
+    "description": "Nombre de lignes reconnues par un moteur.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labelCompareKeep": "Garder le résultat de {engine}",
+  "@labelCompareKeep": {
+    "description": "Bouton : choisir le résultat d'un moteur.",
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      }
+    }
   }
 }

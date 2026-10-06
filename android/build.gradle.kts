@@ -2,6 +2,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // Tesseract4Android (lot 5d), publié sur JitPack seulement, et
+        // seulement pour ce groupe (aucune autre bibliothèque n'en vient).
+        maven {
+            url = uri("https://jitpack.io")
+            content { includeGroup("cz.adaptech.tesseract4android") }
+        }
     }
 }
 

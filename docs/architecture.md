@@ -18,7 +18,7 @@ Versions vérifiées sur pub.dev le 5 octobre 2026. Toutes gratuites et open sou
 | Réseau disponible ? | **connectivity_plus** | Distinguer « en attente » (pas de réseau, pas une erreur) d'une vraie erreur. | 4 |
 | Scan codes-barres / QR | **mobile_scanner** | Lecture en direct avec ML Kit (version embarquée : pas de réseau nécessaire, +3 à 10 Mo par architecture), lampe torche intégrée, bien maintenu. | 5 |
 | Photo d'étiquette | **camera** | Prise de vue dans l'appli avec contrôle de la lampe torche. | 5 |
-| Reconnaissance de texte | **google_mlkit_text_recognition** (fait, 5c) et **flutter_tesseract_ocr** (5d) derrière une interface commune `LabelRecognizer` | Moteur interchangeable + mode comparaison (CDC §10). ML Kit : modèle latin embarqué, hors ligne. Tesseract nécessite d'embarquer le dictionnaire français (quelques Mo dans l'APK). | 5 |
+| Reconnaissance de texte | **google_mlkit_text_recognition** (5c) et **Tesseract4Android** (5d, appelé directement par un canal maison : `flutter_tesseract_ocr` n'est plus compilable) derrière une interface commune `LabelRecognizer` | Moteur interchangeable + mode comparaison (CDC §10). ML Kit : modèle latin embarqué, hors ligne. Tesseract 5.5 : dictionnaire français « best » embarqué (4 Mo, Apache 2.0). Licences à citer dans « À propos » (lot 6). | 5 |
 | Open Food Facts | **http** (appel direct à l'API) | Un seul appel « produit par code-barres » : le paquet officiel serait surdimensionné. | 5 |
 | Requêtes HTTP | **http** | Base du client WebDAV maison. | 4 |
 | Fichiers | **path_provider**, **file_picker**, **share_plus**, **csv** | Emplacement de la base, choix du fichier à importer / dossier de sauvegarde, partage d'un export. | 3–4 |
