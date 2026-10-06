@@ -50,7 +50,7 @@ flutter build apk --release          # APK seul (installation : tool/installer.s
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes : 5a scan + lampe, 5b Open Food Facts, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison, 5e doublons | **en cours** (5a faite, à vérifier sur le téléphone) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes : 5a scan + lampe, 5b Open Food Facts, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison, 5e doublons | **en cours** (5a terminée) |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -176,3 +176,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 4e : purge manuelle de l'historique (report de stock, propagée par la synchro, jamais annulée par un autre appareil ni par un import) et purge automatique des lots épuisés ; écran « Espace disque ». 209 tests verts. **Lot 4 terminé** (purges à vérifier sur le téléphone).
 - 2026-10-06 — Lot 4e vérifié sur le téléphone (écran Espace disque, chiffres justes). **Lot 4 terminé.** À reporter dans le CDC v0.6 : pas de tâches de fond, sauvegardes téléphone + serveur, purge manuelle limitée aux mouvements de plus de 30 jours.
 - 2026-10-06 — Lot 5a : scan de code-barres / QR (ML Kit embarqué, hors ligne), lampe torche, saisie manuelle ; code connu → « −1 » / « Ajouter » / nouveau lot ; code inconnu → nouvelle référence ou association à un lot. 224 tests verts ; APK 82 Mo (+16 Mo de lecteur, toutes architectures).
+- 2026-10-06 — Lot 5a vérifié sur le téléphone par le porteur (scan, lampe, association, « −1 »).
