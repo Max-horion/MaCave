@@ -51,7 +51,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
-| 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **en cours** (premier lancement, paramètres, classification, À propos, icône faits ; reste finitions) |
+| 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **presque terminé** : tout est codé, vérifié sur le téléphone et dans le CDC v0.6 ; restent 3 vérifications hors de portée ici (voir « À reprendre ») |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -67,11 +67,14 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
-2. Lot 6, points déjà repérés :
-   - vérifier sur un appareil neuf le premier lancement (le téléphone du porteur ne le montre pas : cave déjà remplie) ;
-   - faire relire `COPYING.md` (exception ML Kit) avant toute diffusion publique ; dépôt toujours privé ;
-   - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (aucun appareil de test ; un émulateur Android 10 serait lourd avec 8 Go) ;
+État au 2026-10-07 au soir : tout est commité et poussé (`main` = 6f8fc2a), installé sur le téléphone, 333 tests verts. Rien en cours.
+
+1. **Clore le lot 6** — restent des vérifications, pas de code connu à écrire :
+   - premier lancement sur un appareil neuf (le téléphone du porteur ne le montre pas : cave déjà remplie) ; un vieux téléphone Android 8 à 10 permettrait de vérifier aussi le point suivant ;
+   - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (un émulateur Android 10 serait lourd avec 8 Go) ;
+   - faire relire `COPYING.md` (exception ML Kit) avant toute diffusion publique ; dépôt toujours privé.
+   Ensuite : passer le lot 6 à « terminé » dans le tableau, et décider de la suite (V1 complète → bilan, diffusion, V2 ?).
+2. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12), puis le reporter dans le CDC.
 3. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
 
 ## Où trouver quoi (lot 1)
