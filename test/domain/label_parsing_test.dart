@@ -10,6 +10,10 @@ void main() {
     expect(parseVolumeMl('330ml'), 330);
     expect(parseVolumeMl('33 CL'), 330);
     expect(parseVolumeMl('1 l'), 1000);
+    // Fût de 6 litres.
+    expect(parseVolumeMl('6 l'), 6000);
+    expect(parseVolumeMl('6L'), 6000);
+    expect(parseVolumeMl('600 cl'), 6000);
   });
 
   test('un pack : volume d\'une bouteille', () {

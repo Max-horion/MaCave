@@ -66,7 +66,6 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-0. **Ajouter le volume 6 l** (fûts du porteur, demandé le 2026-10-07) : `standardVolumesMl` dans `lib/ui/formats.dart` (aucune autre limite de volume trouvée dans le code) + vérifier la lecture « 6 l » sur une étiquette (`parseVolumeMl`) et un test.
 0. Installé sur le téléphone le 2026-10-07 : le porteur vérifie Paramètres, classification, À propos, icône. Puis finitions du lot 6 (ci-dessous).
 1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
 2. Lot 6, points déjà repérés :
@@ -242,3 +241,4 @@ Pièges rencontrés :
 - 2026-10-07 — Lot 6 : écran Paramètres (thème, taille du texte, volumes par défaut, tri et épuisés à l'ouverture, durée du bandeau « Annuler », moteur de lecture, Open Food Facts activable), Synchronisation / Sauvegardes / Espace disque rangés dedans. 310 tests verts.
 - 2026-10-07 — Lot 6 : gestion de la classification (types, familles, valeurs : création, renommage, suppression ; références gardées « sans catégorie »), propagée par la synchro. 320 tests verts.
 - 2026-10-07 — Lot 6 : écran À propos (licence, sources, licences des bibliothèques), fichiers `LICENSE` (GPL v3) et `COPYING.md` (GPL v3 ou ultérieure + exception ML Kit), icône de l'appli (bouteille Tabler sur bordeaux, adaptative et vectorielle, vérifiée dans l'APK). 322 tests verts ; APK arm64 54,9 Mo.
+- 2026-10-07 — Volume 6 l ajouté aux volumes proposés (fûts du porteur) : formulaire, nouveau lot, volumes par défaut, classification ; lecture « 6 l » sur une étiquette testée. 323 tests verts.
