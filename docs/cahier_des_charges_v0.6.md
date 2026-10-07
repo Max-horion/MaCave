@@ -2,13 +2,13 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.5.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.6.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.5 |
-| Date | 5 octobre 2026 |
+| Version | 0.6 |
+| Date | 7 octobre 2026 |
 | Statut | V1 en cours de développement |
 
 ### Historique des versions
@@ -20,6 +20,7 @@
 | 0.3 | 1er octobre 2026 | Arbitrage de toutes les questions ouvertes et des points « à compléter » ; ajout du modèle de données, des paramètres, des choix techniques et du journal des décisions. |
 | 0.4 | 2 octobre 2026 | Relecture : diffusion future à d’autres utilisateurs, retrait par scan, synchronisation facultative (mode local seul) ; traitement des erreurs de synchronisation, changement de mode, tout serveur WebDAV, premier lancement, préparation des traductions. |
 | 0.5 | 5 octobre 2026 | Retours de la V1 en cours : appellation facultative pour le vin (4.1, 6.7) ; une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée. |
+| 0.6 | 7 octobre 2026 | Décisions des lots 4 à 6 de la V1 : synchronisation et sauvegarde application ouverte, sans tâche de fond (8.3, 8.4) ; sauvegardes sur l’appareil et sur le serveur ; purge manuelle limitée ; code-barres associable à un lot existant et doublons signalés aussi au scan et à la photo (6.2) ; cave du serveur reprise sur un appareil neuf (6.8) ; classification modifiable (6.1) ; import préparé dans un tableur avec consignes et fichier modèle (6.7) ; paramètres précisés (7) ; Open Food Facts désactivable (9) ; licence GPL v3 ou ultérieure (10). |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -135,16 +136,17 @@ Classification initiale (types, familles et valeurs modifiables dans l’applica
 - Les crèmes (cassis, mûre, violette) sont des spiritueux de catégorie « liqueur », avec la famille Parfum. La chartreuse : liqueur, parfum « plantes ».
 - Aucun niveau de classification supplémentaire (labels bio, nature…) n’est prévu.
 - Si un type ou une caractéristique est renommé ou supprimé, les références rattachées restent enregistrées, figurent dans la liste non filtrée et apparaissent « sans catégorie ».
+- Un nouveau type choisit à sa création le modèle de fiche d’un des quatre types de base (champs du 4.1 : vin, bière, spiritueux ou soft) ; ce choix ne peut plus changer ensuite. Un nom vide ou déjà présent au même endroit (sans tenir compte des majuscules ni des accents) est refusé. Le dernier type restant ne peut pas être supprimé.
 ### 6.2 Ajout de bouteilles
 Ajout manuel ou assisté par scan. Il est possible d’ajouter des bouteilles au stock d’un lot existant, ou un nouveau lot (autre millésime ou volume) à une référence existante. La quantité ajoutée se règle facilement pour ajouter plusieurs bouteilles en une fois.
 **Scan — reconnaissance assistée (V1) :**
-- **Code-barres ou QR code, lu en premier :** si le code est connu dans la base, le lot est retrouvé et l’application propose « + n bouteilles » ; sinon, avec du réseau, recherche dans Open Food Facts pour pré-remplir la fiche ; hors réseau, saisie assistée et code mémorisé pour la prochaine fois.
+- **Code-barres ou QR code, lu en premier :** si le code est connu dans la base, le lot est retrouvé et l’application propose « + n bouteilles » ; sinon, avec du réseau, recherche dans Open Food Facts pour pré-remplir la fiche ; hors réseau, saisie assistée et code mémorisé pour la prochaine fois. Le code peut aussi être scanné depuis le formulaire de création, ou associé après coup à un lot existant.
 - **Photo de l’étiquette :** reconnaissance du texte sur le téléphone. Extraction automatique du millésime, du degré et du volume ; appellation comparée à la liste officielle des appellations (INAO), embarquée dans l’application ; pour le nom et le producteur, l’application affiche les lignes de texte trouvées et l’utilisateur touche une ligne pour l’attribuer au bon champ.
 - **Validation :** les champs sont pré-remplis puis validés ou modifiés à la main.
 - **Photo :** supprimée après extraction en V1 ; conservation envisagée en V2 (aide pour retrouver la bonne bouteille dans une cave sombre).
 - **Lampe torche :** activable depuis l’écran de scan.
 - **Code-barres correspondant à plusieurs lots :** fréquent (même code d’un millésime ou d’un brassin à l’autre) : l’application propose de choisir le lot, ou de créer un nouveau lot sur la même référence.
-- **Détection des doublons :** à la création d’une référence, l’application signale une référence proche déjà existante (« Château Figeac » / « Ch. Figeac ») et propose d’y ajouter un lot.
+- **Détection des doublons :** à la création d’une référence, l’application signale une référence proche déjà existante (« Château Figeac » / « Ch. Figeac ») et propose d’y ajouter un lot. La même vérification est faite après une recherche Open Food Facts et après la photo d’une étiquette (« Déjà dans votre cave ? ») ; elle ne fait que proposer.
 ### 6.3 Retrait de bouteilles et historique
 - Retrait manuel, après recherche dans la base.
 - Retrait par scan possible pour les références disposant d’un code-barres ou d’un QR code. Le scan ne retire jamais rien seul : il affiche le lot avec le bouton « −1 » et un réglage de la quantité (2 gestes : scanner, puis « −1 »).
@@ -170,11 +172,11 @@ Aucune notion de valeur.
 ### 6.7 Import et export
 - **Import Vivino (V1, utilisé une fois) :** fichier cellar.csv de l’export Vivino (vin, producteur, millésime, région, pays, type, quantité). Les volumes absents prennent la valeur par défaut du type ; les fiches incomplètes (région manquante…) sont importées avec le marqueur « à compléter ».
 - **Export CSV (V1) :** deux fichiers, stock (références et lots) et historique, lisibles dans Excel ou LibreOffice ; sert aussi de sauvegarde de secours.
-- **Import CSV (V1) :** au format de l’export, pour restaurer une sauvegarde ou importer une saisie préparée dans un tableur.
+- **Import CSV (V1) :** au format de l’export, pour restaurer une sauvegarde ou importer une saisie préparée dans un tableur. Pour un fichier préparé à la main, l’application affiche les consignes (colonnes, valeurs acceptées, types et caractéristiques de la cave) et fournit un fichier modèle à remplir ; le volume peut y être écrit en millilitres ou avec son unité (75 cl, 1,5 l).
 - **Export PDF imprimable :** V2 éventuelle.
 ### 6.8 Premier lancement
 Écran d’accueil en trois étapes, chacune pouvant être passée :
-- Mode de stockage : « Sur cet appareil uniquement » ou « Synchroniser avec un serveur (Nextcloud / WebDAV) » ; si une cave existe déjà sur le serveur, elle est récupérée (nouvel appareil, PC).
+- Mode de stockage : « Sur cet appareil uniquement » ou « Synchroniser avec un serveur (Nextcloud / WebDAV) » ; si une cave existe déjà sur le serveur, elle est récupérée (nouvel appareil, PC) : sur un appareil dont la cave est encore vide, sans poser la question du 8.2.
 - Import facultatif d’une cave existante : fichier Vivino ou CSV.
 - Récapitulatif des valeurs par défaut (volumes pré-remplis par type), modifiables immédiatement ou plus tard.
 Les valeurs par défaut et la classification initiale livrées sont celles de ce cahier des charges ; chacun peut les modifier dans les paramètres.
@@ -185,18 +187,19 @@ Liste initiale, à compléter après les tests de la V1 si des réglages manquen
 |---|---|
 | **Paramètres utilisateur** |  |
 | Apparence | Thème : système (par défaut), clair ou sombre · taille du texte |
-| Valeurs par défaut | Volume pré-rempli par type : vin 75 cl, bière 75 cl, spiritueux 70 cl, soft 1 l |
+| Valeurs par défaut | Volume pré-rempli par type : vin 75 cl, bière 75 cl, spiritueux 70 cl, soft 1 l · volumes proposés de 20 cl à 6 l (fût) |
 | Classification | Créer, renommer ou supprimer les types, les familles de caractéristiques et leurs valeurs |
 | Emplacements (V2) | Liste des emplacements (casiers, pièces), pour les choisir au lieu de les taper |
 | Affichage | Tri par défaut · afficher ou masquer les lots épuisés · durée du bandeau « Annuler » |
 | **Paramètres système** |  |
-| Stockage et synchronisation | Mode : sur cet appareil uniquement, ou synchronisé · serveur : Nextcloud ou autre serveur WebDAV (adresse complète) · identifiant, mot de passe d’application, dossier de la base · synchronisation automatique activée ou non · « Synchroniser maintenant » · état de la dernière synchronisation · journal technique des erreurs |
-| Sauvegarde | Fréquence de la sauvegarde automatique · nombre N de sauvegardes conservées · dossier de sauvegarde sur l’appareil (mode local) · « Sauvegarder maintenant » · « Restaurer » |
-| Espace disque | Taille de la base · purge manuelle de l’historique (avant une date) · purge automatique activée ou non, avec délai réglable |
+| Stockage et synchronisation | Mode : sur cet appareil uniquement, ou synchronisé · serveur : Nextcloud ou autre serveur WebDAV (adresse complète) · identifiant, mot de passe d’application, dossier de la base · synchronisation automatique activée ou non (activée par défaut) · « Synchroniser maintenant » · état de la dernière synchronisation · journal technique des erreurs |
+| Sauvegarde | Fréquence de la sauvegarde automatique : chaque jour (par défaut), chaque semaine ou chaque mois · nombre N de sauvegardes conservées (3 par défaut) · dossier de sauvegarde sur l’appareil (Documents/Cave/Sauvegardes par défaut ; sur Android 11 et suivants, dans Documents ou Download) · « Sauvegarder maintenant » · « Restaurer » |
+| Espace disque | Taille de la base · purge manuelle de l’historique (avant une date antérieure d’au moins 30 jours, pour ne pas écarter un mouvement d’un autre appareil pas encore synchronisé) · purge automatique activée ou non, avec délai réglable |
 | Reconnaissance | Moteur de texte : ML Kit, Tesseract ou mode comparaison (bêta) · recherche Open Food Facts activée ou non |
 | Import / export | Import Vivino · import CSV · export CSV |
 
 **Purge automatique :** La purge automatique supprime les lots épuisés sans aucun mouvement depuis le délai choisi, avec leur historique, ainsi que la référence si elle n’a plus aucun lot. Les lots encore en stock ne sont jamais purgés.
+**Réglages de l’appareil :** Les réglages sont propres à chaque appareil (thème, affichage, sauvegarde, synchronisation…), sauf les volumes par défaut, la classification et la purge automatique, qui font partie de la cave et sont synchronisés.
 ## 8. Données, synchronisation et sauvegarde
 ### 8.1 Principe
 Besoin : garder les données chez soi et y accéder depuis plusieurs appareils (téléphone, PC). Les données sont d’abord stockées sur l’appareil, ce qui rend l’application entièrement utilisable sans réseau (indispensable dans la cave), puis synchronisées comme un fichier de base de données sur le serveur Nextcloud personnel.
@@ -209,7 +212,7 @@ Le serveur Nextcloud est accessible hors du domicile. Aucun service supplémenta
 - **Désactiver la synchronisation :** l’appareil garde sa copie complète et continue en mode local ; la base du serveur n’est pas supprimée ; les sauvegardes basculent vers le dossier local.
 ### 8.3 Synchronisation
 - L’application se synchronise elle-même par WebDAV, avec l’adresse du serveur, l’identifiant et un mot de passe d’application.
-- Moments : à l’ouverture, après chaque modification s’il y a du réseau, sur demande (bouton) ; hors ligne, les modifications attendent le retour du réseau.
+- Moments : à l’ouverture, au retour de l’application au premier plan, quelques secondes après une modification (les saisies sont regroupées), au retour du réseau, sur demande (bouton) ; hors ligne, les modifications attendent le retour du réseau. Uniquement application ouverte : pas de tâche de fond en V1. Synchronisation automatique désactivée : seulement sur demande.
 - Modifications sur deux appareils entre deux synchronisations : les mouvements de stock s’additionnent sans perte ; pour les fiches, la modification la plus récente l’emporte, fiche par fiche.
 - Un indicateur discret affiche l’état : synchronisé, en attente ou erreur.
 **Traitement des erreurs :**
@@ -222,13 +225,13 @@ Le serveur Nextcloud est accessible hors du domicile. Aucun service supplémenta
   - espace insuffisant sur le serveur : message ;
   - fichier du serveur illisible ou endommagé : jamais utilisé à la place des données de l’appareil ; mis de côté (renommé) puis remplacé par la version de l’appareil, avec un message ;
   - base créée par une version plus récente de l’application : synchronisation suspendue sur cet appareil, invitation à mettre l’application à jour, aucun écrasement.
-- Notification uniquement si l’erreur dure plus de 24 heures.
+- Pas de notification en V1 (pas de tâche de fond) : si l’erreur dure plus de 24 heures, l’indicateur passe au rouge dans l’application.
 - Journal technique des dernières erreurs consultable dans les paramètres.
 - Un seul utilisateur en V1, donc un risque d’écritures simultanées très faible.
 ### 8.4 Sauvegarde
 - Historique des versions de fichiers de Nextcloud.
 - Copie locale sur chaque appareil.
-- Sauvegarde automatique périodique : copie datée de la base et export CSV ; seules les N dernières sont conservées. En mode synchronisé, dans un dossier « Sauvegardes » du serveur ; en mode local, dans un dossier de l’appareil choisi par l’utilisateur (par exemple Documents/Cave/Sauvegardes), qu’il peut synchroniser lui-même avec un autre outil.
+- Sauvegarde automatique périodique : copie datée de la base et export CSV, faite application ouverte (à l’ouverture et à la mise en arrière-plan), seulement si la cave a changé ; seules les N dernières sont conservées. Toujours dans un dossier de l’appareil choisi par l’utilisateur (par défaut Documents/Cave/Sauvegardes), qu’il peut synchroniser lui-même avec un autre outil ; en mode synchronisé, une copie en plus dans un dossier « Sauvegardes » du serveur, avec le même nombre conservé. Sur Android 8 à 10, l’écriture dans Documents demande une autorisation.
 - En mode local, une alerte au premier lancement rappelle que les données ne sont stockées que sur l’appareil.
 - Export CSV et « Sauvegarder maintenant » avec possibilité de partager le fichier (courriel, autre application).
 - Boutons « Sauvegarder maintenant » et « Restaurer ».
@@ -247,7 +250,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8. |
 | **Fiabilité** | Aucune perte de données : l’enregistrement et la synchronisation ne doivent jamais corrompre la base, même en cas de coupure de réseau ou de batterie. |
 | **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé d’Android, jamais en clair. |
-| **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. |
+| **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. Seuls les codes-barres de 8 à 14 chiffres sont envoyés, jamais le contenu d’un QR code ; la recherche Open Food Facts peut être désactivée dans les paramètres. |
 | **Maintenabilité** | Code commenté, tests automatiques sur les fonctions de base (stock, synchronisation), documentation à jour : le projet doit pouvoir être repris facilement après une longue pause, et par d’autres en cas de diffusion libre. |
 
 ## 10. Choix techniques et réalisation
@@ -260,7 +263,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Reconnaissance de texte** | Moteur interchangeable dans le code. Version bêta avec ML Kit et Tesseract, et mode comparaison qui affiche les deux résultats côte à côte. Choix final après les tests. |
 | **Codes-barres** | Lecture sur le téléphone ; base Open Food Facts en complément si réseau. |
 | **Budget** | Nul : uniquement des composants et services gratuits. |
-| **Licence** | GNU GPL v3 avec une exception de liaison (permission additionnelle, article 7) autorisant l’utilisation de ML Kit et des services Google. L’exception sera retirée si ML Kit est abandonné. |
+| **Licence** | GNU GPL v3 ou toute version ultérieure, avec une exception de liaison (permission additionnelle, article 7) autorisant l’utilisation de ML Kit et des services Google. L’exception sera retirée si ML Kit est abandonné. |
 | **Diffusion** | V1 : code privé, fichier APK installé manuellement sur le téléphone. Diffusion à d’autres utilisateurs, pour un usage privé, envisagée dans un second temps ; le canal (dépôt public avec APK, F-Droid, Google Play Store) sera choisi après la bêta des moteurs de reconnaissance, F-Droid étant incompatible avec ML Kit et le Play Store payant. |
 
 ## 11. Priorisation
@@ -337,3 +340,16 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 02/10/2026 | Section 10 | Canal de diffusion à choisir après la bêta. |
 | 05/10/2026 | 4.1, 6.2 | Une fiche incomplète (champ obligatoire manquant) est enregistrée avec le marqueur « à compléter », jamais refusée. |
 | 05/10/2026 | 4.1, 6.7 | Appellation facultative pour le vin (« Vin de France », vins étrangers sans équivalent) ; la région ou le pays restent obligatoires. À l’import Vivino, le marqueur « à compléter » signale une région manquante. |
+| 05/10/2026 | 8.3, 8.4 | Pas de tâche de fond en V1 : synchronisation et sauvegarde se font application ouverte ; pas de notification d’erreur, l’indicateur passe au rouge après 24 heures. |
+| 05/10/2026 | 8.4, 7 | Trois sauvegardes conservées par défaut, nombre réglable. |
+| 06/10/2026 | 8.4 | En mode synchronisé, sauvegardes sur l’appareil et dans le dossier « Sauvegardes » du serveur. |
+| 06/10/2026 | 7 | Purge manuelle de l’historique limitée aux mouvements de plus de 30 jours. |
+| 06/10/2026 | 6.2 | Doublons signalés aussi quand Open Food Facts trouve le produit et après la photo d’une étiquette (« Déjà dans votre cave ? »). |
+| 06/10/2026 | 6.2 | Code-barres scanné depuis le formulaire de création, ou associé à un lot existant. |
+| 07/10/2026 | 6.8 | Appareil neuf (cave vide) : la cave du serveur est reprise sans poser de question. |
+| 07/10/2026 | 6.1 | Classification modifiable : modèle de fiche choisi à la création d’un type, non modifiable ; noms en double refusés ; dernier type non supprimable. |
+| 07/10/2026 | 7 | Volume de 6 l (fût) ajouté aux volumes proposés. |
+| 07/10/2026 | 7, 8.3 | Synchronisation automatique activée par défaut, désactivable ; fréquence de la sauvegarde (jour, semaine, mois) et dossier de sauvegarde au choix. |
+| 07/10/2026 | 6.7 | Import préparé dans un tableur : consignes affichées par l’application et fichier modèle à remplir. |
+| 07/10/2026 | 9 | Open Food Facts : seuls les codes de 8 à 14 chiffres sont envoyés ; recherche désactivable. |
+| 07/10/2026 | 10 | Licence : GPL v3 ou toute version ultérieure, avec l’exception ML Kit. |

@@ -4,7 +4,7 @@ Application Android (Flutter) de gestion d'une cave personnelle : références (
 
 ## Documents de référence
 
-- `docs/cahier_des_charges_v0.5.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.5.docx` (source officielle ; la v0.4 est conservée pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis reconversion en Markdown. En cas de doute fonctionnel, c'est lui qui fait foi ; citer la section (ex. « CDC §6.3 »).
+- `docs/cahier_des_charges_v0.6.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.6.docx` (source officielle ; les .docx v0.4 et v0.5 sont conservés pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis report dans le Markdown. Méthode de la v0.6 (pas de pandoc ni de python-docx sur le PC) : .docx décompressé, `word/document.xml` modifié par un script Python (remplacements de texte, lignes de tableau dupliquées), titre dans `docProps/core.xml` et version dans `word/footer1.xml`, recompressé, rendu vérifié avec `soffice --convert-to pdf` ; mêmes modifications appliquées au Markdown. En cas de doute fonctionnel, c'est lui qui fait foi ; citer la section (ex. « CDC §6.3 »).
 - `docs/architecture.md` — bibliothèques, schéma de la base, principe de synchronisation.
 - Ce fichier — état d'avancement et conventions. **À mettre à jour à la fin de chaque lot.**
 
@@ -53,7 +53,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **en cours** (premier lancement, paramètres, classification, À propos, icône faits ; reste finitions) |
 
-**Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
+**Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
 - l'appellation est **facultative** pour le vin ; la région *ou* le pays restent obligatoires (2026-10-05).
 - **Pas de tâches de fond en V1** (2026-10-05) : sauvegarde et synchro se font appli ouverte (ouverture, mise en arrière-plan, après modification, bouton) ; pas de workmanager ni de notification « erreur > 24 h » (affichée dans l'appli à la place). Écart au CDC §8.3/§8.4 à reporter dans sa prochaine version.
@@ -67,13 +67,11 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-0. À vérifier sur le téléphone : Importer → « Préparer un fichier dans un tableur » (consignes, fichier modèle). Puis CDC v0.6 (contenu proposé au porteur le 2026-10-07, + import « maison » au §6.7).
 1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
 2. Lot 6, points déjà repérés :
    - vérifier sur un appareil neuf le premier lancement (le téléphone du porteur ne le montre pas : cave déjà remplie) ;
    - faire relire `COPYING.md` (exception ML Kit) avant toute diffusion publique ; dépôt toujours privé ;
    - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (aucun appareil de test ; un émulateur Android 10 serait lourd avec 8 Go) ;
-   - nouvelle version du CDC (v0.6) reportant les décisions des lots 4 et 5 (voir « Décisions du porteur » et le journal).
 3. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
 
 ## Où trouver quoi (lot 1)
@@ -248,3 +246,4 @@ Pièges rencontrés :
 - 2026-10-07 — Volume 6 l ajouté aux volumes proposés (fûts du porteur) : formulaire, nouveau lot, volumes par défaut, classification ; lecture « 6 l » sur une étiquette testée. 323 tests verts.
 - 2026-10-07 — Porteur : volume 6 l vérifié sur le téléphone. Lot 6 : synchronisation automatique activable, fréquence de la sauvegarde automatique, choix du dossier des sauvegardes, autorisation de stockage pour Android 8 à 10 (non essayée sur un vrai appareil). 330 tests verts.
 - 2026-10-07 — Porteur : synchro automatique, sauvegardes (fréquence, dossier) vérifiées sur le téléphone. Import « maison » : consignes de format et fichier modèle à remplir dans un tableur ; volumes avec unité acceptés à l'import. 333 tests verts.
+- 2026-10-07 — Porteur : import « maison » vérifié sur le téléphone. **CDC v0.6** : décisions des lots 4 à 6 reportées (§6.1, 6.2, 6.7, 6.8, 7, 8.3, 8.4, 9, 10 et journal des décisions).
