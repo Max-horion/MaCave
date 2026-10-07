@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
+import 'package:cave/domain/enums.dart';
 import 'package:cave/data/history_purge.dart';
 import 'package:cave/sync/cave_file.dart';
 import 'package:cave/sync/merge.dart';
@@ -366,4 +367,32 @@ void main() {
       expect(await phone.drinkNames(), ['Bière']);
     },
   );
+
+  test('classification : type créé, valeur renommée, type supprimé', () async {
+    final types = await pc.repo.drinkTypes();
+    final soft = types.firstWhere((t) => t.fieldProfile == FieldProfile.soft);
+    final cider = await pc.repo.createType(
+      name: 'Cidre',
+      profile: FieldProfile.beer,
+      defaultVolumeMl: 750,
+    );
+    final family = await pc.repo.createFamily(cider, 'Style');
+    await pc.repo.createCharacteristic(family, 'Brut');
+    await pc.repo.deleteType(soft.id);
+    // Sur le téléphone, une référence soft créée avant la synchro.
+    await phone.repo.createDrink(
+      DrinkInput(name: 'Jus du téléphone', typeId: soft.id),
+    );
+
+    await sync(pc, phone);
+
+    final names = (await phone.repo.drinkTypes()).map((t) => t.name);
+    expect(names, contains('Cidre'));
+    expect(names, isNot(contains(soft.name)));
+    final values = await phone.db.select(phone.db.characteristics).get();
+    expect(values.where((v) => v.familyId == family).single.name, 'Brut');
+    expect(await phone.drinkNames(), [
+      'Jus du téléphone',
+    ], reason: 'la référence reste, « sans catégorie »');
+  });
 }

@@ -2439,6 +2439,210 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.'**
   String get settingsDeviceNote;
+
+  /// Paramètres : lien vers la gestion de la classification.
+  ///
+  /// In fr, this message translates to:
+  /// **'Types et caractéristiques'**
+  String get settingsClassification;
+
+  /// Paramètres : détail du lien classification.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vin, bière… et leurs familles : robe, style, parfum…'**
+  String get settingsClassificationHelp;
+
+  /// Titre de l'écran de gestion de la classification.
+  ///
+  /// In fr, this message translates to:
+  /// **'Types et caractéristiques'**
+  String get classTitle;
+
+  /// Explication en haut de l'écran classification.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque type a ses familles de caractéristiques (robe, style…) et leurs valeurs (rouge, IPA…). Partagé avec vos autres appareils si la synchronisation est active.'**
+  String get classHelp;
+
+  /// Ligne sous le nom d'un type : profil de champs et volume par défaut.
+  ///
+  /// In fr, this message translates to:
+  /// **'{profile} · {volume}'**
+  String classTypeSummary(String profile, String volume);
+
+  /// Bouton : créer un type de boisson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un type'**
+  String get classAddType;
+
+  /// Bouton : créer une famille de caractéristiques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une famille'**
+  String get classAddFamily;
+
+  /// Puce : ajouter une valeur à une famille.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get classAddValue;
+
+  /// Titre de la fenêtre de création d'un type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau type'**
+  String get classNewType;
+
+  /// Titre de la fenêtre de création d'une famille.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle famille'**
+  String get classNewFamily;
+
+  /// Titre de la fenêtre de création d'une valeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle valeur : {family}'**
+  String classNewValue(String family);
+
+  /// Action : renommer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get classRename;
+
+  /// Action : supprimer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get classDelete;
+
+  /// Champ : nom d'un type, d'une famille ou d'une valeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get className;
+
+  /// Erreur : nom vide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom obligatoire'**
+  String get classNameRequired;
+
+  /// Erreur : nom déjà utilisé au même endroit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce nom existe déjà ici'**
+  String get classNameTaken;
+
+  /// Champ : profil de champs d'un nouveau type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Champs de la fiche'**
+  String get classProfile;
+
+  /// Aide sous le choix du profil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ne peut plus être changé ensuite.'**
+  String get classProfileHelp;
+
+  /// Profil de champs : vin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme un vin'**
+  String get profileWine;
+
+  /// Profil de champs : bière.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme une bière'**
+  String get profileBeer;
+
+  /// Profil de champs : spiritueux.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme un spiritueux'**
+  String get profileSpirit;
+
+  /// Profil de champs : soft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme un soft'**
+  String get profileSoft;
+
+  /// Champs du profil vin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Millésime, appellation, région ou pays obligatoire, cépages, degré'**
+  String get profileWineHelp;
+
+  /// Champs du profil bière.
+  ///
+  /// In fr, this message translates to:
+  /// **'Région, degré ; pas de millésime'**
+  String get profileBeerHelp;
+
+  /// Champs du profil spiritueux.
+  ///
+  /// In fr, this message translates to:
+  /// **'Millésime, appellation, région, degré'**
+  String get profileSpiritHelp;
+
+  /// Champs du profil soft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom, producteur, volume seulement'**
+  String get profileSoftHelp;
+
+  /// Message : type sans famille.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune famille pour ce type.'**
+  String get classNoFamily;
+
+  /// Message : famille sans valeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune valeur'**
+  String get classNoValue;
+
+  /// Confirmation : suppression d'un type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le type « {name} » ?'**
+  String classDeleteTypeTitle(String name);
+
+  /// Confirmation : conséquences de la suppression d'un type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ses familles et leurs valeurs seront supprimées. {count, plural, =0{Aucune référence n\'est concernée.} =1{1 référence restera dans la cave, « sans catégorie ».} other{{count} références resteront dans la cave, « sans catégorie ».}}'**
+  String classDeleteTypeMessage(int count);
+
+  /// Confirmation : suppression d'une famille.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la famille « {name} » ?'**
+  String classDeleteFamilyTitle(String name);
+
+  /// Confirmation : suppression d'une valeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer « {name} » ?'**
+  String classDeleteValueTitle(String name);
+
+  /// Confirmation : conséquences de la suppression d'une famille ou d'une valeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune référence n\'est concernée.} =1{1 référence perdra cette caractéristique (la fiche, elle, est gardée).} other{{count} références perdront cette caractéristique (les fiches, elles, sont gardées).}}'**
+  String classDeleteCharMessage(int count);
+
+  /// Message : le dernier type ne peut pas être supprimé.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il faut garder au moins un type.'**
+  String get classLastType;
 }
 
 class _AppLocalizationsDelegate

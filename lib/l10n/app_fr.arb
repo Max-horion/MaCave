@@ -1993,5 +1993,179 @@
   "settingsDeviceNote": "Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.",
   "@settingsDeviceNote": {
     "description": "Paramètres : note en bas de l'écran."
+  },
+  "settingsClassification": "Types et caractéristiques",
+  "@settingsClassification": {
+    "description": "Paramètres : lien vers la gestion de la classification."
+  },
+  "settingsClassificationHelp": "Vin, bière… et leurs familles : robe, style, parfum…",
+  "@settingsClassificationHelp": {
+    "description": "Paramètres : détail du lien classification."
+  },
+  "classTitle": "Types et caractéristiques",
+  "@classTitle": {
+    "description": "Titre de l'écran de gestion de la classification."
+  },
+  "classHelp": "Chaque type a ses familles de caractéristiques (robe, style…) et leurs valeurs (rouge, IPA…). Partagé avec vos autres appareils si la synchronisation est active.",
+  "@classHelp": {
+    "description": "Explication en haut de l'écran classification."
+  },
+  "classTypeSummary": "{profile} · {volume}",
+  "@classTypeSummary": {
+    "description": "Ligne sous le nom d'un type : profil de champs et volume par défaut.",
+    "placeholders": {
+      "profile": {
+        "type": "String"
+      },
+      "volume": {
+        "type": "String"
+      }
+    }
+  },
+  "classAddType": "Ajouter un type",
+  "@classAddType": {
+    "description": "Bouton : créer un type de boisson."
+  },
+  "classAddFamily": "Ajouter une famille",
+  "@classAddFamily": {
+    "description": "Bouton : créer une famille de caractéristiques."
+  },
+  "classAddValue": "Ajouter",
+  "@classAddValue": {
+    "description": "Puce : ajouter une valeur à une famille."
+  },
+  "classNewType": "Nouveau type",
+  "@classNewType": {
+    "description": "Titre de la fenêtre de création d'un type."
+  },
+  "classNewFamily": "Nouvelle famille",
+  "@classNewFamily": {
+    "description": "Titre de la fenêtre de création d'une famille."
+  },
+  "classNewValue": "Nouvelle valeur : {family}",
+  "@classNewValue": {
+    "description": "Titre de la fenêtre de création d'une valeur.",
+    "placeholders": {
+      "family": {
+        "type": "String"
+      }
+    }
+  },
+  "classRename": "Renommer",
+  "@classRename": {
+    "description": "Action : renommer."
+  },
+  "classDelete": "Supprimer",
+  "@classDelete": {
+    "description": "Action : supprimer."
+  },
+  "className": "Nom",
+  "@className": {
+    "description": "Champ : nom d'un type, d'une famille ou d'une valeur."
+  },
+  "classNameRequired": "Nom obligatoire",
+  "@classNameRequired": {
+    "description": "Erreur : nom vide."
+  },
+  "classNameTaken": "Ce nom existe déjà ici",
+  "@classNameTaken": {
+    "description": "Erreur : nom déjà utilisé au même endroit."
+  },
+  "classProfile": "Champs de la fiche",
+  "@classProfile": {
+    "description": "Champ : profil de champs d'un nouveau type."
+  },
+  "classProfileHelp": "Ne peut plus être changé ensuite.",
+  "@classProfileHelp": {
+    "description": "Aide sous le choix du profil."
+  },
+  "profileWine": "Comme un vin",
+  "@profileWine": {
+    "description": "Profil de champs : vin."
+  },
+  "profileBeer": "Comme une bière",
+  "@profileBeer": {
+    "description": "Profil de champs : bière."
+  },
+  "profileSpirit": "Comme un spiritueux",
+  "@profileSpirit": {
+    "description": "Profil de champs : spiritueux."
+  },
+  "profileSoft": "Comme un soft",
+  "@profileSoft": {
+    "description": "Profil de champs : soft."
+  },
+  "profileWineHelp": "Millésime, appellation, région ou pays obligatoire, cépages, degré",
+  "@profileWineHelp": {
+    "description": "Champs du profil vin."
+  },
+  "profileBeerHelp": "Région, degré ; pas de millésime",
+  "@profileBeerHelp": {
+    "description": "Champs du profil bière."
+  },
+  "profileSpiritHelp": "Millésime, appellation, région, degré",
+  "@profileSpiritHelp": {
+    "description": "Champs du profil spiritueux."
+  },
+  "profileSoftHelp": "Nom, producteur, volume seulement",
+  "@profileSoftHelp": {
+    "description": "Champs du profil soft."
+  },
+  "classNoFamily": "Aucune famille pour ce type.",
+  "@classNoFamily": {
+    "description": "Message : type sans famille."
+  },
+  "classNoValue": "Aucune valeur",
+  "@classNoValue": {
+    "description": "Message : famille sans valeur."
+  },
+  "classDeleteTypeTitle": "Supprimer le type « {name} » ?",
+  "@classDeleteTypeTitle": {
+    "description": "Confirmation : suppression d'un type.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "classDeleteTypeMessage": "Ses familles et leurs valeurs seront supprimées. {count, plural, =0{Aucune référence n'est concernée.} =1{1 référence restera dans la cave, « sans catégorie ».} other{{count} références resteront dans la cave, « sans catégorie ».}}",
+  "@classDeleteTypeMessage": {
+    "description": "Confirmation : conséquences de la suppression d'un type.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "classDeleteFamilyTitle": "Supprimer la famille « {name} » ?",
+  "@classDeleteFamilyTitle": {
+    "description": "Confirmation : suppression d'une famille.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "classDeleteValueTitle": "Supprimer « {name} » ?",
+  "@classDeleteValueTitle": {
+    "description": "Confirmation : suppression d'une valeur.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "classDeleteCharMessage": "{count, plural, =0{Aucune référence n'est concernée.} =1{1 référence perdra cette caractéristique (la fiche, elle, est gardée).} other{{count} références perdront cette caractéristique (les fiches, elles, sont gardées).}}",
+  "@classDeleteCharMessage": {
+    "description": "Confirmation : conséquences de la suppression d'une famille ou d'une valeur.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "classLastType": "Il faut garder au moins un type.",
+  "@classLastType": {
+    "description": "Message : le dernier type ne peut pas être supprimé."
   }
 }

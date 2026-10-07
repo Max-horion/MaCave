@@ -90,6 +90,193 @@ class CaveRepository {
     );
   }
 
+  // Modification de la classification (CDC §6.1, §7). Suppressions logiques ;
+  // les références rattachées restent et apparaissent « sans catégorie ».
+
+  /// Nouveau type, placé en dernier.
+  Future<String> createType({
+    required String name,
+    required FieldProfile profile,
+    required int defaultVolumeMl,
+  }) async {
+    final id = _ctx.newId();
+    final now = _ctx.now();
+    await _db
+        .into(_db.drinkTypes)
+        .insert(
+          DrinkTypesCompanion.insert(
+            id: id,
+            name: _cleanName(name),
+            fieldProfile: profile,
+            defaultVolumeMl: defaultVolumeMl,
+            sortOrder: Value(await _nextOrder('drink_types', null, null)),
+            updatedAt: now,
+            updatedBy: _ctx.deviceId,
+          ),
+        );
+    return id;
+  }
+
+  /// Nouvelle famille de caractéristiques d'un type, placée en dernier.
+  Future<String> createFamily(String typeId, String name) async {
+    final id = _ctx.newId();
+    final now = _ctx.now();
+    await _db
+        .into(_db.characteristicFamilies)
+        .insert(
+          CharacteristicFamiliesCompanion.insert(
+            id: id,
+            typeId: typeId,
+            name: _cleanName(name),
+            sortOrder: Value(
+              await _nextOrder('characteristic_families', 'type_id', typeId),
+            ),
+            updatedAt: now,
+            updatedBy: _ctx.deviceId,
+          ),
+        );
+    return id;
+  }
+
+  /// Nouvelle valeur d'une famille, placée en dernier.
+  Future<String> createCharacteristic(String familyId, String name) async {
+    final id = _ctx.newId();
+    final now = _ctx.now();
+    await _db
+        .into(_db.characteristics)
+        .insert(
+          CharacteristicsCompanion.insert(
+            id: id,
+            familyId: familyId,
+            name: _cleanName(name),
+            sortOrder: Value(
+              await _nextOrder('characteristics', 'family_id', familyId),
+            ),
+            updatedAt: now,
+            updatedBy: _ctx.deviceId,
+          ),
+        );
+    return id;
+  }
+
+  Future<void> renameType(String id, String name) => _db.customUpdate(
+    'UPDATE drink_types SET name = ?, updated_at = ?, updated_by = ? '
+    'WHERE id = ?',
+    variables: _renameVariables(id, name),
+    updates: {_db.drinkTypes},
+  );
+
+  Future<void> renameFamily(String id, String name) => _db.customUpdate(
+    'UPDATE characteristic_families SET name = ?, updated_at = ?, '
+    'updated_by = ? WHERE id = ?',
+    variables: _renameVariables(id, name),
+    updates: {_db.characteristicFamilies},
+  );
+
+  Future<void> renameCharacteristic(String id, String name) => _db.customUpdate(
+    'UPDATE characteristics SET name = ?, updated_at = ?, updated_by = ? '
+    'WHERE id = ?',
+    variables: _renameVariables(id, name),
+    updates: {_db.characteristics},
+  );
+
+  /// Supprime un type, ses familles et leurs valeurs. Le dernier type ne
+  /// peut pas être supprimé (il faut un type pour créer une référence).
+  Future<void> deleteType(String id) {
+    return _db.transaction(() async {
+      final others = await (_db.select(
+        _db.drinkTypes,
+      )..where((t) => t.deletedAt.isNull() & t.id.equals(id).not())).get();
+      if (others.isEmpty) {
+        throw StateError('Le dernier type ne peut pas être supprimé');
+      }
+      final families = await (_db.select(
+        _db.characteristicFamilies,
+      )..where((f) => f.typeId.equals(id) & f.deletedAt.isNull())).get();
+      for (final f in families) {
+        await _deleteFamily(f.id);
+      }
+      await (_db.update(
+        _db.drinkTypes,
+      )..where((t) => t.id.equals(id))).write(_deletionStamp());
+    });
+  }
+
+  /// Supprime une famille et ses valeurs.
+  Future<void> deleteFamily(String id) =>
+      _db.transaction(() => _deleteFamily(id));
+
+  Future<void> _deleteFamily(String id) async {
+    await (_db.update(_db.characteristics)
+          ..where((c) => c.familyId.equals(id) & c.deletedAt.isNull()))
+        .write(_deletionStamp());
+    await (_db.update(
+      _db.characteristicFamilies,
+    )..where((f) => f.id.equals(id))).write(_deletionStamp());
+  }
+
+  Future<void> deleteCharacteristic(String id) async {
+    await (_db.update(
+      _db.characteristics,
+    )..where((c) => c.id.equals(id))).write(_deletionStamp());
+  }
+
+  /// Références actives d'un type : prévient avant une suppression.
+  Future<int> drinkCountOfType(String typeId) async {
+    final row = await _db
+        .customSelect(
+          'SELECT COUNT(*) AS n FROM drinks '
+          'WHERE type_id = ? AND deleted_at IS NULL',
+          variables: [Variable(typeId)],
+        )
+        .getSingle();
+    return row.read<int>('n');
+  }
+
+  /// Références actives qui portent l'une de ces caractéristiques.
+  Future<int> drinkCountWithCharacteristics(Iterable<String> ids) async {
+    final list = ids.toList();
+    if (list.isEmpty) return 0;
+    final marks = List.filled(list.length, '?').join(', ');
+    final row = await _db
+        .customSelect(
+          'SELECT COUNT(DISTINCT dc.drink_id) AS n FROM drink_characteristics dc '
+          'JOIN drinks d ON d.id = dc.drink_id AND d.deleted_at IS NULL '
+          'WHERE dc.deleted_at IS NULL AND dc.characteristic_id IN ($marks)',
+          variables: [for (final id in list) Variable(id)],
+        )
+        .getSingle();
+    return row.read<int>('n');
+  }
+
+  static String _cleanName(String name) {
+    final clean = name.trim();
+    if (clean.isEmpty) {
+      throw ArgumentError.value(name, 'name', 'Nom obligatoire');
+    }
+    return clean;
+  }
+
+  List<Variable<Object>> _renameVariables(String id, String name) => [
+    Variable(_cleanName(name)),
+    Variable(_ctx.now()),
+    Variable(_ctx.deviceId),
+    Variable(id),
+  ];
+
+  /// Ordre d'affichage suivant dans une table (lignes supprimées comprises :
+  /// deux appareils qui ajoutent en même temps restent départagés par l'ID).
+  Future<int> _nextOrder(String table, String? parent, String? parentId) async {
+    final where = parent == null ? '' : 'WHERE $parent = ?';
+    final row = await _db
+        .customSelect(
+          'SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM $table $where',
+          variables: [if (parentId != null) Variable(parentId)],
+        )
+        .getSingle();
+    return row.read<int>('n');
+  }
+
   /// Aucune référence ni aucun lot, même supprimés : cave toute neuve, rien
   /// à perdre en la remplaçant par celle du serveur.
   Future<bool> isEmpty() async {

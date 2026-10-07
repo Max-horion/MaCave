@@ -1618,4 +1618,138 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsDeviceNote =>
       'Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.';
+
+  @override
+  String get settingsClassification => 'Types et caractéristiques';
+
+  @override
+  String get settingsClassificationHelp =>
+      'Vin, bière… et leurs familles : robe, style, parfum…';
+
+  @override
+  String get classTitle => 'Types et caractéristiques';
+
+  @override
+  String get classHelp =>
+      'Chaque type a ses familles de caractéristiques (robe, style…) et leurs valeurs (rouge, IPA…). Partagé avec vos autres appareils si la synchronisation est active.';
+
+  @override
+  String classTypeSummary(String profile, String volume) {
+    return '$profile · $volume';
+  }
+
+  @override
+  String get classAddType => 'Ajouter un type';
+
+  @override
+  String get classAddFamily => 'Ajouter une famille';
+
+  @override
+  String get classAddValue => 'Ajouter';
+
+  @override
+  String get classNewType => 'Nouveau type';
+
+  @override
+  String get classNewFamily => 'Nouvelle famille';
+
+  @override
+  String classNewValue(String family) {
+    return 'Nouvelle valeur : $family';
+  }
+
+  @override
+  String get classRename => 'Renommer';
+
+  @override
+  String get classDelete => 'Supprimer';
+
+  @override
+  String get className => 'Nom';
+
+  @override
+  String get classNameRequired => 'Nom obligatoire';
+
+  @override
+  String get classNameTaken => 'Ce nom existe déjà ici';
+
+  @override
+  String get classProfile => 'Champs de la fiche';
+
+  @override
+  String get classProfileHelp => 'Ne peut plus être changé ensuite.';
+
+  @override
+  String get profileWine => 'Comme un vin';
+
+  @override
+  String get profileBeer => 'Comme une bière';
+
+  @override
+  String get profileSpirit => 'Comme un spiritueux';
+
+  @override
+  String get profileSoft => 'Comme un soft';
+
+  @override
+  String get profileWineHelp =>
+      'Millésime, appellation, région ou pays obligatoire, cépages, degré';
+
+  @override
+  String get profileBeerHelp => 'Région, degré ; pas de millésime';
+
+  @override
+  String get profileSpiritHelp => 'Millésime, appellation, région, degré';
+
+  @override
+  String get profileSoftHelp => 'Nom, producteur, volume seulement';
+
+  @override
+  String get classNoFamily => 'Aucune famille pour ce type.';
+
+  @override
+  String get classNoValue => 'Aucune valeur';
+
+  @override
+  String classDeleteTypeTitle(String name) {
+    return 'Supprimer le type « $name » ?';
+  }
+
+  @override
+  String classDeleteTypeMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count références resteront dans la cave, « sans catégorie ».',
+      one: '1 référence restera dans la cave, « sans catégorie ».',
+      zero: 'Aucune référence n\'est concernée.',
+    );
+    return 'Ses familles et leurs valeurs seront supprimées. $_temp0';
+  }
+
+  @override
+  String classDeleteFamilyTitle(String name) {
+    return 'Supprimer la famille « $name » ?';
+  }
+
+  @override
+  String classDeleteValueTitle(String name) {
+    return 'Supprimer « $name » ?';
+  }
+
+  @override
+  String classDeleteCharMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count références perdront cette caractéristique (les fiches, elles, sont gardées).',
+      one: '1 référence perdra cette caractéristique (la fiche, elle, est gardée).',
+      zero: 'Aucune référence n\'est concernée.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get classLastType => 'Il faut garder au moins un type.';
 }

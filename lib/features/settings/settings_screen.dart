@@ -10,6 +10,7 @@ import '../backup/backup_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../storage/storage_screen.dart';
 import '../sync/sync_screen.dart';
+import 'classification_screen.dart';
 import 'default_volumes.dart';
 
 /// Écran des paramètres (CDC §7). Les réglages d'affichage sont propres à
@@ -90,6 +91,15 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const DefaultVolumeTiles(
             padding: EdgeInsets.symmetric(horizontal: 16),
+          ),
+
+          ListTile(
+            minTileHeight: AppTheme.minButtonHeight,
+            leading: const Icon(Icons.category_outlined),
+            title: Text(l10n.settingsClassification),
+            subtitle: Text(l10n.settingsClassificationHelp),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => open(const ClassificationScreen()),
           ),
 
           _Section(l10n.settingsDisplay),
