@@ -33,6 +33,7 @@ String syncStatusTitle(AppLocalizations l10n, SyncState state) =>
       SyncStatus.synced => l10n.syncStatusSynced,
       SyncStatus.syncing => l10n.syncStatusSyncing,
       SyncStatus.waiting => l10n.syncStatusWaiting,
+      SyncStatus.pending => l10n.syncStatusPending,
       SyncStatus.error => l10n.syncStatusError,
     };
 
@@ -44,6 +45,7 @@ List<String> syncStatusDetails(Formats formats, SyncState state, DateTime now) {
       syncProblemMessage(l10n, state.problem!),
     if (state.longError(now)) l10n.syncLongError,
     if (state.notice != null) l10n.syncSetAside(state.notice!),
+    if (!state.automatic) l10n.syncManualNote,
     state.lastSuccess == null
         ? l10n.syncNever
         : l10n.syncLastSuccess(formats.dateTime(state.lastSuccess!.toLocal())),
@@ -66,7 +68,7 @@ List<String> syncStatusDetails(Formats formats, SyncState state, DateTime now) {
     icon: Icons.cloud_sync_outlined,
     color: colors.primary,
   ),
-  SyncStatus.waiting => (
+  SyncStatus.waiting || SyncStatus.pending => (
     icon: Icons.cloud_queue,
     color: colors.onSurfaceVariant,
   ),

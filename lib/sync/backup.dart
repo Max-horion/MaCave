@@ -47,7 +47,6 @@ class BackupService {
     required this._folder,
     required this._tempFolder,
     this.defaultKeep = 3,
-    this.every = const Duration(days: 1),
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now;
 
@@ -64,13 +63,18 @@ class BackupService {
   /// Choix proposés pour le nombre de sauvegardes conservées.
   static const keepChoices = [1, 2, 3, 5, 10];
 
-  /// Intervalle minimal entre deux sauvegardes automatiques.
-  final Duration every;
+  /// Fréquence de la sauvegarde automatique, en jours, tant que
+  /// l'utilisateur n'a pas choisi (voir [everyDays]).
+  static const defaultEveryDays = 1;
+
+  /// Choix proposés : chaque jour, chaque semaine, chaque mois.
+  static const everyDaysChoices = [1, 7, 30];
 
   static const _lastAtKey = 'backup_last_at';
   static const _lastFingerprintKey = 'backup_last_fingerprint';
   static const _lastErrorKey = 'backup_last_error';
   static const _keepKey = 'backup_keep';
+  static const _everyKey = 'backup_every_days';
 
   static final _stampFormat = DateFormat('yyyy-MM-dd_HH-mm-ss');
   static final _namePattern = RegExp(
@@ -190,6 +194,18 @@ class BackupService {
     await _prune();
   });
 
+  /// Intervalle minimal entre deux sauvegardes automatiques, en jours
+  /// (réglage propre à cet appareil, CDC §7).
+  Future<int> everyDays() async {
+    final value = int.tryParse(await _store.getString(_everyKey) ?? '');
+    return value != null && value >= 1 ? value : defaultEveryDays;
+  }
+
+  Future<void> setEveryDays(int days) async {
+    if (days < 1) throw ArgumentError.value(days, 'days', 'Au moins 1');
+    await _store.setString(_everyKey, '$days');
+  }
+
   /// Nombre de sauvegardes qui seraient supprimées en n'en gardant que
   /// [count].
   Future<int> excessWith(int count) async {
@@ -208,12 +224,13 @@ class BackupService {
     }
   }
 
-  /// Sauvegarde automatique, si la dernière date de plus de [every] et si la
-  /// cave a changé depuis. Ne lève jamais d'erreur : elle est mémorisée et
+  /// Sauvegarde automatique, si la dernière date de plus de [everyDays] et
+  /// si la cave a changé depuis. Ne lève jamais d'erreur : elle est mémorisée et
   /// affichée sur l'écran des sauvegardes ([lastError]).
   Future<BackupSet?> backupIfDue() => _exclusive(() async {
     try {
       final last = await lastBackupAt();
+      final every = Duration(days: await everyDays());
       if (last != null && _clock().difference(last) < every) return null;
       final fingerprint = await contentFingerprint(_db);
       if (fingerprint == await _store.getString(_lastFingerprintKey)) {

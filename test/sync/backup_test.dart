@@ -174,6 +174,22 @@ void main() {
       },
     );
 
+    test('fréquence réglable : chaque semaine', () async {
+      final lot = await addBeer('Bière A', 6);
+      final s = service(keep: 10);
+      expect(await s.everyDays(), 1, reason: 'chaque jour par défaut');
+      await s.setEveryDays(7);
+      expect(await service().everyDays(), 7, reason: 'réglage enregistré');
+      expect(await s.backupIfDue(), isNotNull);
+
+      await repo.addExit(lot, 1);
+      now = now.add(const Duration(days: 3));
+      expect(await s.backupIfDue(), isNull);
+      now = now.add(const Duration(days: 4));
+      expect(await s.backupIfDue(), isNotNull);
+      expect(() => s.setEveryDays(0), throwsArgumentError);
+    });
+
     test('une erreur est mémorisée, jamais levée', () async {
       await addBeer('Bière A', 1);
       final s = BackupService(

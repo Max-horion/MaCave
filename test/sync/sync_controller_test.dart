@@ -234,6 +234,56 @@ void main() {
     expect(server.count('PUT'), 2);
   });
 
+  test('synchro automatique désactivée : seulement sur demande', () async {
+    await activate();
+    await controller().setAutomatic(false);
+    server.requests.clear();
+
+    // Ni modification, ni retour au premier plan, ni ouverture ne
+    // synchronisent.
+    await phone.addBeer('Bière', 1);
+    controller().localChanged();
+    await controller().resumed();
+    await wait();
+    expect(server.requests, isEmpty);
+    expect(state().status, SyncStatus.pending);
+    expect(state().automatic, isFalse);
+
+    await controller().start();
+    expect(server.requests, isEmpty, reason: 'réglage gardé');
+    expect(state().automatic, isFalse);
+
+    // Pas de nouvel essai automatique après une erreur.
+    server.forcedStatus = 500;
+    await controller().syncNow();
+    server.requests.clear();
+    await wait();
+    expect(server.requests, isEmpty);
+    server.forcedStatus = null;
+
+    await controller().syncNow();
+    expect(state().status, SyncStatus.synced);
+    expect(state().automatic, isFalse);
+    expect(server.count('PUT'), 1);
+  });
+
+  test('synchro automatique réactivée : synchronise aussitôt', () async {
+    await activate();
+    await controller().setAutomatic(false);
+    await phone.addBeer('Bière', 1);
+    controller().localChanged();
+    server.requests.clear();
+
+    await controller().setAutomatic(true);
+    expect(state().status, SyncStatus.synced);
+    expect(server.count('PUT'), 1);
+    // Désactiver la synchro remet le réglage par défaut.
+    await controller().setAutomatic(false);
+    await controller().deactivate();
+    await activate();
+    expect(state().automatic, isTrue);
+  });
+
   test('désactivation : mode local, le fichier du serveur reste', () async {
     await activate();
     await controller().deactivate();

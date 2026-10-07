@@ -809,6 +809,27 @@ class AppLocalizationsFr extends AppLocalizations {
       'Cette sauvegarde vient d\'une version plus récente de Ma Cave. Mettez l\'application à jour pour la restaurer.';
 
   @override
+  String get backupEveryLabel => 'Sauvegarde automatique';
+
+  @override
+  String get backupEveryHelp =>
+      'Faite à l\'ouverture de l\'appli, seulement si la cave a changé.';
+
+  @override
+  String get backupEveryDay => 'Chaque jour';
+
+  @override
+  String get backupEveryWeek => 'Chaque semaine';
+
+  @override
+  String get backupEveryMonth => 'Chaque mois';
+
+  @override
+  String backupEveryDays(int count) {
+    return 'Tous les $count jours';
+  }
+
+  @override
   String get backupKeepLabel => 'Sauvegardes conservées';
 
   @override
@@ -932,6 +953,20 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get syncStatusWaiting =>
       'En attente du réseau : les modifications seront envoyées à son retour.';
+
+  @override
+  String get syncStatusPending => 'Modifications à envoyer';
+
+  @override
+  String get syncManualNote =>
+      'Synchronisation automatique désactivée : touchez « Synchroniser maintenant » pour envoyer et recevoir les modifications.';
+
+  @override
+  String get syncAutomatic => 'Synchronisation automatique';
+
+  @override
+  String get syncAutomaticHelp =>
+      'À l\'ouverture, après chaque modification et au retour du réseau. Désactivée : seulement avec « Synchroniser maintenant ».';
 
   @override
   String get syncStatusError => 'Erreur de synchronisation';

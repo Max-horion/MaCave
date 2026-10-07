@@ -155,7 +155,16 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
           icon: const Icon(Icons.cloud_off),
           label: Text(l10n.syncDeactivate),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          minTileHeight: AppTheme.minButtonHeight,
+          title: Text(l10n.syncAutomatic),
+          subtitle: Text(l10n.syncAutomaticHelp),
+          value: state.automatic,
+          onChanged: idle ? _controller.setAutomatic : null,
+        ),
+        const SizedBox(height: 8),
         Text(l10n.syncBackupsNote, style: theme.textTheme.bodySmall),
         const SizedBox(height: 8),
         ExpansionTile(

@@ -992,6 +992,35 @@
   "@backupProblemNewer": {
     "description": "Fichier à restaurer créé par une version plus récente."
   },
+  "backupEveryLabel": "Sauvegarde automatique",
+  "@backupEveryLabel": {
+    "description": "Réglage : fréquence de la sauvegarde automatique (CDC §7)."
+  },
+  "backupEveryHelp": "Faite à l'ouverture de l'appli, seulement si la cave a changé.",
+  "@backupEveryHelp": {
+    "description": "Explication sous le réglage de fréquence de la sauvegarde automatique."
+  },
+  "backupEveryDay": "Chaque jour",
+  "@backupEveryDay": {
+    "description": "Fréquence de la sauvegarde automatique : une par jour au plus."
+  },
+  "backupEveryWeek": "Chaque semaine",
+  "@backupEveryWeek": {
+    "description": "Fréquence de la sauvegarde automatique : une par semaine au plus."
+  },
+  "backupEveryMonth": "Chaque mois",
+  "@backupEveryMonth": {
+    "description": "Fréquence de la sauvegarde automatique : une tous les 30 jours au plus."
+  },
+  "backupEveryDays": "Tous les {count} jours",
+  "@backupEveryDays": {
+    "description": "Fréquence de la sauvegarde automatique, nombre de jours quelconque.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "backupKeepLabel": "Sauvegardes conservées",
   "@backupKeepLabel": {
     "description": "Réglage : nombre de sauvegardes gardées (les plus anciennes sont supprimées)."
@@ -1140,6 +1169,22 @@
   "syncStatusWaiting": "En attente du réseau : les modifications seront envoyées à son retour.",
   "@syncStatusWaiting": {
     "description": "État : pas de réseau (ce n'est pas une erreur)."
+  },
+  "syncStatusPending": "Modifications à envoyer",
+  "@syncStatusPending": {
+    "description": "État : synchronisation automatique désactivée et modifications pas encore envoyées au serveur."
+  },
+  "syncManualNote": "Synchronisation automatique désactivée : touchez « Synchroniser maintenant » pour envoyer et recevoir les modifications.",
+  "@syncManualNote": {
+    "description": "Ligne d'explication sous l'état de la synchronisation quand elle n'est pas automatique."
+  },
+  "syncAutomatic": "Synchronisation automatique",
+  "@syncAutomatic": {
+    "description": "Interrupteur de l'écran Synchronisation (CDC §7)."
+  },
+  "syncAutomaticHelp": "À l'ouverture, après chaque modification et au retour du réseau. Désactivée : seulement avec « Synchroniser maintenant ».",
+  "@syncAutomaticHelp": {
+    "description": "Explication sous l'interrupteur « Synchronisation automatique »."
   },
   "syncStatusError": "Erreur de synchronisation",
   "@syncStatusError": {

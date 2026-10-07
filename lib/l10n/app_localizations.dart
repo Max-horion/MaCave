@@ -1168,6 +1168,42 @@ abstract class AppLocalizations {
   /// **'Cette sauvegarde vient d\'une version plus récente de Ma Cave. Mettez l\'application à jour pour la restaurer.'**
   String get backupProblemNewer;
 
+  /// Réglage : fréquence de la sauvegarde automatique (CDC §7).
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauvegarde automatique'**
+  String get backupEveryLabel;
+
+  /// Explication sous le réglage de fréquence de la sauvegarde automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faite à l\'ouverture de l\'appli, seulement si la cave a changé.'**
+  String get backupEveryHelp;
+
+  /// Fréquence de la sauvegarde automatique : une par jour au plus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque jour'**
+  String get backupEveryDay;
+
+  /// Fréquence de la sauvegarde automatique : une par semaine au plus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque semaine'**
+  String get backupEveryWeek;
+
+  /// Fréquence de la sauvegarde automatique : une tous les 30 jours au plus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque mois'**
+  String get backupEveryMonth;
+
+  /// Fréquence de la sauvegarde automatique, nombre de jours quelconque.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les {count} jours'**
+  String backupEveryDays(int count);
+
   /// Réglage : nombre de sauvegardes gardées (les plus anciennes sont supprimées).
   ///
   /// In fr, this message translates to:
@@ -1383,6 +1419,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En attente du réseau : les modifications seront envoyées à son retour.'**
   String get syncStatusWaiting;
+
+  /// État : synchronisation automatique désactivée et modifications pas encore envoyées au serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifications à envoyer'**
+  String get syncStatusPending;
+
+  /// Ligne d'explication sous l'état de la synchronisation quand elle n'est pas automatique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation automatique désactivée : touchez « Synchroniser maintenant » pour envoyer et recevoir les modifications.'**
+  String get syncManualNote;
+
+  /// Interrupteur de l'écran Synchronisation (CDC §7).
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation automatique'**
+  String get syncAutomatic;
+
+  /// Explication sous l'interrupteur « Synchronisation automatique ».
+  ///
+  /// In fr, this message translates to:
+  /// **'À l\'ouverture, après chaque modification et au retour du réseau. Désactivée : seulement avec « Synchroniser maintenant ».'**
+  String get syncAutomaticHelp;
 
   /// État : la dernière synchronisation a échoué.
   ///

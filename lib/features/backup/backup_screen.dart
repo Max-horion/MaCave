@@ -16,6 +16,7 @@ class BackupOverview {
     required this.sets,
     required this.lastError,
     required this.keep,
+    required this.everyDays,
   });
 
   final String folder;
@@ -24,6 +25,9 @@ class BackupOverview {
 
   /// Nombre de sauvegardes conservées.
   final int keep;
+
+  /// Fréquence de la sauvegarde automatique, en jours.
+  final int everyDays;
 }
 
 final backupOverviewProvider = FutureProvider.autoDispose<BackupOverview>((
@@ -35,6 +39,7 @@ final backupOverviewProvider = FutureProvider.autoDispose<BackupOverview>((
     sets: await service.list(),
     lastError: await service.lastError(),
     keep: await service.keepCount(),
+    everyDays: await service.everyDays(),
   );
 });
 
@@ -108,6 +113,31 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               minTileHeight: 56,
+              title: Text(l10n.backupEveryLabel),
+              subtitle: Text(l10n.backupEveryHelp),
+              trailing: DropdownButton<int>(
+                value: o.everyDays,
+                onChanged: _busy ? null : _changeEvery,
+                items: [
+                  for (final n in {
+                    ...BackupService.everyDaysChoices,
+                    o.everyDays,
+                  })
+                    DropdownMenuItem(
+                      value: n,
+                      child: Text(switch (n) {
+                        1 => l10n.backupEveryDay,
+                        7 => l10n.backupEveryWeek,
+                        30 => l10n.backupEveryMonth,
+                        _ => l10n.backupEveryDays(n),
+                      }),
+                    ),
+                ],
+              ),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              minTileHeight: 56,
               title: Text(l10n.backupKeepLabel),
               subtitle: Text(l10n.backupKeepHelp),
               trailing: DropdownButton<int>(
@@ -176,6 +206,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       ),
     );
   });
+
+  Future<void> _changeEvery(int? days) async {
+    if (days == null) return;
+    await _run(() => ref.read(backupServiceProvider).setEveryDays(days));
+  }
 
   /// Change le nombre de sauvegardes conservées, après confirmation s'il
   /// faut en supprimer.

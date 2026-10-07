@@ -52,6 +52,10 @@ void main() {
   }
 
   Future<void> openScreen(WidgetTester tester) async {
+    // Écran haut : toute la liste est construite.
+    tester.view.physicalSize = const Size(1600, 4000);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -137,9 +141,10 @@ void main() {
       }
     });
     await openScreen(tester);
-    expect(find.byType(ListTile), findsNWidgets(1 + 3));
+    // Deux réglages (fréquence, nombre conservé) + les sauvegardes.
+    expect(find.byType(ListTile), findsNWidgets(2 + 3));
 
-    await tester.tap(find.byType(DropdownButton<int>));
+    await tester.tap(find.byType(DropdownButton<int>).last);
     await tester.pumpAndSettle();
     await tester.runAsync(() async {
       await tester.tap(find.text('1').last);
@@ -161,7 +166,21 @@ void main() {
       expect(await service.list(), hasLength(1));
     });
     await settle(tester);
-    expect(find.byType(ListTile), findsNWidgets(1 + 1));
+    expect(find.byType(ListTile), findsNWidgets(2 + 1));
     expect(find.text('5 octobre 2026 17:30'), findsOneWidget);
+  });
+
+  testWidgets('fréquence de la sauvegarde automatique', (tester) async {
+    await openScreen(tester);
+    expect(find.text('Chaque jour'), findsOneWidget);
+    await tester.tap(find.byType(DropdownButton<int>).first);
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Chaque semaine').last);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    });
+    await settle(tester);
+    expect(find.text('Chaque semaine'), findsOneWidget);
+    expect(await tester.runAsync(service.everyDays), 7);
   });
 }

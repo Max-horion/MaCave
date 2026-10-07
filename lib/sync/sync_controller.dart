@@ -32,6 +32,10 @@ enum SyncStatus {
   /// Pas de réseau : les modifications attendent, sans message.
   waiting,
 
+  /// Synchronisation automatique désactivée : des modifications attendent
+  /// « Synchroniser maintenant ».
+  pending,
+
   /// Échec : voir [SyncState.problem] ; nouvelles tentatives automatiques.
   error,
 }
@@ -44,6 +48,7 @@ class SyncState {
     this.detail,
     this.errorSince,
     this.notice,
+    this.automatic = true,
   });
 
   static const off = SyncState(status: SyncStatus.off);
@@ -62,6 +67,10 @@ class SyncState {
   /// Fichier endommagé du serveur mis de côté : nom du fichier, à signaler.
   final String? notice;
 
+  /// Synchronisation automatique (ouverture, modification, retour du réseau)
+  /// ; sinon seulement « Synchroniser maintenant » (CDC §7).
+  final bool automatic;
+
   bool get enabled => status != SyncStatus.off;
 
   /// L'erreur dure depuis plus de 24 heures.
@@ -77,6 +86,7 @@ class SyncState {
     String? detail,
     DateTime? errorSince,
     String? notice,
+    bool? automatic,
   }) => SyncState(
     status: status ?? this.status,
     lastSuccess: lastSuccess ?? this.lastSuccess,
@@ -84,6 +94,7 @@ class SyncState {
     detail: detail,
     errorSince: errorSince,
     notice: notice,
+    automatic: automatic ?? this.automatic,
   );
 }
 
@@ -182,6 +193,9 @@ class SyncController extends Notifier<SyncState> {
   static const _logKey = 'sync_log';
   static const _mirroredKey = 'sync_backup_mirrored';
 
+  /// « false » : synchronisation automatique désactivée sur cet appareil.
+  static const automaticKey = 'sync_automatic';
+
   /// Lignes conservées dans le journal.
   static const logSize = 20;
 
@@ -189,7 +203,9 @@ class SyncController extends Notifier<SyncState> {
   SyncState build() {
     _env = ref.watch(syncEnvironmentProvider);
     _onlineSubscription = _env.onlineChanges.listen((online) {
-      if (online && state.status == SyncStatus.waiting) syncNow();
+      if (online && state.automatic && state.status == SyncStatus.waiting) {
+        syncNow();
+      }
     });
     ref.onDispose(() {
       _debounceTimer?.cancel();
@@ -210,19 +226,52 @@ class SyncController extends Notifier<SyncState> {
     }
     _current?.client.close();
     _current = _open(saved.settings, saved.password);
+    final automatic = await _env.store.getString(automaticKey) != 'false';
     state = SyncState(
       status: SyncStatus.synced,
       lastSuccess: await _readDate(_lastSuccessKey),
       errorSince: await _readDate(_errorSinceKey),
+      automatic: automatic,
     );
     _retryIndex = 0;
-    await syncNow();
+    if (automatic) await syncNow();
+  }
+
+  /// Retour de l'appli au premier plan : synchronisation si elle est
+  /// automatique.
+  Future<void> resumed() async {
+    if (state.automatic) await syncNow();
+  }
+
+  /// Active ou désactive la synchronisation automatique sur cet appareil ;
+  /// la réactiver synchronise aussitôt.
+  Future<void> setAutomatic(bool automatic) async {
+    await _env.store.setString(automaticKey, '$automatic');
+    _debounceTimer?.cancel();
+    if (!automatic) _retryTimer?.cancel();
+    state = state.copyWith(
+      status: state.status,
+      problem: state.problem,
+      detail: state.detail,
+      errorSince: state.errorSince,
+      notice: state.notice,
+      automatic: automatic,
+    );
+    if (automatic) await syncNow();
   }
 
   /// La cave a été modifiée : synchronisation un peu plus tard, pour
-  /// regrouper une série de saisies.
+  /// regrouper une série de saisies. Sans synchronisation automatique,
+  /// l'état passe « en attente » jusqu'au prochain « Synchroniser
+  /// maintenant ».
   void localChanged() {
     if (_current == null || _running) return;
+    if (!state.automatic) {
+      if (state.status == SyncStatus.synced) {
+        state = state.copyWith(status: SyncStatus.pending);
+      }
+      return;
+    }
     _debounceTimer?.cancel();
     _debounceTimer = Timer(_env.debounce, syncNow);
   }
@@ -346,7 +395,12 @@ class SyncController extends Notifier<SyncState> {
     cancelActivation();
     await _current?.service.forget();
     await _env.settings.clear();
-    for (final key in [_lastSuccessKey, _errorSinceKey, _mirroredKey]) {
+    for (final key in [
+      _lastSuccessKey,
+      _errorSinceKey,
+      _mirroredKey,
+      automaticKey,
+    ]) {
       await _env.store.remove(key);
     }
     _current?.client.close();
@@ -412,6 +466,7 @@ class SyncController extends Notifier<SyncState> {
       status: SyncStatus.synced,
       lastSuccess: now,
       notice: notice,
+      automatic: state.automatic,
     );
   }
 
@@ -433,7 +488,7 @@ class SyncController extends Notifier<SyncState> {
       SyncProblem.newerVersion,
       SyncProblem.otherCave,
     };
-    if (userMustAct.contains(e.problem)) return;
+    if (userMustAct.contains(e.problem) || !state.automatic) return;
     if (_retryIndex < _env.retryDelays.length) {
       _retryTimer = Timer(_env.retryDelays[_retryIndex++], syncNow);
     }

@@ -116,7 +116,7 @@ class _AutomaticTasksState extends ConsumerState<AutomaticTasks>
         ref.read(backupServiceProvider).backupIfDue();
         ref.read(syncControllerProvider.notifier).paused();
       case AppLifecycleState.resumed:
-        ref.read(syncControllerProvider.notifier).syncNow();
+        ref.read(syncControllerProvider.notifier).resumed();
       default:
     }
   }
