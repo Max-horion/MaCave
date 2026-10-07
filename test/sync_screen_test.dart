@@ -155,24 +155,44 @@ void main() {
     expect(secrets.values, isEmpty);
   });
 
+  /// Met sur le faux serveur la cave d'un autre appareil (une bière).
+  Future<void> putOtherCave() async {
+    final other = memoryDatabase();
+    final repo = CaveRepository(other, TestContext(deviceId: 'pc'));
+    final types = await repo.drinkTypes();
+    await repo.addNewDrink(
+      drink: DrinkInput(name: 'Bière du serveur', typeId: types[1].id),
+      volumeMl: 330,
+      quantity: 3,
+    );
+    final path = '${root.path}/autre.sqlite';
+    await snapshotDatabase(other, path);
+    await other.close();
+    server.put('/cave/cave.sqlite', File(path).readAsBytesSync());
+  }
+
+  Future<List<String>> localNames(WidgetTester tester) async =>
+      (await tester.runAsync(
+        () async => (await db.select(db.drinks).get())
+            .where((d) => d.deletedAt == null)
+            .map((d) => d.name)
+            .toList(),
+      ))!;
+
   testWidgets('autre cave sur le serveur : on choisit celle du serveur', (
     tester,
   ) async {
     await tester.runAsync(() async {
       server = await FakeWebDavServer.start();
-      // La cave d'un autre appareil, déjà sur le serveur.
-      final other = memoryDatabase();
-      final repo = CaveRepository(other, TestContext(deviceId: 'pc'));
+      await putOtherCave();
+      // Une cave déjà remplie sur ce téléphone : il faut choisir.
+      final repo = CaveRepository(db, ctx);
       final types = await repo.drinkTypes();
       await repo.addNewDrink(
-        drink: DrinkInput(name: 'Bière du serveur', typeId: types[1].id),
+        drink: DrinkInput(name: 'Bière du téléphone', typeId: types[1].id),
         volumeMl: 330,
-        quantity: 3,
+        quantity: 1,
       );
-      final path = '${root.path}/autre.sqlite';
-      await snapshotDatabase(other, path);
-      await other.close();
-      server.put('/cave/cave.sqlite', File(path).readAsBytesSync());
     });
     addTearDown(() => tester.runAsync(server.close));
     await open(tester, const SyncScreen());
@@ -187,11 +207,28 @@ void main() {
     await settle(tester, rounds: 25);
 
     expect(find.text('Synchronisé'), findsOneWidget);
-    final names = await tester.runAsync(
-      () async => (await db.select(db.drinks).get()).map((d) => d.name),
-    );
-    expect(names, ['Bière du serveur']);
+    expect(await localNames(tester), ['Bière du serveur']);
   });
+
+  testWidgets(
+    'cave neuve (nouvel appareil) : celle du serveur, sans question',
+    (tester) async {
+      await tester.runAsync(() async {
+        server = await FakeWebDavServer.start();
+        await putOtherCave();
+      });
+      addTearDown(() => tester.runAsync(server.close));
+      await open(tester, const SyncScreen());
+
+      await fillForm(tester);
+      await tapActivate(tester);
+      await settle(tester, rounds: 25);
+
+      expect(find.text('Une autre cave est sur le serveur'), findsNothing);
+      expect(find.text('Synchronisé'), findsOneWidget);
+      expect(await localNames(tester), ['Bière du serveur']);
+    },
+  );
 
   testWidgets('indicateur : invisible en mode local, puis « Réessayer »', (
     tester,

@@ -6,11 +6,14 @@ import 'package:uuid/uuid.dart';
 import 'app.dart';
 import 'data/providers.dart';
 import 'data/write_context.dart';
+import 'features/welcome/welcome_screen.dart';
 import 'sync/providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final deviceId = await _loadDeviceId();
+  final firstLaunch =
+      await SharedPreferencesAsync().getString(welcomeDoneKey) == null;
   runApp(
     ProviderScope(
       overrides: [
@@ -18,7 +21,7 @@ Future<void> main() async {
           WriteContext(deviceId: deviceId),
         ),
       ],
-      child: const AutomaticTasks(child: CaveApp()),
+      child: AutomaticTasks(child: CaveApp(firstLaunch: firstLaunch)),
     ),
   );
 }

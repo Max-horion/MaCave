@@ -51,7 +51,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
-| 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
+| 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **en cours** (premier lancement fait, à vérifier) |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -70,7 +70,6 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 2. Lot 6, points déjà repérés :
    - écran des paramètres (CDC §7) : y déplacer « Espace disque » (purges) et le choix du moteur de lecture ; ajouter le réglage « recherche Open Food Facts activée ou non », la durée du bandeau « Annuler » (`undoDuration`), thème, tri par défaut, volumes par défaut, gestion de la classification ;
    - écran « À propos » : licences et sources à citer (INAO / Licence Ouverte, Tesseract et tessdata_best / Apache 2.0, ML Kit, Open Food Facts) ; fichier `LICENSE` (GPL v3 + exception ML Kit) avant toute diffusion ;
-   - premier lancement en 3 étapes (CDC §6.8), alerte « données seulement sur l'appareil » en mode local (CDC §8.4) ;
    - Android 8 à 10 : autorisation d'écriture dans Documents pour les sauvegardes ;
    - nouvelle version du CDC (v0.6) reportant les décisions des lots 4 et 5 (voir « Décisions du porteur » et le journal).
 3. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
@@ -176,6 +175,11 @@ Pièges rencontrés :
 - `lib/features/label/` — `LabelCaptureScreen` (package `camera`, lampe torche) ; `label_flow.dart` : `readLabelWithCamera` (photo **supprimée** après lecture, CDC §6.2), `LabelReadingScreen` (suggestions, lignes à toucher pour nom / producteur / appellation, « Déjà dans votre cave ? »), `continueAfterLabel`, `addToExistingFromLabel` (fenêtre « nouveau lot » pré-remplie). Points d'entrée : bouton « Lire l'étiquette » du formulaire de création (ne remplit que les champs vides), fiche « Code inconnu » (complète Open Food Facts), écran de scan (« Pas de code-barres ? »). `labelPhotoProvider` remplaçable dans les tests.
 - `lib/domain/label_parsing.dart` — `parseVolumeMl` (« 75 cl », « 0,75 L », « 6 x 33 cl »), `parseAbv` ; resserviront à la lecture des étiquettes (5c).
 
+## Où trouver quoi (lot 6)
+
+- `lib/features/welcome/welcome_screen.dart` — **premier lancement** (CDC §6.8) : `WelcomeGate` (si la préférence `welcome_done` est absente : accueil pour une cave neuve, sinon la liste directement et la préférence est posée — un téléphone qui a déjà une cave ne voit jamais l'accueil) ; `WelcomeScreen` : 1. mode de stockage (local → alerte « données sur cet appareil seulement », CDC §8.4, montrée une fois ; synchro → `SyncScreen`), 2. import (`startImport`), 3. volumes par défaut par type (`setDefaultVolumeMl`). Chaque étape peut être passée. `main.dart` lit la préférence avant `runApp` et passe `CaveApp(firstLaunch:)` (faux par défaut : les tests existants ouvrent la liste).
+- Activation de la synchro avec une **cave neuve** (`CaveRepository.isEmpty` : aucune référence ni lot, même supprimés) et une autre cave sur le serveur : celle du serveur est reprise **sans poser la question** (nouvel appareil, CDC §6.8) ; sinon la question « Utiliser / Remplacer » reste.
+
 ## Conventions
 
 - **Textes de l'interface** : jamais en dur dans le code. Tout passe par `lib/l10n/app_fr.arb` (avec une `description` pour chaque clé), puis `AppLocalizations.of(context).cle`. Pluriels au format ICU (voir `bottleCount`). Dates et nombres formatés selon la langue de l'appareil (`intl`).
@@ -220,3 +224,4 @@ Pièges rencontrés :
 - 2026-10-06 — Retour du porteur sur le 5d : Tesseract plus lent et **ne lisait aucun texte**. Cause : orientation EXIF ignorée (photo couchée). Corrigé (photo redressée et réduite côté Android, repli si tous les mots sont peu sûrs, diagnostic en mode comparaison) ; test sur un vrai résultat hOCR de Tesseract 5 (étiquette inventée). 290 tests verts.
 - 2026-10-06 — Bêta des moteurs (porteur) : Tesseract lit, un peu plus lent, résultats proches de ML Kit (ML Kit légèrement meilleur) ; échec commun des deux sur un nom en arc de cercle (à voir plus tard). Le porteur continue de comparer. Ajout du code-barres dans les deux sens (formulaire et lots existants). 295 tests verts.
 - 2026-10-07 — Vérifiés sur le téléphone par le porteur : 5d (Tesseract, mode comparaison), code-barres dans les deux sens, écrans du lot 3. **Lots 3 et 5 terminés.**
+- 2026-10-07 — Lot 6 : premier lancement en 3 étapes (stockage + alerte mode local, import, volumes par défaut), cave du serveur reprise d'office sur un appareil neuf. 301 tests verts. Invisible sur le téléphone du porteur (cave déjà remplie) : à vérifier sur un appareil neuf.

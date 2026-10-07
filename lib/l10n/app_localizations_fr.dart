@@ -1452,4 +1452,86 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get formOffFilled => 'Champs vides complétés avec Open Food Facts';
+
+  @override
+  String welcomeStep(int step, int total) {
+    return 'Étape $step sur $total';
+  }
+
+  @override
+  String get welcomeSkip => 'Passer';
+
+  @override
+  String get welcomeNext => 'Suivant';
+
+  @override
+  String get welcomeFinish => 'Commencer';
+
+  @override
+  String get welcomeStorageTitle => 'Où ranger votre cave ?';
+
+  @override
+  String get welcomeStorageHelp =>
+      'Vous pourrez changer d\'avis plus tard (menu ⋮ → Synchronisation).';
+
+  @override
+  String get welcomeLocal => 'Sur cet appareil uniquement';
+
+  @override
+  String get welcomeLocalHelp =>
+      'Rien à configurer. Sauvegardes automatiques dans Documents/Cave/Sauvegardes.';
+
+  @override
+  String get welcomeSync => 'Synchroniser avec un serveur';
+
+  @override
+  String get welcomeSyncHelp =>
+      'Nextcloud ou autre serveur WebDAV. Si une cave y est déjà, elle est récupérée (nouvel appareil).';
+
+  @override
+  String get welcomeSyncDone => 'Synchronisation activée';
+
+  @override
+  String get welcomeLocalAlertTitle => 'Données sur cet appareil seulement';
+
+  @override
+  String get welcomeLocalAlert =>
+      'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Synchronisation).';
+
+  @override
+  String get welcomeLocalAlertOk => 'J\'ai compris';
+
+  @override
+  String get welcomeImportTitle => 'Vous avez déjà une cave ?';
+
+  @override
+  String get welcomeImportHelp =>
+      'Importez un export Vivino ou un fichier CSV (par exemple une sauvegarde de Ma Cave). Un aperçu est affiché avant tout ajout. Vous pourrez aussi le faire plus tard (menu ⋮ → Importer un fichier).';
+
+  @override
+  String get welcomeImportButton => 'Importer un fichier';
+
+  @override
+  String welcomeImportCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Votre cave contient $count bouteilles.',
+      one: 'Votre cave contient 1 bouteille.',
+      zero: 'Votre cave est encore vide.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get welcomeDefaultsTitle => 'Volumes par défaut';
+
+  @override
+  String get welcomeDefaultsHelp =>
+      'Volume proposé pour une nouvelle bouteille, selon son type. Touchez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.';
+
+  @override
+  String welcomeVolumeOf(String type) {
+    return 'Volume par défaut : $type';
+  }
 }

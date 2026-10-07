@@ -2169,6 +2169,132 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Champs vides complétés avec Open Food Facts'**
   String get formOffFilled;
+
+  /// Premier lancement : position dans les étapes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape {step} sur {total}'**
+  String welcomeStep(int step, int total);
+
+  /// Premier lancement : passer l'étape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get welcomeSkip;
+
+  /// Premier lancement : étape suivante.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get welcomeNext;
+
+  /// Premier lancement : dernière étape, ouvrir la cave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get welcomeFinish;
+
+  /// Premier lancement, étape 1 : titre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Où ranger votre cave ?'**
+  String get welcomeStorageTitle;
+
+  /// Premier lancement, étape 1 : explication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pourrez changer d\'avis plus tard (menu ⋮ → Synchronisation).'**
+  String get welcomeStorageHelp;
+
+  /// Premier lancement : choix du mode local.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur cet appareil uniquement'**
+  String get welcomeLocal;
+
+  /// Premier lancement : détail du mode local.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à configurer. Sauvegardes automatiques dans Documents/Cave/Sauvegardes.'**
+  String get welcomeLocalHelp;
+
+  /// Premier lancement : choix de la synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser avec un serveur'**
+  String get welcomeSync;
+
+  /// Premier lancement : détail de la synchronisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nextcloud ou autre serveur WebDAV. Si une cave y est déjà, elle est récupérée (nouvel appareil).'**
+  String get welcomeSyncHelp;
+
+  /// Premier lancement : la synchronisation est en place.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation activée'**
+  String get welcomeSyncDone;
+
+  /// Alerte du mode local (CDC §8.4) : titre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données sur cet appareil seulement'**
+  String get welcomeLocalAlertTitle;
+
+  /// Alerte du mode local (CDC §8.4) : message.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Synchronisation).'**
+  String get welcomeLocalAlert;
+
+  /// Alerte du mode local : bouton.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'ai compris'**
+  String get welcomeLocalAlertOk;
+
+  /// Premier lancement, étape 2 : titre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà une cave ?'**
+  String get welcomeImportTitle;
+
+  /// Premier lancement, étape 2 : explication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importez un export Vivino ou un fichier CSV (par exemple une sauvegarde de Ma Cave). Un aperçu est affiché avant tout ajout. Vous pourrez aussi le faire plus tard (menu ⋮ → Importer un fichier).'**
+  String get welcomeImportHelp;
+
+  /// Premier lancement, étape 2 : bouton d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer un fichier'**
+  String get welcomeImportButton;
+
+  /// Premier lancement, étape 2 : contenu actuel de la cave.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Votre cave est encore vide.} =1{Votre cave contient 1 bouteille.} other{Votre cave contient {count} bouteilles.}}'**
+  String welcomeImportCount(int count);
+
+  /// Premier lancement, étape 3 : titre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volumes par défaut'**
+  String get welcomeDefaultsTitle;
+
+  /// Premier lancement, étape 3 : explication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volume proposé pour une nouvelle bouteille, selon son type. Touchez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.'**
+  String get welcomeDefaultsHelp;
+
+  /// Fenêtre de choix du volume par défaut d'un type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volume par défaut : {type}'**
+  String welcomeVolumeOf(String type);
 }
 
 class _AppLocalizationsDelegate

@@ -79,6 +79,29 @@ class CaveRepository {
   Future<int?> defaultVolumeMl(String typeId) async =>
       (await _activeType(typeId))?.defaultVolumeMl;
 
+  /// Change le volume pré-rempli d'un type (premier lancement, paramètres).
+  Future<void> setDefaultVolumeMl(String typeId, int volumeMl) async {
+    await (_db.update(_db.drinkTypes)..where((t) => t.id.equals(typeId))).write(
+      DrinkTypesCompanion(
+        defaultVolumeMl: Value(volumeMl),
+        updatedAt: Value(_ctx.now()),
+        updatedBy: Value(_ctx.deviceId),
+      ),
+    );
+  }
+
+  /// Aucune référence ni aucun lot, même supprimés : cave toute neuve, rien
+  /// à perdre en la remplaçant par celle du serveur.
+  Future<bool> isEmpty() async {
+    final row = await _db
+        .customSelect(
+          'SELECT (SELECT COUNT(*) FROM drinks) + (SELECT COUNT(*) FROM lots) '
+          'AS n',
+        )
+        .getSingle();
+    return row.read<int>('n') == 0;
+  }
+
   // ─────────────────────────────── Références ───────────────────────────────
 
   Future<Drink?> drink(String id) {

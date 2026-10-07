@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sync/providers.dart';
 import '../../sync/sync_controller.dart';
@@ -216,7 +217,10 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
         final l10n = AppLocalizations.of(context);
         final result = await _controller.activate(settings, password);
         if (result == ActivationResult.otherCave) {
-          final useServer = await _askOtherCave();
+          // Cave neuve (nouvel appareil) : on récupère celle du serveur sans
+          // poser la question (CDC §6.8).
+          final empty = await ref.read(caveRepositoryProvider).isEmpty();
+          final useServer = empty ? true : await _askOtherCave();
           if (useServer == null) {
             _controller.cancelActivation();
             return;

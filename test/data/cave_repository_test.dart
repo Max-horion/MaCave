@@ -344,4 +344,32 @@ void main() {
     await repo.deleteLot(lotB);
     expect((await totals.first).bottles, 6);
   });
+
+  test(
+    'volume par défaut d\'un type modifiable (date de modification)',
+    () async {
+      final before = (await repo.drinkTypes()).firstWhere(
+        (t) => t.id == beerTypeId,
+      );
+      await repo.setDefaultVolumeMl(beerTypeId, 330);
+      expect(await repo.defaultVolumeMl(beerTypeId), 330);
+      final after = (await repo.drinkTypes()).firstWhere(
+        (t) => t.id == beerTypeId,
+      );
+      expect(after.updatedAt, greaterThan(before.updatedAt));
+      expect(after.updatedBy, ctx.deviceId);
+    },
+  );
+
+  test('cave neuve : vide tant qu\'aucune référence n\'a existé', () async {
+    expect(await repo.isEmpty(), isTrue);
+    final lotId = await newWineLot();
+    expect(await repo.isEmpty(), isFalse);
+    await repo.deleteDrink((await repo.lot(lotId))!.drinkId);
+    expect(
+      await repo.isEmpty(),
+      isFalse,
+      reason: 'une suppression doit encore se propager',
+    );
+  });
 }
