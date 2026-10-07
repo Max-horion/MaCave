@@ -66,6 +66,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
+0. **Ajouter le volume 6 l** (fûts du porteur, demandé le 2026-10-07) : `standardVolumesMl` dans `lib/ui/formats.dart` (aucune autre limite de volume trouvée dans le code) + vérifier la lecture « 6 l » sur une étiquette (`parseVolumeMl`) et un test.
 0. Installé sur le téléphone le 2026-10-07 : le porteur vérifie Paramètres, classification, À propos, icône. Puis finitions du lot 6 (ci-dessous).
 1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
 2. Lot 6, points déjà repérés :
