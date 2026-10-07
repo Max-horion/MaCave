@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../../sync/storage_access.dart';
 import '../../sync/providers.dart';
 import '../../theme/app_theme.dart';
 import '../cellar/cellar_screen.dart';
@@ -165,8 +166,12 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
         ],
       ),
     );
-    if (ok == true) _localAlertShown = true;
-    return ok == true;
+    if (ok != true) return false;
+    _localAlertShown = true;
+    // Android 8 à 10 : autorisation d'écrire les sauvegardes dans Documents.
+    final access = ref.read(storageAccessProvider);
+    if (!await access.granted()) await access.request();
+    return true;
   }
 
   Widget _storageStep(BuildContext context, bool syncOn) {

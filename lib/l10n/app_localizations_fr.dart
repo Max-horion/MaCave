@@ -719,12 +719,33 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupHelp =>
-      'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé.';
+      'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.';
 
   @override
   String backupFolder(String path) {
     return 'Dossier : $path';
   }
+
+  @override
+  String get backupChooseFolder => 'Choisir le dossier';
+
+  @override
+  String get backupDefaultFolder => 'Revenir au dossier par défaut';
+
+  @override
+  String get backupFolderChanged =>
+      'Dossier changé. Les sauvegardes déjà faites restent dans l\'ancien dossier.';
+
+  @override
+  String get backupFolderRefused =>
+      'L\'appli ne peut pas écrire dans ce dossier. Choisissez un dossier dans Documents ou Download.';
+
+  @override
+  String get backupNeedsPermission =>
+      'Android doit autoriser l\'appli à écrire dans Documents pour y ranger les sauvegardes.';
+
+  @override
+  String get backupAllow => 'Autoriser';
 
   @override
   String get backupFolderHelp =>
@@ -855,7 +876,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupHelpSynced =>
-      'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.';
+      'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.';
 
   @override
   String get menuSync => 'Synchronisation';

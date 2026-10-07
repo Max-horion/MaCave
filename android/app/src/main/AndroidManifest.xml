@@ -1,12 +1,21 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Synchronisation WebDAV (lot 4). Flutter ne l'ajoute qu'en débogage. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- connectivity_plus : savoir si le réseau est disponible. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Sauvegardes dans Documents (lot 6) : autorisation demandée seulement
+         sur Android 8 à 10 ; inutile à partir d'Android 11. Le paquet camera
+         la déclare jusqu'à Android 9 seulement : on la remplace. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"
+        tools:replace="android:maxSdkVersion" />
     <application
         android:label="Ma Cave"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

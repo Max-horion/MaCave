@@ -66,13 +66,12 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-0. Installé sur le téléphone le 2026-10-07 : le porteur vérifie Paramètres, classification, À propos, icône. Puis finitions du lot 6 (ci-dessous).
+0. À vérifier sur le téléphone (pas encore installé) : interrupteur « Synchronisation automatique » (écran Synchronisation), fréquence de la sauvegarde et choix du dossier (écran Sauvegardes). Le porteur a validé le volume 6 l le 2026-10-07.
 1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
 2. Lot 6, points déjà repérés :
-   - réglages du CDC §7 pas encore faits : fréquence de la sauvegarde automatique (fixe : 1 par jour), choix du dossier de sauvegarde en mode local, synchronisation automatique activée ou non ;
    - vérifier sur un appareil neuf le premier lancement (le téléphone du porteur ne le montre pas : cave déjà remplie) ;
    - faire relire `COPYING.md` (exception ML Kit) avant toute diffusion publique ; dépôt toujours privé ;
-   - Android 8 à 10 : autorisation d'écriture dans Documents pour les sauvegardes ;
+   - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (aucun appareil de test ; un émulateur Android 10 serait lourd avec 8 Go) ;
    - nouvelle version du CDC (v0.6) reportant les décisions des lots 4 et 5 (voir « Décisions du porteur » et le journal).
 3. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
 
@@ -187,6 +186,9 @@ Pièges rencontrés :
 - `lib/features/settings/about_screen.dart` — **À propos** (Paramètres, en bas) : version (`package_info_plus`, `appVersionProvider` remplaçable en test), licence, sources (INAO, Open Food Facts, ML Kit, Tesseract + Leptonica/libpng/libjpeg — la phrase « basé en partie sur les travaux de l'Independent JPEG Group » est **exigée** par libjpeg —, icône), bouton « Licences des logiciels » (`showLicensePage`). `lib/licenses.dart` (`registerExtraLicenses`, appelé dans `main`) y ajoute les licences sans paquet Dart, textes dans `assets/licenses/`.
 - **Icône** (choix du porteur, 2026-10-07) : bouteille « bottle » de Tabler Icons (MIT, source et licence dans `tool/icon/`) en blanc sur le bordeaux du thème `#7B1E3A`. Icône adaptative **vectorielle** : `res/drawable/ic_launcher_foreground.xml` (tracés SVG recopiés, agrandis ×2,25 au centre), `res/values/ic_launcher_background.xml`, `res/mipmap-anydpi-v26/ic_launcher.xml` (+ monochrome pour les icônes à thème d'Android 13+). Les PNG `mipmap-*/ic_launcher.png` et `assets/icon.png` (écran À propos) sont des rendus de secours. Pas d'outil de conversion SVG sur le PC : rendu fait avec `firefox --headless --screenshot` + Pillow.
 - Open Food Facts désactivé : `OpenFoodFacts.lookUp` rend `OffDisabled` **sans aucune requête** ; le scan et le formulaire ne lancent alors pas la recherche.
+- **Synchronisation automatique** activable (écran Synchronisation, préférence `sync_automatic` de l'appareil, remise par défaut à la désactivation) : désactivée, ni ouverture, ni retour au premier plan (`SyncController.resumed`), ni modification, ni retour du réseau, ni nouvel essai ne synchronisent ; une modification fait passer l'état à `SyncStatus.pending` (« Modifications à envoyer ») jusqu'à « Synchroniser maintenant ».
+- **Sauvegardes** : fréquence (chaque jour / semaine / mois, `backup_every_days`) et **dossier choisi** (`backup_folder`, sélecteur de dossier de `file_picker`) dans `BackupService` ; un dossier est essayé (fichier `.essai-ma-cave` écrit puis supprimé) avant d'être accepté — sur Android 11+, seuls Documents et Download (et leurs sous-dossiers) sont utilisables par chemin. Les sauvegardes déjà faites restent dans l'ancien dossier.
+- **Android 8 à 10** : autorisation `WRITE_EXTERNAL_STORAGE` (`maxSdkVersion` 29, remplace celle du paquet camera limitée à 28 par `tools:replace`) + `requestLegacyExternalStorage` ; demandée par un canal maison `fr.bouthon.cave/storage` (`MainActivity.kt`, `lib/sync/storage_access.dart`, `GrantedStorageAccess` hors Android et en test) : au premier lancement après l'alerte du mode local, une fois à l'ouverture si la cave n'est pas vide (`storage_permission_asked`), avant « Sauvegarder maintenant » / un changement de dossier, et par le bouton « Autoriser » de l'écran Sauvegardes.
 - Activation de la synchro avec une **cave neuve** (`CaveRepository.isEmpty` : aucune référence ni lot, même supprimés) et une autre cave sur le serveur : celle du serveur est reprise **sans poser la question** (nouvel appareil, CDC §6.8) ; sinon la question « Utiliser / Remplacer » reste.
 
 Pièges rencontrés :
@@ -242,3 +244,4 @@ Pièges rencontrés :
 - 2026-10-07 — Lot 6 : gestion de la classification (types, familles, valeurs : création, renommage, suppression ; références gardées « sans catégorie »), propagée par la synchro. 320 tests verts.
 - 2026-10-07 — Lot 6 : écran À propos (licence, sources, licences des bibliothèques), fichiers `LICENSE` (GPL v3) et `COPYING.md` (GPL v3 ou ultérieure + exception ML Kit), icône de l'appli (bouteille Tabler sur bordeaux, adaptative et vectorielle, vérifiée dans l'APK). 322 tests verts ; APK arm64 54,9 Mo.
 - 2026-10-07 — Volume 6 l ajouté aux volumes proposés (fûts du porteur) : formulaire, nouveau lot, volumes par défaut, classification ; lecture « 6 l » sur une étiquette testée. 323 tests verts.
+- 2026-10-07 — Porteur : volume 6 l vérifié sur le téléphone. Lot 6 : synchronisation automatique activable, fréquence de la sauvegarde automatique, choix du dossier des sauvegardes, autorisation de stockage pour Android 8 à 10 (non essayée sur un vrai appareil). 330 tests verts.

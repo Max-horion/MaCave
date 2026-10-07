@@ -75,6 +75,7 @@ class BackupService {
   static const _lastErrorKey = 'backup_last_error';
   static const _keepKey = 'backup_keep';
   static const _everyKey = 'backup_every_days';
+  static const _folderKey = 'backup_folder';
 
   static final _stampFormat = DateFormat('yyyy-MM-dd_HH-mm-ss');
   static final _namePattern = RegExp(
@@ -103,12 +104,36 @@ class BackupService {
     return result;
   }
 
-  /// Dossier des sauvegardes (créé si besoin).
+  /// Dossier des sauvegardes (créé si besoin) : celui choisi par
+  /// l'utilisateur, sinon le dossier par défaut.
   Future<Directory> folder() async {
-    final dir = await _folder();
+    final chosen = await _store.getString(_folderKey);
+    final dir = chosen != null ? Directory(chosen) : await _folder();
     await dir.create(recursive: true);
     return dir;
   }
+
+  /// L'utilisateur a choisi un autre dossier que celui par défaut.
+  Future<bool> hasChosenFolder() async =>
+      await _store.getString(_folderKey) != null;
+
+  /// Change le dossier des sauvegardes (CDC §8.4 : dossier choisi par
+  /// l'utilisateur, qu'il peut synchroniser avec un autre outil) ; null
+  /// revient au dossier par défaut. Le dossier est d'abord essayé (fichier
+  /// écrit puis supprimé) : lève [FileSystemException] si l'appli ne peut
+  /// pas y écrire. Les sauvegardes déjà faites restent dans l'ancien dossier.
+  Future<void> setFolder(String? path) => _exclusive(() async {
+    if (path != null) {
+      final dir = Directory(path);
+      await dir.create(recursive: true);
+      final probe = File('${dir.path}/.essai-ma-cave');
+      await probe.writeAsString('ok', flush: true);
+      await probe.delete();
+      await _store.setString(_folderKey, dir.path);
+    } else {
+      await _store.remove(_folderKey);
+    }
+  });
 
   /// Sauvegardes présentes dans le dossier, de la plus récente à la plus
   /// ancienne.

@@ -8,6 +8,7 @@ import 'package:cave/features/backup/backup_screen.dart';
 import 'package:cave/l10n/app_localizations.dart';
 import 'package:cave/sync/backup.dart';
 import 'package:cave/sync/providers.dart';
+import 'package:cave/sync/storage_access.dart';
 import 'package:cave/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,11 @@ void main() {
   late BackupService service;
   late DateTime now;
 
+  /// Autorisation de stockage (Android 8 à 10), accordée par défaut.
+  late _FakeAccess access;
+
   setUp(() async {
+    access = _FakeAccess(isGranted: true);
     db = memoryDatabase();
     ctx = TestContext();
     root = Directory.systemTemp.createTempSync('cave_backup_screen');
@@ -63,6 +68,7 @@ void main() {
           writeContextProvider.overrideWithValue(ctx),
           localSyncEnvironment(db, ctx),
           backupServiceProvider.overrideWithValue(service),
+          storageAccessProvider.overrideWithValue(access),
         ],
         child: MaterialApp(
           theme: AppTheme.light,
@@ -88,33 +94,8 @@ void main() {
   testWidgets('sauvegarder maintenant ajoute une sauvegarde à la liste', (
     tester,
   ) async {
-    await tester.runAsync(() async {
-      final repo = CaveRepository(db, ctx);
-      final types = await repo.drinkTypes();
-      await repo.addNewDrink(
-        drink: DrinkInput(name: 'Bière Test', typeId: types[1].id),
-        volumeMl: 330,
-        quantity: 2,
-      );
-    });
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          databaseProvider.overrideWithValue(db),
-          writeContextProvider.overrideWithValue(ctx),
-          localSyncEnvironment(db, ctx),
-          backupServiceProvider.overrideWithValue(service),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.light,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: const BackupScreen(),
-        ),
-      ),
-    );
-    await settle(tester);
+    await addDrink(tester);
+    await openScreen(tester);
     expect(find.text('Aucune sauvegarde pour l\'instant.'), findsOneWidget);
 
     // Vraies écritures de fichiers : le clic est fait hors de l'horloge
@@ -183,4 +164,38 @@ void main() {
     expect(find.text('Chaque semaine'), findsOneWidget);
     expect(await tester.runAsync(service.everyDays), 7);
   });
+
+  testWidgets('Android 8 à 10 : autorisation demandée par « Autoriser »', (
+    tester,
+  ) async {
+    access = _FakeAccess(isGranted: false);
+    await openScreen(tester);
+    expect(
+      find.textContaining('autoriser l\'appli à écrire dans Documents'),
+      findsOneWidget,
+    );
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Autoriser'));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await settle(tester);
+    expect(access.requests, 1);
+    expect(find.text('Autoriser'), findsNothing);
+  });
+}
+
+class _FakeAccess implements StorageAccess {
+  _FakeAccess({required this.isGranted});
+
+  bool isGranted;
+  var requests = 0;
+
+  @override
+  Future<bool> granted() async => isGranted;
+
+  @override
+  Future<bool> request() async {
+    requests++;
+    return isGranted = true;
+  }
 }

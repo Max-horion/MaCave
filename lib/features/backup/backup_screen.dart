@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../sync/backup.dart';
 import '../../sync/cave_file.dart';
 import '../../sync/providers.dart';
+import '../../sync/storage_access.dart';
 import '../../ui/formats.dart';
 
 /// État affiché par l'écran : dossier, sauvegardes présentes, dernière erreur.
@@ -17,6 +20,8 @@ class BackupOverview {
     required this.lastError,
     required this.keep,
     required this.everyDays,
+    required this.chosenFolder,
+    required this.access,
   });
 
   final String folder;
@@ -28,13 +33,22 @@ class BackupOverview {
 
   /// Fréquence de la sauvegarde automatique, en jours.
   final int everyDays;
+
+  /// Dossier choisi par l'utilisateur (pas celui par défaut).
+  final bool chosenFolder;
+
+  /// L'appli peut écrire dans Documents (autorisation, Android 8 à 10).
+  final bool access;
 }
 
 final backupOverviewProvider = FutureProvider.autoDispose<BackupOverview>((
   ref,
 ) async {
   final service = ref.watch(backupServiceProvider);
+  final access = await ref.watch(storageAccessProvider).granted();
   return BackupOverview(
+    chosenFolder: await service.hasChosenFolder(),
+    access: access,
     folder: (await service.folder()).path,
     sets: await service.list(),
     lastError: await service.lastError(),
@@ -90,6 +104,33 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               style: theme.textTheme.bodySmall,
             ),
             Text(l10n.backupFolderHelp, style: theme.textTheme.bodySmall),
+            Wrap(
+              spacing: 8,
+              children: [
+                TextButton.icon(
+                  onPressed: _busy ? null : _chooseFolder,
+                  icon: const Icon(Icons.folder_open),
+                  label: Text(l10n.backupChooseFolder),
+                ),
+                if (o.chosenFolder)
+                  TextButton(
+                    onPressed: _busy ? null : () => _setFolder(null),
+                    child: Text(l10n.backupDefaultFolder),
+                  ),
+              ],
+            ),
+            if (!o.access) ...[
+              const SizedBox(height: 8),
+              Text(
+                l10n.backupNeedsPermission,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+              FilledButton.tonalIcon(
+                onPressed: _busy ? null : _allow,
+                icon: const Icon(Icons.lock_open),
+                label: Text(l10n.backupAllow),
+              ),
+            ],
             if (o.lastError != null) ...[
               const SizedBox(height: 12),
               Text(
@@ -194,8 +235,33 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     );
   }
 
+  Future<void> _allow() =>
+      _run(() => ref.read(storageAccessProvider).request());
+
+  Future<void> _chooseFolder() async {
+    final path = await FilePicker.getDirectoryPath();
+    if (path == null || !mounted) return;
+    await _setFolder(path);
+  }
+
+  /// Change le dossier (null : dossier par défaut), après l'avoir essayé.
+  Future<void> _setFolder(String? path) => _run(() async {
+    final l10n = AppLocalizations.of(context);
+    final access = ref.read(storageAccessProvider);
+    if (!await access.granted()) await access.request();
+    try {
+      await ref.read(backupServiceProvider).setFolder(path);
+    } on FileSystemException {
+      if (mounted) _message(l10n.backupFolderRefused);
+      return;
+    }
+    if (mounted) _message(l10n.backupFolderChanged);
+  });
+
   Future<void> _backupNow() => _run(() async {
     final l10n = AppLocalizations.of(context);
+    final access = ref.read(storageAccessProvider);
+    if (!await access.granted()) await access.request();
     final set = await ref.read(backupServiceProvider).backupNow();
     if (!mounted) return;
     _message(

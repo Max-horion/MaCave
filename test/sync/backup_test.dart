@@ -190,6 +190,40 @@ void main() {
       expect(() => s.setEveryDays(0), throwsArgumentError);
     });
 
+    test('dossier choisi par l\'utilisateur, puis retour au défaut', () async {
+      await addBeer('Bière A', 1);
+      final s = service();
+      final chosen = Directory('${root.path}/Synchronisé/Cave');
+      expect(await s.hasChosenFolder(), isFalse);
+      await s.backupNow();
+
+      await s.setFolder(chosen.path);
+      expect(await s.hasChosenFolder(), isTrue);
+      expect((await s.folder()).path, chosen.path);
+      expect(await s.list(), isEmpty, reason: 'les anciennes restent');
+      await s.backupNow();
+      expect(chosen.listSync().whereType<File>(), hasLength(3));
+      expect(
+        File('${chosen.path}/.essai-ma-cave').existsSync(),
+        isFalse,
+        reason: 'fichier d\'essai supprimé',
+      );
+
+      await s.setFolder(null);
+      expect((await s.folder()).path, backups.path);
+      expect(await s.list(), hasLength(1));
+    });
+
+    test('dossier où l\'on ne peut pas écrire : refusé', () async {
+      final s = service();
+      final blocker = File('${root.path}/fichier')..writeAsStringSync('x');
+      await expectLater(
+        s.setFolder('${blocker.path}/dossier'),
+        throwsA(isA<FileSystemException>()),
+      );
+      expect(await s.hasChosenFolder(), isFalse);
+    });
+
     test('une erreur est mémorisée, jamais levée', () async {
       await addBeer('Bière A', 1);
       final s = BackupService(

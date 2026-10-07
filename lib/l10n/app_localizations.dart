@@ -1051,7 +1051,7 @@ abstract class AppLocalizations {
   /// Explication en tête de l'écran des sauvegardes.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé.'**
+  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.'**
   String get backupHelp;
 
   /// Dossier où sont enregistrées les sauvegardes.
@@ -1059,6 +1059,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Dossier : {path}'**
   String backupFolder(String path);
+
+  /// Bouton : choisir le dossier des sauvegardes sur l'appareil (CDC §8.4).
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir le dossier'**
+  String get backupChooseFolder;
+
+  /// Bouton : abandonner le dossier choisi et revenir à Documents/Cave/Sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir au dossier par défaut'**
+  String get backupDefaultFolder;
+
+  /// Message après le changement du dossier des sauvegardes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier changé. Les sauvegardes déjà faites restent dans l\'ancien dossier.'**
+  String get backupFolderChanged;
+
+  /// Message : le dossier choisi n'est pas accessible en écriture (Android limite les dossiers utilisables).
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'appli ne peut pas écrire dans ce dossier. Choisissez un dossier dans Documents ou Download.'**
+  String get backupFolderRefused;
+
+  /// Avertissement sur Android 8 à 10 quand l'autorisation de stockage n'est pas accordée.
+  ///
+  /// In fr, this message translates to:
+  /// **'Android doit autoriser l\'appli à écrire dans Documents pour y ranger les sauvegardes.'**
+  String get backupNeedsPermission;
+
+  /// Bouton : demander l'autorisation d'écrire dans Documents (Android 8 à 10).
+  ///
+  /// In fr, this message translates to:
+  /// **'Autoriser'**
+  String get backupAllow;
 
   /// Conseil sous le dossier des sauvegardes.
   ///
@@ -1237,7 +1273,7 @@ abstract class AppLocalizations {
   /// Explication en tête de l'écran des sauvegardes, quand la synchronisation est active.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.'**
+  /// **'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.'**
   String get backupHelpSynced;
 
   /// Menu principal : ouvrir l'écran de synchronisation.

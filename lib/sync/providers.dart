@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../data/local_store.dart';
 import '../data/providers.dart';
 import 'backup.dart';
+import 'storage_access.dart';
 import 'sync_controller.dart';
 import 'sync_settings.dart';
 
@@ -128,9 +129,30 @@ class _AutomaticTasksState extends ConsumerState<AutomaticTasks>
     if (!mounted) return;
     await ref.read(syncControllerProvider.notifier).start();
     if (!mounted) return;
+    await _askStorageOnce();
+    if (!mounted) return;
     await ref.read(backupServiceProvider).backupIfDue();
     if (!mounted) return;
     await _autoPurgeIfDue();
+  }
+
+  /// Android 8 à 10 : la sauvegarde automatique a besoin de l'autorisation
+  /// d'écrire dans Documents. Demandée une seule fois, et seulement si la
+  /// cave contient quelque chose ; si elle est refusée, l'écran Sauvegardes
+  /// affiche l'erreur et un bouton « Autoriser ».
+  Future<void> _askStorageOnce() async {
+    const askedKey = 'storage_permission_asked';
+    final store = ref.read(localStoreProvider);
+    try {
+      final access = ref.read(storageAccessProvider);
+      if (await access.granted()) return;
+      if (await store.getString(askedKey) != null) return;
+      if (await ref.read(caveRepositoryProvider).isEmpty()) return;
+      await store.setString(askedKey, 'true');
+      await access.request();
+    } catch (_) {
+      // Rien : la sauvegarde signalera le problème.
+    }
   }
 
   /// Purge automatique (si activée), au plus une fois par jour. Ne gêne

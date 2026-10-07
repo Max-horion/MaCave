@@ -876,7 +876,7 @@
   "@backupTitle": {
     "description": "Titre de l'écran des sauvegardes."
   },
-  "backupHelp": "Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé.",
+  "backupHelp": "Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.",
   "@backupHelp": {
     "description": "Explication en tête de l'écran des sauvegardes."
   },
@@ -888,6 +888,30 @@
         "type": "String"
       }
     }
+  },
+  "backupChooseFolder": "Choisir le dossier",
+  "@backupChooseFolder": {
+    "description": "Bouton : choisir le dossier des sauvegardes sur l'appareil (CDC §8.4)."
+  },
+  "backupDefaultFolder": "Revenir au dossier par défaut",
+  "@backupDefaultFolder": {
+    "description": "Bouton : abandonner le dossier choisi et revenir à Documents/Cave/Sauvegardes."
+  },
+  "backupFolderChanged": "Dossier changé. Les sauvegardes déjà faites restent dans l'ancien dossier.",
+  "@backupFolderChanged": {
+    "description": "Message après le changement du dossier des sauvegardes."
+  },
+  "backupFolderRefused": "L'appli ne peut pas écrire dans ce dossier. Choisissez un dossier dans Documents ou Download.",
+  "@backupFolderRefused": {
+    "description": "Message : le dossier choisi n'est pas accessible en écriture (Android limite les dossiers utilisables)."
+  },
+  "backupNeedsPermission": "Android doit autoriser l'appli à écrire dans Documents pour y ranger les sauvegardes.",
+  "@backupNeedsPermission": {
+    "description": "Avertissement sur Android 8 à 10 quand l'autorisation de stockage n'est pas accordée."
+  },
+  "backupAllow": "Autoriser",
+  "@backupAllow": {
+    "description": "Bouton : demander l'autorisation d'écrire dans Documents (Android 8 à 10)."
   },
   "backupFolderHelp": "Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.",
   "@backupFolderHelp": {
@@ -1046,7 +1070,7 @@
   "@backupKeepConfirm": {
     "description": "Bouton : confirmer la suppression des sauvegardes en trop."
   },
-  "backupHelpSynced": "Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, au plus une fois par jour et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.",
+  "backupHelpSynced": "Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.",
   "@backupHelpSynced": {
     "description": "Explication en tête de l'écran des sauvegardes, quand la synchronisation est active."
   },

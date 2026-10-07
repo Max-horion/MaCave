@@ -1,9 +1,12 @@
 package fr.bouthon.cave
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.os.Build
 import com.googlecode.tesseract.android.TessBaseAPI
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -20,6 +23,28 @@ class MainActivity : FlutterActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private var tess: TessBaseAPI? = null
     private var tessKey: String? = null
+
+    // Android 8 à 10 : écrire les sauvegardes dans Documents demande
+    // l'autorisation « stockage » (Android 11+ : sans autorisation). Canal
+    // « fr.bouthon.cave/storage » (lib/sync/storage_access.dart).
+    private var storageResult: MethodChannel.Result? = null
+    private val storageRequestCode = 4201
+
+    private fun storageGranted(): Boolean =
+        Build.VERSION.SDK_INT > Build.VERSION_CODES.Q ||
+            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != storageRequestCode) return
+        storageResult?.success(storageGranted())
+        storageResult = null
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -40,6 +65,28 @@ class MainActivity : FlutterActivity() {
                         } catch (e: Exception) {
                             runOnUiThread { result.error("tesseract", e.message, null) }
                         }
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "fr.bouthon.cave/storage",
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "granted" -> result.success(storageGranted())
+                "request" -> {
+                    if (storageGranted()) {
+                        result.success(true)
+                    } else if (storageResult != null) {
+                        result.error("storage", "demande déjà en cours", null)
+                    } else {
+                        storageResult = result
+                        requestPermissions(
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            storageRequestCode,
+                        )
                     }
                 }
                 else -> result.notImplemented()
