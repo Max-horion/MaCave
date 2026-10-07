@@ -60,13 +60,14 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 - Sauvegardes : **3 conservées par défaut**, nombre réglable sur l'écran Sauvegardes (2026-10-05).
 - En mode synchronisé, sauvegardes **sur le téléphone ET sur le serveur** (dossier `Sauvegardes` à côté de la cave, même nombre conservé) (2026-10-06). Le CDC §8.4 ne prévoyait que le serveur : écart à reporter.
 - Doublons (5e) faits **avant** la reconnaissance de texte, et utilisés aussi dans la fiche « Code inconnu » quand Open Food Facts trouve le produit (« Déjà dans votre cave ? ») et, au 5c, pour le nom lu sur l'étiquette (2026-10-06, idée du porteur).
+- Synchronisation automatique : **activée par défaut**, interrupteur gardé dans l'écran Synchronisation pour pouvoir la couper (CDC §7) (2026-10-07).
 - Le marqueur « à compléter » est calculé à l'enregistrement de chaque fiche. **Ne jamais le recalculer en masse** silencieusement : le porteur s'en sert comme liste de fiches à revoir (ex. après un import).
 
 Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, photos, PDF, appli PC) ne sont pas développées en V1, mais le schéma de la base les prévoit.
 
 ## À reprendre (prochaine séance)
 
-0. À vérifier sur le téléphone (pas encore installé) : interrupteur « Synchronisation automatique » (écran Synchronisation), fréquence de la sauvegarde et choix du dossier (écran Sauvegardes). Le porteur a validé le volume 6 l le 2026-10-07.
+0. À vérifier sur le téléphone (installé le 2026-10-07) : interrupteur « Synchronisation automatique » (écran Synchronisation), fréquence de la sauvegarde et choix du dossier (écran Sauvegardes). Le porteur a validé le volume 6 l le 2026-10-07.
 1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
 2. Lot 6, points déjà repérés :
    - vérifier sur un appareil neuf le premier lancement (le téléphone du porteur ne le montre pas : cave déjà remplie) ;
