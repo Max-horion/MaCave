@@ -48,9 +48,9 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 0 | Squelette : projet, traductions FR, thèmes clair/sombre, premier test, CLAUDE.md, architecture, Git/GitHub, installation sur le téléphone | **terminé** |
 | 1 | Base de données et stock : schéma drift, classification initiale, références, lots, mouvements, calcul du stock (tests) | **terminé** |
 | 2 | Liste, recherche plein texte (FTS5, migration de schéma v1 → v2), filtres/tris, fiche référence et lots, ajout, sortie rapide « −1 » avec annulation | **terminé** |
-| 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** (vérif. téléphone en attente) |
+| 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
-| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **en cours** (5a, 5b, 5e, 5c terminées ; 5d faite, à vérifier sur le téléphone) |
+| 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | à faire |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
@@ -66,15 +66,14 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-1. Vérification par le porteur sur le téléphone : 5d (Tesseract, mode comparaison) et code-barres dans les deux sens (formulaire, lots existants). Si OK : lot 5 **terminé** dans le tableau.
-2. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
-3. Lot 6, points déjà repérés :
+1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
+2. Lot 6, points déjà repérés :
    - écran des paramètres (CDC §7) : y déplacer « Espace disque » (purges) et le choix du moteur de lecture ; ajouter le réglage « recherche Open Food Facts activée ou non », la durée du bandeau « Annuler » (`undoDuration`), thème, tri par défaut, volumes par défaut, gestion de la classification ;
    - écran « À propos » : licences et sources à citer (INAO / Licence Ouverte, Tesseract et tessdata_best / Apache 2.0, ML Kit, Open Food Facts) ; fichier `LICENSE` (GPL v3 + exception ML Kit) avant toute diffusion ;
    - premier lancement en 3 étapes (CDC §6.8), alerte « données seulement sur l'appareil » en mode local (CDC §8.4) ;
    - Android 8 à 10 : autorisation d'écriture dans Documents pour les sauvegardes ;
    - nouvelle version du CDC (v0.6) reportant les décisions des lots 4 et 5 (voir « Décisions du porteur » et le journal).
-4. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
+3. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
 
 ## Où trouver quoi (lot 1)
 
@@ -220,3 +219,4 @@ Pièges rencontrés :
 - 2026-10-06 — Lot 5d : Tesseract 5 (Tesseract4Android, canal maison après abandon de `flutter_tesseract_ocr`, non compilable), dictionnaire français « best », choix du moteur et mode comparaison avec compteur des choix. 287 tests verts ; APK 141 Mo.
 - 2026-10-06 — Retour du porteur sur le 5d : Tesseract plus lent et **ne lisait aucun texte**. Cause : orientation EXIF ignorée (photo couchée). Corrigé (photo redressée et réduite côté Android, repli si tous les mots sont peu sûrs, diagnostic en mode comparaison) ; test sur un vrai résultat hOCR de Tesseract 5 (étiquette inventée). 290 tests verts.
 - 2026-10-06 — Bêta des moteurs (porteur) : Tesseract lit, un peu plus lent, résultats proches de ML Kit (ML Kit légèrement meilleur) ; échec commun des deux sur un nom en arc de cercle (à voir plus tard). Le porteur continue de comparer. Ajout du code-barres dans les deux sens (formulaire et lots existants). 295 tests verts.
+- 2026-10-07 — Vérifiés sur le téléphone par le porteur : 5d (Tesseract, mode comparaison), code-barres dans les deux sens, écrans du lot 3. **Lots 3 et 5 terminés.**
