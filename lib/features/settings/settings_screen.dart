@@ -10,6 +10,7 @@ import '../backup/backup_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../storage/storage_screen.dart';
 import '../sync/sync_screen.dart';
+import 'about_screen.dart';
 import 'classification_screen.dart';
 import 'default_volumes.dart';
 
@@ -167,6 +168,12 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.ios_share,
             title: l10n.menuExport,
             onTap: () => startExport(context, ref),
+          ),
+          const Divider(height: 32),
+          _LinkTile(
+            icon: Icons.info_outline,
+            title: l10n.aboutTitle,
+            onTap: () => open(const AboutScreen()),
           ),
           const SizedBox(height: 16),
           Padding(

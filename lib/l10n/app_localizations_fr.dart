@@ -1752,4 +1752,52 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get classLastType => 'Il faut garder au moins un type.';
+
+  @override
+  String get aboutTitle => 'À propos';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get aboutDescription =>
+      'Gestion d\'une cave personnelle, entièrement hors ligne, avec synchronisation facultative sur votre serveur.';
+
+  @override
+  String get aboutCopyright => '© 2026 Max-horion';
+
+  @override
+  String get aboutLicense =>
+      'Logiciel libre sous licence GNU GPL version 3 ou ultérieure, avec une autorisation supplémentaire pour Google ML Kit. Fourni sans aucune garantie.';
+
+  @override
+  String get aboutData => 'Données';
+
+  @override
+  String get aboutInao =>
+      'Appellations : Institut national de l\'origine et de la qualité (INAO), data.gouv.fr — Licence Ouverte / Etalab 2.0.';
+
+  @override
+  String get aboutOff =>
+      'Fiches pré-remplies : Open Food Facts (openfoodfacts.org), base libre sous licence ODbL. Seul le code-barres est envoyé.';
+
+  @override
+  String get aboutRecognition => 'Lecture des codes-barres et des étiquettes';
+
+  @override
+  String get aboutMlKit =>
+      'Google ML Kit — gratuit, non libre ; fonctionne sur le téléphone, sans envoi des photos.';
+
+  @override
+  String get aboutTesseract =>
+      'Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l\'Independent JPEG Group.';
+
+  @override
+  String get aboutIcon =>
+      'Icône : « bottle » de Tabler Icons (tabler.io), © Paweł Kuna — MIT.';
+
+  @override
+  String get aboutLicenses => 'Licences des logiciels';
 }

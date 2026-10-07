@@ -9,10 +9,12 @@ import 'data/local_store.dart';
 import 'data/providers.dart';
 import 'data/write_context.dart';
 import 'features/welcome/welcome_screen.dart';
+import 'licenses.dart';
 import 'sync/providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerExtraLicenses();
   final deviceId = await _loadDeviceId();
   final preferences = await AppPreferences.load(PrefsLocalStore());
   final firstLaunch =

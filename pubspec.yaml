@@ -44,6 +44,7 @@ dependencies:
   http: ^1.6.0
   intl: any
   mobile_scanner: ^7.4.2
+  package_info_plus: ^10.2.2
   path_provider: ^2.1.6
   share_plus: ^13.3.1
   shared_preferences: ^2.5.5
@@ -80,9 +81,14 @@ flutter:
   # Appellations officielles (INAO, Licence Ouverte) : tool/build_appellations.py
   assets:
     - assets/appellations.txt
+    # Icône de l'appli (écran À propos), rendue depuis tool/icon/bottle.svg.
+    - assets/icon.png
     # Tesseract (lot 5d) : dictionnaire français « best » (Apache 2.0,
     # github.com/tesseract-ocr/tessdata_best), copié au premier usage.
     - assets/tessdata/
+    # Licences des éléments de tiers sans paquet Dart (Tesseract et ses
+    # bibliothèques, icône), affichées par « Licences des logiciels ».
+    - assets/licenses/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

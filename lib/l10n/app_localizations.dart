@@ -2643,6 +2643,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Il faut garder au moins un type.'**
   String get classLastType;
+
+  /// Titre de l'écran À propos ; lien dans les paramètres.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get aboutTitle;
+
+  /// Numéro de version de l'appli.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version {version}'**
+  String aboutVersion(String version);
+
+  /// Présentation de l'appli.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gestion d\'une cave personnelle, entièrement hors ligne, avec synchronisation facultative sur votre serveur.'**
+  String get aboutDescription;
+
+  /// Auteur de l'appli.
+  ///
+  /// In fr, this message translates to:
+  /// **'© 2026 Max-horion'**
+  String get aboutCopyright;
+
+  /// Licence de l'appli.
+  ///
+  /// In fr, this message translates to:
+  /// **'Logiciel libre sous licence GNU GPL version 3 ou ultérieure, avec une autorisation supplémentaire pour Google ML Kit. Fourni sans aucune garantie.'**
+  String get aboutLicense;
+
+  /// À propos : rubrique des sources de données.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données'**
+  String get aboutData;
+
+  /// Source des appellations.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appellations : Institut national de l\'origine et de la qualité (INAO), data.gouv.fr — Licence Ouverte / Etalab 2.0.'**
+  String get aboutInao;
+
+  /// Source Open Food Facts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fiches pré-remplies : Open Food Facts (openfoodfacts.org), base libre sous licence ODbL. Seul le code-barres est envoyé.'**
+  String get aboutOff;
+
+  /// À propos : rubrique des moteurs de reconnaissance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture des codes-barres et des étiquettes'**
+  String get aboutRecognition;
+
+  /// Mention ML Kit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Google ML Kit — gratuit, non libre ; fonctionne sur le téléphone, sans envoi des photos.'**
+  String get aboutMlKit;
+
+  /// Mention Tesseract et bibliothèques embarquées (mention IJG exigée).
+  ///
+  /// In fr, this message translates to:
+  /// **'Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l\'Independent JPEG Group.'**
+  String get aboutTesseract;
+
+  /// Source de l'icône.
+  ///
+  /// In fr, this message translates to:
+  /// **'Icône : « bottle » de Tabler Icons (tabler.io), © Paweł Kuna — MIT.'**
+  String get aboutIcon;
+
+  /// Bouton : liste des licences des bibliothèques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Licences des logiciels'**
+  String get aboutLicenses;
 }
 
 class _AppLocalizationsDelegate

@@ -2167,5 +2167,62 @@
   "classLastType": "Il faut garder au moins un type.",
   "@classLastType": {
     "description": "Message : le dernier type ne peut pas être supprimé."
+  },
+  "aboutTitle": "À propos",
+  "@aboutTitle": {
+    "description": "Titre de l'écran À propos ; lien dans les paramètres."
+  },
+  "aboutVersion": "Version {version}",
+  "@aboutVersion": {
+    "description": "Numéro de version de l'appli.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutDescription": "Gestion d'une cave personnelle, entièrement hors ligne, avec synchronisation facultative sur votre serveur.",
+  "@aboutDescription": {
+    "description": "Présentation de l'appli."
+  },
+  "aboutCopyright": "© 2026 Max-horion",
+  "@aboutCopyright": {
+    "description": "Auteur de l'appli."
+  },
+  "aboutLicense": "Logiciel libre sous licence GNU GPL version 3 ou ultérieure, avec une autorisation supplémentaire pour Google ML Kit. Fourni sans aucune garantie.",
+  "@aboutLicense": {
+    "description": "Licence de l'appli."
+  },
+  "aboutData": "Données",
+  "@aboutData": {
+    "description": "À propos : rubrique des sources de données."
+  },
+  "aboutInao": "Appellations : Institut national de l'origine et de la qualité (INAO), data.gouv.fr — Licence Ouverte / Etalab 2.0.",
+  "@aboutInao": {
+    "description": "Source des appellations."
+  },
+  "aboutOff": "Fiches pré-remplies : Open Food Facts (openfoodfacts.org), base libre sous licence ODbL. Seul le code-barres est envoyé.",
+  "@aboutOff": {
+    "description": "Source Open Food Facts."
+  },
+  "aboutRecognition": "Lecture des codes-barres et des étiquettes",
+  "@aboutRecognition": {
+    "description": "À propos : rubrique des moteurs de reconnaissance."
+  },
+  "aboutMlKit": "Google ML Kit — gratuit, non libre ; fonctionne sur le téléphone, sans envoi des photos.",
+  "@aboutMlKit": {
+    "description": "Mention ML Kit."
+  },
+  "aboutTesseract": "Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l'Independent JPEG Group.",
+  "@aboutTesseract": {
+    "description": "Mention Tesseract et bibliothèques embarquées (mention IJG exigée)."
+  },
+  "aboutIcon": "Icône : « bottle » de Tabler Icons (tabler.io), © Paweł Kuna — MIT.",
+  "@aboutIcon": {
+    "description": "Source de l'icône."
+  },
+  "aboutLicenses": "Licences des logiciels",
+  "@aboutLicenses": {
+    "description": "Bouton : liste des licences des bibliothèques."
   }
 }
