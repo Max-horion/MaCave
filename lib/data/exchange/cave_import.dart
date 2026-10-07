@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../domain/label_parsing.dart';
 import '../../domain/csv.dart';
 import '../../domain/enums.dart';
 import '../../domain/text.dart';
@@ -154,9 +155,11 @@ class CaveImporter {
           vintageText.isNotEmpty ||
           stockText.isNotEmpty;
 
+      // En millilitres (« 750 »), ou avec l'unité dans un fichier préparé à
+      // la main (« 75 cl », « 0,75 l »).
       final volume = volumeText.isEmpty
           ? (type?.defaultVolumeMl ?? 750)
-          : int.tryParse(volumeText);
+          : int.tryParse(volumeText) ?? parseVolumeMl(volumeText);
       if (hasLot && (volume == null || volume <= 0)) {
         report.issues.add(
           ImportIssue(line, ImportIssueCode.invalidVolume, volumeText),

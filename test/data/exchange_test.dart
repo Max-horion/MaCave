@@ -5,6 +5,8 @@ import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
 import 'package:cave/data/exchange/cave_import.dart';
 import 'package:cave/data/exchange/csv_export.dart';
+import 'package:cave/data/exchange/exchange_format.dart';
+import 'package:cave/data/exchange/import_template.dart';
 import 'package:cave/domain/csv.dart';
 import 'package:cave/domain/drink_filter.dart';
 import 'package:cave/domain/enums.dart';
@@ -204,6 +206,40 @@ void main() {
         (preview.drinksCreated, preview.lotsCreated, preview.bottlesAdded),
         (applied.drinksCreated, applied.lotsCreated, applied.bottlesAdded),
       );
+    });
+
+    test('volume écrit avec son unité', () async {
+      final report = await CaveImporter(db, ctx).apply(
+        'Nom;Type;Volume (ml);Stock\n'
+        'Fût Test;Bière;6 l;1\n'
+        'Bouteille Test;Bière;75 cl;2\n'
+        'Mauvais Test;Bière;beaucoup;1\n',
+      );
+      expect(report.lotsCreated, 2);
+      expect(report.issues.single.code, ImportIssueCode.invalidVolume);
+      final volumes = (await db.select(db.lots).get())
+          .map((l) => l.volumeMl)
+          .toSet();
+      expect(volumes, {6000, 750});
+    });
+
+    test('fichier modèle : importé tel quel, sans erreur', () async {
+      final classification = await CaveQueries(db).watchClassification().first;
+      final template = importTemplateCsv(classification);
+      final table = CsvTable(decodeCsv(template));
+      expect(table.has(StockColumns.name), isTrue);
+
+      final report = await CaveImporter(db, ctx).apply(template);
+      expect(report.kind, ImportKind.stock);
+      expect(report.issues, isEmpty);
+      expect(report.unknownCharacteristics, isEmpty);
+      expect(report.drinksCreated, 2, reason: 'un vin et une bière');
+      expect(report.bottlesAdded, 18);
+      expect(report.needsCompletion, 0);
+      final names = (await db.select(db.drinks).get()).map((d) => d.name);
+      expect(names, everyElement(startsWith(templateExamplePrefix)));
+      final links = await db.select(db.drinkCharacteristics).get();
+      expect(links, isNotEmpty, reason: 'caractéristiques reconnues');
     });
 
     test('fichier non reconnu', () async {

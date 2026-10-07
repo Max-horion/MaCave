@@ -537,6 +537,151 @@
       }
     }
   },
+  "importTitle": "Importer un fichier",
+  "@importTitle": {
+    "description": "Titre du choix de l'import (CDC §6.7)."
+  },
+  "importHelp": "Fichiers acceptés : une sauvegarde ou un export de Ma Cave, l'export de Vivino (cellar.csv), ou un fichier préparé dans un tableur.",
+  "@importHelp": {
+    "description": "Explication sous le titre de l'import."
+  },
+  "importChooseFile": "Choisir le fichier",
+  "@importChooseFile": {
+    "description": "Bouton : ouvrir le sélecteur de fichier pour importer."
+  },
+  "importPrepare": "Préparer un fichier dans un tableur",
+  "@importPrepare": {
+    "description": "Bouton : ouvrir les consignes de format et le fichier modèle."
+  },
+  "importSeeGuide": "Préparer un fichier : voir les consignes",
+  "@importSeeGuide": {
+    "description": "Lien dans l'aperçu quand le fichier n'est pas reconnu."
+  },
+  "importGuideTitle": "Préparer un fichier d'import",
+  "@importGuideTitle": {
+    "description": "Titre de l'écran des consignes d'import."
+  },
+  "importGuideIntro": "Pour importer une cave tenue dans un tableur (Excel, LibreOffice…), le plus simple est de partir du fichier modèle : il contient les bonnes colonnes et deux lignes d'exemple à remplacer.",
+  "@importGuideIntro": {
+    "description": "Introduction de l'écran des consignes d'import."
+  },
+  "importTemplateGet": "Obtenir le fichier modèle",
+  "@importTemplateGet": {
+    "description": "Bouton : partager ou enregistrer le fichier CSV modèle."
+  },
+  "importGuideImport": "Importer mon fichier",
+  "@importGuideImport": {
+    "description": "Bouton de l'écran des consignes : choisir le fichier préparé et l'importer."
+  },
+  "importTemplateTitle": "Fichier modèle",
+  "@importTemplateTitle": {
+    "description": "Titre du choix partage/enregistrement du fichier modèle."
+  },
+  "importTemplateHelp": "Ouvrez-le dans un tableur, remplacez les lignes d'exemple par vos bouteilles, enregistrez-le au format CSV puis importez-le.",
+  "@importTemplateHelp": {
+    "description": "Explication du fichier modèle."
+  },
+  "importTemplateFile": "ma-cave-modele-import.csv",
+  "@importTemplateFile": {
+    "description": "Nom du fichier modèle d'import."
+  },
+  "importGuideRulesTitle": "Règles générales",
+  "@importGuideRulesTitle": {
+    "description": "Titre de section des consignes d'import."
+  },
+  "importGuideRuleLot": "Une ligne par lot : une même boisson en deux millésimes ou deux volumes s'écrit sur deux lignes, avec le même nom et le même producteur.",
+  "@importGuideRuleLot": {
+    "description": "Consigne d'import : une ligne par lot."
+  },
+  "importGuideRuleHeader": "La première ligne contient les noms des colonnes, écrits comme dans le modèle (majuscules et accents indifférents). L'ordre des colonnes est libre ; seule la colonne « Nom » est obligatoire.",
+  "@importGuideRuleHeader": {
+    "description": "Consigne d'import : ligne d'en-tête."
+  },
+  "importGuideRuleCsv": "Enregistrez au format CSV, avec le point-virgule ou la virgule comme séparateur, de préférence en UTF-8.",
+  "@importGuideRuleCsv": {
+    "description": "Consigne d'import : format CSV."
+  },
+  "importGuideRuleIncomplete": "Une ligne incomplète est quand même importée : la fiche est marquée « à compléter ». Avant l'import, un aperçu indique ce qui sera créé et les lignes ignorées.",
+  "@importGuideRuleIncomplete": {
+    "description": "Consigne d'import : fiches incomplètes et aperçu."
+  },
+  "importGuideRuleAgain": "Importer à nouveau le même fichier ne double pas le stock : le stock du fichier remplace celui du lot. Les fiches déjà présentes ne sont pas modifiées.",
+  "@importGuideRuleAgain": {
+    "description": "Consigne d'import : réimport sans doublon."
+  },
+  "importGuideColumnsTitle": "Colonnes",
+  "@importGuideColumnsTitle": {
+    "description": "Titre de section des consignes d'import : liste des colonnes."
+  },
+  "importGuideColType": "Un des types de votre cave (liste ci-dessous). Vide ou inconnu : fiche « à compléter ».",
+  "@importGuideColType": {
+    "description": "Consigne pour la colonne Type."
+  },
+  "importGuideColName": "Obligatoire. Nom de la boisson ; une ligne sans nom est ignorée.",
+  "@importGuideColName": {
+    "description": "Consigne pour la colonne Nom."
+  },
+  "importGuideColText": "Texte libre, facultatif. Pour un vin, indiquez la région ou le pays, sinon la fiche sera « à compléter ».",
+  "@importGuideColText": {
+    "description": "Consigne pour les colonnes texte (producteur, appellation, région, pays, cépages)."
+  },
+  "importGuideColAbv": "Degré d'alcool : 13,5 ou 13.5.",
+  "@importGuideColAbv": {
+    "description": "Consigne pour la colonne Degré."
+  },
+  "importGuideColRating": "Note personnelle, de 0 à 5 (étoiles).",
+  "@importGuideColRating": {
+    "description": "Consigne pour la colonne Note."
+  },
+  "importGuideColComment": "Texte libre.",
+  "@importGuideColComment": {
+    "description": "Consigne pour la colonne Commentaire."
+  },
+  "importGuideColVintage": "Année (2020) ; vide pour une boisson sans millésime.",
+  "@importGuideColVintage": {
+    "description": "Consigne pour la colonne Millésime."
+  },
+  "importGuideColVolume": "En millilitres (750) ou avec l'unité (75 cl, 1,5 l). Vide : volume par défaut du type.",
+  "@importGuideColVolume": {
+    "description": "Consigne pour la colonne Volume."
+  },
+  "importGuideColBarcode": "Facultatif : chiffres du code-barres de la bouteille.",
+  "@importGuideColBarcode": {
+    "description": "Consigne pour la colonne Code-barres."
+  },
+  "importGuideColStock": "Nombre de bouteilles ; vide : 0.",
+  "@importGuideColStock": {
+    "description": "Consigne pour la colonne Stock."
+  },
+  "importGuideTypesTitle": "Types et caractéristiques reconnus",
+  "@importGuideTypesTitle": {
+    "description": "Titre de section : classification de l'utilisateur, utilisable dans le fichier."
+  },
+  "importGuideTypesHelp": "Ceux de votre cave, modifiables dans Paramètres → Types et caractéristiques.",
+  "@importGuideTypesHelp": {
+    "description": "Explication de la section types et caractéristiques."
+  },
+  "importGuideColFavorite": "« {yes} » pour un favori, sinon vide.",
+  "@importGuideColFavorite": {
+    "description": "Consigne pour la colonne Favori ; yes = mot attendu (oui).",
+    "placeholders": {
+      "yes": {
+        "type": "String"
+      }
+    }
+  },
+  "importGuideColCharacteristics": "Famille et valeur séparées par « {family} », plusieurs séparées par « {separator} » : Robe : Rouge {separator} Sucre : Sec. La famille peut être omise. Une valeur inconnue est ignorée et signalée.",
+  "@importGuideColCharacteristics": {
+    "description": "Consigne pour la colonne Caractéristiques.",
+    "placeholders": {
+      "family": {
+        "type": "String"
+      },
+      "separator": {
+        "type": "String"
+      }
+    }
+  },
   "importPreviewTitle": "Aperçu de l'import",
   "@importPreviewTitle": {
     "description": "Titre du bilan avant import."

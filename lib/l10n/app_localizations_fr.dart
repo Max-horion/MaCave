@@ -432,6 +432,124 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get importTitle => 'Importer un fichier';
+
+  @override
+  String get importHelp =>
+      'Fichiers acceptés : une sauvegarde ou un export de Ma Cave, l\'export de Vivino (cellar.csv), ou un fichier préparé dans un tableur.';
+
+  @override
+  String get importChooseFile => 'Choisir le fichier';
+
+  @override
+  String get importPrepare => 'Préparer un fichier dans un tableur';
+
+  @override
+  String get importSeeGuide => 'Préparer un fichier : voir les consignes';
+
+  @override
+  String get importGuideTitle => 'Préparer un fichier d\'import';
+
+  @override
+  String get importGuideIntro =>
+      'Pour importer une cave tenue dans un tableur (Excel, LibreOffice…), le plus simple est de partir du fichier modèle : il contient les bonnes colonnes et deux lignes d\'exemple à remplacer.';
+
+  @override
+  String get importTemplateGet => 'Obtenir le fichier modèle';
+
+  @override
+  String get importGuideImport => 'Importer mon fichier';
+
+  @override
+  String get importTemplateTitle => 'Fichier modèle';
+
+  @override
+  String get importTemplateHelp =>
+      'Ouvrez-le dans un tableur, remplacez les lignes d\'exemple par vos bouteilles, enregistrez-le au format CSV puis importez-le.';
+
+  @override
+  String get importTemplateFile => 'ma-cave-modele-import.csv';
+
+  @override
+  String get importGuideRulesTitle => 'Règles générales';
+
+  @override
+  String get importGuideRuleLot =>
+      'Une ligne par lot : une même boisson en deux millésimes ou deux volumes s\'écrit sur deux lignes, avec le même nom et le même producteur.';
+
+  @override
+  String get importGuideRuleHeader =>
+      'La première ligne contient les noms des colonnes, écrits comme dans le modèle (majuscules et accents indifférents). L\'ordre des colonnes est libre ; seule la colonne « Nom » est obligatoire.';
+
+  @override
+  String get importGuideRuleCsv =>
+      'Enregistrez au format CSV, avec le point-virgule ou la virgule comme séparateur, de préférence en UTF-8.';
+
+  @override
+  String get importGuideRuleIncomplete =>
+      'Une ligne incomplète est quand même importée : la fiche est marquée « à compléter ». Avant l\'import, un aperçu indique ce qui sera créé et les lignes ignorées.';
+
+  @override
+  String get importGuideRuleAgain =>
+      'Importer à nouveau le même fichier ne double pas le stock : le stock du fichier remplace celui du lot. Les fiches déjà présentes ne sont pas modifiées.';
+
+  @override
+  String get importGuideColumnsTitle => 'Colonnes';
+
+  @override
+  String get importGuideColType =>
+      'Un des types de votre cave (liste ci-dessous). Vide ou inconnu : fiche « à compléter ».';
+
+  @override
+  String get importGuideColName =>
+      'Obligatoire. Nom de la boisson ; une ligne sans nom est ignorée.';
+
+  @override
+  String get importGuideColText =>
+      'Texte libre, facultatif. Pour un vin, indiquez la région ou le pays, sinon la fiche sera « à compléter ».';
+
+  @override
+  String get importGuideColAbv => 'Degré d\'alcool : 13,5 ou 13.5.';
+
+  @override
+  String get importGuideColRating => 'Note personnelle, de 0 à 5 (étoiles).';
+
+  @override
+  String get importGuideColComment => 'Texte libre.';
+
+  @override
+  String get importGuideColVintage =>
+      'Année (2020) ; vide pour une boisson sans millésime.';
+
+  @override
+  String get importGuideColVolume =>
+      'En millilitres (750) ou avec l\'unité (75 cl, 1,5 l). Vide : volume par défaut du type.';
+
+  @override
+  String get importGuideColBarcode =>
+      'Facultatif : chiffres du code-barres de la bouteille.';
+
+  @override
+  String get importGuideColStock => 'Nombre de bouteilles ; vide : 0.';
+
+  @override
+  String get importGuideTypesTitle => 'Types et caractéristiques reconnus';
+
+  @override
+  String get importGuideTypesHelp =>
+      'Ceux de votre cave, modifiables dans Paramètres → Types et caractéristiques.';
+
+  @override
+  String importGuideColFavorite(String yes) {
+    return '« $yes » pour un favori, sinon vide.';
+  }
+
+  @override
+  String importGuideColCharacteristics(String family, String separator) {
+    return 'Famille et valeur séparées par « $family », plusieurs séparées par « $separator » : Robe : Rouge $separator Sucre : Sec. La famille peut être omise. Une valeur inconnue est ignorée et signalée.';
+  }
+
+  @override
   String get importPreviewTitle => 'Aperçu de l\'import';
 
   @override

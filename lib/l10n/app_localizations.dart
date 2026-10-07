@@ -730,6 +730,204 @@ abstract class AppLocalizations {
   /// **'ma-cave-historique-{date}.csv'**
   String exportFileHistory(String date);
 
+  /// Titre du choix de l'import (CDC §6.7).
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer un fichier'**
+  String get importTitle;
+
+  /// Explication sous le titre de l'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichiers acceptés : une sauvegarde ou un export de Ma Cave, l\'export de Vivino (cellar.csv), ou un fichier préparé dans un tableur.'**
+  String get importHelp;
+
+  /// Bouton : ouvrir le sélecteur de fichier pour importer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir le fichier'**
+  String get importChooseFile;
+
+  /// Bouton : ouvrir les consignes de format et le fichier modèle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparer un fichier dans un tableur'**
+  String get importPrepare;
+
+  /// Lien dans l'aperçu quand le fichier n'est pas reconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparer un fichier : voir les consignes'**
+  String get importSeeGuide;
+
+  /// Titre de l'écran des consignes d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparer un fichier d\'import'**
+  String get importGuideTitle;
+
+  /// Introduction de l'écran des consignes d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour importer une cave tenue dans un tableur (Excel, LibreOffice…), le plus simple est de partir du fichier modèle : il contient les bonnes colonnes et deux lignes d\'exemple à remplacer.'**
+  String get importGuideIntro;
+
+  /// Bouton : partager ou enregistrer le fichier CSV modèle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Obtenir le fichier modèle'**
+  String get importTemplateGet;
+
+  /// Bouton de l'écran des consignes : choisir le fichier préparé et l'importer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer mon fichier'**
+  String get importGuideImport;
+
+  /// Titre du choix partage/enregistrement du fichier modèle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier modèle'**
+  String get importTemplateTitle;
+
+  /// Explication du fichier modèle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez-le dans un tableur, remplacez les lignes d\'exemple par vos bouteilles, enregistrez-le au format CSV puis importez-le.'**
+  String get importTemplateHelp;
+
+  /// Nom du fichier modèle d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'ma-cave-modele-import.csv'**
+  String get importTemplateFile;
+
+  /// Titre de section des consignes d'import.
+  ///
+  /// In fr, this message translates to:
+  /// **'Règles générales'**
+  String get importGuideRulesTitle;
+
+  /// Consigne d'import : une ligne par lot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une ligne par lot : une même boisson en deux millésimes ou deux volumes s\'écrit sur deux lignes, avec le même nom et le même producteur.'**
+  String get importGuideRuleLot;
+
+  /// Consigne d'import : ligne d'en-tête.
+  ///
+  /// In fr, this message translates to:
+  /// **'La première ligne contient les noms des colonnes, écrits comme dans le modèle (majuscules et accents indifférents). L\'ordre des colonnes est libre ; seule la colonne « Nom » est obligatoire.'**
+  String get importGuideRuleHeader;
+
+  /// Consigne d'import : format CSV.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrez au format CSV, avec le point-virgule ou la virgule comme séparateur, de préférence en UTF-8.'**
+  String get importGuideRuleCsv;
+
+  /// Consigne d'import : fiches incomplètes et aperçu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une ligne incomplète est quand même importée : la fiche est marquée « à compléter ». Avant l\'import, un aperçu indique ce qui sera créé et les lignes ignorées.'**
+  String get importGuideRuleIncomplete;
+
+  /// Consigne d'import : réimport sans doublon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer à nouveau le même fichier ne double pas le stock : le stock du fichier remplace celui du lot. Les fiches déjà présentes ne sont pas modifiées.'**
+  String get importGuideRuleAgain;
+
+  /// Titre de section des consignes d'import : liste des colonnes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Colonnes'**
+  String get importGuideColumnsTitle;
+
+  /// Consigne pour la colonne Type.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un des types de votre cave (liste ci-dessous). Vide ou inconnu : fiche « à compléter ».'**
+  String get importGuideColType;
+
+  /// Consigne pour la colonne Nom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Obligatoire. Nom de la boisson ; une ligne sans nom est ignorée.'**
+  String get importGuideColName;
+
+  /// Consigne pour les colonnes texte (producteur, appellation, région, pays, cépages).
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte libre, facultatif. Pour un vin, indiquez la région ou le pays, sinon la fiche sera « à compléter ».'**
+  String get importGuideColText;
+
+  /// Consigne pour la colonne Degré.
+  ///
+  /// In fr, this message translates to:
+  /// **'Degré d\'alcool : 13,5 ou 13.5.'**
+  String get importGuideColAbv;
+
+  /// Consigne pour la colonne Note.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note personnelle, de 0 à 5 (étoiles).'**
+  String get importGuideColRating;
+
+  /// Consigne pour la colonne Commentaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte libre.'**
+  String get importGuideColComment;
+
+  /// Consigne pour la colonne Millésime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année (2020) ; vide pour une boisson sans millésime.'**
+  String get importGuideColVintage;
+
+  /// Consigne pour la colonne Volume.
+  ///
+  /// In fr, this message translates to:
+  /// **'En millilitres (750) ou avec l\'unité (75 cl, 1,5 l). Vide : volume par défaut du type.'**
+  String get importGuideColVolume;
+
+  /// Consigne pour la colonne Code-barres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Facultatif : chiffres du code-barres de la bouteille.'**
+  String get importGuideColBarcode;
+
+  /// Consigne pour la colonne Stock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de bouteilles ; vide : 0.'**
+  String get importGuideColStock;
+
+  /// Titre de section : classification de l'utilisateur, utilisable dans le fichier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Types et caractéristiques reconnus'**
+  String get importGuideTypesTitle;
+
+  /// Explication de la section types et caractéristiques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ceux de votre cave, modifiables dans Paramètres → Types et caractéristiques.'**
+  String get importGuideTypesHelp;
+
+  /// Consigne pour la colonne Favori ; yes = mot attendu (oui).
+  ///
+  /// In fr, this message translates to:
+  /// **'« {yes} » pour un favori, sinon vide.'**
+  String importGuideColFavorite(String yes);
+
+  /// Consigne pour la colonne Caractéristiques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Famille et valeur séparées par « {family} », plusieurs séparées par « {separator} » : Robe : Rouge {separator} Sucre : Sec. La famille peut être omise. Une valeur inconnue est ignorée et signalée.'**
+  String importGuideColCharacteristics(String family, String separator);
+
   /// Titre du bilan avant import.
   ///
   /// In fr, this message translates to:
