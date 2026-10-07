@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/app_preferences.dart';
 import '../../data/cave_queries.dart';
 import '../../data/cave_repository.dart';
 import '../../data/database.dart';
@@ -220,7 +221,10 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
     }
     setState(() => _barcode = code);
 
-    if (!OpenFoodFacts.canLookUp(code)) return;
+    if (!OpenFoodFacts.canLookUp(code) ||
+        !ref.read(appPreferencesProvider).openFoodFacts) {
+      return;
+    }
     final result = await ref.read(openFoodFactsProvider).lookUp(code);
     if (result is! OffFound || !mounted) return;
     setState(() => _fill(classification, result.draft, onlyEmpty: true));

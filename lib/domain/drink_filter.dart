@@ -76,8 +76,10 @@ class DrinkFilter {
     );
   }
 
-  /// Retire tous les filtres, garde la recherche et le tri.
-  DrinkFilter cleared() => DrinkFilter(query: query, sort: sort);
+  /// Retire tous les filtres, garde la recherche et le tri ; les épuisés
+  /// reviennent à [showExhausted] (réglage par défaut).
+  DrinkFilter cleared({bool showExhausted = false}) =>
+      DrinkFilter(query: query, sort: sort, showExhausted: showExhausted);
 }
 
 /// Transforme le texte tapé en requête FTS5, ou `null` s'il n'y a rien à

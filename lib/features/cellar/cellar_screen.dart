@@ -7,15 +7,13 @@ import '../../domain/drink_filter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
-import '../backup/backup_screen.dart';
 import '../drink/drink_detail_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../inventory/inventory_screen.dart';
 import '../scan/scan_flow.dart';
+import '../settings/settings_screen.dart';
 import '../stats/stats_screen.dart';
-import '../storage/storage_screen.dart';
 import '../sync/sync_indicator.dart';
-import '../sync/sync_screen.dart';
 import '../drink/drink_form_screen.dart';
 import '../stock_actions.dart';
 import 'filter_sheet.dart';
@@ -90,7 +88,7 @@ class CellarScreen extends ConsumerWidget {
                       ? OutlinedButton(
                           onPressed: () => ref
                               .read(drinkFilterProvider.notifier)
-                              .change((f) => f.cleared()),
+                              .clearFilters(),
                           child: Text(l10n.clearFilters),
                         )
                       : null,
@@ -129,18 +127,10 @@ class CellarScreen extends ConsumerWidget {
   }
 }
 
-enum _MenuAction {
-  inventory,
-  statistics,
-  import,
-  export,
-  backups,
-  sync,
-  storage,
-}
+enum _MenuAction { inventory, statistics, import, export, settings }
 
-/// Menu « ⋮ » : inventaire, statistiques, import, export, sauvegardes,
-/// synchronisation et espace disque.
+/// Menu « ⋮ » : inventaire, statistiques, import, export, paramètres
+/// (synchronisation, sauvegardes et espace disque y sont rangés).
 class _MainMenu extends ConsumerWidget {
   const _MainMenu();
 
@@ -158,9 +148,7 @@ class _MainMenu extends ConsumerWidget {
         _MenuAction.statistics => open(const StatsScreen()),
         _MenuAction.import => startImport(context, ref),
         _MenuAction.export => startExport(context, ref),
-        _MenuAction.backups => open(const BackupScreen()),
-        _MenuAction.sync => open(const SyncScreen()),
-        _MenuAction.storage => open(const StorageScreen()),
+        _MenuAction.settings => open(const SettingsScreen()),
       },
       itemBuilder: (_) => [
         PopupMenuItem(
@@ -192,25 +180,12 @@ class _MainMenu extends ConsumerWidget {
             title: Text(l10n.menuExport),
           ),
         ),
+        const PopupMenuDivider(),
         PopupMenuItem(
-          value: _MenuAction.backups,
+          value: _MenuAction.settings,
           child: ListTile(
-            leading: const Icon(Icons.save_outlined),
-            title: Text(l10n.menuBackups),
-          ),
-        ),
-        PopupMenuItem(
-          value: _MenuAction.sync,
-          child: ListTile(
-            leading: const Icon(Icons.cloud_outlined),
-            title: Text(l10n.menuSync),
-          ),
-        ),
-        PopupMenuItem(
-          value: _MenuAction.storage,
-          child: ListTile(
-            leading: const Icon(Icons.storage_outlined),
-            title: Text(l10n.menuStorage),
+            leading: const Icon(Icons.settings_outlined),
+            title: Text(l10n.menuSettings),
           ),
         ),
       ],

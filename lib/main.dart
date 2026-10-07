@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import 'app.dart';
+import 'data/app_preferences.dart';
+import 'data/local_store.dart';
 import 'data/providers.dart';
 import 'data/write_context.dart';
 import 'features/welcome/welcome_screen.dart';
@@ -12,6 +14,7 @@ import 'sync/providers.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final deviceId = await _loadDeviceId();
+  final preferences = await AppPreferences.load(PrefsLocalStore());
   final firstLaunch =
       await SharedPreferencesAsync().getString(welcomeDoneKey) == null;
   runApp(
@@ -20,6 +23,7 @@ Future<void> main() async {
         writeContextProvider.overrideWithValue(
           WriteContext(deviceId: deviceId),
         ),
+        initialAppPreferencesProvider.overrideWithValue(preferences),
       ],
       child: AutomaticTasks(child: CaveApp(firstLaunch: firstLaunch)),
     ),

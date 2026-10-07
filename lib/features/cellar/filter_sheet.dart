@@ -52,7 +52,7 @@ class _FilterSheet extends ConsumerWidget {
               ),
               if (filter.activeCount > 0)
                 TextButton(
-                  onPressed: () => notifier.change((f) => f.cleared()),
+                  onPressed: () => notifier.clearFilters(),
                   child: Text(l10n.clearFilters),
                 ),
             ],

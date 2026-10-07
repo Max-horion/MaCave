@@ -1472,7 +1472,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get welcomeStorageHelp =>
-      'Vous pourrez changer d\'avis plus tard (menu ⋮ → Synchronisation).';
+      'Vous pourrez changer d\'avis plus tard (menu ⋮ → Paramètres → Synchronisation).';
 
   @override
   String get welcomeLocal => 'Sur cet appareil uniquement';
@@ -1496,7 +1496,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get welcomeLocalAlert =>
-      'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Synchronisation).';
+      'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).';
 
   @override
   String get welcomeLocalAlertOk => 'J\'ai compris';
@@ -1534,4 +1534,88 @@ class AppLocalizationsFr extends AppLocalizations {
   String welcomeVolumeOf(String type) {
     return 'Volume par défaut : $type';
   }
+
+  @override
+  String get menuSettings => 'Paramètres';
+
+  @override
+  String get settingsTitle => 'Paramètres';
+
+  @override
+  String get settingsAppearance => 'Apparence';
+
+  @override
+  String get settingsTheme => 'Thème';
+
+  @override
+  String get settingsThemeSystem => 'Comme le téléphone';
+
+  @override
+  String get settingsThemeLight => 'Clair';
+
+  @override
+  String get settingsThemeDark => 'Sombre';
+
+  @override
+  String get settingsTextSize => 'Taille du texte';
+
+  @override
+  String get settingsTextNormal => 'Normale';
+
+  @override
+  String get settingsTextLarge => 'Grande';
+
+  @override
+  String get settingsTextLarger => 'Très grande';
+
+  @override
+  String get settingsDefaults => 'Volumes par défaut';
+
+  @override
+  String get settingsDefaultsHelp =>
+      'Volume proposé pour une nouvelle bouteille, selon son type. Partagé avec vos autres appareils si la synchronisation est active.';
+
+  @override
+  String get settingsDisplay => 'Affichage';
+
+  @override
+  String get settingsDefaultSort => 'Tri à l\'ouverture';
+
+  @override
+  String get settingsShowExhausted => 'Afficher les références épuisées';
+
+  @override
+  String get settingsShowExhaustedHelp =>
+      'À l\'ouverture de l\'appli ; modifiable à tout moment dans les filtres.';
+
+  @override
+  String get settingsUndo => 'Durée du bandeau « Annuler »';
+
+  @override
+  String settingsSeconds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count secondes',
+      one: '1 seconde',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsRecognition => 'Reconnaissance';
+
+  @override
+  String get settingsOff => 'Recherche sur Open Food Facts';
+
+  @override
+  String get settingsOffHelp =>
+      'Pour un code-barres inconnu, le code (et rien d\'autre) est envoyé à Open Food Facts pour pré-remplir la fiche.';
+
+  @override
+  String get settingsData => 'Données';
+
+  @override
+  String get settingsDeviceNote =>
+      'Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.';
 }

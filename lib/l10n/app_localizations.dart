@@ -2203,7 +2203,7 @@ abstract class AppLocalizations {
   /// Premier lancement, étape 1 : explication.
   ///
   /// In fr, this message translates to:
-  /// **'Vous pourrez changer d\'avis plus tard (menu ⋮ → Synchronisation).'**
+  /// **'Vous pourrez changer d\'avis plus tard (menu ⋮ → Paramètres → Synchronisation).'**
   String get welcomeStorageHelp;
 
   /// Premier lancement : choix du mode local.
@@ -2245,7 +2245,7 @@ abstract class AppLocalizations {
   /// Alerte du mode local (CDC §8.4) : message.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Synchronisation).'**
+  /// **'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).'**
   String get welcomeLocalAlert;
 
   /// Alerte du mode local : bouton.
@@ -2295,6 +2295,150 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Volume par défaut : {type}'**
   String welcomeVolumeOf(String type);
+
+  /// Menu : ouvrir les paramètres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres'**
+  String get menuSettings;
+
+  /// Titre de l'écran des paramètres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres'**
+  String get settingsTitle;
+
+  /// Paramètres : rubrique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Apparence'**
+  String get settingsAppearance;
+
+  /// Paramètres : choix du thème.
+  ///
+  /// In fr, this message translates to:
+  /// **'Thème'**
+  String get settingsTheme;
+
+  /// Thème : suivre le réglage d'Android.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme le téléphone'**
+  String get settingsThemeSystem;
+
+  /// Thème clair.
+  ///
+  /// In fr, this message translates to:
+  /// **'Clair'**
+  String get settingsThemeLight;
+
+  /// Thème sombre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sombre'**
+  String get settingsThemeDark;
+
+  /// Paramètres : taille du texte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille du texte'**
+  String get settingsTextSize;
+
+  /// Taille du texte : celle d'Android.
+  ///
+  /// In fr, this message translates to:
+  /// **'Normale'**
+  String get settingsTextNormal;
+
+  /// Taille du texte : un peu plus grande.
+  ///
+  /// In fr, this message translates to:
+  /// **'Grande'**
+  String get settingsTextLarge;
+
+  /// Taille du texte : nettement plus grande.
+  ///
+  /// In fr, this message translates to:
+  /// **'Très grande'**
+  String get settingsTextLarger;
+
+  /// Paramètres : rubrique des volumes pré-remplis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volumes par défaut'**
+  String get settingsDefaults;
+
+  /// Paramètres : explication des volumes par défaut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Volume proposé pour une nouvelle bouteille, selon son type. Partagé avec vos autres appareils si la synchronisation est active.'**
+  String get settingsDefaultsHelp;
+
+  /// Paramètres : rubrique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Affichage'**
+  String get settingsDisplay;
+
+  /// Paramètres : tri de la liste au démarrage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tri à l\'ouverture'**
+  String get settingsDefaultSort;
+
+  /// Paramètres : interrupteur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher les références épuisées'**
+  String get settingsShowExhausted;
+
+  /// Paramètres : explication de l'interrupteur des épuisés.
+  ///
+  /// In fr, this message translates to:
+  /// **'À l\'ouverture de l\'appli ; modifiable à tout moment dans les filtres.'**
+  String get settingsShowExhaustedHelp;
+
+  /// Paramètres : durée d'affichage du bandeau d'annulation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Durée du bandeau « Annuler »'**
+  String get settingsUndo;
+
+  /// Une durée en secondes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 seconde} other{{count} secondes}}'**
+  String settingsSeconds(int count);
+
+  /// Paramètres : rubrique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reconnaissance'**
+  String get settingsRecognition;
+
+  /// Paramètres : interrupteur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche sur Open Food Facts'**
+  String get settingsOff;
+
+  /// Paramètres : explication de la recherche Open Food Facts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour un code-barres inconnu, le code (et rien d\'autre) est envoyé à Open Food Facts pour pré-remplir la fiche.'**
+  String get settingsOffHelp;
+
+  /// Paramètres : rubrique synchronisation, sauvegardes, import/export.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données'**
+  String get settingsData;
+
+  /// Paramètres : note en bas de l'écran.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.'**
+  String get settingsDeviceNote;
 }
 
 class _AppLocalizationsDelegate

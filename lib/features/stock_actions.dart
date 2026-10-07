@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/app_preferences.dart';
 import '../data/database.dart';
 import '../data/providers.dart';
 import '../domain/enums.dart';
@@ -9,10 +10,6 @@ import '../domain/field_rules.dart';
 import '../l10n/app_localizations.dart';
 import '../ui/formats.dart';
 import '../ui/widgets.dart';
-
-/// Durée du bandeau « Annuler » (CDC §6.3 : « quelques secondes »).
-/// Deviendra un réglage au lot 6 (CDC §7, Affichage).
-const undoDuration = Duration(seconds: 6);
 
 /// Sortie rapide « −1 » (CDC §6.3) : retire une bouteille, « consommée ».
 /// S'il y a plusieurs lots en stock, demande lequel, du millésime le plus
@@ -433,7 +430,7 @@ Future<int?> _quantityDialog(
   );
 }
 
-/// Bandeau « … — Annuler » qui disparaît seul après [undoDuration].
+/// Bandeau « … — Annuler » qui disparaît seul (durée réglable, CDC §7).
 void _showUndo(
   BuildContext context,
   WidgetRef ref,
@@ -447,7 +444,7 @@ void _showUndo(
     ..showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: undoDuration,
+        duration: ref.read(appPreferencesProvider).undoDuration,
         // Sans cela, un bandeau avec action reste affiché indéfiniment.
         persist: false,
         action: SnackBarAction(

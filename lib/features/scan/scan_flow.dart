@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/app_preferences.dart';
 import '../../data/cave_queries.dart';
 import '../../data/database.dart';
 import '../../data/providers.dart';
@@ -91,7 +92,10 @@ Future<void> handleScannedCode(
           context,
           normalized,
           // Recherche lancée tout de suite, pendant l'affichage de la fiche.
-          OpenFoodFacts.canLookUp(normalized) ? _lookUp(ref, normalized) : null,
+          OpenFoodFacts.canLookUp(normalized) &&
+                  ref.read(appPreferencesProvider).openFoodFacts
+              ? _lookUp(ref, normalized)
+              : null,
         )
       : await _showKnown(context, normalized, matches);
   if (choice == null || !context.mounted) return;
@@ -375,6 +379,7 @@ class _UnknownCodeSheet extends StatelessWidget {
                   Text(switch (result) {
                     OffNotFound() => l10n.offNotFound,
                     OffOffline() => l10n.offOffline,
+                    OffDisabled() => '',
                     OffUnavailable() => l10n.offUnavailable,
                     OffFound() => '',
                   }, style: theme.textTheme.bodySmall),

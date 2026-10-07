@@ -33,6 +33,11 @@ class OffOffline extends OffResult {
   const OffOffline();
 }
 
+/// Recherche désactivée dans les paramètres : aucune requête n'a été faite.
+class OffDisabled extends OffResult {
+  const OffDisabled();
+}
+
 /// Le service n'a pas répondu correctement.
 class OffUnavailable extends OffResult {
   const OffUnavailable(this.detail);
@@ -42,11 +47,16 @@ class OffUnavailable extends OffResult {
 class OpenFoodFacts {
   OpenFoodFacts({
     required this.isOnline,
+    this.isEnabled = _always,
     http.Client? client,
     this.timeout = const Duration(seconds: 10),
   }) : _http = client ?? http.Client();
 
   final Future<bool> Function() isOnline;
+
+  /// Réglage « recherche Open Food Facts » (CDC §7), relu à chaque recherche.
+  final bool Function() isEnabled;
+  static bool _always() => true;
   final http.Client _http;
   final Duration timeout;
 
@@ -64,6 +74,7 @@ class OpenFoodFacts {
 
   Future<OffResult> lookUp(String code) async {
     if (!canLookUp(code)) return const OffNotFound();
+    if (!isEnabled()) return const OffDisabled();
     if (!await isOnline()) return const OffOffline();
     final uri = Uri.https(
       'world.openfoodfacts.org',

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/drink_filter.dart';
+import 'app_preferences.dart';
 import 'cave_queries.dart';
 import 'cave_repository.dart';
 import 'database.dart';
@@ -60,7 +61,21 @@ final regionsProvider = StreamProvider<List<String>>(
 /// Recherche, filtres et tri de la liste (conservés tant que l'appli est ouverte).
 class DrinkFilterNotifier extends Notifier<DrinkFilter> {
   @override
-  DrinkFilter build() => const DrinkFilter();
+  DrinkFilter build() => _initial;
+
+  /// Tri et épuisés tels que réglés dans les paramètres (CDC §7).
+  DrinkFilter get _initial {
+    final prefs = ref.read(appPreferencesProvider);
+    return DrinkFilter(
+      sort: prefs.defaultSort,
+      showExhausted: prefs.showExhausted,
+    );
+  }
+
+  /// Retire les filtres (épuisés : retour au réglage), garde recherche et tri.
+  void clearFilters() {
+    state = state.cleared(showExhausted: _initial.showExhausted);
+  }
 
   void change(DrinkFilter Function(DrinkFilter current) edit) {
     state = edit(state);

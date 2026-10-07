@@ -1819,7 +1819,7 @@
   "@welcomeStorageTitle": {
     "description": "Premier lancement, étape 1 : titre."
   },
-  "welcomeStorageHelp": "Vous pourrez changer d'avis plus tard (menu ⋮ → Synchronisation).",
+  "welcomeStorageHelp": "Vous pourrez changer d'avis plus tard (menu ⋮ → Paramètres → Synchronisation).",
   "@welcomeStorageHelp": {
     "description": "Premier lancement, étape 1 : explication."
   },
@@ -1847,7 +1847,7 @@
   "@welcomeLocalAlertTitle": {
     "description": "Alerte du mode local (CDC §8.4) : titre."
   },
-  "welcomeLocalAlert": "Votre cave n'est enregistrée que sur ce téléphone. S'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Synchronisation).",
+  "welcomeLocalAlert": "Votre cave n'est enregistrée que sur ce téléphone. S'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).",
   "@welcomeLocalAlert": {
     "description": "Alerte du mode local (CDC §8.4) : message."
   },
@@ -1892,5 +1892,106 @@
         "type": "String"
       }
     }
+  },
+  "menuSettings": "Paramètres",
+  "@menuSettings": {
+    "description": "Menu : ouvrir les paramètres."
+  },
+  "settingsTitle": "Paramètres",
+  "@settingsTitle": {
+    "description": "Titre de l'écran des paramètres."
+  },
+  "settingsAppearance": "Apparence",
+  "@settingsAppearance": {
+    "description": "Paramètres : rubrique."
+  },
+  "settingsTheme": "Thème",
+  "@settingsTheme": {
+    "description": "Paramètres : choix du thème."
+  },
+  "settingsThemeSystem": "Comme le téléphone",
+  "@settingsThemeSystem": {
+    "description": "Thème : suivre le réglage d'Android."
+  },
+  "settingsThemeLight": "Clair",
+  "@settingsThemeLight": {
+    "description": "Thème clair."
+  },
+  "settingsThemeDark": "Sombre",
+  "@settingsThemeDark": {
+    "description": "Thème sombre."
+  },
+  "settingsTextSize": "Taille du texte",
+  "@settingsTextSize": {
+    "description": "Paramètres : taille du texte."
+  },
+  "settingsTextNormal": "Normale",
+  "@settingsTextNormal": {
+    "description": "Taille du texte : celle d'Android."
+  },
+  "settingsTextLarge": "Grande",
+  "@settingsTextLarge": {
+    "description": "Taille du texte : un peu plus grande."
+  },
+  "settingsTextLarger": "Très grande",
+  "@settingsTextLarger": {
+    "description": "Taille du texte : nettement plus grande."
+  },
+  "settingsDefaults": "Volumes par défaut",
+  "@settingsDefaults": {
+    "description": "Paramètres : rubrique des volumes pré-remplis."
+  },
+  "settingsDefaultsHelp": "Volume proposé pour une nouvelle bouteille, selon son type. Partagé avec vos autres appareils si la synchronisation est active.",
+  "@settingsDefaultsHelp": {
+    "description": "Paramètres : explication des volumes par défaut."
+  },
+  "settingsDisplay": "Affichage",
+  "@settingsDisplay": {
+    "description": "Paramètres : rubrique."
+  },
+  "settingsDefaultSort": "Tri à l'ouverture",
+  "@settingsDefaultSort": {
+    "description": "Paramètres : tri de la liste au démarrage."
+  },
+  "settingsShowExhausted": "Afficher les références épuisées",
+  "@settingsShowExhausted": {
+    "description": "Paramètres : interrupteur."
+  },
+  "settingsShowExhaustedHelp": "À l'ouverture de l'appli ; modifiable à tout moment dans les filtres.",
+  "@settingsShowExhaustedHelp": {
+    "description": "Paramètres : explication de l'interrupteur des épuisés."
+  },
+  "settingsUndo": "Durée du bandeau « Annuler »",
+  "@settingsUndo": {
+    "description": "Paramètres : durée d'affichage du bandeau d'annulation."
+  },
+  "settingsSeconds": "{count, plural, =1{1 seconde} other{{count} secondes}}",
+  "@settingsSeconds": {
+    "description": "Une durée en secondes.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsRecognition": "Reconnaissance",
+  "@settingsRecognition": {
+    "description": "Paramètres : rubrique."
+  },
+  "settingsOff": "Recherche sur Open Food Facts",
+  "@settingsOff": {
+    "description": "Paramètres : interrupteur."
+  },
+  "settingsOffHelp": "Pour un code-barres inconnu, le code (et rien d'autre) est envoyé à Open Food Facts pour pré-remplir la fiche.",
+  "@settingsOffHelp": {
+    "description": "Paramètres : explication de la recherche Open Food Facts."
+  },
+  "settingsData": "Données",
+  "@settingsData": {
+    "description": "Paramètres : rubrique synchronisation, sauvegardes, import/export."
+  },
+  "settingsDeviceNote": "Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.",
+  "@settingsDeviceNote": {
+    "description": "Paramètres : note en bas de l'écran."
   }
 }

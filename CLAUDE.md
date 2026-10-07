@@ -51,7 +51,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 3 | Inventaire guidé, statistiques, import Vivino, import/export CSV, historique sur la fiche | **terminé** |
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
-| 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **en cours** (premier lancement fait, à vérifier) |
+| 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **en cours** (premier lancement et paramètres faits ; reste classification, À propos, finitions) |
 
 **Décisions du porteur** (les deux premières sont dans le CDC v0.5 ; celles du lot 4 sont à reporter dans sa prochaine version) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -68,7 +68,9 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 1. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12).
 2. Lot 6, points déjà repérés :
-   - écran des paramètres (CDC §7) : y déplacer « Espace disque » (purges) et le choix du moteur de lecture ; ajouter le réglage « recherche Open Food Facts activée ou non », la durée du bandeau « Annuler » (`undoDuration`), thème, tri par défaut, volumes par défaut, gestion de la classification ;
+   - **gestion de la classification** (CDC §6.1, §7) : créer, renommer, supprimer types, familles, valeurs (références orphelines « sans catégorie ») — prochaine étape ;
+   - réglages du CDC §7 pas encore faits : fréquence de la sauvegarde automatique (fixe : 1 par jour), choix du dossier de sauvegarde en mode local, synchronisation automatique activée ou non ;
+   - vérifier sur un appareil neuf le premier lancement (le téléphone du porteur ne le montre pas : cave déjà remplie) ;
    - écran « À propos » : licences et sources à citer (INAO / Licence Ouverte, Tesseract et tessdata_best / Apache 2.0, ML Kit, Open Food Facts) ; fichier `LICENSE` (GPL v3 + exception ML Kit) avant toute diffusion ;
    - Android 8 à 10 : autorisation d'écriture dans Documents pour les sauvegardes ;
    - nouvelle version du CDC (v0.6) reportant les décisions des lots 4 et 5 (voir « Décisions du porteur » et le journal).
@@ -122,7 +124,7 @@ Règles d'import :
 - `lib/sync/sync_service.dart` — **cycle de synchro** (4c) : `sync()` (architecture §4 : GET conditionnel → vérification → `mergeCaveFile` → PUT conditionnel, 3 essais si 412), `useServerCave` / `replaceServerCave` (CDC §8.2), `forget()` (changement de serveur). Erreurs → `SyncException(SyncProblem…)`, une par message du CDC §8.3. Préférences locales : `sync_etag` (ETag connu) et `sync_fingerprint` (empreinte de la base quand elle était identique au serveur : sert à savoir s'il faut envoyer après un 304). **Pas encore branché dans l'appli** (4d : réglages, mot de passe, déclencheurs, indicateur).
 - `contentFingerprint` (`cave_file.dart`) — empreinte partagée par sauvegarde et synchro : **somme** des `updated_at` + nombre de lignes (pas le maximum : une modification datée par une horloge en retard ne le ferait pas bouger).
 - `lib/data/history_purge.dart` — **purges** (4e) : `purgeBefore(date)` (manuelle) = report de stock (inventaire à la date, ID UUID v5 `purge/<lot>/<date>` identique sur tous les appareils) puis **suppression physique** des mouvements antérieurs, date enregistrée dans `settings` (`history_purged_before`, ne recule jamais). La fusion prend la plus récente des deux dates, n'importe jamais de mouvement antérieur et applique la purge reçue (`applyPurge`) ; l'import d'historique les ignore aussi. `autoPurge` (réglage synchronisé `auto_purge`, désactivé par défaut) : lots à stock 0 sans mouvement depuis N mois → suppression logique du lot, de ses mouvements et de la référence sans autre lot ; lancée à l'ouverture après la sauvegarde, une fois par jour.
-- `lib/features/storage/storage_screen.dart` — écran « Espace disque » (menu ⋮) : taille, purge manuelle (date ≤ aujourd'hui − 30 jours, sauvegarde puis `VACUUM`), purge automatique. À déplacer dans l'écran des paramètres au lot 6.
+- `lib/features/storage/storage_screen.dart` — écran « Espace disque » (Paramètres) : taille, purge manuelle (date ≤ aujourd'hui − 30 jours, sauvegarde puis `VACUUM`), purge automatique.
 - `lib/sync/sync_settings.dart` — paramètres de synchro propres à l'appareil (`SyncSettings` : Nextcloud = adresse du serveur → `…/remote.php/dav/files/<user>/<dossier>/`, ou adresse WebDAV complète), mot de passe dans le coffre (`SecureSecretStore`, `MemorySecretStore` pour les tests), `SyncSettingsStore`.
 - `lib/sync/sync_controller.dart` — `SyncController` (Riverpod) : état affiché (`SyncState` : off, synced, syncing, waiting, error + cause, `errorSince` → rouge après 24 h), `start` (ouverture), `localChanged` (regroupe 10 s), `paused`, `syncNow`, nouvelles tentatives 1, 5, 30 min (pas pour identifiants/dossier/version/autre cave), journal des 20 dernières erreurs, `activate` (paramètres enregistrés seulement si ça marche) puis `resolveOtherCave`, `deactivate`. Dépendances regroupées dans `SyncEnvironment` (`syncEnvironmentProvider`, remplacé dans les tests par `localSyncEnvironment` de `test/helpers.dart`).
 - `lib/sync/server_backups.dart` — `mirrorLatestBackup` : copie la dernière sauvegarde locale dans `Sauvegardes/` du serveur et n'y garde que les N plus récentes (règle commune à tous les appareils). Appelé après chaque synchro réussie.
@@ -131,7 +133,7 @@ Règles d'import :
 - `test/sync/fake_webdav_server.dart` — faux serveur WebDAV (vrai serveur HTTP local, règles d'ETag de Nextcloud) ; `test/sync/device.dart` — appareils simulés (base + horloge + ID préfixés).
 - `lib/sync/providers.dart` — dossier `Documents/Cave/Sauvegardes` (Android 11+ : écriture sans autorisation, vérifié sur le téléphone ; l'appli ne voit plus ses fichiers après une réinstallation → « Restaurer depuis un fichier »), widget `AutoBackup` (dans `main.dart`).
 - `lib/data/local_store.dart` — préférences propres à l'appareil (`PrefsLocalStore`, `MemoryLocalStore` pour les tests).
-- `lib/features/backup/backup_screen.dart` — écran Sauvegardes (menu ⋮).
+- `lib/features/backup/backup_screen.dart` — écran Sauvegardes (Paramètres).
 
 Pièges rencontrés :
 - Tests d'interface avec de vraies écritures de fichiers : faire le `tap` dans `tester.runAsync`, sinon l'action ne progresse pas.
@@ -146,7 +148,6 @@ Pièges rencontrés :
 - Purge manuelle : un mouvement fait hors ligne sur un autre appareil, **daté d'avant la purge** et pas encore synchronisé, serait ignoré (le report de stock ne le connaît pas). D'où la date limite à aujourd'hui − 30 jours (choix technique, `StorageScreen.minimumAge`).
 - Purge automatique : un lot purgé ici puis réapprovisionné hors ligne sur un autre appareil avant la synchro resterait supprimé (mouvement rattaché à un lot supprimé). Cas rare, non traité.
 - Tests d'écran d'un déroulé qui lit la base puis ouvre une fenêtre : faire chaque `tap` dans `tester.runAsync` puis `settle`, sinon la fenêtre n'apparaît jamais.
-- Réglage « recherche Open Food Facts activée ou non » (CDC §7) : pas encore fait, à mettre dans l'écran des paramètres (lot 6). En attendant la recherche est toujours active (signalée à l'écran).
 - R8 (APK release) refuse les références de ML Kit aux modèles chinois/japonais/coréen/devanagari non embarqués : `-dontwarn` dans `android/app/proguard-rules.pro`.
 - Écran en `ListView` dans un test : les éléments hors écran ne sont pas construits → `scrollUntilVisible`, puis `pumpAndSettle` après `ensureVisible` avant de toucher.
 - APK : **seul l'APK arm64 est installé** (`tool/installer.sh` : `--split-per-abi`, puis `app-arm64-v8a-release.apk`, décision du porteur du 2026-10-06). L'APK universel pèse 141 Mo (~46 Mo de code natif ML Kit + Tesseract par architecture). `--target-platform` seul ne suffit pas : il ne filtre pas le code natif des bibliothèques. ⚠️ L'APK arm64 a un numéro de version plus élevé (versionCode + 2000) que l'APK universel : **ne plus réinstaller l'APK universel** sur ce téléphone (Android le refuserait comme un retour en arrière, et le contourner par une désinstallation effacerait la base).
@@ -178,7 +179,14 @@ Pièges rencontrés :
 ## Où trouver quoi (lot 6)
 
 - `lib/features/welcome/welcome_screen.dart` — **premier lancement** (CDC §6.8) : `WelcomeGate` (si la préférence `welcome_done` est absente : accueil pour une cave neuve, sinon la liste directement et la préférence est posée — un téléphone qui a déjà une cave ne voit jamais l'accueil) ; `WelcomeScreen` : 1. mode de stockage (local → alerte « données sur cet appareil seulement », CDC §8.4, montrée une fois ; synchro → `SyncScreen`), 2. import (`startImport`), 3. volumes par défaut par type (`setDefaultVolumeMl`). Chaque étape peut être passée. `main.dart` lit la préférence avant `runApp` et passe `CaveApp(firstLaunch:)` (faux par défaut : les tests existants ouvrent la liste).
+- `lib/data/app_preferences.dart` — **réglages propres à l'appareil** (`AppPreferences` : thème, taille du texte ×1 / ×1,15 / ×1,3, tri à l'ouverture, épuisés affichés à l'ouverture, durée du bandeau « Annuler », recherche Open Food Facts). Lus dans `main.dart` avant `runApp` (`initialAppPreferencesProvider`, pas de clignotement du thème), modifiés par `appPreferencesProvider.notifier.change`. Clés `pref_*` : ne pas renommer. `DrinkFilterNotifier` part du tri et des épuisés réglés ; « Effacer les filtres » (`clearFilters`) y revient.
+- `lib/features/settings/settings_screen.dart` — **écran Paramètres** (menu ⋮ → Paramètres) : Apparence, Volumes par défaut (`DefaultVolumeTiles`, `default_volumes.dart`, partagé avec l'accueil ; seul réglage synchronisé, il est dans la base), Affichage, Reconnaissance (moteur — le sélecteur reste aussi sur l'écran photo pendant la bêta — et Open Food Facts), Données (liens vers Synchronisation, Sauvegardes, Espace disque, import, export). Le menu ⋮ ne garde que Inventaire, Statistiques, Importer, Exporter, Paramètres.
+- Open Food Facts désactivé : `OpenFoodFacts.lookUp` rend `OffDisabled` **sans aucune requête** ; le scan et le formulaire ne lancent alors pas la recherche.
 - Activation de la synchro avec une **cave neuve** (`CaveRepository.isEmpty` : aucune référence ni lot, même supprimés) et une autre cave sur le serveur : celle du serveur est reprise **sans poser la question** (nouvel appareil, CDC §6.8) ; sinon la question « Utiliser / Remplacer » reste.
+
+Pièges rencontrés :
+- Test d'un écran en `ListView` : `scrollUntilVisible` avec un pas positif ne fait que descendre → toucher les lignes dans l'ordre de l'écran ; viser la bonne liste par une clé (`Key('settings-list')`).
+- `tester.pageBack()` ne trouve pas le bouton retour ici : toucher `find.byTooltip('Retour')`.
 
 ## Conventions
 
@@ -225,3 +233,4 @@ Pièges rencontrés :
 - 2026-10-06 — Bêta des moteurs (porteur) : Tesseract lit, un peu plus lent, résultats proches de ML Kit (ML Kit légèrement meilleur) ; échec commun des deux sur un nom en arc de cercle (à voir plus tard). Le porteur continue de comparer. Ajout du code-barres dans les deux sens (formulaire et lots existants). 295 tests verts.
 - 2026-10-07 — Vérifiés sur le téléphone par le porteur : 5d (Tesseract, mode comparaison), code-barres dans les deux sens, écrans du lot 3. **Lots 3 et 5 terminés.**
 - 2026-10-07 — Lot 6 : premier lancement en 3 étapes (stockage + alerte mode local, import, volumes par défaut), cave du serveur reprise d'office sur un appareil neuf. 301 tests verts. Invisible sur le téléphone du porteur (cave déjà remplie) : à vérifier sur un appareil neuf.
+- 2026-10-07 — Lot 6 : écran Paramètres (thème, taille du texte, volumes par défaut, tri et épuisés à l'ouverture, durée du bandeau « Annuler », moteur de lecture, Open Food Facts activable), Synchronisation / Sauvegardes / Espace disque rangés dedans. 310 tests verts.

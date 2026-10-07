@@ -66,12 +66,14 @@ void main() {
 
     OpenFoodFacts service({
       bool online = true,
+      bool enabled = true,
       int status = 200,
       Object? body,
     }) {
       requests = [];
       return OpenFoodFacts(
         isOnline: () async => online,
+        isEnabled: () => enabled,
         client: MockClient((request) async {
           requests.add(request);
           return http.Response(
@@ -112,6 +114,12 @@ void main() {
     test('hors ligne : aucune requête', () async {
       final off = service(online: false);
       expect(await off.lookUp('3760000000017'), isA<OffOffline>());
+      expect(requests, isEmpty);
+    });
+
+    test('recherche désactivée dans les paramètres : aucune requête', () async {
+      final off = service(enabled: false);
+      expect(await off.lookUp('3760000000017'), isA<OffDisabled>());
       expect(requests, isEmpty);
     });
 

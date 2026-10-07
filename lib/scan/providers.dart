@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/app_preferences.dart';
 import '../domain/label_reading.dart';
 import '../sync/providers.dart';
 import 'label_recognizer.dart';
@@ -11,6 +12,7 @@ final openFoodFactsProvider = Provider<OpenFoodFacts>((ref) {
   final off = OpenFoodFacts(
     // Même détection du réseau que la synchronisation (connectivity_plus).
     isOnline: ref.watch(syncEnvironmentProvider).isOnline,
+    isEnabled: () => ref.read(appPreferencesProvider).openFoodFacts,
   );
   ref.onDispose(off.close);
   return off;

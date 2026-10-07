@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/database.dart';
 import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../sync/providers.dart';
 import '../../theme/app_theme.dart';
-import '../../ui/formats.dart';
 import '../cellar/cellar_screen.dart';
 import '../exchange/exchange_actions.dart';
+import '../settings/default_volumes.dart';
 import '../sync/sync_screen.dart';
 
 /// Préférence de l'appareil : premier lancement terminé (ou passé).
@@ -288,71 +287,24 @@ class _Choice extends StatelessWidget {
 }
 
 /// Étape 3 : volume pré-rempli par type, modifiable d'un toucher.
-class _DefaultsStep extends ConsumerWidget {
+class _DefaultsStep extends StatelessWidget {
   const _DefaultsStep();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final formats = Formats.of(context);
-    final l10n = formats.l10n;
-    final theme = Theme.of(context);
-    final types = ref.watch(classificationProvider).value?.types ?? const [];
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.welcomeDefaultsTitle, style: theme.textTheme.headlineSmall),
+        Text(
+          l10n.welcomeDefaultsTitle,
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 8),
         Text(l10n.welcomeDefaultsHelp),
         const SizedBox(height: 16),
-        for (final type in types)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            minTileHeight: AppTheme.minButtonHeight,
-            title: Text(type.name),
-            trailing: Text(
-              formats.volume(type.defaultVolumeMl),
-              style: theme.textTheme.titleMedium,
-            ),
-            onTap: () => _choose(context, ref, type),
-          ),
+        const DefaultVolumeTiles(),
       ],
     );
-  }
-
-  Future<void> _choose(
-    BuildContext context,
-    WidgetRef ref,
-    DrinkType type,
-  ) async {
-    final formats = Formats.of(context);
-    final volumes = {...standardVolumesMl, type.defaultVolumeMl}.toList()
-      ..sort();
-    final chosen = await showDialog<int>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(formats.l10n.welcomeVolumeOf(type.name)),
-        children: [
-          for (final v in volumes)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, v),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 40),
-                child: Row(
-                  children: [
-                    Icon(
-                      v == type.defaultVolumeMl ? Icons.check : null,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 16),
-                    Text(formats.volume(v)),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-    if (chosen == null || chosen == type.defaultVolumeMl) return;
-    await ref.read(caveRepositoryProvider).setDefaultVolumeMl(type.id, chosen);
   }
 }
