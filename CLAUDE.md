@@ -71,7 +71,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 1. **Clore le lot 6** — restent des vérifications, pas de code connu à écrire :
    - ~~premier lancement sur un appareil neuf~~ : **vérifié le 2026-10-08** sur un OnePlus 8T (Android 14) en mode local (voir le journal) ; reste éventuellement le choix « Synchroniser avec un serveur » de l'étape 1 sur un appareil neuf ;
-   - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (un émulateur Android 10 serait lourd avec 8 Go) ;
+   - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (un émulateur Android 10 serait lourd avec 8 Go ; le vieux OnePlus One du porteur est en Android 6, inutilisable : il faut un téléphone en Android 8, 9 ou 10) ;
    - ~~faire relire `COPYING.md`~~ : **relu avec le porteur le 2026-10-08** (voir le journal) ; dépôt toujours privé. À savoir avant de diffuser : à cause de ML Kit, F-Droid refusera l'appli telle quelle.
    Ensuite : passer le lot 6 à « terminé » dans le tableau, et décider de la suite (V1 complète → bilan, diffusion, V2 ?).
 2. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12), puis le reporter dans le CDC.
