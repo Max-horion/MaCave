@@ -5,7 +5,9 @@ Bilan établi le 2026-10-08, à la fin du lot 6, par rapport au cahier des charg
 ## En bref
 
 - **Toutes les fonctions V1 du CDC §11 sont faites**, vérifiées sur le téléphone de référence (OnePlus 13, Android 16) et reportées dans le CDC v0.6.
-- **Une seule vérification reste ouverte** : l'autorisation d'écriture dans Documents sur Android 8 à 10 (codée, jamais essayée faute d'appareil). Le lot 6, et donc la V1, seront déclarés terminés après cet essai.
+- **Deux conditions restent pour terminer la V1** (décision du porteur, 2026-10-08) :
+  - essayer l'autorisation d'écriture dans Documents sur Android 8 à 10 (codée, jamais essayée faute d'appareil) ;
+  - remplacer ML Kit pour la lecture des codes-barres par une bibliothèque libre, essayée et approuvée par le porteur (lot 7, voir §6).
 - **Une décision reste à prendre** : le moteur de reconnaissance de texte (CDC §12), après une bêta plus longue.
 - Réalisé en 4 jours (5 au 8 octobre 2026), 6 lots + 1 lot de démarrage, 53 commits, budget nul.
 
@@ -82,7 +84,7 @@ La bêta continue pendant la saisie de la cave (compteur du mode « Comparer »)
 
 **Orientation du porteur (2026-10-08)** : accepter les performances un peu moindres de Tesseract si cela permet une appli **100 % open source**.
 
-⚠️ **Choisir Tesseract ne suffira pas pour être 100 % open source** : ML Kit sert aussi à **lire les codes-barres** (`mobile_scanner`). Il faudrait donc aussi remplacer le lecteur de codes-barres par une bibliothèque libre, par exemple fondée sur ZXing (à évaluer : vitesse, lecture dans le noir, codes abîmés). Gains si tout ML Kit disparaît :
+⚠️ **Choisir Tesseract ne suffira pas pour être 100 % open source** : ML Kit sert aussi à **lire les codes-barres** (`mobile_scanner`). **Décision du porteur (2026-10-08)** : remplacer le lecteur de codes-barres par une bibliothèque libre, par exemple fondée sur ZXing, à essayer et approuver avant de terminer la V1 (lot 7 ; critères : vitesse, lecture dans le noir, codes abîmés). Gains si tout ML Kit disparaît :
 - l'exception de liaison de `COPYING.md` peut être retirée (GPL v3 pure, CDC §10) ;
 - F-Droid devient possible comme canal de diffusion ;
 - l'APK s'allège.
@@ -93,7 +95,7 @@ Canal à choisir après la bêta des moteurs : dépôt public avec APK, F-Droid 
 
 ### Suite du projet
 
-1. Terminer la V1 : essai sur Android 8, 9 ou 10.
+1. Terminer la V1 : essai sur Android 8, 9 ou 10, et lecteur de codes-barres libre (lot 7) essayé et approuvé.
 2. Usage réel : saisir la cave, inventaire complet, synchro avec un deuxième appareil.
-3. Choix du moteur, puis éventuel remplacement du lecteur de codes-barres.
+3. Choix du moteur de reconnaissance de texte.
 4. V2 (CDC §11), dans un ordre à décider : emplacements, période de consommation, accords mets et vins, statistiques dans le temps, photos d'étiquette, export PDF, application PC.
