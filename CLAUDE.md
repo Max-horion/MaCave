@@ -6,6 +6,7 @@ Application Android (Flutter) de gestion d'une cave personnelle : références (
 
 - `docs/cahier_des_charges_v0.6.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.6.docx` (source officielle ; les .docx v0.4 et v0.5 sont conservés pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis report dans le Markdown. Méthode de la v0.6 (pas de pandoc ni de python-docx sur le PC) : .docx décompressé, `word/document.xml` modifié par un script Python (remplacements de texte, lignes de tableau dupliquées), titre dans `docProps/core.xml` et version dans `word/footer1.xml`, recompressé, rendu vérifié avec `soffice --convert-to pdf` ; mêmes modifications appliquées au Markdown. En cas de doute fonctionnel, c'est lui qui fait foi ; citer la section (ex. « CDC §6.3 »).
 - `docs/architecture.md` — bibliothèques, schéma de la base, principe de synchronisation.
+- `docs/bilan_v1.md` — bilan de la V1 (2026-10-08) : critères de réussite, fonctions, exigences non fonctionnelles, limites, décisions à venir.
 - Ce fichier — état d'avancement et conventions. **À mettre à jour à la fin de chaque lot.**
 
 ## Le porteur du projet
@@ -67,15 +68,16 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-État au 2026-10-07 au soir : tout est commité et poussé (`main` = 6f8fc2a), installé sur le téléphone, 333 tests verts. Rien en cours.
+État au 2026-10-08 : tout est commité, installé sur le téléphone, 333 tests verts. Bilan de la V1 fait (`docs/bilan_v1.md`). Rien en cours.
 
 1. **Clore le lot 6** — restent des vérifications, pas de code connu à écrire :
    - ~~premier lancement sur un appareil neuf~~ : **vérifié le 2026-10-08** sur un OnePlus 8T (Android 14) en mode local (voir le journal) ; reste éventuellement le choix « Synchroniser avec un serveur » de l'étape 1 sur un appareil neuf ;
    - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (un émulateur Android 10 serait lourd avec 8 Go ; le vieux OnePlus One du porteur est en Android 6, inutilisable : il faut un téléphone en Android 8, 9 ou 10) ;
    - ~~faire relire `COPYING.md`~~ : **relu avec le porteur le 2026-10-08** (voir le journal) ; dépôt toujours privé. À savoir avant de diffuser : à cause de ML Kit, F-Droid refusera l'appli telle quelle.
-   Ensuite : passer le lot 6 à « terminé » dans le tableau, et décider de la suite (V1 complète → bilan, diffusion, V2 ?).
-2. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») ; choix définitif du moteur à décider ensuite (CDC §12), puis le reporter dans le CDC.
-3. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
+   Ensuite : passer le lot 6 (et la V1) à « terminé » dans le tableau, **seulement après l'essai sur Android 8 à 10** (décision du porteur, 2026-10-08), puis décider de la suite (diffusion, V2 ?).
+2. Bêta des moteurs : le porteur continue de comparer (compteur dans le mode « Comparer ») pendant la saisie de sa cave ; choix définitif du moteur à décider ensuite (CDC §12), puis le reporter dans le CDC. **Orientation du porteur (2026-10-08)** : accepter un Tesseract un peu moins bon pour une appli 100 % open source. ⚠️ Il faudrait alors aussi remplacer le lecteur de codes-barres : `mobile_scanner` embarque ML Kit (`com.google.mlkit:barcode-scanning`) ; piste : une bibliothèque fondée sur ZXing. Sans ML Kit : exception de `COPYING.md` retirée, F-Droid possible (voir `docs/bilan_v1.md` §6).
+3. Avant une diffusion : test de performances avec des milliers de lots (exigence CDC §9 jamais mesurée).
+4. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
 
 ## Où trouver quoi (lot 1)
 
@@ -252,3 +254,4 @@ Pièges rencontrés :
 - 2026-10-07 — Porteur : import « maison » vérifié sur le téléphone. **CDC v0.6** : décisions des lots 4 à 6 reportées (§6.1, 6.2, 6.7, 6.8, 7, 8.3, 8.4, 9, 10 et journal des décisions).
 - 2026-10-08 — Premier lancement vérifié sur un appareil neuf (OnePlus 8T, Android 14, appli jamais installée, APK arm64 du 2026-10-07) : étape 1 → « Sur cet appareil uniquement » → alerte « Données sur cet appareil seulement » (pas de demande d'autorisation, normal sur Android 11+) ; étape 2 → choix d'import affiché puis « Passer » ; étape 3 → volumes par défaut (choix du volume affiché) puis « Commencer » → liste vide ; après fermeture forcée et relance, l'accueil ne revient pas. Pas de dossier de sauvegardes créé : normal, une cave vide n'est jamais sauvegardée.
 - 2026-10-08 — `COPYING.md` relu avec le porteur : auteur = **Maxence Pithon** (identité civile à la place du pseudo, aussi dans l'écran À propos) ; dernière phrase de l'exception ML Kit supprimée (phrase facultative du modèle FSF, réservée aux bibliothèques libres, mal recopiée avec « Ma Cave ») ; Leptonica, libpng et libjpeg ajoutés au tableau des éléments de tiers. Dates de mise à jour des données INAO (exigées par la Licence Ouverte) ajoutées dans `COPYING.md` et l'écran À propos : aires et produits 2025-10-09, délimitation parcellaire 2026-10-05 ; `tool/build_appellations.py` les affiche désormais (à reporter après chaque reconstruction).
+- 2026-10-08 — Bilan de la V1 (`docs/bilan_v1.md`). Porteur : choix du moteur après une bêta plus longue, a priori Tesseract pour être 100 % open source (⚠️ lecteur de codes-barres à remplacer aussi).
