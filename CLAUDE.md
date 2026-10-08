@@ -70,7 +70,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 État au 2026-10-07 au soir : tout est commité et poussé (`main` = 6f8fc2a), installé sur le téléphone, 333 tests verts. Rien en cours.
 
 1. **Clore le lot 6** — restent des vérifications, pas de code connu à écrire :
-   - premier lancement sur un appareil neuf (le téléphone du porteur ne le montre pas : cave déjà remplie) ; un vieux téléphone Android 8 à 10 permettrait de vérifier aussi le point suivant ;
+   - ~~premier lancement sur un appareil neuf~~ : **vérifié le 2026-10-08** sur un OnePlus 8T (Android 14) en mode local (voir le journal) ; reste éventuellement le choix « Synchroniser avec un serveur » de l'étape 1 sur un appareil neuf ;
    - Android 8 à 10 : autorisation d'écriture dans Documents **codée mais jamais essayée** (un émulateur Android 10 serait lourd avec 8 Go) ;
    - faire relire `COPYING.md` (exception ML Kit) avant toute diffusion publique ; dépôt toujours privé.
    Ensuite : passer le lot 6 à « terminé » dans le tableau, et décider de la suite (V1 complète → bilan, diffusion, V2 ?).
@@ -250,3 +250,4 @@ Pièges rencontrés :
 - 2026-10-07 — Porteur : volume 6 l vérifié sur le téléphone. Lot 6 : synchronisation automatique activable, fréquence de la sauvegarde automatique, choix du dossier des sauvegardes, autorisation de stockage pour Android 8 à 10 (non essayée sur un vrai appareil). 330 tests verts.
 - 2026-10-07 — Porteur : synchro automatique, sauvegardes (fréquence, dossier) vérifiées sur le téléphone. Import « maison » : consignes de format et fichier modèle à remplir dans un tableur ; volumes avec unité acceptés à l'import. 333 tests verts.
 - 2026-10-07 — Porteur : import « maison » vérifié sur le téléphone. **CDC v0.6** : décisions des lots 4 à 6 reportées (§6.1, 6.2, 6.7, 6.8, 7, 8.3, 8.4, 9, 10 et journal des décisions).
+- 2026-10-08 — Premier lancement vérifié sur un appareil neuf (OnePlus 8T, Android 14, appli jamais installée, APK arm64 du 2026-10-07) : étape 1 → « Sur cet appareil uniquement » → alerte « Données sur cet appareil seulement » (pas de demande d'autorisation, normal sur Android 11+) ; étape 2 → choix d'import affiché puis « Passer » ; étape 3 → volumes par défaut (choix du volume affiché) puis « Commencer » → liste vide ; après fermeture forcée et relance, l'accueil ne revient pas. Pas de dossier de sauvegardes créé : normal, une cave vide n'est jamais sauvegardée.
