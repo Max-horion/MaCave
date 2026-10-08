@@ -1940,7 +1940,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Gestion d\'une cave personnelle, entièrement hors ligne, avec synchronisation facultative sur votre serveur.';
 
   @override
-  String get aboutCopyright => '© 2026 Max-horion';
+  String get aboutCopyright => '© 2026 Maxence Pithon';
 
   @override
   String get aboutLicense =>

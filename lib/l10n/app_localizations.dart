@@ -2959,7 +2959,7 @@ abstract class AppLocalizations {
   /// Auteur de l'appli.
   ///
   /// In fr, this message translates to:
-  /// **'© 2026 Max-horion'**
+  /// **'© 2026 Maxence Pithon'**
   String get aboutCopyright;
 
   /// Licence de l'appli.

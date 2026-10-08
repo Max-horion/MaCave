@@ -1,6 +1,6 @@
 # Ma Cave — licence
 
-Copyright © 2026 Max-horion
+Copyright © 2026 Maxence Pithon
 
 Ma Cave est un logiciel libre : vous pouvez le redistribuer et le modifier
 selon les termes de la **GNU General Public License** publiée par la Free
@@ -25,9 +25,7 @@ ci-dessous fait foi :
 > with Google ML Kit (or a modified version of that library), containing parts
 > covered by the terms of the ML Kit Terms of Service
 > (https://developers.google.com/ml-kit/terms), the licensors of this Program
-> grant you additional permission to convey the resulting work. Corresponding
-> Source for a non-source form of such a combination shall include the source
-> code for the parts of Ma Cave used as well as that of the covered work.
+> grant you additional permission to convey the resulting work.
 
 ## Éléments de tiers
 
@@ -37,6 +35,9 @@ ci-dessous fait foi :
 | Appellations (`assets/appellations.txt`) | INAO, data.gouv.fr | Licence Ouverte / Etalab 2.0 |
 | Dictionnaire français de Tesseract (`assets/tessdata/`) | tesseract-ocr/tessdata_best | Apache 2.0 |
 | Tesseract, Tesseract4Android | tesseract-ocr ; Adaptech | Apache 2.0 |
+| Leptonica (avec Tesseract) | Leptonica, Dan Bloomberg | BSD 2 clauses (`assets/licenses/leptonica.txt`) |
+| libpng (avec Tesseract) | The PNG Reference Library Authors | PNG Reference Library License v2 (`assets/licenses/libpng.txt`) |
+| libjpeg (avec Tesseract) | Independent JPEG Group | Licence IJG (`assets/licenses/libjpeg.txt`) : ce logiciel est basé en partie sur les travaux de l'Independent JPEG Group |
 | Google ML Kit | Google | Conditions d'utilisation de ML Kit |
 | Fiches pré-remplies | Open Food Facts (données consultées en ligne) | ODbL |
 
