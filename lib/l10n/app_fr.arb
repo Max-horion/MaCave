@@ -2411,9 +2411,9 @@
   "@aboutData": {
     "description": "À propos : rubrique des sources de données."
   },
-  "aboutInao": "Appellations : Institut national de l'origine et de la qualité (INAO), data.gouv.fr — Licence Ouverte / Etalab 2.0.",
+  "aboutInao": "Appellations : Institut national de l'origine et de la qualité (INAO), data.gouv.fr, jeux de données « Aires et produits AOC/AOP et IGP » (mis à jour le 9 octobre 2025) et « Délimitation parcellaire des AOC viticoles » (mis à jour le 5 octobre 2026) — Licence Ouverte / Etalab 2.0.",
   "@aboutInao": {
-    "description": "Source des appellations."
+    "description": "Source des appellations. Dates de mise à jour affichées par tool/build_appellations.py : à reporter ici et dans COPYING.md après chaque reconstruction de la liste."
   },
   "aboutOff": "Fiches pré-remplies : Open Food Facts (openfoodfacts.org), base libre sous licence ODbL. Seul le code-barres est envoyé.",
   "@aboutOff": {

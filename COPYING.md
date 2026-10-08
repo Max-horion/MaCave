@@ -32,7 +32,7 @@ ci-dessous fait foi :
 | Élément | Auteur / source | Licence |
 |---|---|---|
 | Icône (bouteille, `tool/icon/bottle.svg`) | Tabler Icons, © Paweł Kuna | MIT (`tool/icon/LICENSE`) |
-| Appellations (`assets/appellations.txt`) | INAO, data.gouv.fr | Licence Ouverte / Etalab 2.0 |
+| Appellations (`assets/appellations.txt`) | INAO, data.gouv.fr : « Aires et produits AOC/AOP et IGP » (mis à jour le 9 octobre 2025) et « Délimitation parcellaire des AOC viticoles » (mis à jour le 5 octobre 2026) | Licence Ouverte / Etalab 2.0 |
 | Dictionnaire français de Tesseract (`assets/tessdata/`) | tesseract-ocr/tessdata_best | Apache 2.0 |
 | Tesseract, Tesseract4Android | tesseract-ocr ; Adaptech | Apache 2.0 |
 | Leptonica (avec Tesseract) | Leptonica, Dan Bloomberg | BSD 2 clauses (`assets/licenses/leptonica.txt`) |

@@ -15,7 +15,8 @@ un mot de vin (rouge, blanc, rosé, mousseux…), si son nom prolonge une
 appellation viticole (« Chablis premier cru Vaillons »), ou si c'est un
 spiritueux (signe européen « IG »). Quelques exceptions sont listées à la
 main (EXTRA_WINES, NOT_DRINKS) : relire la sortie « écartés » après une mise
-à jour.
+à jour, et reporter les dates de mise à jour affichées (exigées par la Licence
+Ouverte) dans COPYING.md et dans le texte « aboutInao » de app_fr.arb.
 
 Usage : tool/build_appellations.py [--show-excluded]
 """
@@ -89,8 +90,9 @@ def dbf_rows(data):
 
 def main():
     # Vins de la délimitation parcellaire.
-    shp = next(r['url'] for r in resources(DATASET_PARCELS)
-               if r['url'].endswith('-shp.zip'))
+    parcels_file = next(r for r in resources(DATASET_PARCELS)
+                        if r['url'].endswith('-shp.zip'))
+    shp = parcels_file['url']
     archive = zipfile.ZipFile(io.BufferedReader(RemoteFile(shp), 1 << 20))
     dbf = next(n for n in archive.namelist() if n.endswith('.dbf'))
     wines = set()
@@ -99,8 +101,9 @@ def main():
             wines.update((row['app'], row['denom']))
 
     # Toutes les appellations (CSV en Windows-1252).
-    products_url = next(r['url'] for r in resources(DATASET_PRODUCTS)
-                        if r['format'] == 'csv')
+    products_file = next(r for r in resources(DATASET_PRODUCTS)
+                         if r['format'] == 'csv')
+    products_url = products_file['url']
     text = urllib.request.urlopen(products_url, timeout=120).read().decode('cp1252')
     by_area = {}
     for row in csv.DictReader(io.StringIO(text), delimiter=';'):
@@ -134,6 +137,10 @@ def main():
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('\n'.join(sorted(names, key=fold)) + '\n')
     print(f'{OUT} : {len(names)} appellations', file=sys.stderr)
+    # Dates à citer (Licence Ouverte) : COPYING.md et « aboutInao ».
+    print('Mises à jour : aires et produits '
+          f"{products_file['last_modified'][:10]}, délimitation parcellaire "
+          f"{parcels_file['last_modified'][:10]}", file=sys.stderr)
     if '--show-excluded' in sys.argv:
         print('\n'.join(excluded), file=sys.stderr)
 

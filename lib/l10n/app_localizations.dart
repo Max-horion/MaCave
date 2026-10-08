@@ -2974,10 +2974,10 @@ abstract class AppLocalizations {
   /// **'Données'**
   String get aboutData;
 
-  /// Source des appellations.
+  /// Source des appellations. Dates de mise à jour affichées par tool/build_appellations.py : à reporter ici et dans COPYING.md après chaque reconstruction de la liste.
   ///
   /// In fr, this message translates to:
-  /// **'Appellations : Institut national de l\'origine et de la qualité (INAO), data.gouv.fr — Licence Ouverte / Etalab 2.0.'**
+  /// **'Appellations : Institut national de l\'origine et de la qualité (INAO), data.gouv.fr, jeux de données « Aires et produits AOC/AOP et IGP » (mis à jour le 9 octobre 2025) et « Délimitation parcellaire des AOC viticoles » (mis à jour le 5 octobre 2026) — Licence Ouverte / Etalab 2.0.'**
   String get aboutInao;
 
   /// Source Open Food Facts.

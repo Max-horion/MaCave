@@ -1951,7 +1951,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutInao =>
-      'Appellations : Institut national de l\'origine et de la qualité (INAO), data.gouv.fr — Licence Ouverte / Etalab 2.0.';
+      'Appellations : Institut national de l\'origine et de la qualité (INAO), data.gouv.fr, jeux de données « Aires et produits AOC/AOP et IGP » (mis à jour le 9 octobre 2025) et « Délimitation parcellaire des AOC viticoles » (mis à jour le 5 octobre 2026) — Licence Ouverte / Etalab 2.0.';
 
   @override
   String get aboutOff =>
