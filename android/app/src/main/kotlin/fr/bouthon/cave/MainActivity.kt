@@ -7,6 +7,14 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.os.Build
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
+import com.google.zxing.LuminanceSource
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.PlanarYUVLuminanceSource
+import com.google.zxing.ReaderException
+import com.google.zxing.common.HybridBinarizer
 import com.googlecode.tesseract.android.TessBaseAPI
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -23,6 +31,33 @@ class MainActivity : FlutterActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private var tess: TessBaseAPI? = null
     private var tessKey: String? = null
+
+    // ZXing (lot 7) : lecteur de codes-barres libre. Canal
+    // « fr.bouthon.cave/zxing » (lib/scan/zxing_reader.dart) : reçoit la
+    // luminance d'une image de la caméra et rend le code lu, ou null. Fil à
+    // part (pas celui de Tesseract) ; MultiFormatReader n'est pas thread-safe.
+    private val barcodeWorker = Executors.newSingleThreadExecutor()
+    private val barcodeReader = MultiFormatReader().apply {
+        setHints(
+            mapOf(
+                DecodeHintType.POSSIBLE_FORMATS to listOf(
+                    BarcodeFormat.EAN_13,
+                    BarcodeFormat.EAN_8,
+                    BarcodeFormat.UPC_A,
+                    BarcodeFormat.UPC_E,
+                    BarcodeFormat.CODE_128,
+                    BarcodeFormat.CODE_39,
+                    BarcodeFormat.CODE_93,
+                    BarcodeFormat.ITF,
+                    BarcodeFormat.QR_CODE,
+                    BarcodeFormat.DATA_MATRIX,
+                ),
+                // Cherche sur plus de lignes de l'image : plus lent, mais
+                // une image prise à main levée dans le noir en a besoin.
+                DecodeHintType.TRY_HARDER to true,
+            ),
+        )
+    }
 
     // Android 8 à 10 : écrire les sauvegardes dans Documents demande
     // l'autorisation « stockage » (Android 11+ : sans autorisation). Canal
@@ -72,6 +107,34 @@ class MainActivity : FlutterActivity() {
         }
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
+            "fr.bouthon.cave/zxing",
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "decode" -> {
+                    val bytes = call.argument<ByteArray>("bytes")!!
+                    val width = call.argument<Int>("width")!!
+                    val height = call.argument<Int>("height")!!
+                    val rowStride = call.argument<Int>("rowStride")!!
+                    barcodeWorker.execute {
+                        val found = try {
+                            decodeBarcode(bytes, width, height, rowStride)
+                        } catch (e: Exception) {
+                            null
+                        }
+                        runOnUiThread {
+                            result.success(
+                                found?.let {
+                                    mapOf("text" to it.text, "format" to it.barcodeFormat.name)
+                                },
+                            )
+                        }
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
             "fr.bouthon.cave/storage",
         ).setMethodCallHandler { call, result ->
             when (call.method) {
@@ -92,6 +155,42 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    /// Cherche un code dans l'image telle quelle, puis tournée d'un quart de
+    /// tour : le capteur est en paysage, et un code tenu à l'horizontale
+    /// téléphone en main y apparaît vertical. Les codes linéaires ne sont lus
+    /// que dans le sens des lignes ; les QR codes, dans tous les sens.
+    private fun decodeBarcode(data: ByteArray, width: Int, height: Int, rowStride: Int): com.google.zxing.Result? {
+        if (rowStride < width || data.size < (height - 1) * rowStride + width) {
+            throw IllegalArgumentException("Image incomplète")
+        }
+        val upright = PlanarYUVLuminanceSource(
+            data, rowStride, height, 0, 0, width, height, false,
+        )
+        return tryDecode(upright) ?: tryDecode(rotated(data, width, height, rowStride))
+    }
+
+    private fun tryDecode(source: LuminanceSource): com.google.zxing.Result? =
+        try {
+            barcodeReader.decodeWithState(BinaryBitmap(HybridBinarizer(source)))
+        } catch (e: ReaderException) {
+            null
+        } finally {
+            barcodeReader.reset()
+        }
+
+    /// Image tournée d'un quart de tour (sens horaire), sans marge en fin de ligne.
+    private fun rotated(data: ByteArray, width: Int, height: Int, rowStride: Int): LuminanceSource {
+        val out = ByteArray(width * height)
+        for (y in 0 until height) {
+            val row = y * rowStride
+            val column = height - 1 - y
+            for (x in 0 until width) {
+                out[x * height + column] = data[row + x]
+            }
+        }
+        return PlanarYUVLuminanceSource(out, height, width, 0, 0, height, width, false)
     }
 
     /// [dataPath] doit contenir un dossier `tessdata` avec `<language>.traineddata`.
@@ -176,6 +275,7 @@ class MainActivity : FlutterActivity() {
             tess = null
         }
         worker.shutdown()
+        barcodeWorker.shutdown()
         super.onDestroy()
     }
 }

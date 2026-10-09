@@ -38,6 +38,7 @@ ci-dessous fait foi :
 | Leptonica (avec Tesseract) | Leptonica, Dan Bloomberg | BSD 2 clauses (`assets/licenses/leptonica.txt`) |
 | libpng (avec Tesseract) | The PNG Reference Library Authors | PNG Reference Library License v2 (`assets/licenses/libpng.txt`) |
 | libjpeg (avec Tesseract) | Independent JPEG Group | Licence IJG (`assets/licenses/libjpeg.txt`) : ce logiciel est basé en partie sur les travaux de l'Independent JPEG Group |
+| ZXing (lecteur de codes-barres, `com.google.zxing:core`) | ZXing authors | Apache 2.0 |
 | Google ML Kit | Google | Conditions d'utilisation de ML Kit |
 | Fiches pré-remplies | Open Food Facts (données consultées en ligne) | ODbL |
 

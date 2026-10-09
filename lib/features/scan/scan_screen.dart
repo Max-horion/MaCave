@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../scan/barcode_engine.dart';
+import 'zxing_scanner.dart';
 
 /// Ce que l'écran de scan retourne.
 sealed class ScanResult {
@@ -25,9 +28,9 @@ class LabelRequested extends ScanResult {
 /// à la main, ou la demande de photo d'étiquette ; null si l'utilisateur
 /// ferme l'écran.
 ///
-/// La lecture se fait entièrement sur le téléphone (ML Kit embarqué) : pas
-/// besoin de réseau dans la cave.
-class ScanScreen extends StatefulWidget {
+/// La lecture se fait entièrement sur le téléphone, sans réseau : ML Kit
+/// embarqué, ou ZXing (libre, lot 7), au choix pendant l'essai.
+class ScanScreen extends ConsumerStatefulWidget {
   const ScanScreen({super.key, this.offerLabel = true});
 
   /// Propose « Pas de code-barres ? Photo de l'étiquette » (pas quand on
@@ -35,22 +38,70 @@ class ScanScreen extends StatefulWidget {
   final bool offerLabel;
 
   @override
-  State<ScanScreen> createState() => _ScanScreenState();
+  ConsumerState<ScanScreen> createState() => _ScanScreenState();
 }
 
-class _ScanScreenState extends State<ScanScreen> {
-  final _controller = MobileScannerController(
-    // Un seul code suffit : on s'arrête au premier.
-    detectionSpeed: DetectionSpeed.noDuplicates,
-  );
+class _ScanScreenState extends ConsumerState<ScanScreen> {
+  /// Lecteur affiché ; un seul des deux contrôleurs existe à la fois (ils se
+  /// partagent la caméra).
+  BarcodeEngine? _engine;
+  MobileScannerController? _mlKit;
+  ZxingScannerController? _zxing;
 
   /// Un code a été retenu : on ignore les détections suivantes.
   bool _done = false;
 
   @override
+  void initState() {
+    super.initState();
+    ref.read(barcodeEngineProvider.future).then(_use);
+  }
+
+  @override
   void dispose() {
-    _controller.dispose();
+    _mlKit?.dispose();
+    _zxing?.dispose();
     super.dispose();
+  }
+
+  /// Passe au lecteur [engine] : l'autre est arrêté et retiré de l'écran
+  /// **avant** d'ouvrir la caméra pour le nouveau.
+  Future<void> _use(BarcodeEngine engine) async {
+    if (!mounted || _done || engine == _engine) return;
+    final oldMlKit = _mlKit;
+    final oldZxing = _zxing;
+    setState(() {
+      _engine = engine;
+      _mlKit = null;
+      _zxing = null;
+    });
+    await WidgetsBinding.instance.endOfFrame;
+    if (oldMlKit != null) {
+      await oldMlKit.stop();
+      await oldMlKit.dispose();
+    }
+    if (oldZxing != null) {
+      await oldZxing.stop();
+      oldZxing.dispose();
+    }
+    // Choix changé entre-temps : c'est l'appel suivant qui ouvre la caméra.
+    if (!mounted || _done || _engine != engine) return;
+    setState(() {
+      switch (engine) {
+        case BarcodeEngine.mlKit:
+          _mlKit = MobileScannerController(
+            // Un seul code suffit : on s'arrête au premier.
+            detectionSpeed: DetectionSpeed.noDuplicates,
+          );
+        case BarcodeEngine.zxing:
+          _zxing = ZxingScannerController(onCode: _found)..start();
+      }
+    });
+  }
+
+  Future<void> _choose(BarcodeEngine engine) async {
+    await ref.read(barcodeEngineProvider.notifier).setEngine(engine);
+    await _use(engine);
   }
 
   void _found(String code) {
@@ -66,7 +117,8 @@ class _ScanScreenState extends State<ScanScreen> {
   Future<void> _close(ScanResult result) async {
     if (_done) return;
     _done = true;
-    await _controller.stop();
+    await _mlKit?.stop();
+    await _zxing?.stop();
     if (mounted) Navigator.pop(context, result);
   }
 
@@ -104,43 +156,22 @@ class _ScanScreenState extends State<ScanScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
+    Widget overlay(BuildContext context, BoxConstraints constraints) => Center(
+      child: Container(
+        width: constraints.maxWidth * 0.8,
+        height: constraints.maxWidth * 0.45,
+        decoration: BoxDecoration(
+          border: Border.all(color: colors.primary, width: 3),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
     return Scaffold(
       appBar: AppBar(title: Text(l10n.scanTitle)),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: MobileScanner(
-              controller: _controller,
-              onDetect: (capture) {
-                for (final barcode in capture.barcodes) {
-                  final value = barcode.rawValue;
-                  if (value != null && value.trim().isNotEmpty) {
-                    _found(value);
-                    return;
-                  }
-                }
-              },
-              errorBuilder: (context, error) => _CameraError(
-                message:
-                    error.errorCode == MobileScannerErrorCode.permissionDenied
-                    ? l10n.scanCameraDenied
-                    : l10n.scanCameraError(
-                        error.errorDetails?.message ?? error.errorCode.name,
-                      ),
-              ),
-              overlayBuilder: (context, constraints) => Center(
-                child: Container(
-                  width: constraints.maxWidth * 0.8,
-                  height: constraints.maxWidth * 0.45,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: colors.primary, width: 3),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          Expanded(child: _viewer(l10n, overlay)),
           SafeArea(
             top: false,
             child: Padding(
@@ -150,28 +181,13 @@ class _ScanScreenState extends State<ScanScreen> {
                 children: [
                   Text(l10n.scanHint, textAlign: TextAlign.center),
                   const SizedBox(height: 12),
+                  if (_engine case final engine?) ...[
+                    _EngineChoice(engine: engine, onChanged: _choose),
+                    const SizedBox(height: 12),
+                  ],
                   Row(
                     children: [
-                      Expanded(
-                        child: ValueListenableBuilder(
-                          valueListenable: _controller,
-                          builder: (context, state, _) {
-                            final on = state.torchState == TorchState.on;
-                            return FilledButton.tonalIcon(
-                              onPressed:
-                                  state.torchState == TorchState.unavailable
-                                  ? null
-                                  : _controller.toggleTorch,
-                              icon: Icon(
-                                on ? Icons.flashlight_off : Icons.flashlight_on,
-                              ),
-                              label: Text(
-                                on ? l10n.scanTorchOff : l10n.scanTorchOn,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      Expanded(child: _torchButton(l10n)),
                       const SizedBox(width: 12),
                       Expanded(
                         child: OutlinedButton.icon(
@@ -196,6 +212,115 @@ class _ScanScreenState extends State<ScanScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _viewer(
+    AppLocalizations l10n,
+    Widget Function(BuildContext, BoxConstraints) overlay,
+  ) {
+    if (_mlKit case final controller?) {
+      return MobileScanner(
+        controller: controller,
+        onDetect: (capture) {
+          for (final barcode in capture.barcodes) {
+            final value = barcode.rawValue;
+            if (value != null && value.trim().isNotEmpty) {
+              _found(value);
+              return;
+            }
+          }
+        },
+        errorBuilder: (context, error) => _CameraError(
+          message: error.errorCode == MobileScannerErrorCode.permissionDenied
+              ? l10n.scanCameraDenied
+              : l10n.scanCameraError(
+                  error.errorDetails?.message ?? error.errorCode.name,
+                ),
+        ),
+        overlayBuilder: overlay,
+      );
+    }
+    if (_zxing case final controller?) {
+      return ZxingScannerView(
+        controller: controller,
+        errorBuilder: (context, error) => _CameraError(
+          message: error.denied
+              ? l10n.scanCameraDenied
+              : l10n.scanCameraError(error.detail ?? ''),
+        ),
+        overlayBuilder: overlay,
+      );
+    }
+    // Entre deux lecteurs.
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _torchButton(AppLocalizations l10n) {
+    Widget button({required bool on, VoidCallback? onPressed}) =>
+        FilledButton.tonalIcon(
+          onPressed: onPressed,
+          icon: Icon(on ? Icons.flashlight_off : Icons.flashlight_on),
+          label: Text(on ? l10n.scanTorchOff : l10n.scanTorchOn),
+        );
+    if (_mlKit case final controller?) {
+      return ValueListenableBuilder(
+        valueListenable: controller,
+        builder: (context, state, _) => button(
+          on: state.torchState == TorchState.on,
+          onPressed: state.torchState == TorchState.unavailable
+              ? null
+              : controller.toggleTorch,
+        ),
+      );
+    }
+    if (_zxing case final controller?) {
+      return ListenableBuilder(
+        listenable: controller,
+        builder: (context, _) => button(
+          on: controller.torch,
+          onPressed: controller.camera == null ? null : controller.toggleTorch,
+        ),
+      );
+    }
+    return button(on: false);
+  }
+}
+
+/// Choix du lecteur pendant l'essai (lot 7), retenu sur cet appareil.
+class _EngineChoice extends StatelessWidget {
+  const _EngineChoice({required this.engine, required this.onChanged});
+
+  final BarcodeEngine engine;
+  final ValueChanged<BarcodeEngine> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          l10n.scanEngine,
+          style: Theme.of(context).textTheme.bodySmall,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 4),
+        SegmentedButton<BarcodeEngine>(
+          segments: [
+            ButtonSegment(
+              value: BarcodeEngine.mlKit,
+              label: Text(l10n.scanEngineMlKit),
+            ),
+            ButtonSegment(
+              value: BarcodeEngine.zxing,
+              label: Text(l10n.scanEngineZxing),
+            ),
+          ],
+          selected: {engine},
+          onSelectionChanged: (s) => onChanged(s.single),
+        ),
+      ],
     );
   }
 }

@@ -2020,6 +2020,24 @@ abstract class AppLocalizations {
   /// **'Éteindre la lampe'**
   String get scanTorchOff;
 
+  /// Titre du choix du lecteur de codes-barres (écran de scan, Paramètres).
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecteur de codes-barres (essai)'**
+  String get scanEngine;
+
+  /// Lecteur ML Kit (Google, non libre).
+  ///
+  /// In fr, this message translates to:
+  /// **'ML Kit'**
+  String get scanEngineMlKit;
+
+  /// Lecteur ZXing (libre).
+  ///
+  /// In fr, this message translates to:
+  /// **'ZXing (libre)'**
+  String get scanEngineZxing;
+
   /// Bouton : taper le code-barres à la main.
   ///
   /// In fr, this message translates to:
@@ -3003,6 +3021,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l\'Independent JPEG Group.'**
   String get aboutTesseract;
+
+  /// Mention ZXing.
+  ///
+  /// In fr, this message translates to:
+  /// **'ZXing, lecteur de codes-barres libre (essai, au choix avec ML Kit) — Apache 2.0.'**
+  String get aboutZxing;
 
   /// Source de l'icône.
   ///

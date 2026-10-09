@@ -1367,6 +1367,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get scanTorchOff => 'Éteindre la lampe';
 
   @override
+  String get scanEngine => 'Lecteur de codes-barres (essai)';
+
+  @override
+  String get scanEngineMlKit => 'ML Kit';
+
+  @override
+  String get scanEngineZxing => 'ZXing (libre)';
+
+  @override
   String get scanManualEntry => 'Saisir le code';
 
   @override
@@ -1967,6 +1976,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get aboutTesseract =>
       'Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l\'Independent JPEG Group.';
+
+  @override
+  String get aboutZxing =>
+      'ZXing, lecteur de codes-barres libre (essai, au choix avec ML Kit) — Apache 2.0.';
 
   @override
   String get aboutIcon =>

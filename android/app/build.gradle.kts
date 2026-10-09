@@ -58,4 +58,7 @@ dependencies {
     // Tesseract 5 (lot 5d), appelé par MainActivity.kt. Variante OpenMP :
     // plusieurs cœurs, une seule instance à la fois.
     implementation("cz.adaptech.tesseract4android:tesseract4android-openmp:4.9.0")
+    // ZXing (lot 7) : lecteur de codes-barres libre (Apache 2.0), en Java,
+    // sans code natif ; appelé par MainActivity.kt.
+    implementation("com.google.zxing:core:3.5.4")
 }

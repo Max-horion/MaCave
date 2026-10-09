@@ -10,7 +10,7 @@ final appVersionProvider = FutureProvider<String>(
 );
 
 /// Écran « À propos » : version, licence, sources à citer (INAO, Open Food
-/// Facts, ML Kit, Tesseract et ses bibliothèques, icône) et licences des
+/// Facts, ML Kit, Tesseract et ses bibliothèques, ZXing, icône) et licences des
 /// bibliothèques (page standard de Flutter, complétée par licenses.dart).
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
@@ -68,6 +68,7 @@ class AboutScreen extends ConsumerWidget {
           section(l10n.aboutRecognition),
           paragraph(l10n.aboutMlKit),
           paragraph(l10n.aboutTesseract),
+          paragraph(l10n.aboutZxing),
           const SizedBox(height: 8),
           paragraph(l10n.aboutIcon),
           const SizedBox(height: 16),

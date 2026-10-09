@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 /// Ajoute à la page « Licences des logiciels » (showLicensePage) les
 /// éléments de tiers qui ne sont pas des paquets Dart : Tesseract et les
-/// bibliothèques qu'il embarque (code natif Android), son dictionnaire, et
-/// l'icône. Les paquets Dart y figurent déjà d'eux-mêmes.
+/// bibliothèques qu'il embarque (code natif Android), son dictionnaire,
+/// ZXing (bibliothèque Java) et l'icône. Les paquets Dart y figurent déjà d'eux-mêmes.
 void registerExtraLicenses() {
   LicenseRegistry.addLicense(() async* {
     Future<String> text(String file) =>
@@ -14,6 +14,7 @@ void registerExtraLicenses() {
       'Tesseract4Android',
       'tessdata_best',
     ], await text('apache-2.0.txt'));
+    yield LicenseEntryWithLineBreaks(['ZXing'], await text('apache-2.0.txt'));
     yield LicenseEntryWithLineBreaks([
       'Leptonica',
     ], await text('leptonica.txt'));

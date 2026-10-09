@@ -1661,6 +1661,18 @@
   "@scanTorchOff": {
     "description": "Bouton : éteindre la lampe torche."
   },
+  "scanEngine": "Lecteur de codes-barres (essai)",
+  "@scanEngine": {
+    "description": "Titre du choix du lecteur de codes-barres (écran de scan, Paramètres)."
+  },
+  "scanEngineMlKit": "ML Kit",
+  "@scanEngineMlKit": {
+    "description": "Lecteur ML Kit (Google, non libre)."
+  },
+  "scanEngineZxing": "ZXing (libre)",
+  "@scanEngineZxing": {
+    "description": "Lecteur ZXing (libre)."
+  },
   "scanManualEntry": "Saisir le code",
   "@scanManualEntry": {
     "description": "Bouton : taper le code-barres à la main."
@@ -2430,6 +2442,10 @@
   "aboutTesseract": "Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l'Independent JPEG Group.",
   "@aboutTesseract": {
     "description": "Mention Tesseract et bibliothèques embarquées (mention IJG exigée)."
+  },
+  "aboutZxing": "ZXing, lecteur de codes-barres libre (essai, au choix avec ML Kit) — Apache 2.0.",
+  "@aboutZxing": {
+    "description": "Mention ZXing."
   },
   "aboutIcon": "Icône : « bottle » de Tabler Icons (tabler.io), © Paweł Kuna — MIT.",
   "@aboutIcon": {
