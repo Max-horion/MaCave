@@ -12,6 +12,10 @@ void main() {
     expect(parseVolumeMl('1 l'), 1000);
     // Fût de 6 litres.
     expect(parseVolumeMl('6 l'), 6000);
+    expect(parseVolumeMl('10 cl'), 100);
+    expect(parseVolumeMl('100 ml'), 100);
+    expect(parseVolumeMl('2 l'), 2000);
+    expect(parseVolumeMl('5L'), 5000);
     expect(parseVolumeMl('6L'), 6000);
     expect(parseVolumeMl('600 cl'), 6000);
   });

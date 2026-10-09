@@ -7,7 +7,8 @@ import '../l10n/app_localizations.dart';
 
 /// Volumes proposés dans les formulaires, en millilitres.
 const standardVolumesMl = [
-  200, 250, 330, 375, 440, 500, 700, 750, 1000, 1500, 3000, 6000, //
+  100, 200, 250, 330, 375, 440, 500, 700, 750, 1000, 1500, 2000, 3000, 5000,
+  6000, //
 ];
 
 /// Mise en forme des valeurs affichées, selon la langue de l'appareil
