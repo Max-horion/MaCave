@@ -18,29 +18,29 @@ void main() {
     });
     tearDown(() => container.dispose());
 
-    test('ML Kit par défaut', () async {
+    test('ZXing par défaut', () async {
       expect(
         await container.read(barcodeEngineProvider.future),
-        BarcodeEngine.mlKit,
+        BarcodeEngine.zxing,
       );
     });
 
     test('le lecteur choisi est retenu sur l\'appareil', () async {
       await container
           .read(barcodeEngineProvider.notifier)
-          .setEngine(BarcodeEngine.zxing);
-      expect(
-        await container.read(barcodeEngineProvider.future),
-        BarcodeEngine.zxing,
-      );
-      expect(store.values['barcode_engine'], 'zxing');
-    });
-
-    test('valeur illisible : ML Kit', () async {
-      store.values['barcode_engine'] = 'laser';
+          .setEngine(BarcodeEngine.mlKit);
       expect(
         await container.read(barcodeEngineProvider.future),
         BarcodeEngine.mlKit,
+      );
+      expect(store.values['barcode_engine'], 'mlKit');
+    });
+
+    test('valeur illisible : ZXing', () async {
+      store.values['barcode_engine'] = 'laser';
+      expect(
+        await container.read(barcodeEngineProvider.future),
+        BarcodeEngine.zxing,
       );
     });
   });

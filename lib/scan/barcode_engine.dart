@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../sync/providers.dart';
 
-// Choix du lecteur de codes-barres (lot 7) : ML Kit (Google, non libre) ou
-// ZXing (libre, Apache 2.0). Propre à l'appareil (préférences locales).
-// Essai du porteur pendant la saisie de sa cave : si ZXing convient, ML Kit
-// sera retiré (exception de COPYING.md levée, CDC §12).
+// Choix du lecteur de codes-barres (lot 7) : ZXing (libre, Apache 2.0, par
+// défaut depuis le 2026-10-09, approuvé par le porteur) ou ML Kit (Google,
+// non libre, gardé pour comparaison pendant l'essai). Propre à l'appareil
+// (préférences locales).
 
 enum BarcodeEngine { mlKit, zxing }
 
@@ -21,7 +21,7 @@ class BarcodeEngineNotifier extends AsyncNotifier<BarcodeEngine> {
   Future<BarcodeEngine> build() async {
     final store = ref.watch(localStoreProvider);
     return BarcodeEngine.values.asNameMap()[await store.getString(_key)] ??
-        BarcodeEngine.mlKit;
+        BarcodeEngine.zxing;
   }
 
   Future<void> setEngine(BarcodeEngine engine) async {

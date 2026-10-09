@@ -53,7 +53,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **presque terminé** : tout est codé, vérifié sur le téléphone et dans le CDC v0.6 ; reste l'essai sur Android 8 à 10 (voir « À reprendre ») |
-| 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **codé** (ZXing, au choix avec ML Kit, installé le 2026-10-09) ; reste l'essai du porteur, puis le choix définitif |
+| 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **codé, ZXing approuvé** par le porteur (2026-10-09) et lecteur par défaut ; ML Kit gardé en comparaison pendant le week-end, puis choix définitif |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -69,9 +69,9 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-État au 2026-10-09 : tout est commité, installé sur le téléphone, 342 tests verts. Lecteur ZXing (lot 7) codé et installé, **jamais essayé sur une vraie bouteille** : à faire par le porteur (écran de scan → « ZXing (libre) »).
+État au 2026-10-09 : tout est commité, installé sur le téléphone, 342 tests verts. Lecteur ZXing (lot 7) **approuvé par le porteur** et mis par défaut ; ML Kit (codes-barres) et Tesseract / ML Kit (texte) restent en test parallèle pendant le week-end du 10-11 octobre.
 
-0. **Lot 7** : recueillir l'avis du porteur sur ZXing (vitesse, codes abîmés ou courbes, peu de lumière, QR codes). Si ZXing est approuvé (et Tesseract retenu pour le texte) : retirer `mobile_scanner` et `google_mlkit_text_recognition` (écran de scan sans choix, `MlKitLabelRecognizer`, mode comparaison, règles `-dontwarn` de `proguard-rules.pro`), retirer l'exception ML Kit de `COPYING.md` et la mention de l'écran À propos, reporter le choix dans le CDC (§10, §12). Vérifier ensuite avec `aapt2`/`unzip -l` qu'aucune classe `com.google.mlkit` ne reste dans l'APK. Si ZXing lit mal : pistes zxing-cpp (`io.github.zxing-cpp:android`, Apache 2.0, code natif, plus tolérant), recadrage sur le cadre visé, résolution plus fine.
+0. **Lot 7** : après le week-end, recueillir le bilan du porteur (ZXing face à ML Kit, Tesseract face à ML Kit). Si c'est confirmé (et Tesseract retenu pour le texte) : retirer `mobile_scanner` et `google_mlkit_text_recognition` (écran de scan sans choix, `MlKitLabelRecognizer`, mode comparaison, règles `-dontwarn` de `proguard-rules.pro`), retirer l'exception ML Kit de `COPYING.md` et la mention de l'écran À propos, reporter le choix dans le CDC (§10, §12). Vérifier ensuite avec `aapt2`/`unzip -l` qu'aucune classe `com.google.mlkit` ne reste dans l'APK. Si ZXing lit mal : pistes zxing-cpp (`io.github.zxing-cpp:android`, Apache 2.0, code natif, plus tolérant), recadrage sur le cadre visé, résolution plus fine.
 
 1. **Clore le lot 6** — restent des vérifications, pas de code connu à écrire :
    - ~~premier lancement sur un appareil neuf~~ : **vérifié le 2026-10-08** sur un OnePlus 8T (Android 14) en mode local (voir le journal) ; reste éventuellement le choix « Synchroniser avec un serveur » de l'étape 1 sur un appareil neuf ;
@@ -206,7 +206,7 @@ Pièges rencontrés :
 
 ## Où trouver quoi (lot 7)
 
-- `lib/scan/barcode_engine.dart` — lecteur choisi (`BarcodeEngine.mlKit` / `zxing`), propre à l'appareil (préférence `barcode_engine`, ML Kit par défaut). Choix sur l'écran de scan (pendant l'essai) et dans Paramètres → Reconnaissance.
+- `lib/scan/barcode_engine.dart` — lecteur choisi (`BarcodeEngine.mlKit` / `zxing`), propre à l'appareil (préférence `barcode_engine`, **ZXing par défaut** depuis le 2026-10-09 ; un choix déjà enregistré est gardé). Choix sur l'écran de scan (pendant l'essai) et dans Paramètres → Reconnaissance.
 - `lib/scan/zxing_reader.dart` — `LuminanceFrame` (plan Y d'une image de la caméra), `ZxingFrameDecoder` (canal `fr.bouthon.cave/zxing`), `ReadConfirmer` : un code linéaire n'est retenu que **lu deux fois de suite** à l'identique (somme de contrôle faible) ; un QR code / Data Matrix dès la première lecture.
 - `lib/features/scan/zxing_scanner.dart` — `ZxingScannerController` (caméra du paquet `camera` en 1280 × 720, flux d'images, une image lue à la fois, lampe, `stop()` qui libère la caméra) et `ZxingScannerView` (aperçu, suit la vie de l'appli).
 - `ScanScreen` (`scan_screen.dart`) n'a qu'un lecteur à la fois : au changement, l'ancien est retiré de l'écran et arrêté **avant** d'ouvrir la caméra pour le nouveau.
@@ -270,3 +270,4 @@ Pièges rencontrés :
 - 2026-10-08 — Bilan de la V1 (`docs/bilan_v1.md`). Porteur : choix du moteur après une bêta plus longue, a priori Tesseract pour être 100 % open source (⚠️ lecteur de codes-barres à remplacer aussi).
 - 2026-10-08 — Porteur : la V1 ne sera terminée qu'avec une alternative libre à ML Kit pour les codes-barres, essayée et approuvée (lot 7 ajouté au plan), en plus de l'essai sur Android 8 à 10.
 - 2026-10-09 — Lot 7 : lecteur de codes-barres libre ZXing (Java, Apache 2.0) par un canal maison, caméra du paquet `camera`, double lecture exigée pour les codes linéaires ; choix ML Kit / ZXing sur l'écran de scan et dans les Paramètres. 342 tests verts ; APK arm64 55,1 Mo ; installé sur le téléphone. Lecture réelle à essayer par le porteur.
+- 2026-10-09 — Porteur : ZXing marche bien → lecteur par défaut. ML Kit et Tesseract gardés en test parallèle pendant le week-end avant le choix définitif. 342 tests verts ; installé sur le téléphone.
