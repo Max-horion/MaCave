@@ -272,3 +272,4 @@ Pièges rencontrés :
 - 2026-10-09 — Lot 7 : lecteur de codes-barres libre ZXing (Java, Apache 2.0) par un canal maison, caméra du paquet `camera`, double lecture exigée pour les codes linéaires ; choix ML Kit / ZXing sur l'écran de scan et dans les Paramètres. 342 tests verts ; APK arm64 55,1 Mo ; installé sur le téléphone. Lecture réelle à essayer par le porteur.
 - 2026-10-09 — Porteur : ZXing marche bien → lecteur par défaut. ML Kit et Tesseract gardés en test parallèle pendant le week-end avant le choix définitif. 342 tests verts ; installé sur le téléphone.
 - 2026-10-09 — Porteur : inventaire de la cave presque fini ; ML Kit et Tesseract jugés **tous deux médiocres** pour lire les étiquettes, pas encore de choix. Volumes 10 cl, 2 l et 5 l ajoutés (`standardVolumesMl` ; affichage en cl sous 1 l, comme sur les étiquettes). 342 tests verts.
+- 2026-10-09 — Porteur : volume 1,75 l ajouté. 342 tests verts ; installé et approuvé sur le téléphone.
