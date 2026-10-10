@@ -2,14 +2,14 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.6.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.7.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.6 |
-| Date | 7 octobre 2026 |
-| Statut | V1 en cours de développement |
+| Version | 0.7 |
+| Date | 10 octobre 2026 |
+| Statut | V1 terminée, dernières vérifications en cours |
 
 ### Historique des versions
 
@@ -21,6 +21,7 @@
 | 0.4 | 2 octobre 2026 | Relecture : diffusion future à d’autres utilisateurs, retrait par scan, synchronisation facultative (mode local seul) ; traitement des erreurs de synchronisation, changement de mode, tout serveur WebDAV, premier lancement, préparation des traductions. |
 | 0.5 | 5 octobre 2026 | Retours de la V1 en cours : appellation facultative pour le vin (4.1, 6.7) ; une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée. |
 | 0.6 | 7 octobre 2026 | Décisions des lots 4 à 6 de la V1 : synchronisation et sauvegarde application ouverte, sans tâche de fond (8.3, 8.4) ; sauvegardes sur l’appareil et sur le serveur ; purge manuelle limitée ; code-barres associable à un lot existant et doublons signalés aussi au scan et à la photo (6.2) ; cave du serveur reprise sur un appareil neuf (6.8) ; classification modifiable (6.1) ; import préparé dans un tableur avec consignes et fichier modèle (6.7) ; paramètres précisés (7) ; Open Food Facts désactivable (9) ; licence GPL v3 ou ultérieure (10). |
+| 0.7 | 10 octobre 2026 | Fin de la bêta des moteurs de reconnaissance : ML Kit retiré, Tesseract pour le texte et ZXing pour les codes-barres, application entièrement libre et licence sans exception (7, 10, 11, 12) ; conditions de fin de la V1 (11, 12) ; lecture d’étiquette : lignes regroupées et ajout à la suite d’un champ (6.2) ; volumes proposés de 10 cl à 6 l (7) ; Android 8 à 10 vérifié (9). |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -141,7 +142,7 @@ Classification initiale (types, familles et valeurs modifiables dans l’applica
 Ajout manuel ou assisté par scan. Il est possible d’ajouter des bouteilles au stock d’un lot existant, ou un nouveau lot (autre millésime ou volume) à une référence existante. La quantité ajoutée se règle facilement pour ajouter plusieurs bouteilles en une fois.
 **Scan — reconnaissance assistée (V1) :**
 - **Code-barres ou QR code, lu en premier :** si le code est connu dans la base, le lot est retrouvé et l’application propose « + n bouteilles » ; sinon, avec du réseau, recherche dans Open Food Facts pour pré-remplir la fiche ; hors réseau, saisie assistée et code mémorisé pour la prochaine fois. Le code peut aussi être scanné depuis le formulaire de création, ou associé après coup à un lot existant.
-- **Photo de l’étiquette :** reconnaissance du texte sur le téléphone. Extraction automatique du millésime, du degré et du volume ; appellation comparée à la liste officielle des appellations (INAO), embarquée dans l’application ; pour le nom et le producteur, l’application affiche les lignes de texte trouvées et l’utilisateur touche une ligne pour l’attribuer au bon champ.
+- **Photo de l’étiquette :** reconnaissance du texte sur le téléphone. Extraction automatique du millésime, du degré et du volume ; appellation comparée à la liste officielle des appellations (INAO), embarquée dans l’application ; pour le nom et le producteur, l’application affiche les lignes de texte trouvées et l’utilisateur touche une ligne pour l’attribuer au bon champ, ou pour l’ajouter à la suite d’un champ déjà rempli (nom écrit sur plusieurs lignes). Les mots écrits côte à côte sont regroupés en une ligne, et un mot qui annonce toujours un nom (« Château », « Domaine », « Cuvée »…) est collé à la ligne qui le suit.
 - **Validation :** les champs sont pré-remplis puis validés ou modifiés à la main.
 - **Photo :** supprimée après extraction en V1 ; conservation envisagée en V2 (aide pour retrouver la bonne bouteille dans une cave sombre).
 - **Lampe torche :** activable depuis l’écran de scan.
@@ -187,7 +188,7 @@ Liste initiale, à compléter après les tests de la V1 si des réglages manquen
 |---|---|
 | **Paramètres utilisateur** |  |
 | Apparence | Thème : système (par défaut), clair ou sombre · taille du texte |
-| Valeurs par défaut | Volume pré-rempli par type : vin 75 cl, bière 75 cl, spiritueux 70 cl, soft 1 l · volumes proposés de 20 cl à 6 l (fût) |
+| Valeurs par défaut | Volume pré-rempli par type : vin 75 cl, bière 75 cl, spiritueux 70 cl, soft 1 l · volumes proposés de 10 cl à 6 l (fût) |
 | Classification | Créer, renommer ou supprimer les types, les familles de caractéristiques et leurs valeurs |
 | Emplacements (V2) | Liste des emplacements (casiers, pièces), pour les choisir au lieu de les taper |
 | Affichage | Tri par défaut · afficher ou masquer les lots épuisés · durée du bandeau « Annuler » |
@@ -195,7 +196,7 @@ Liste initiale, à compléter après les tests de la V1 si des réglages manquen
 | Stockage et synchronisation | Mode : sur cet appareil uniquement, ou synchronisé · serveur : Nextcloud ou autre serveur WebDAV (adresse complète) · identifiant, mot de passe d’application, dossier de la base · synchronisation automatique activée ou non (activée par défaut) · « Synchroniser maintenant » · état de la dernière synchronisation · journal technique des erreurs |
 | Sauvegarde | Fréquence de la sauvegarde automatique : chaque jour (par défaut), chaque semaine ou chaque mois · nombre N de sauvegardes conservées (3 par défaut) · dossier de sauvegarde sur l’appareil (Documents/Cave/Sauvegardes par défaut ; sur Android 11 et suivants, dans Documents ou Download) · « Sauvegarder maintenant » · « Restaurer » |
 | Espace disque | Taille de la base · purge manuelle de l’historique (avant une date antérieure d’au moins 30 jours, pour ne pas écarter un mouvement d’un autre appareil pas encore synchronisé) · purge automatique activée ou non, avec délai réglable |
-| Reconnaissance | Moteur de texte : ML Kit, Tesseract ou mode comparaison (bêta) · recherche Open Food Facts activée ou non |
+| Reconnaissance | Recherche Open Food Facts activée ou non (moteurs fixés depuis la fin de la bêta : Tesseract pour le texte, ZXing pour les codes-barres) |
 | Import / export | Import Vivino · import CSV · export CSV |
 
 **Purge automatique :** La purge automatique supprime les lots épuisés sans aucun mouvement depuis le délai choisi, avec leur historique, ainsi que la référence si elle n’a plus aucun lot. Les lots encore en stock ne sont jamais purgés.
@@ -247,7 +248,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Rapidité de saisie** | Ajouter une bouteille en moins de 30 secondes et en moins de 3 manipulations. |
 | **Performances** | Ouverture en moins de 2 secondes ; recherche instantanée, même avec plusieurs milliers de lots. |
 | **Ergonomie** | Utilisable d’une main, dans une cave peu éclairée : contraste élevé, gros boutons, lampe torche au scan ; thème clair ou sombre, qui suit le système par défaut. |
-| **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8. |
+| **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8 (vérifié sur Android 10 : l’autorisation d’écrire les sauvegardes dans Documents est demandée sur Android 8 à 10, et l’application guide l’utilisateur vers les réglages si elle a été refusée définitivement). |
 | **Fiabilité** | Aucune perte de données : l’enregistrement et la synchronisation ne doivent jamais corrompre la base, même en cas de coupure de réseau ou de batterie. |
 | **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé d’Android, jamais en clair. |
 | **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. Seuls les codes-barres de 8 à 14 chiffres sont envoyés, jamais le contenu d’un QR code ; la recherche Open Food Facts peut être désactivée dans les paramètres. |
@@ -260,18 +261,18 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Développement** | Par le porteur du projet (débutant en Python), avec Claude Code. |
 | **Technologie** | Flutter (langage Dart) : un seul code pour Android (V1) et pour le PC (Windows, Linux) ensuite. |
 | **Base de données** | Fichier SQLite local, synchronisé facultativement par WebDAV (Nextcloud ou autre serveur). |
-| **Reconnaissance de texte** | Moteur interchangeable dans le code. Version bêta avec ML Kit et Tesseract, et mode comparaison qui affiche les deux résultats côte à côte. Choix final après les tests. |
-| **Codes-barres** | Lecture sur le téléphone ; base Open Food Facts en complément si réseau. |
+| **Reconnaissance de texte** | Moteur interchangeable dans le code. Tesseract (libre), retenu après une bêta qui le comparait à ML Kit (Google, non libre) : un peu moins précis, mais il rend l’application entièrement libre. |
+| **Codes-barres** | Lecture sur le téléphone avec ZXing (libre), qui remplace ML Kit ; base Open Food Facts en complément si réseau. |
 | **Budget** | Nul : uniquement des composants et services gratuits. |
-| **Licence** | GNU GPL v3 ou toute version ultérieure, avec une exception de liaison (permission additionnelle, article 7) autorisant l’utilisation de ML Kit et des services Google. L’exception sera retirée si ML Kit est abandonné. |
-| **Diffusion** | V1 : code privé, fichier APK installé manuellement sur le téléphone. Diffusion à d’autres utilisateurs, pour un usage privé, envisagée dans un second temps ; le canal (dépôt public avec APK, F-Droid, Google Play Store) sera choisi après la bêta des moteurs de reconnaissance, F-Droid étant incompatible avec ML Kit et le Play Store payant. |
+| **Licence** | GNU GPL v3 ou toute version ultérieure, sans exception : l’exception de liaison prévue pour ML Kit a été retirée avec lui. |
+| **Diffusion** | V1 : code privé, fichier APK installé manuellement sur le téléphone. Diffusion à d’autres utilisateurs, pour un usage privé, envisagée dans un second temps ; le canal (dépôt public avec APK, F-Droid, Google Play Store) sera choisi à la fin de la V1 ; sans ML Kit, F-Droid devient possible, le Play Store reste payant. |
 
 ## 11. Priorisation
 ### V1 — indispensable
 - Gestion des types, familles et caractéristiques
 - Fiche référence et lots (champs V1 du 4.1)
 - Ajout manuel, ajout de plusieurs bouteilles en une fois
-- Scan : code-barres et reconnaissance de texte assistée (bêta avec deux moteurs)
+- Scan : code-barres et reconnaissance de texte assistée, avec des composants libres (ZXing, Tesseract)
 - Lampe torche, détection des doublons
 - Retrait manuel, sortie rapide « −1 », retrait par scan, annulation
 - Historique des mouvements (motifs, commentaire)
@@ -300,8 +301,8 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 - Synchronisation avec Google Drive, Dropbox ou OneDrive
 - Interprétation automatique plus poussée des étiquettes
 ## 12. Points à rediscuter
-- Choix définitif du moteur de reconnaissance de texte, après la bêta.
-- Canal de diffusion à d’autres utilisateurs, après la bêta.
+- Fin de la V1 : après l’essai sur Android 8 à 10 et l’approbation d’un lecteur de codes-barres libre (faits le 10/10/2026), puis les dernières vérifications du porteur. Ensuite, décider de la suite (diffusion, V2).
+- Canal de diffusion à d’autres utilisateurs, à la fin de la V1.
 - Paramètres manquants éventuels, après les tests de la V1.
 - Hors cahier des charges : optimisation de la procédure de sauvegarde du serveur (Raspberry Pi).
 ## 13. Journal des décisions
@@ -353,3 +354,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 07/10/2026 | 6.7 | Import préparé dans un tableur : consignes affichées par l’application et fichier modèle à remplir. |
 | 07/10/2026 | 9 | Open Food Facts : seuls les codes de 8 à 14 chiffres sont envoyés ; recherche désactivable. |
 | 07/10/2026 | 10 | Licence : GPL v3 ou toute version ultérieure, avec l’exception ML Kit. |
+| 08/10/2026 | 11 | La V1 n’est terminée qu’après un essai sur Android 8 à 10 et l’approbation, par le porteur, d’un lecteur de codes-barres libre remplaçant ML Kit. |
+| 09/10/2026 | 7 | Volumes de 10 cl, 1,75 l, 2 l et 5 l ajoutés aux volumes proposés. |
+| 10/10/2026 | 10, 12 | Fin de la bêta : Tesseract retenu pour le texte (un peu moins précis que ML Kit, mais libre), ZXing pour les codes-barres ; ML Kit retiré ; licence GPL v3 ou ultérieure, sans exception. |
+| 10/10/2026 | 6.2 | Lecture d’étiquette : lignes voisines regroupées, mots qui annoncent un nom (« Château », « Domaine »…) collés à la ligne suivante, ligne ajoutable à la suite d’un champ déjà rempli. |
