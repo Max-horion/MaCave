@@ -2380,6 +2380,18 @@ abstract class AppLocalizations {
   /// **'Utiliser comme appellation'**
   String get labelUseAsAppellation;
 
+  /// Choix : la ligne est ajoutée à la fin du nom déjà rempli (nom découpé en plusieurs lignes sur la photo).
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter à la suite du nom'**
+  String get labelAppendToName;
+
+  /// Choix : la ligne est ajoutée à la fin du producteur déjà rempli.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter à la suite du producteur'**
+  String get labelAppendToProducer;
+
   /// Bouton de la fiche « Code inconnu » : lire l'étiquette.
   ///
   /// In fr, this message translates to:

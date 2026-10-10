@@ -114,6 +114,40 @@ void main() {
     expect(r.name, 'Domaine du Test');
   });
 
+  test('« CHÂTEAU » seul sur sa ligne est collé au nom qui suit', () {
+    final r = read([
+      const LabelLine('CHÂTEAU', height: 30),
+      const LabelLine('LES TROIS CHÊNES', height: 90),
+      'GRAND VIN DE BORDEAUX',
+      '2018',
+    ]);
+    expect(r.name, 'Château les Trois Chênes');
+    expect(r.lines.first, 'CHÂTEAU LES TROIS CHÊNES');
+    expect(r.lines, hasLength(3));
+  });
+
+  test('mots jamais seuls : petits mots compris, jamais avant un nombre', () {
+    List<String> joined(List<String> lines) =>
+        joinLeadWords([for (final l in lines) LabelLine(l)])
+            .map((l) => l.text)
+            .toList();
+    expect(joined(['DOMAINE DE LA', 'GRANDE COLLINE']), [
+      'DOMAINE DE LA GRANDE COLLINE',
+    ]);
+    expect(joined(['Brasserie', 'du Test', '33 cl']), [
+      'Brasserie du Test',
+      '33 cl',
+    ]);
+    expect(joined(['CUVÉE', '2019']), ['CUVÉE', '2019']);
+    // Une ligne qui contient autre chose n'est pas touchée.
+    expect(joined(['MIS EN BOUTEILLE AU CHÂTEAU', 'SAINT-TRUC']), [
+      'MIS EN BOUTEILLE AU CHÂTEAU',
+      'SAINT-TRUC',
+    ]);
+    // Dernière ligne : rien à quoi la coller.
+    expect(joined(['GRAND VIN', 'CHÂTEAU']), ['GRAND VIN', 'CHÂTEAU']);
+  });
+
   test('l\'appellation la plus précise l\'emporte, en mots entiers', () {
     final index = AppellationIndex([
       'Alsace',

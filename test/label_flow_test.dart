@@ -156,14 +156,14 @@ void main() {
 
     // Lecture : suggestions affichées, photo supprimée.
     expect(find.text('Lecture de l\'étiquette'), findsOneWidget);
-    expect(find.text('Château des Lunes'), findsOneWidget);
+    expect(find.text('Château des Lunes'), findsWidgets);
     expect(find.text('Saint-Emilion grand cru'), findsOneWidget);
     expect(find.text('2019'), findsWidgets);
     expect(recognizer.read, [photo.path]);
     expect(photo.existsSync(), isFalse);
 
     // Le producteur n'a pas été bien coupé : on prend une autre ligne.
-    await tap(tester, find.text('GRAND VIN DE BORDEAUX'));
+    await tap(tester, find.text('Grand Vin de Bordeaux'));
     await tap(tester, find.text('Utiliser comme producteur'));
 
     await tap(tester, find.text('Continuer avec ces informations'));
@@ -176,7 +176,8 @@ void main() {
       () => db.select(db.drinks).getSingle(),
     ))!;
     expect(drink.name, 'Château des Lunes');
-    expect(drink.producer, 'GRAND VIN DE BORDEAUX');
+    // Ligne en capitales remise en forme.
+    expect(drink.producer, 'Grand Vin de Bordeaux');
     expect(drink.appellation, 'Saint-Emilion grand cru');
     expect(drink.country, 'France');
     expect(drink.abv, 14);
@@ -184,6 +185,31 @@ void main() {
     final lot = (await tester.runAsync(() => repo.lotsOf(drink.id)))!.single;
     expect(lot.vintage, 2019);
     expect(lot.volumeMl, 750);
+  });
+
+  testWidgets('nom en plusieurs lignes : « Ajouter à la suite du nom »', (
+    tester,
+  ) async {
+    await open(
+      tester,
+      lines: const [
+        LabelLine('LES TROIS', height: 80),
+        LabelLine('2019', height: 30),
+        LabelLine('CHÊNES', height: 60),
+      ],
+    );
+    await tap(tester, find.text('Lire l\'étiquette'));
+    expect(find.text('Les Trois'), findsWidgets);
+    // Nom suggéré : « Les Trois » (le plus gros) ; pas de producteur, donc
+    // rien à quoi ajouter de ce côté.
+    await tap(tester, find.text('Chênes'));
+    expect(find.text('Ajouter à la suite du nom'), findsOneWidget);
+    expect(find.text('Ajouter à la suite du producteur'), findsNothing);
+    expect(find.text('Les Trois Chênes'), findsOneWidget); // aperçu
+    await tap(tester, find.text('Ajouter à la suite du nom'));
+
+    await tap(tester, find.text('Continuer avec ces informations'));
+    expect(find.text('Les Trois Chênes'), findsOneWidget);
   });
 
   testWidgets('référence déjà dans la cave : bouteilles ajoutées', (

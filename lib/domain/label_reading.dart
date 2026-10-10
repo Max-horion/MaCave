@@ -116,10 +116,11 @@ class LabelReading {
 /// Analyse les lignes d'une étiquette. [currentYear] : le millésime ne peut
 /// pas être dans le futur.
 LabelReading readLabel(
-  List<LabelLine> lines,
+  List<LabelLine> recognized,
   AppellationIndex appellations, {
   required int currentYear,
 }) {
+  final lines = joinLeadWords(recognized);
   final texts = [
     for (final l in lines)
       if (l.text.trim().isNotEmpty) l.text.trim(),
@@ -261,7 +262,7 @@ String? _name(List<LabelLine> lines, String? appellation) {
     if (text.length < 3 || _isBoilerplate(text, appellation)) continue;
     if (best == null || l.height > best.height) best = l;
   }
-  return best == null ? null : _tidy(best.text);
+  return best == null ? null : tidyLabelText(best.text);
 }
 
 /// Producteur : « mis en bouteille par X », sinon une ligne « Brasserie X ».
@@ -271,19 +272,90 @@ String? _producer(List<String> lines) {
       r'mis en bouteilles?\s+par\s+(.+?)(?:\s+(?:à|a|-|–)\s+|,|$)',
       caseSensitive: false,
     ).firstMatch(line);
-    if (m != null) return _tidy(m.group(1)!);
+    if (m != null) return tidyLabelText(m.group(1)!);
   }
   for (final line in lines) {
     if (RegExp(r'^\s*brasserie\b', caseSensitive: false).hasMatch(line)) {
-      return _tidy(line);
+      return tidyLabelText(line);
     }
   }
   return null;
 }
 
+/// Mots qui annoncent toujours la suite du nom : « CHÂTEAU » écrit seul en
+/// petit au-dessus de « LES TROIS CHÊNES ». Sans accents ni casse.
+const leadWords = {
+  'abbaye',
+  'baron',
+  'brasserie',
+  'cave',
+  'caves',
+  'cellier',
+  'ch',
+  'chateau',
+  'clos',
+  'comte',
+  'comtesse',
+  'cuvee',
+  'distillerie',
+  'dom',
+  'domaine',
+  'domaines',
+  'famille',
+  'maison',
+  'marquis',
+  'mas',
+  'moulin',
+  'prieure',
+  'saint',
+  'sainte',
+  'st',
+  'ste',
+  'vignoble',
+  'vignobles',
+};
+
+/// Petits mots qui peuvent accompagner un mot de [leadWords] sur sa ligne
+/// (« DOMAINE DE LA », « CHÂTEAU DU »).
+const _leadCompanions = {'de', 'du', 'des', 'la', 'le', 'les', 'l', 'd', 'et'};
+
+/// Colle à la ligne suivante une ligne faite seulement de mots qui ne sont
+/// jamais seuls (« CHÂTEAU », « DOMAINE DE LA ») : le nom se lit alors en
+/// une ligne. La suivante doit contenir des lettres (pas « 2019 »).
+List<LabelLine> joinLeadWords(List<LabelLine> lines) {
+  final result = <LabelLine>[];
+  for (var i = 0; i < lines.length; i++) {
+    final line = lines[i];
+    final next = i + 1 < lines.length ? lines[i + 1] : null;
+    if (next != null &&
+        _onlyLeadWords(line.text) &&
+        RegExp(r'[a-z]').hasMatch(fold(next.text))) {
+      result.add(
+        LabelLine(
+          '${line.text.trim()} ${next.text.trim()}',
+          height: line.height > next.height ? line.height : next.height,
+        ),
+      );
+      i++;
+    } else {
+      result.add(line);
+    }
+  }
+  return result;
+}
+
+bool _onlyLeadWords(String text) {
+  final words = fold(text)
+      .split(RegExp(r'[^a-z]+'))
+      .where((w) => w.isNotEmpty)
+      .toList();
+  return words.any(leadWords.contains) &&
+      words.every((w) => leadWords.contains(w) || _leadCompanions.contains(w));
+}
+
 /// « CHÂTEAU FIGEAC » → « Château Figeac » : les étiquettes sont souvent
 /// en capitales ; les petits mots restent en minuscules.
-String _tidy(String text) {
+String tidyLabelText(String text) {
   final trimmed = text.trim().replaceAll(RegExp(r'\s+'), ' ');
   if (trimmed != trimmed.toUpperCase()) return trimmed;
   const small = {'de', 'du', 'des', 'la', 'le', 'les', 'et', 'en', 'au', 'aux'};

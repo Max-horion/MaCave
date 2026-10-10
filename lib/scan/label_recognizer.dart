@@ -146,7 +146,7 @@ HocrResult _readHocr(String hocr, int minConfidence) {
     dotAll: true,
   );
   final starts = lineStart.allMatches(hocr).toList();
-  final lines = <LabelLine>[];
+  final lines = <_HocrLine>[];
   var kept = 0, dropped = 0;
   for (final (i, start) in starts.indexed) {
     final end = i + 1 < starts.length ? starts[i + 1].start : hocr.length;
@@ -171,14 +171,81 @@ HocrResult _readHocr(String hocr, int minConfidence) {
       RegExp(r'x_size ([\d.]+)').firstMatch(title)?.group(1) ?? '',
     );
     final box = RegExp(r'bbox (\d+) (\d+) (\d+) (\d+)').firstMatch(title);
-    final height =
-        size ??
-        (box == null
-            ? 0.0
-            : double.parse(box.group(4)!) - double.parse(box.group(2)!));
-    lines.add(LabelLine(words.join(' '), height: height));
+    final edges = box == null
+        ? null
+        : [for (var g = 1; g <= 4; g++) double.parse(box.group(g)!)];
+    final height = size ?? (edges == null ? 0.0 : edges[3] - edges[1]);
+    lines.add(_HocrLine(words, height, edges));
   }
-  return HocrResult(lines, kept: kept, dropped: dropped);
+  return HocrResult(
+    [
+      for (final group in _sideBySide(lines))
+        LabelLine(
+          group.expand((l) => l.words).join(' '),
+          height: group.map((l) => l.height).reduce((a, b) => a > b ? a : b),
+        ),
+    ],
+    kept: kept,
+    dropped: dropped,
+  );
+}
+
+/// Ligne rendue par Tesseract, avec son cadre (gauche, haut, droite, bas)
+/// s'il est connu.
+class _HocrLine {
+  _HocrLine(this.words, this.height, this.box);
+
+  final List<String> words;
+  final double height;
+  final List<double>? box;
+}
+
+/// Regroupe les lignes de Tesseract qui sont côte à côte sur l'étiquette :
+/// sur une bouteille, le texte est courbe ou vu en biais, chaque mot un peu
+/// plus haut ou plus bas que son voisin, et Tesseract en fait des lignes
+/// séparées (« CHÂTEAU » / « LES » / « TROIS CHÊNES »). Deux lignes vont
+/// ensemble si elles sont à peu près à la même hauteur, ont des lettres de taille
+/// voisine et sont proches sans se chevaucher en largeur ; de proche en
+/// proche, un arc entier est regroupé. Chaque groupe est lu de gauche à
+/// droite, et les groupes restent dans l'ordre de lecture.
+List<List<_HocrLine>> _sideBySide(List<_HocrLine> lines) {
+  final groups = <List<_HocrLine>>[];
+  for (final line in lines) {
+    final group = line.box == null
+        ? null
+        : groups.where((g) => g.any((m) => _neighbours(m, line))).firstOrNull;
+    if (group == null) {
+      groups.add([line]);
+    } else {
+      group
+        ..add(line)
+        ..sort((a, b) => a.box![0].compareTo(b.box![0]));
+    }
+  }
+  return groups;
+}
+
+bool _neighbours(_HocrLine a, _HocrLine b) {
+  final x = a.box, y = b.box;
+  if (x == null || y == null) return false;
+  final heightA = x[3] - x[1], heightB = y[3] - y[1];
+  final minHeight = heightA < heightB ? heightA : heightB;
+  final maxHeight = heightA > heightB ? heightA : heightB;
+  if (minHeight <= 0) return false;
+  // À peu près à la même hauteur : centres écartés de moins de 0,9 fois la
+  // plus grande hauteur (un texte en pente descend de presque une demi-ligne
+  // d'un mot à l'autre ; mesuré sur un vrai résultat de Tesseract).
+  final centres = (x[1] + x[3]) / 2 - (y[1] + y[3]) / 2;
+  if (centres.abs() > 0.9 * maxHeight) return false;
+  // Lettres de taille voisine.
+  final small = a.height < b.height ? a.height : b.height;
+  final large = a.height > b.height ? a.height : b.height;
+  if (large > 0 && small / large < 0.6) return false;
+  // Côte à côte : ni l'un sur l'autre, ni trop loin (2,5 hauteurs).
+  final left = x[0] > y[0] ? x[0] : y[0];
+  final right = x[2] < y[2] ? x[2] : y[2];
+  final gap = left - right; // négatif : chevauchement en largeur
+  return gap > -0.3 * minHeight && gap <= 2.5 * maxHeight;
 }
 
 String _unescape(String text) => text

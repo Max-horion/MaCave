@@ -421,39 +421,69 @@ class _LabelReadingScreenState extends ConsumerState<LabelReadingScreen> {
     });
   }
 
+  /// Attribue une ligne (remise en forme : « CHÂTEAU » → « Château ») à un
+  /// champ, à la place de son contenu ou à la suite : un nom découpé en
+  /// plusieurs lignes se recompose en quelques touchers.
   Future<void> _assign(String line) async {
     final l10n = AppLocalizations.of(context);
-    final field = await showModalBottomSheet<_Field>(
+    final text = tidyLabelText(line);
+    final choice = await showModalBottomSheet<(_Field, bool)>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
       builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                line,
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.center,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  text,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            for (final (field, label) in [
-              (_Field.name, l10n.labelUseAsName),
-              (_Field.producer, l10n.labelUseAsProducer),
-              (_Field.appellation, l10n.labelUseAsAppellation),
-            ])
-              ListTile(
-                minTileHeight: 56,
-                title: Text(label),
-                onTap: () => Navigator.pop(context, field),
-              ),
-          ],
+              const SizedBox(height: 8),
+              for (final (field, label) in [
+                (_Field.name, l10n.labelUseAsName),
+                (_Field.producer, l10n.labelUseAsProducer),
+                (_Field.appellation, l10n.labelUseAsAppellation),
+              ])
+                ListTile(
+                  minTileHeight: 56,
+                  title: Text(label),
+                  onTap: () => Navigator.pop(context, (field, false)),
+                ),
+              for (final (field, label, current) in [
+                (_Field.name, l10n.labelAppendToName, _reading.name),
+                (
+                  _Field.producer,
+                  l10n.labelAppendToProducer,
+                  _reading.producer,
+                ),
+              ])
+                if (current != null && current.isNotEmpty)
+                  ListTile(
+                    minTileHeight: 56,
+                    leading: const Icon(Icons.playlist_add),
+                    title: Text(label),
+                    subtitle: Text('$current $text'),
+                    onTap: () => Navigator.pop(context, (field, true)),
+                  ),
+            ],
+          ),
         ),
       ),
     );
-    if (field != null) _set(field, line.trim());
+    if (choice == null) return;
+    final (field, append) = choice;
+    final current = switch (field) {
+      _Field.name => _reading.name,
+      _Field.producer => _reading.producer,
+      _Field.appellation => _reading.appellation,
+    };
+    _set(field, append ? '$current $text' : text);
   }
 
   @override
@@ -560,7 +590,7 @@ class _LabelReadingScreenState extends ConsumerState<LabelReadingScreen> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               minTileHeight: 48,
-              title: Text(line),
+              title: Text(tidyLabelText(line)),
               trailing: const Icon(Icons.touch_app_outlined),
               onTap: () => _assign(line),
             ),

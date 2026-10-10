@@ -1569,6 +1569,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get labelUseAsAppellation => 'Utiliser comme appellation';
 
   @override
+  String get labelAppendToName => 'Ajouter à la suite du nom';
+
+  @override
+  String get labelAppendToProducer => 'Ajouter à la suite du producteur';
+
+  @override
   String get scanUnknownPhoto => 'Photographier l\'étiquette';
 
   @override

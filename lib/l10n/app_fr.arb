@@ -1921,6 +1921,14 @@
   "@labelUseAsAppellation": {
     "description": "Choix : la ligne devient l'appellation."
   },
+  "labelAppendToName": "Ajouter à la suite du nom",
+  "@labelAppendToName": {
+    "description": "Choix : la ligne est ajoutée à la fin du nom déjà rempli (nom découpé en plusieurs lignes sur la photo)."
+  },
+  "labelAppendToProducer": "Ajouter à la suite du producteur",
+  "@labelAppendToProducer": {
+    "description": "Choix : la ligne est ajoutée à la fin du producteur déjà rempli."
+  },
   "scanUnknownPhoto": "Photographier l'étiquette",
   "@scanUnknownPhoto": {
     "description": "Bouton de la fiche « Code inconnu » : lire l'étiquette."
