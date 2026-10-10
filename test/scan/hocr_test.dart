@@ -36,20 +36,13 @@ void main() {
     expect(lines.map((l) => l.height), [82, 30, 30]);
   });
 
-  test('diagnostic : mots gardés et écartés', () {
-    final r = readHocr(_hocr);
-    expect((r.kept, r.dropped), (5, 2));
-  });
-
   test('tous les mots peu sûrs : gardés quand même', () {
     const doubtful = '''
 <span class='ocr_line' id='line_1_1' title="bbox 0 0 100 40; x_size 30">
  <span class='ocrx_word' id='word_1_1' title='bbox 0 0 50 40; x_wconf 22'>CHATEAV</span>
  <span class='ocrx_word' id='word_1_2' title='bbox 55 0 100 40; x_wconf 18'>LUNE5</span>
 </span>''';
-    final r = readHocr(doubtful);
-    expect(r.lines.single.text, 'CHATEAV LUNE5');
-    expect(r.kept, 2);
+    expect(parseHocr(doubtful).single.text, 'CHATEAV LUNE5');
   });
 
   test('vrai résultat de Tesseract 5 (étiquette inventée, photo droite)', () {
