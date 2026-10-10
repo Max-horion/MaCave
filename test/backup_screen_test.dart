@@ -182,13 +182,74 @@ void main() {
     expect(access.requests, 1);
     expect(find.text('Autoriser'), findsNothing);
   });
+
+  testWidgets('refus pendant « Sauvegarder maintenant » : rien n\'est tenté', (
+    tester,
+  ) async {
+    access = _FakeAccess(isGranted: false, accepts: false);
+    await addDrink(tester);
+    await openScreen(tester);
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Sauvegarder maintenant'));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    });
+    await settle(tester);
+    expect(access.requests, 1);
+    expect(find.text('Sauvegarde enregistrée.'), findsNothing);
+    expect(
+      find.textContaining('autoriser l\'appli à écrire dans Documents'),
+      findsNWidgets(2), // l'avertissement de l'écran et le message
+    );
+    expect(await tester.runAsync(service.list), isEmpty);
+  });
+
+  testWidgets(
+    'sans autorisation, le dossier illisible ne bloque pas l\'écran',
+    (tester) async {
+      // Android 10 sans autorisation : lire le dossier lève une erreur. Ici,
+      // un « dossier » qui est un fichier fait de même.
+      final notADir = File('${root.path}/fichier')..writeAsStringSync('x');
+      service = BackupService(
+        db: db,
+        store: MemoryLocalStore(),
+        folder: () async => Directory('${notADir.path}/Sauvegardes'),
+        tempFolder: () async => root,
+        clock: () => now,
+      );
+      access = _FakeAccess(isGranted: false);
+      await openScreen(tester);
+      expect(find.textContaining('Une erreur'), findsNothing);
+      expect(find.text('Autoriser'), findsOneWidget);
+    },
+  );
+
+  testWidgets('refus définitif : « Ouvrir les réglages » à la place', (
+    tester,
+  ) async {
+    access = _FakeAccess(isGranted: false, isBlocked: true);
+    await openScreen(tester);
+    expect(find.text('Autoriser'), findsNothing);
+    expect(find.textContaining('Android ne propose plus'), findsOneWidget);
+    await tester.tap(find.text('Ouvrir les réglages'));
+    await settle(tester);
+    expect(access.settingsOpened, 1);
+  });
 }
 
 class _FakeAccess implements StorageAccess {
-  _FakeAccess({required this.isGranted});
+  _FakeAccess({
+    required this.isGranted,
+    this.accepts = true,
+    this.isBlocked = false,
+  });
 
   bool isGranted;
+
+  /// Réponse de l'utilisateur à la fenêtre d'autorisation.
+  final bool accepts;
+  final bool isBlocked;
   var requests = 0;
+  var settingsOpened = 0;
 
   @override
   Future<bool> granted() async => isGranted;
@@ -196,6 +257,12 @@ class _FakeAccess implements StorageAccess {
   @override
   Future<bool> request() async {
     requests++;
-    return isGranted = true;
+    return isGranted = accepts;
   }
+
+  @override
+  Future<bool> blocked() async => isBlocked;
+
+  @override
+  Future<void> openSettings() async => settingsOpened++;
 }

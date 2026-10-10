@@ -866,6 +866,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupAllow => 'Autoriser';
 
   @override
+  String get backupPermissionBlocked =>
+      'Android ne propose plus de le demander. Dans les réglages de l\'appli, touchez Autorisations, puis Stockage, puis Autoriser.';
+
+  @override
+  String get backupOpenSettings => 'Ouvrir les réglages';
+
+  @override
   String get backupFolderHelp =>
       'Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.';
 

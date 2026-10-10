@@ -1058,6 +1058,14 @@
   "@backupAllow": {
     "description": "Bouton : demander l'autorisation d'écrire dans Documents (Android 8 à 10)."
   },
+  "backupPermissionBlocked": "Android ne propose plus de le demander. Dans les réglages de l'appli, touchez Autorisations, puis Stockage, puis Autoriser.",
+  "@backupPermissionBlocked": {
+    "description": "Explication quand l'autorisation de stockage a été refusée définitivement (Android 8 à 10) : il faut passer par les réglages d'Android."
+  },
+  "backupOpenSettings": "Ouvrir les réglages",
+  "@backupOpenSettings": {
+    "description": "Bouton : ouvrir la page de l'appli dans les réglages d'Android, pour autoriser le stockage."
+  },
   "backupFolderHelp": "Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.",
   "@backupFolderHelp": {
     "description": "Conseil sous le dossier des sauvegardes."

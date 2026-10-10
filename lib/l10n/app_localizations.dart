@@ -1294,6 +1294,18 @@ abstract class AppLocalizations {
   /// **'Autoriser'**
   String get backupAllow;
 
+  /// Explication quand l'autorisation de stockage a été refusée définitivement (Android 8 à 10) : il faut passer par les réglages d'Android.
+  ///
+  /// In fr, this message translates to:
+  /// **'Android ne propose plus de le demander. Dans les réglages de l\'appli, touchez Autorisations, puis Stockage, puis Autoriser.'**
+  String get backupPermissionBlocked;
+
+  /// Bouton : ouvrir la page de l'appli dans les réglages d'Android, pour autoriser le stockage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir les réglages'**
+  String get backupOpenSettings;
+
   /// Conseil sous le dossier des sauvegardes.
   ///
   /// In fr, this message translates to:

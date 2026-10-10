@@ -22,6 +22,7 @@ class BackupOverview {
     required this.everyDays,
     required this.chosenFolder,
     required this.access,
+    this.accessBlocked = false,
   });
 
   final String folder;
@@ -39,18 +40,27 @@ class BackupOverview {
 
   /// L'appli peut écrire dans Documents (autorisation, Android 8 à 10).
   final bool access;
+
+  /// Autorisation refusée définitivement : seuls les réglages d'Android
+  /// permettent de l'accorder.
+  final bool accessBlocked;
 }
 
 final backupOverviewProvider = FutureProvider.autoDispose<BackupOverview>((
   ref,
 ) async {
   final service = ref.watch(backupServiceProvider);
-  final access = await ref.watch(storageAccessProvider).granted();
+  final storage = ref.watch(storageAccessProvider);
+  final access = await storage.granted();
   return BackupOverview(
+    accessBlocked: !access && await storage.blocked(),
     chosenFolder: await service.hasChosenFolder(),
     access: access,
-    folder: (await service.folder()).path,
-    sets: await service.list(),
+    // Sans autorisation (Android 8 à 10), Android refuse même la lecture du
+    // dossier : on n'y touche pas, l'écran montre l'avertissement et le
+    // bouton pour autoriser.
+    folder: access ? (await service.folder()).path : await service.folderPath(),
+    sets: access ? await service.list() : const [],
     lastError: await service.lastError(),
     keep: await service.keepCount(),
     everyDays: await service.everyDays(),
@@ -69,6 +79,23 @@ class BackupScreen extends ConsumerStatefulWidget {
 class _BackupScreenState extends ConsumerState<BackupScreen> {
   /// Une opération est en cours : boutons désactivés.
   bool _busy = false;
+
+  /// Au retour des réglages d'Android, l'autorisation a pu changer.
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: () => ref.invalidate(backupOverviewProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,11 +152,21 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 l10n.backupNeedsPermission,
                 style: TextStyle(color: theme.colorScheme.error),
               ),
-              FilledButton.tonalIcon(
-                onPressed: _busy ? null : _allow,
-                icon: const Icon(Icons.lock_open),
-                label: Text(l10n.backupAllow),
-              ),
+              if (o.accessBlocked) ...[
+                Text(l10n.backupPermissionBlocked),
+                FilledButton.tonalIcon(
+                  onPressed: _busy
+                      ? null
+                      : ref.read(storageAccessProvider).openSettings,
+                  icon: const Icon(Icons.settings),
+                  label: Text(l10n.backupOpenSettings),
+                ),
+              ] else
+                FilledButton.tonalIcon(
+                  onPressed: _busy ? null : _allow,
+                  icon: const Icon(Icons.lock_open),
+                  label: Text(l10n.backupAllow),
+                ),
             ],
             if (o.lastError != null) ...[
               const SizedBox(height: 12),
@@ -235,6 +272,16 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     );
   }
 
+  /// Android 8 à 10 : demande l'autorisation si besoin. Refusée, rien n'est
+  /// tenté (l'écriture échouerait) : un message renvoie vers l'explication
+  /// affichée sur l'écran.
+  Future<bool> _ensureAccess() async {
+    final access = ref.read(storageAccessProvider);
+    if (await access.granted() || await access.request()) return true;
+    if (mounted) _message(AppLocalizations.of(context).backupNeedsPermission);
+    return false;
+  }
+
   Future<void> _allow() =>
       _run(() => ref.read(storageAccessProvider).request());
 
@@ -247,8 +294,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   /// Change le dossier (null : dossier par défaut), après l'avoir essayé.
   Future<void> _setFolder(String? path) => _run(() async {
     final l10n = AppLocalizations.of(context);
-    final access = ref.read(storageAccessProvider);
-    if (!await access.granted()) await access.request();
+    if (!await _ensureAccess()) return;
     try {
       await ref.read(backupServiceProvider).setFolder(path);
     } on FileSystemException {
@@ -260,8 +306,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   Future<void> _backupNow() => _run(() async {
     final l10n = AppLocalizations.of(context);
-    final access = ref.read(storageAccessProvider);
-    if (!await access.granted()) await access.request();
+    if (!await _ensureAccess()) return;
     final set = await ref.read(backupServiceProvider).backupNow();
     if (!mounted) return;
     _message(

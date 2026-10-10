@@ -1,12 +1,15 @@
 package fr.bouthon.cave
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
@@ -70,6 +73,23 @@ class MainActivity : FlutterActivity() {
             checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
             PackageManager.PERMISSION_GRANTED
 
+    // Refus définitif : après un refus avec « Ne plus demander » (ou un
+    // second refus sur certains téléphones, dont les Xiaomi), Android
+    // n'affiche plus la fenêtre et répond « refusé » tout seul. Seuls les
+    // réglages de l'appli permettent alors d'autoriser. Android ne le dit pas
+    // directement : on le note quand une demande est refusée sans que le
+    // système propose de redemander (shouldShowRequestPermissionRationale).
+    private val storagePrefs by lazy {
+        getSharedPreferences("storage_access", MODE_PRIVATE)
+    }
+
+    private fun storageBlocked(): Boolean =
+        !storageGranted() &&
+            storagePrefs.getBoolean("blocked", false) &&
+            !shouldShowRequestPermissionRationale(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -77,7 +97,12 @@ class MainActivity : FlutterActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != storageRequestCode) return
-        storageResult?.success(storageGranted())
+        val granted = storageGranted()
+        val blocked = !granted && !shouldShowRequestPermissionRationale(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        )
+        storagePrefs.edit().putBoolean("blocked", blocked).apply()
+        storageResult?.success(granted)
         storageResult = null
     }
 
@@ -139,9 +164,22 @@ class MainActivity : FlutterActivity() {
         ).setMethodCallHandler { call, result ->
             when (call.method) {
                 "granted" -> result.success(storageGranted())
+                "blocked" -> result.success(storageBlocked())
+                "openSettings" -> {
+                    startActivity(
+                        Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", packageName, null),
+                        ),
+                    )
+                    result.success(null)
+                }
                 "request" -> {
                     if (storageGranted()) {
                         result.success(true)
+                    } else if (storageBlocked()) {
+                        // La fenêtre ne s'afficherait pas : inutile de demander.
+                        result.success(false)
                     } else if (storageResult != null) {
                         result.error("storage", "demande déjà en cours", null)
                     } else {

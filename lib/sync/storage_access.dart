@@ -13,6 +13,14 @@ abstract class StorageAccess {
 
   /// Demande l'autorisation (fenêtre du système) ; retourne la réponse.
   Future<bool> request();
+
+  /// Refus définitif : Android n'affiche plus la fenêtre (« Ne plus
+  /// demander », ou second refus sur certains téléphones). Seuls les
+  /// réglages de l'appli permettent alors d'autoriser.
+  Future<bool> blocked();
+
+  /// Ouvre la page de l'appli dans les réglages d'Android.
+  Future<void> openSettings();
 }
 
 /// Sur Android : canal « fr.bouthon.cave/storage » (MainActivity.kt).
@@ -26,6 +34,13 @@ class AndroidStorageAccess implements StorageAccess {
   @override
   Future<bool> request() async =>
       await _channel.invokeMethod<bool>('request') ?? false;
+
+  @override
+  Future<bool> blocked() async =>
+      await _channel.invokeMethod<bool>('blocked') ?? false;
+
+  @override
+  Future<void> openSettings() => _channel.invokeMethod<void>('openSettings');
 }
 
 /// Autres systèmes, et tests : rien à demander.
@@ -37,6 +52,12 @@ class GrantedStorageAccess implements StorageAccess {
 
   @override
   Future<bool> request() async => true;
+
+  @override
+  Future<bool> blocked() async => false;
+
+  @override
+  Future<void> openSettings() async {}
 }
 
 final storageAccessProvider = Provider<StorageAccess>(

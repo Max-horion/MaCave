@@ -113,6 +113,11 @@ class BackupService {
     return dir;
   }
 
+  /// Chemin du dossier des sauvegardes, sans le créer ni le lire (possible
+  /// même sans l'autorisation de stockage d'Android 8 à 10).
+  Future<String> folderPath() async =>
+      await _store.getString(_folderKey) ?? (await _folder()).path;
+
   /// L'utilisateur a choisi un autre dossier que celui par défaut.
   Future<bool> hasChosenFolder() async =>
       await _store.getString(_folderKey) != null;
