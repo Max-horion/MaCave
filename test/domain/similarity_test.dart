@@ -128,6 +128,29 @@ void main() {
       expect(onLabel('Gin Bio', ['GIN RIO']), isFalse);
     });
 
+    test('un même texte préparé pour toute la cave : mêmes résultats', () {
+      // LabelMatcher retient les mots déjà cherchés : réutilisé pour
+      // plusieurs références (dans un ordre quelconque), il doit donner
+      // exactement ce que donne un calcul fait de zéro.
+      const label = 'CHATEAU F1GEAC\nGRAND VIN\nSAINT-EMILI0N\n2019';
+      final matcher = LabelMatcher(label);
+      for (final drink in [
+        'Château Figeac',
+        'Château Pavie',
+        'Château Figeac Grand Vin',
+        'Clos Figeac',
+        'Château Figeac',
+        'Leffe Blonde',
+      ]) {
+        expect(
+          matcher.score(drinkName: drink),
+          labelMatchScore(labelText: label, drinkName: drink),
+          reason: drink,
+        );
+      }
+      expect(LabelMatcher('').score(drinkName: 'Château Figeac'), 0);
+    });
+
     test('la saisie à la main garde la comparaison stricte', () {
       expect(similar('Château F1geac', 'Château Pavie'), isFalse);
       expect(similar('Leffe Blonde', 'Leffe Brune'), isFalse);

@@ -2,6 +2,43 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 
+/// Fenêtre de confirmation : [message] (et [title]), « Annuler » et le
+/// bouton [action]. Vrai si l'utilisateur confirme.
+Future<bool> confirm(
+  BuildContext context, {
+  String? title,
+  required String message,
+  required String action,
+}) async {
+  final l10n = AppLocalizations.of(context);
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: title == null ? null : Text(title),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.actionCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(action),
+        ),
+      ],
+    ),
+  );
+  return result ?? false;
+}
+
+/// Message bref en bas de l'écran. `persist: false` : sinon, avec une
+/// action, il ne disparaîtrait jamais (Flutter 3.3x).
+void showMessage(BuildContext context, String text, {SnackBarAction? action}) {
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(text), action: action, persist: false));
+}
+
 /// Réglage d'une quantité avec deux gros boutons − et + (utilisable d'une
 /// main, CDC §9).
 class QuantityStepper extends StatelessWidget {

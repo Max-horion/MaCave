@@ -106,16 +106,7 @@ class HistoryPurge {
     final now = _ctx.now();
     for (final MapEntry(key: lotId, value: movements) in byLot.entries) {
       final stock = computeStock(
-        movements
-            .where((m) => m.deletedAt == null)
-            .map(
-              (m) => StockEvent(
-                id: m.id,
-                occurredAt: m.occurredAt,
-                kind: m.kind,
-                quantity: m.quantity,
-              ),
-            ),
+        movements.where((m) => m.deletedAt == null).map(stockEventOf),
       );
       // Rien à reporter : repartir de zéro donne le même stock.
       if (stock == 0) continue;
@@ -225,10 +216,10 @@ class HistoryPurge {
       // Le lot et son historique.
       await (_db.update(_db.movements)
             ..where((t) => t.lotId.equals(lot.id) & t.deletedAt.isNull()))
-          .write(_deletionStamp());
+          .write(_ctx.deletionStamp());
       await (_db.update(
         _db.lots,
-      )..where((t) => t.id.equals(lot.id))).write(_deletionStamp());
+      )..where((t) => t.id.equals(lot.id))).write(_ctx.deletionStamp());
       drinks.add(lot.drinkId);
     }
     // La référence, si elle n'a plus aucun lot.
@@ -239,7 +230,7 @@ class HistoryPurge {
       if (remaining.isEmpty) {
         await (_db.update(_db.drinks)
               ..where((t) => t.id.equals(drinkId) & t.deletedAt.isNull()))
-            .write(_deletionStamp());
+            .write(_ctx.deletionStamp());
       }
     }
     return lots.length;
@@ -257,13 +248,4 @@ class HistoryPurge {
           updatedBy: _ctx.deviceId,
         ),
       );
-
-  RawValuesInsertable<T> _deletionStamp<T>() {
-    final now = _ctx.now();
-    return RawValuesInsertable<T>({
-      'deleted_at': Variable<int>(now),
-      'updated_at': Variable<int>(now),
-      'updated_by': Variable<String>(_ctx.deviceId),
-    });
-  }
 }

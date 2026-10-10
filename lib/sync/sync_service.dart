@@ -213,6 +213,9 @@ class SyncService {
     }
   }
 
+  /// La base locale a-t-elle du nouveau que le serveur n'a pas reçu ?
+  Future<bool> hasUnsentChanges() => _changedSinceSync();
+
   /// La base locale a-t-elle changé depuis qu'elle était identique au
   /// serveur ?
   Future<bool> _changedSinceSync() async =>

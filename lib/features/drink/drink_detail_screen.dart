@@ -74,10 +74,10 @@ class DrinkDetailScreen extends ConsumerWidget {
     Drink drink,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await _confirm(
+    final confirmed = await confirm(
       context,
-      l10n.deleteDrinkConfirm(drink.name),
-      l10n.actionDelete,
+      message: l10n.deleteDrinkConfirm(drink.name),
+      action: l10n.actionDelete,
     );
     if (confirmed && context.mounted) {
       await ref.read(caveRepositoryProvider).deleteDrink(drink.id);
@@ -319,36 +319,11 @@ class _LotCard extends ConsumerWidget {
 
   Future<void> _confirmDeleteLot(BuildContext context, WidgetRef ref) async {
     final formats = Formats.of(context);
-    final confirmed = await _confirm(
+    final confirmed = await confirm(
       context,
-      formats.l10n.deleteLotConfirm(formats.lotExplicit(lot)),
-      formats.l10n.actionDelete,
+      message: formats.l10n.deleteLotConfirm(formats.lotExplicit(lot)),
+      action: formats.l10n.actionDelete,
     );
     if (confirmed) await ref.read(caveRepositoryProvider).deleteLot(lot.id);
   }
-}
-
-Future<bool> _confirm(
-  BuildContext context,
-  String message,
-  String action,
-) async {
-  final l10n = AppLocalizations.of(context);
-  final result = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: Text(message),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(l10n.actionCancel),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(action),
-        ),
-      ],
-    ),
-  );
-  return result ?? false;
 }

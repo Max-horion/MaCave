@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 /// Ce qu'il faut pour estampiller une écriture : quel appareil, quelle heure,
@@ -21,6 +22,18 @@ class WriteContext {
 
   /// Nouvel UUID v7 (triable par date de création).
   String newId() => _idGenerator();
+
+  /// Champs d'une suppression logique, communs à toutes les tables
+  /// synchronisées (colonnes de `SyncColumns`) : la ligne reste, datée et
+  /// signée, pour que la suppression se propage aux autres appareils.
+  RawValuesInsertable<T> deletionStamp<T>() {
+    final time = now();
+    return RawValuesInsertable<T>({
+      'deleted_at': Variable<int>(time),
+      'updated_at': Variable<int>(time),
+      'updated_by': Variable<String>(deviceId),
+    });
+  }
 
   static int _systemClock() => DateTime.now().toUtc().millisecondsSinceEpoch;
 

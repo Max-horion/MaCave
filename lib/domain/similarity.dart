@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'text.dart';
 
 // Ressemblance entre deux références (CDC §6.2, détection des doublons) :
@@ -36,22 +38,31 @@ const _stopWords = {
   'aux', 'the', 'of', 'and',
 };
 
+// Expressions compilées une seule fois : elles servent pour chaque
+// référence de la cave.
+final _separators = RegExp(r'[^a-z0-9]+');
+final _year = RegExp(r'^(1[89]|20)\d\d$');
+final _volumeWord = RegExp(r'^\d+(ml|cl|l)$');
+final _volumeInText = RegExp(r'\d+\s*(ml|cl|l)\b');
+final _number = RegExp(r'^\d+$');
+
 /// Mots d'un nom, prêts à être comparés.
 Set<String> similarityWords(String? text) {
   if (text == null) return const {};
+  final folded = fold(text);
   final words = <String>{};
-  for (final raw in fold(text).split(RegExp(r'[^a-z0-9]+'))) {
+  for (final raw in folded.split(_separators)) {
     if (raw.isEmpty || _stopWords.contains(raw)) continue;
     // Millésime ou volume : ne distinguent pas une référence (ils sont sur
     // le lot).
-    if (RegExp(r'^(1[89]|20)\d\d$').hasMatch(raw)) continue;
-    if (RegExp(r'^\d+(ml|cl|l)$').hasMatch(raw)) continue;
+    if (_year.hasMatch(raw)) continue;
+    if (_volumeWord.hasMatch(raw)) continue;
     if (const {'ml', 'cl', 'l', 'vol'}.contains(raw)) continue;
     words.add(_abbreviations[raw] ?? raw);
   }
   // Un nombre seul après un volume retiré (« 75 cl ») : retiré aussi.
-  if (RegExp(r'\d+\s*(ml|cl|l)\b').hasMatch(fold(text))) {
-    words.removeWhere((w) => RegExp(r'^\d+$').hasMatch(w));
+  if (_volumeInText.hasMatch(folded)) {
+    words.removeWhere(_number.hasMatch);
   }
   return words;
 }
@@ -166,71 +177,138 @@ List<String> _labelTokens(String text) {
 /// Distance d'édition (Levenshtein) entre deux mots déjà canoniques.
 int _distance(String a, String b) {
   var previous = List<int>.generate(b.length + 1, (i) => i);
+  var current = List<int>.filled(b.length + 1, 0);
   for (var i = 1; i <= a.length; i++) {
-    final current = List<int>.filled(b.length + 1, 0)..[0] = i;
+    current[0] = i;
     for (var j = 1; j <= b.length; j++) {
       final cost = a[i - 1] == b[j - 1] ? 0 : 1;
-      current[j] = [
-        previous[j] + 1,
-        current[j - 1] + 1,
+      current[j] = min(
+        min(previous[j] + 1, current[j - 1] + 1),
         previous[j - 1] + cost,
-      ].reduce((x, y) => x < y ? x : y);
+      );
     }
-    previous = current;
+    (previous, current) = (current, previous);
   }
   return previous[b.length];
 }
 
-/// Le mot [word] de la référence se retrouve-t-il, approximativement, dans
-/// les mots lus ? Tolérance : aucune lettre fausse sous 5 lettres, une
-/// jusqu'à 7, deux au-delà.
-bool _foundIn(String word, List<String> tokens) {
-  final target = _ocrCanonical(word);
-  final allowed = target.length < 5 ? 0 : (target.length < 8 ? 1 : 2);
-  for (final token in tokens) {
-    final candidate = _ocrCanonical(token);
-    if ((candidate.length - target.length).abs() > allowed) continue;
-    if (_distance(candidate, target) <= allowed) return true;
+/// Paires de lettres voisines d'un mot, avec leur nombre.
+Map<String, int> _bigrams(String word) {
+  final grams = <String, int>{};
+  for (var i = 0; i + 1 < word.length; i++) {
+    final gram = word.substring(i, i + 2);
+    grams[gram] = (grams[gram] ?? 0) + 1;
   }
-  return false;
+  return grams;
+}
+
+/// Paires de lettres communes à deux mots.
+int _commonBigrams(Map<String, int> a, Map<String, int> b) {
+  var common = 0;
+  a.forEach((gram, n) => common += min(n, b[gram] ?? 0));
+  return common;
+}
+
+/// Mot lu, sous sa forme canonique, avec ses paires de lettres.
+typedef _Candidate = (String, Map<String, int>);
+
+/// Texte lu sur une étiquette, préparé **une seule fois** pour y chercher
+/// toutes les références de la cave (« Déjà dans votre cave ? ») : mots
+/// ramenés à leur forme canonique et rangés par longueur, et résultat de
+/// chaque mot déjà cherché retenu (« château », « domaine »… reviennent
+/// dans des centaines de références). Sans cela, une cave de quelques
+/// milliers de références demandait des dizaines de secondes (mesuré avec
+/// tool/perf/cave_perf_test.dart).
+class LabelMatcher {
+  LabelMatcher(String labelText) {
+    for (final token in _labelTokens(labelText)) {
+      final canonical = _ocrCanonical(token);
+      if (_tokens.add(canonical)) {
+        _byLength.putIfAbsent(canonical.length, () => []).add((
+          canonical,
+          _bigrams(canonical),
+        ));
+      }
+    }
+  }
+
+  final _tokens = <String>{};
+  final _byLength = <int, List<_Candidate>>{};
+  final _found = <String, bool>{};
+
+  /// Ressemblance entre une référence de la cave et le texte lu : part des
+  /// mots du nom de la référence (et de son producteur, s'il aide)
+  /// retrouvés quelque part dans le texte, de 0 à 1. Il faut au moins un
+  /// mot distinctif (pas « Château », « Domaine »…) retrouvé.
+  double score({required String drinkName, String? drinkProducer}) {
+    if (_tokens.isEmpty) return 0;
+    double scoreOf(Set<String> set) {
+      final words = set.toList();
+      if (words.isEmpty) return 0;
+      var found = 0;
+      var distinctive = false;
+      void count(Iterable<String> ws) {
+        found += ws.length;
+        if (ws.any((w) => !_genericWords.contains(w))) distinctive = true;
+      }
+
+      for (var i = 0; i < words.length; i++) {
+        if (_foundIn(words[i])) {
+          count([words[i]]);
+        } else if (i + 1 < words.length && _foundIn(words[i] + words[i + 1])) {
+          // Deux mots collés par la reconnaissance (« CHATEAUFIGEAC »).
+          count([words[i], words[i + 1]]);
+          i++;
+        }
+      }
+      return distinctive ? found / words.length : 0;
+    }
+
+    final name = similarityWords(drinkName);
+    final byName = scoreOf(name);
+    final withProducer = scoreOf({...name, ...similarityWords(drinkProducer)});
+    return byName > withProducer ? byName : withProducer;
+  }
+
+  /// Le mot [word] de la référence se retrouve-t-il, approximativement, dans
+  /// les mots lus ? Tolérance : aucune lettre fausse sous 5 lettres, une
+  /// jusqu'à 7, deux au-delà.
+  bool _foundIn(String word) => _found[word] ??= _search(word);
+
+  bool _search(String word) {
+    final target = _ocrCanonical(word);
+    if (_tokens.contains(target)) return true;
+    final allowed = target.length < 5 ? 0 : (target.length < 8 ? 1 : 2);
+    if (allowed == 0) return false;
+    // Tri rapide avant le calcul de distance : deux mots à [allowed]
+    // modifications près ont au moins (longueur − 1) − 2 × [allowed] paires
+    // de lettres en commun (chaque modification en détruit au plus deux).
+    final grams = _bigrams(target);
+    final needed = target.length - 1 - 2 * allowed;
+    for (
+      var length = target.length - allowed;
+      length <= target.length + allowed;
+      length++
+    ) {
+      for (final (candidate, candidateGrams)
+          in _byLength[length] ?? const <_Candidate>[]) {
+        if (needed > 0 && _commonBigrams(grams, candidateGrams) < needed) {
+          continue;
+        }
+        if (_distance(candidate, target) <= allowed) return true;
+      }
+    }
+    return false;
+  }
 }
 
 /// Ressemblance entre une référence de la cave et le texte lu sur une
-/// étiquette : part des mots du nom de la référence (et de son producteur,
-/// s'il aide) retrouvés quelque part dans le texte, de 0 à 1. Il faut au
-/// moins un mot distinctif (pas « Château », « Domaine »…) retrouvé.
+/// étiquette (voir [LabelMatcher.score]). Pour comparer toute la cave au
+/// même texte, préparer un seul [LabelMatcher].
 double labelMatchScore({
   required String labelText,
   required String drinkName,
   String? drinkProducer,
-}) {
-  final tokens = _labelTokens(labelText);
-  if (tokens.isEmpty) return 0;
-  double score(Set<String> set) {
-    final words = set.toList();
-    if (words.isEmpty) return 0;
-    var found = 0;
-    var distinctive = false;
-    void count(Iterable<String> ws) {
-      found += ws.length;
-      if (ws.any((w) => !_genericWords.contains(w))) distinctive = true;
-    }
-
-    for (var i = 0; i < words.length; i++) {
-      if (_foundIn(words[i], tokens)) {
-        count([words[i]]);
-      } else if (i + 1 < words.length &&
-          _foundIn(words[i] + words[i + 1], tokens)) {
-        // Deux mots collés par la reconnaissance (« CHATEAUFIGEAC »).
-        count([words[i], words[i + 1]]);
-        i++;
-      }
-    }
-    return distinctive ? found / words.length : 0;
-  }
-
-  final name = similarityWords(drinkName);
-  final byName = score(name);
-  final withProducer = score({...name, ...similarityWords(drinkProducer)});
-  return byName > withProducer ? byName : withProducer;
-}
+}) =>
+    LabelMatcher(labelText)
+        .score(drinkName: drinkName, drinkProducer: drinkProducer);

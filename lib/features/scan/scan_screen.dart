@@ -75,32 +75,10 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   }
 
   Future<void> _typeCode() async {
-    final l10n = AppLocalizations.of(context);
-    final field = TextEditingController();
     final code = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.scanManualEntry),
-        content: TextField(
-          controller: field,
-          autofocus: true,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: l10n.scanManualLabel),
-          onSubmitted: (v) => Navigator.pop(context, v),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.actionCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, field.text),
-            child: Text(l10n.actionOk),
-          ),
-        ],
-      ),
+      builder: (context) => const _ManualCodeDialog(),
     );
-    field.dispose();
     if (code != null && mounted) _found(code);
   }
 
@@ -184,6 +162,50 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       label: Text(_zxing.torch ? l10n.scanTorchOff : l10n.scanTorchOn),
     ),
   );
+}
+
+/// Saisie du code à la main. Le champ appartient à la fenêtre : il n'est
+/// détruit qu'une fois celle-ci fermée (animation comprise).
+class _ManualCodeDialog extends StatefulWidget {
+  const _ManualCodeDialog();
+
+  @override
+  State<_ManualCodeDialog> createState() => _ManualCodeDialogState();
+}
+
+class _ManualCodeDialogState extends State<_ManualCodeDialog> {
+  final _field = TextEditingController();
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.scanManualEntry),
+      content: TextField(
+        controller: _field,
+        autofocus: true,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(labelText: l10n.scanManualLabel),
+        onSubmitted: (v) => Navigator.pop(context, v),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.actionCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _field.text),
+          child: Text(l10n.actionOk),
+        ),
+      ],
+    );
+  }
 }
 
 class _CameraError extends StatelessWidget {

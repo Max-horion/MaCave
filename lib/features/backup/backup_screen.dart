@@ -11,6 +11,7 @@ import '../../sync/cave_file.dart';
 import '../../sync/providers.dart';
 import '../../sync/storage_access.dart';
 import '../../ui/formats.dart';
+import '../../ui/widgets.dart';
 
 /// État affiché par l'écran : dossier, sauvegardes présentes, dernière erreur.
 class BackupOverview {
@@ -259,17 +260,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     try {
       await action();
     } catch (e) {
-      if (mounted) _message(AppLocalizations.of(context).errorGeneric('$e'));
+      if (mounted) {
+        showMessage(context, AppLocalizations.of(context).errorGeneric('$e'));
+      }
     } finally {
       ref.invalidate(backupOverviewProvider);
       if (mounted) setState(() => _busy = false);
     }
-  }
-
-  void _message(String text, {SnackBarAction? action}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text), action: action, persist: false),
-    );
   }
 
   /// Android 8 à 10 : demande l'autorisation si besoin. Refusée, rien n'est
@@ -278,7 +275,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   Future<bool> _ensureAccess() async {
     final access = ref.read(storageAccessProvider);
     if (await access.granted() || await access.request()) return true;
-    if (mounted) _message(AppLocalizations.of(context).backupNeedsPermission);
+    if (mounted) {
+      showMessage(context, AppLocalizations.of(context).backupNeedsPermission);
+    }
     return false;
   }
 
@@ -298,10 +297,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     try {
       await ref.read(backupServiceProvider).setFolder(path);
     } on FileSystemException {
-      if (mounted) _message(l10n.backupFolderRefused);
+      if (mounted) showMessage(context, l10n.backupFolderRefused);
       return;
     }
-    if (mounted) _message(l10n.backupFolderChanged);
+    if (mounted) showMessage(context, l10n.backupFolderChanged);
   });
 
   Future<void> _backupNow() => _run(() async {
@@ -309,7 +308,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     if (!await _ensureAccess()) return;
     final set = await ref.read(backupServiceProvider).backupNow();
     if (!mounted) return;
-    _message(
+    showMessage(
+      context,
       l10n.backupDone,
       action: SnackBarAction(
         label: l10n.backupShare,
@@ -331,24 +331,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final service = ref.read(backupServiceProvider);
     final excess = await service.excessWith(count);
     if (excess > 0 && mounted) {
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(l10n.backupKeepConfirmTitle),
-          content: Text(l10n.backupKeepConfirmMessage(excess)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(l10n.actionCancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(l10n.backupKeepConfirm),
-            ),
-          ],
-        ),
+      final confirmed = await confirm(
+        context,
+        title: l10n.backupKeepConfirmTitle,
+        message: l10n.backupKeepConfirmMessage(excess),
+        action: l10n.backupKeepConfirm,
       );
-      if (confirmed != true) return;
+      if (!confirmed) return;
     }
     await _run(() => service.setKeepCount(count));
   }
@@ -419,7 +408,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     try {
       info = service.inspect(path);
     } on CaveFileException catch (e) {
-      _message(switch (e.problem) {
+      showMessage(context, switch (e.problem) {
         CaveFileProblem.unreadable => l10n.backupProblemUnreadable,
         CaveFileProblem.notACave => l10n.backupProblemNotACave,
         CaveFileProblem.newerVersion => l10n.backupProblemNewer,
@@ -453,7 +442,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
     await _run(() async {
       await service.restore(path);
-      if (mounted) _message(l10n.backupRestored);
+      if (mounted) showMessage(context, l10n.backupRestored);
     });
   }
 }

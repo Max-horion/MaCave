@@ -186,6 +186,9 @@ class SyncController extends Notifier<SyncState> {
   Timer? _retryTimer;
   var _retryIndex = 0;
   var _running = false;
+
+  /// La cave a été modifiée pendant une synchronisation.
+  var _changedWhileRunning = false;
   StreamSubscription<bool>? _onlineSubscription;
 
   static const _lastSuccessKey = 'sync_last_success';
@@ -265,7 +268,12 @@ class SyncController extends Notifier<SyncState> {
   /// l'état passe « en attente » jusqu'au prochain « Synchroniser
   /// maintenant ».
   void localChanged() {
-    if (_current == null || _running) return;
+    if (_current == null) return;
+    if (_running) {
+      // La copie envoyée a peut-être été prise avant : vu à la fin.
+      _changedWhileRunning = true;
+      return;
+    }
     if (!state.automatic) {
       if (state.status == SyncStatus.synced) {
         state = state.copyWith(status: SyncStatus.pending);
@@ -288,6 +296,7 @@ class SyncController extends Notifier<SyncState> {
     if (current == null || _running) return;
     _running = true;
     _retryTimer?.cancel();
+    var succeeded = false;
     try {
       if (!await _env.isOnline()) {
         // Pas une erreur : la synchronisation reprendra avec le réseau.
@@ -305,6 +314,7 @@ class SyncController extends Notifier<SyncState> {
       final report = await current.service.sync();
       await _succeeded(notice: report.setAsideAs);
       await _mirrorBackups(current);
+      succeeded = true;
     } on SyncException catch (e) {
       await _failed(e);
     } catch (e) {
@@ -312,6 +322,18 @@ class SyncController extends Notifier<SyncState> {
     } finally {
       _running = false;
     }
+    if (succeeded) await _afterSync(current);
+  }
+
+  /// Une modification faite pendant la synchronisation n'est peut-être pas
+  /// partie (copie prise avant) : elle est envoyée après le délai habituel,
+  /// seulement s'il reste vraiment quelque chose à envoyer (la fusion
+  /// elle-même modifie aussi la base). Sans cela, elle attendait le
+  /// prochain déclencheur (ouverture, retour au premier plan…).
+  Future<void> _afterSync(_Connection connection) async {
+    if (!_changedWhileRunning) return;
+    _changedWhileRunning = false;
+    if (await connection.service.hasUnsentChanges()) localChanged();
   }
 
   /// Active la synchronisation avec ces paramètres : premier cycle complet

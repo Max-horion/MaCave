@@ -9,6 +9,7 @@ import '../../sync/sync_service.dart';
 import '../../sync/sync_settings.dart';
 import '../../theme/app_theme.dart';
 import '../../ui/formats.dart';
+import '../../ui/widgets.dart';
 import 'sync_messages.dart';
 
 /// Paramètres enregistrés et journal, relus à chaque changement d'état.
@@ -216,11 +217,6 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
     }
   }
 
-  void _message(String text) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(text), persist: false));
-  }
-
   Future<void> _activate(SyncSettings settings, String? password) =>
       _run(() async {
         final l10n = AppLocalizations.of(context);
@@ -238,7 +234,7 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
         }
         if (!mounted) return;
         setState(() => _editing = false);
-        _message(l10n.syncActivated);
+        showMessage(context, l10n.syncActivated);
       });
 
   /// Autre cave sur le serveur, découverte plus tard (un autre appareil a
@@ -316,7 +312,7 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
     if (confirmed != true || !mounted) return;
     await _run(() async {
       await _controller.deactivate();
-      if (mounted) _message(l10n.syncDeactivated);
+      if (mounted) showMessage(context, l10n.syncDeactivated);
     });
   }
 }

@@ -119,74 +119,104 @@ Future<void> showRemoveDialog(
   Lot lot,
 ) async {
   if (lot.stock == 0) return;
-  final formats = Formats.of(context);
-  final l10n = formats.l10n;
-  var quantity = 1;
-  var reason = ExitReason.consumed;
-  final comment = TextEditingController();
-
-  final confirmed = await showDialog<bool>(
+  final l10n = AppLocalizations.of(context);
+  final exit = await showDialog<_ExitChoice>(
     context: context,
-    builder: (context) => StatefulBuilder(
-      builder: (context, setState) => AlertDialog(
-        title: Text(l10n.removeBottles),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(formats.lotExplicit(lot), textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              QuantityStepper(
-                value: quantity,
-                max: lot.stock,
-                onChanged: (v) => setState(() => quantity = v),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.fieldReason),
-              const SizedBox(height: 8),
-              SegmentedButton<ExitReason>(
-                segments: [
-                  for (final r in ExitReason.values)
-                    ButtonSegment(value: r, label: Text(formats.reason(r))),
-                ],
-                selected: {reason},
-                showSelectedIcon: false,
-                onSelectionChanged: (s) => setState(() => reason = s.single),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: comment,
-                decoration: InputDecoration(labelText: l10n.fieldComment),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.actionCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.removeBottles),
-          ),
-        ],
-      ),
-    ),
+    builder: (context) => _RemoveDialog(lot: lot),
   );
-  final text = comment.text;
-  comment.dispose();
-  if (confirmed != true || !context.mounted) return;
+  if (exit == null || !context.mounted) return;
+  final (:quantity, :reason, :comment) = exit;
   await _run(context, () async {
     final id = await ref
         .read(caveRepositoryProvider)
-        .addExit(lot.id, quantity, reason: reason, comment: text);
+        .addExit(lot.id, quantity, reason: reason, comment: comment);
     if (context.mounted) {
       _showUndo(context, ref, l10n.bottlesRemoved(quantity), id);
     }
   });
+}
+
+/// Quantité, motif et commentaire choisis dans [_RemoveDialog].
+typedef _ExitChoice = ({int quantity, ExitReason reason, String comment});
+
+/// Fenêtre « Retirer des bouteilles ». Le champ du commentaire appartient à
+/// la fenêtre : il n'est détruit qu'une fois celle-ci fermée (animation
+/// comprise).
+class _RemoveDialog extends StatefulWidget {
+  const _RemoveDialog({required this.lot});
+
+  final Lot lot;
+
+  @override
+  State<_RemoveDialog> createState() => _RemoveDialogState();
+}
+
+class _RemoveDialogState extends State<_RemoveDialog> {
+  var _quantity = 1;
+  var _reason = ExitReason.consumed;
+  final _comment = TextEditingController();
+
+  @override
+  void dispose() {
+    _comment.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final formats = Formats.of(context);
+    final l10n = formats.l10n;
+    return AlertDialog(
+      title: Text(l10n.removeBottles),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(formats.lotExplicit(widget.lot), textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            QuantityStepper(
+              value: _quantity,
+              max: widget.lot.stock,
+              onChanged: (v) => setState(() => _quantity = v),
+            ),
+            const SizedBox(height: 16),
+            Text(l10n.fieldReason),
+            const SizedBox(height: 8),
+            SegmentedButton<ExitReason>(
+              segments: [
+                for (final r in ExitReason.values)
+                  ButtonSegment(value: r, label: Text(formats.reason(r))),
+              ],
+              selected: {_reason},
+              showSelectedIcon: false,
+              onSelectionChanged: (s) => setState(() => _reason = s.single),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _comment,
+              decoration: InputDecoration(labelText: l10n.fieldComment),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.actionCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, (
+            quantity: _quantity,
+            reason: _reason,
+            comment: _comment.text,
+          )),
+          child: Text(l10n.removeBottles),
+        ),
+      ],
+    );
+  }
 }
 
 /// Nouveau lot sur une référence existante : autre millésime ou volume

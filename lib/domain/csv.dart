@@ -5,6 +5,8 @@
 /// Excel et LibreOffice en français (séparateur « ; », marque UTF-8).
 library;
 
+import 'text.dart';
+
 /// Marque d'ordre des octets UTF-8 : sans elle, Excel affiche mal les accents.
 const utf8Bom = '﻿';
 
@@ -121,19 +123,6 @@ class CsvTable {
   }
 }
 
-/// « Volume (ml) » → « volumeml », « Région » → « region ».
-String normalizeHeader(String name) {
-  const accents = {
-    'à': 'a', 'â': 'a', 'ä': 'a', 'ç': 'c', 'é': 'e', 'è': 'e', 'ê': 'e', //
-    'ë': 'e', 'î': 'i', 'ï': 'i', 'ô': 'o', 'ö': 'o', 'ù': 'u', 'û': 'u',
-    'ü': 'u',
-  };
-  final lower = name.toLowerCase();
-  final buffer = StringBuffer();
-  for (final rune in lower.runes) {
-    final c = String.fromCharCode(rune);
-    final plain = accents[c] ?? c;
-    if (RegExp(r'[a-z0-9]').hasMatch(plain)) buffer.write(plain);
-  }
-  return buffer.toString();
-}
+/// « Volume (ml) » → « volumeml », « Région » → « region » : sans accents,
+/// majuscules, espaces ni ponctuation ([compactKey]).
+String normalizeHeader(String name) => compactKey(name);

@@ -234,6 +234,31 @@ void main() {
     expect(server.count('PUT'), 2);
   });
 
+  test(
+    'modification pendant une synchronisation : envoyée juste après',
+    () async {
+      await activate();
+      await phone.addBeer('Bière', 1);
+      server.requests.clear();
+      Future<void>? during;
+      server.beforePut = () {
+        server.beforePut = null;
+        // La copie envoyée est déjà prise : cette bière n'y est pas.
+        during = phone.addBeer('Bière du milieu', 2);
+        controller().localChanged();
+      };
+      await controller().syncNow();
+      await during;
+      await wait();
+      expect(server.requests.where((r) => r == 'PUT $remote'), hasLength(2));
+      expect(state().status, SyncStatus.synced);
+      // Plus rien à envoyer : pas de troisième envoi.
+      server.requests.clear();
+      await controller().syncNow();
+      expect(server.requests.where((r) => r == 'PUT $remote'), isEmpty);
+    },
+  );
+
   test('synchro automatique désactivée : seulement sur demande', () async {
     await activate();
     await controller().setAutomatic(false);

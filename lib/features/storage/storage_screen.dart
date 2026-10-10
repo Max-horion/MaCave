@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../sync/providers.dart';
 import '../../theme/app_theme.dart';
 import '../../ui/formats.dart';
+import '../../ui/widgets.dart';
 
 /// Ce qu'affiche l'écran : taille, historique, réglage de la purge auto.
 class StorageOverview {
@@ -190,38 +191,13 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     try {
       await action();
     } catch (e) {
-      if (mounted) _message(AppLocalizations.of(context).errorGeneric('$e'));
+      if (mounted) {
+        showMessage(context, AppLocalizations.of(context).errorGeneric('$e'));
+      }
     } finally {
       ref.invalidate(storageOverviewProvider);
       if (mounted) setState(() => _busy = false);
     }
-  }
-
-  void _message(String text) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(text), persist: false));
-  }
-
-  Future<bool> _confirm(String title, String message, String action) async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.actionCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(action),
-          ),
-        ],
-      ),
-    );
-    return confirmed == true && mounted;
   }
 
   /// Purge manuelle : date, confirmation, sauvegarde, purge, compactage.
@@ -248,21 +224,22 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     final count = await purge.countBefore(date);
     if (!mounted) return;
     if (count == 0) {
-      _message(l10n.storagePurgeNone);
+      showMessage(context, l10n.storagePurgeNone);
       return;
     }
-    final ok = await _confirm(
-      l10n.storagePurgeConfirmTitle,
-      l10n.storagePurgeConfirmMessage(count, formats.date(date)),
-      l10n.storagePurgeConfirm,
+    final ok = await confirm(
+      context,
+      title: l10n.storagePurgeConfirmTitle,
+      message: l10n.storagePurgeConfirmMessage(count, formats.date(date)),
+      action: l10n.storagePurgeConfirm,
     );
-    if (!ok) return;
+    if (!ok || !mounted) return;
     await _run(() async {
       await ref.read(backupServiceProvider).backupNow();
       final removed = await purge.purgeBefore(date);
       // Rend au téléphone la place libérée (impossible dans une transaction).
       await ref.read(databaseProvider).customStatement('VACUUM');
-      if (mounted) _message(l10n.storagePurgeDone(removed));
+      if (mounted) showMessage(context, l10n.storagePurgeDone(removed));
     });
   }
 
@@ -277,19 +254,20 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
         : 0;
     if (candidates > 0) {
       if (!mounted) return;
-      final ok = await _confirm(
-        l10n.storageAutoConfirmTitle,
-        l10n.storageAutoConfirmMessage(candidates),
-        l10n.storageAutoConfirm,
+      final ok = await confirm(
+        context,
+        title: l10n.storageAutoConfirmTitle,
+        message: l10n.storageAutoConfirmMessage(candidates),
+        action: l10n.storageAutoConfirm,
       );
-      if (!ok) return;
+      if (!ok || !mounted) return;
     }
     await _run(() async {
       if (candidates > 0) await ref.read(backupServiceProvider).backupNow();
       await purge.setAutoSettings(settings);
       if (candidates > 0) {
         final removed = await purge.autoPurge(now);
-        if (mounted) _message(l10n.storageAutoDone(removed));
+        if (mounted) showMessage(context, l10n.storageAutoDone(removed));
       }
     });
   }

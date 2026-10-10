@@ -4,6 +4,7 @@ import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
 import 'package:cave/data/exchange/cave_import.dart';
 import 'package:cave/data/providers.dart';
+import 'package:cave/domain/enums.dart';
 import 'package:cave/features/drink/drink_detail_screen.dart';
 import 'package:cave/features/exchange/exchange_actions.dart';
 import 'package:cave/features/inventory/inventory_screen.dart';
@@ -139,6 +140,49 @@ void main() {
     expect(find.text('Historique'), findsOneWidget);
     expect(find.text('−1 bouteille · 2018 · 75 cl'), findsOneWidget);
     expect(find.text('+3 bouteilles · 2018 · 75 cl'), findsOneWidget);
+  });
+
+  testWidgets('fiche : retirer avec quantité, motif et commentaire', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 3000);
+    tester.view.devicePixelRatio = 2.6;
+    addTearDown(tester.view.reset);
+
+    final a = await addWine(tester, 'Alpha', 5);
+    await tester.pumpWidget(screen(DrinkDetailScreen(drinkId: a.drinkId)));
+    await settle(tester);
+    // Menu du lot (l'autre est celui de la référence, en haut).
+    await tester.tap(
+      find.descendant(
+        of: find.byType(Card).last,
+        matching: find.byType(PopupMenuButton<void>),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Retirer des bouteilles'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Plus'));
+    await tester.tap(find.text('Offerte'));
+    await tester.enterText(find.byType(TextField), '  Pour Paul  ');
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async {
+      await tester.tap(
+        find.widgetWithText(FilledButton, 'Retirer des bouteilles'),
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await settle(tester);
+
+    expect(await stock(tester, a.lotId), 3);
+    final exit = (await tester.runAsync(() => repo.movementsOf(a.lotId)))!.last;
+    expect(exit.kind, MovementKind.exit);
+    expect(exit.quantity, 2);
+    expect(exit.reason, ExitReason.gifted);
+    expect(exit.comment, 'Pour Paul');
+    // Fenêtre fermée, champ libéré sans erreur.
+    expect(find.byType(AlertDialog), findsNothing);
   });
 
   testWidgets('aperçu d\'import : bilan et lignes en erreur', (tester) async {

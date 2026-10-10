@@ -9,6 +9,7 @@ import '../../domain/text.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../ui/formats.dart';
+import '../../ui/widgets.dart';
 
 /// Gestion de la classification (CDC §6.1, §7) : types, familles de
 /// caractéristiques et valeurs. Les suppressions sont logiques et les
@@ -194,10 +195,11 @@ class TypeClassificationScreen extends ConsumerWidget {
     final repo = ref.read(caveRepositoryProvider);
     final count = await repo.drinkCountOfType(type.id);
     if (!context.mounted) return;
-    final confirmed = await confirmDeletion(
+    final confirmed = await confirm(
       context,
       title: l10n.classDeleteTypeTitle(type.name),
       message: l10n.classDeleteTypeMessage(count),
+      action: l10n.classDelete,
     );
     if (!confirmed || !context.mounted) return;
     Navigator.pop(context);
@@ -250,10 +252,11 @@ class _FamilyCard extends ConsumerWidget {
                   values.map((v) => v.id),
                 );
                 if (!context.mounted) return;
-                final ok = await confirmDeletion(
+                final ok = await confirm(
                   context,
                   title: l10n.classDeleteFamilyTitle(family.name),
                   message: l10n.classDeleteCharMessage(count),
+                  action: l10n.classDelete,
                 );
                 if (ok) await repo.deleteFamily(family.id);
               },
@@ -286,10 +289,11 @@ class _FamilyCard extends ConsumerWidget {
                     value.id,
                   ]);
                   if (!context.mounted) return;
-                  final ok = await confirmDeletion(
+                  final ok = await confirm(
                     context,
                     title: l10n.classDeleteValueTitle(value.name),
                     message: l10n.classDeleteCharMessage(count),
+                    action: l10n.classDelete,
                   );
                   if (ok) await repo.deleteCharacteristic(value.id);
                 },
@@ -442,33 +446,6 @@ String? validateClassName(
   final others = taken.where((t) => t != initial).map(fold);
   if (others.contains(key)) return l10n.classNameTaken;
   return null;
-}
-
-/// Confirmation d'une suppression.
-Future<bool> confirmDeletion(
-  BuildContext context, {
-  required String title,
-  required String message,
-}) async {
-  final l10n = AppLocalizations.of(context);
-  final ok = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(l10n.actionCancel),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(l10n.classDelete),
-        ),
-      ],
-    ),
-  );
-  return ok == true;
 }
 
 typedef _NewType = ({String name, FieldProfile profile, int volumeMl});

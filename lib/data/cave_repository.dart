@@ -198,7 +198,7 @@ class CaveRepository {
       }
       await (_db.update(
         _db.drinkTypes,
-      )..where((t) => t.id.equals(id))).write(_deletionStamp());
+      )..where((t) => t.id.equals(id))).write(_ctx.deletionStamp());
     });
   }
 
@@ -209,16 +209,16 @@ class CaveRepository {
   Future<void> _deleteFamily(String id) async {
     await (_db.update(_db.characteristics)
           ..where((c) => c.familyId.equals(id) & c.deletedAt.isNull()))
-        .write(_deletionStamp());
+        .write(_ctx.deletionStamp());
     await (_db.update(
       _db.characteristicFamilies,
-    )..where((f) => f.id.equals(id))).write(_deletionStamp());
+    )..where((f) => f.id.equals(id))).write(_ctx.deletionStamp());
   }
 
   Future<void> deleteCharacteristic(String id) async {
     await (_db.update(
       _db.characteristics,
-    )..where((c) => c.id.equals(id))).write(_deletionStamp());
+    )..where((c) => c.id.equals(id))).write(_ctx.deletionStamp());
   }
 
   /// Références actives d'un type : prévient avant une suppression.
@@ -436,10 +436,10 @@ class CaveRepository {
     return _db.transaction(() async {
       await (_db.update(_db.lots)
             ..where((t) => t.drinkId.equals(id) & t.deletedAt.isNull()))
-          .write(_deletionStamp());
+          .write(_ctx.deletionStamp());
       await (_db.update(
         _db.drinks,
-      )..where((t) => t.id.equals(id))).write(_deletionStamp());
+      )..where((t) => t.id.equals(id))).write(_ctx.deletionStamp());
     });
   }
 
@@ -471,7 +471,7 @@ class CaveRepository {
             !characteristicIds.contains(r.characteristicId)) {
           await (_db.update(
             _db.drinkCharacteristics,
-          )..where((t) => t.id.equals(r.id))).write(_deletionStamp());
+          )..where((t) => t.id.equals(r.id))).write(_ctx.deletionStamp());
         }
       }
       // Liens à ajouter ou à réactiver.
@@ -624,7 +624,7 @@ class CaveRepository {
   Future<void> deleteLot(String id) async {
     await (_db.update(
       _db.lots,
-    )..where((t) => t.id.equals(id))).write(_deletionStamp());
+    )..where((t) => t.id.equals(id))).write(_ctx.deletionStamp());
   }
 
   // ─────────────────────────────── Mouvements ───────────────────────────────
@@ -724,7 +724,7 @@ class CaveRepository {
       if (m.deletedAt != null) return;
       await (_db.update(
         _db.movements,
-      )..where((t) => t.id.equals(movementId))).write(_deletionStamp());
+      )..where((t) => t.id.equals(movementId))).write(_ctx.deletionStamp());
       await recomputeStock(m.lotId);
     });
   }
@@ -759,7 +759,7 @@ class CaveRepository {
 
   /// Recalcule le stock en cache d'un lot à partir de ses mouvements.
   Future<int> recomputeStock(String lotId) async {
-    final events = (await movementsOf(lotId)).map(_toEvent);
+    final events = (await movementsOf(lotId)).map(stockEventOf);
     final stock = computeStock(events);
     // Écriture directe : le cache n'est pas une modification de la fiche,
     // il ne change donc pas updatedAt.
@@ -799,24 +799,12 @@ class CaveRepository {
           ),
         );
   }
-
-  // ───────────────────────────────── Outils ─────────────────────────────────
-
-  static StockEvent _toEvent(Movement m) => StockEvent(
-    id: m.id,
-    occurredAt: m.occurredAt,
-    kind: m.kind,
-    quantity: m.quantity,
-  );
-
-  /// Champs d'une suppression logique, communs à toutes les tables
-  /// synchronisées (colonnes de `SyncColumns`).
-  RawValuesInsertable<T> _deletionStamp<T>() {
-    final now = _ctx.now();
-    return RawValuesInsertable<T>({
-      'deleted_at': Variable<int>(now),
-      'updated_at': Variable<int>(now),
-      'updated_by': Variable<String>(_ctx.deviceId),
-    });
-  }
 }
+
+/// Un mouvement réduit à ce qui compte pour le calcul du stock.
+StockEvent stockEventOf(Movement m) => StockEvent(
+  id: m.id,
+  occurredAt: m.occurredAt,
+  kind: m.kind,
+  quantity: m.quantity,
+);

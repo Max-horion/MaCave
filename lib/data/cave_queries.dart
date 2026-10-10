@@ -99,8 +99,6 @@ class CaveStats {
   final List<StatEntry> byRegion;
 }
 
-/// Lectures « en direct » pour les écrans : chaque méthode `watch…` renvoie un
-/// flux qui émet de nouveau dès que les tables concernées changent.
 /// Référence existante qui ressemble à celle qu'on s'apprête à créer
 /// (CDC §6.2, doublons).
 class SimilarDrink {
@@ -119,6 +117,8 @@ class SimilarDrink {
   final int bottles;
 }
 
+/// Lectures « en direct » pour les écrans : chaque méthode `watch…` renvoie un
+/// flux qui émet de nouveau dès que les tables concernées changent.
 class CaveQueries {
   CaveQueries(this._db);
 
@@ -162,12 +162,13 @@ class CaveQueries {
     FieldProfile? profile,
     int limit = 3,
   }) {
+    // Texte lu préparé une fois pour toute la cave.
+    final matcher = LabelMatcher(labelText);
     return _rankDrinks(
       profile: profile,
       limit: limit,
       score: (drink) {
-        final onLabel = labelMatchScore(
-          labelText: labelText,
+        final onLabel = matcher.score(
           drinkName: drink.name,
           drinkProducer: drink.producer,
         );
@@ -303,7 +304,11 @@ class CaveQueries {
                 lots: lotsByDrink[d.drink.id] ?? const [],
               ),
           ];
-          items.sort(_comparator(filter.sort));
+          // Nom sans accents calculé une fois par référence, pas à chaque
+          // comparaison : avec 5 000 références, le tri passe de ~240 ms à
+          // ~25 ms (tool/perf/cave_perf_test.dart).
+          final keys = {for (final i in items) i.drink.id: fold(i.drink.name)};
+          items.sort(_comparator(filter.sort, (i) => keys[i.drink.id]!));
           return items;
         });
   }
@@ -335,11 +340,21 @@ class CaveQueries {
     return result;
   }
 
+  /// Comparaison de textes sans accents ni majuscules ; la forme [fold] de
+  /// chaque texte n'est calculée qu'une fois (tri de milliers de noms).
+  static int Function(String, String) _byFolded() {
+    final folded = <String, String>{};
+    String key(String text) => folded[text] ??= fold(text);
+    return (a, b) => key(a).compareTo(key(b));
+  }
+
+  /// Ordre de la liste ; [nameKey] : nom sans accents ni majuscules.
   static int Function(DrinkListItem, DrinkListItem) _comparator(
     DrinkSort sort,
+    String Function(DrinkListItem) nameKey,
   ) {
     int byName(DrinkListItem a, DrinkListItem b) =>
-        fold(a.drink.name).compareTo(fold(b.drink.name));
+        nameKey(a).compareTo(nameKey(b));
     int? oldestVintage(DrinkListItem i) {
       final vintages = i.lots.map((l) => l.vintage).whereType<int>();
       return vintages.isEmpty ? null : vintages.reduce((a, b) => a < b ? a : b);
@@ -379,7 +394,7 @@ class CaveQueries {
         .map(
           (rows) =>
               rows.map((r) => r.read<String>('place')).toList()
-                ..sort((a, b) => fold(a).compareTo(fold(b))),
+                ..sort(_byFolded()),
         );
   }
 
@@ -483,8 +498,9 @@ class CaveQueries {
       for (final r in await query.get())
         (drinkName: r.readTable(_db.drinks).name, lot: r.readTable(_db.lots)),
     ];
+    final byFolded = _byFolded();
     items.sort((a, b) {
-      final byName = fold(a.drinkName).compareTo(fold(b.drinkName));
+      final byName = byFolded(a.drinkName, b.drinkName);
       if (byName != 0) return byName;
       final va = a.lot.vintage, vb = b.lot.vintage;
       if (va != vb) {
