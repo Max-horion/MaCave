@@ -2,14 +2,14 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.7.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.8.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.7 |
+| Version | 0.8 |
 | Date | 10 octobre 2026 |
-| Statut | V1 terminée, dernières vérifications en cours |
+| Statut | V1 terminée |
 
 ### Historique des versions
 
@@ -22,6 +22,7 @@
 | 0.5 | 5 octobre 2026 | Retours de la V1 en cours : appellation facultative pour le vin (4.1, 6.7) ; une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée. |
 | 0.6 | 7 octobre 2026 | Décisions des lots 4 à 6 de la V1 : synchronisation et sauvegarde application ouverte, sans tâche de fond (8.3, 8.4) ; sauvegardes sur l’appareil et sur le serveur ; purge manuelle limitée ; code-barres associable à un lot existant et doublons signalés aussi au scan et à la photo (6.2) ; cave du serveur reprise sur un appareil neuf (6.8) ; classification modifiable (6.1) ; import préparé dans un tableur avec consignes et fichier modèle (6.7) ; paramètres précisés (7) ; Open Food Facts désactivable (9) ; licence GPL v3 ou ultérieure (10). |
 | 0.7 | 10 octobre 2026 | Fin de la bêta des moteurs de reconnaissance : ML Kit retiré, Tesseract pour le texte et ZXing pour les codes-barres, application entièrement libre et licence sans exception (7, 10, 11, 12) ; conditions de fin de la V1 (11, 12) ; lecture d’étiquette : lignes regroupées et ajout à la suite d’un champ (6.2) ; volumes proposés de 10 cl à 6 l (7) ; Android 8 à 10 vérifié (9). |
+| 0.8 | 10 octobre 2026 | Clôture de la V1 : statut « V1 terminée » ; conditions de fin remplies (Android 10 vérifié, lecteur de codes-barres libre approuvé) ; points à rediscuter mis à jour (12). |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -301,7 +302,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 - Synchronisation avec Google Drive, Dropbox ou OneDrive
 - Interprétation automatique plus poussée des étiquettes
 ## 12. Points à rediscuter
-- Fin de la V1 : après l’essai sur Android 8 à 10 et l’approbation d’un lecteur de codes-barres libre (faits le 10/10/2026), puis les dernières vérifications du porteur. Ensuite, décider de la suite (diffusion, V2).
+- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel (saisie complète, inventaire, deuxième appareil), diffusion, V2 ; ordre à décider.
 - Canal de diffusion à d’autres utilisateurs, à la fin de la V1.
 - Paramètres manquants éventuels, après les tests de la V1.
 - Hors cahier des charges : optimisation de la procédure de sauvegarde du serveur (Raspberry Pi).
@@ -358,3 +359,4 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 09/10/2026 | 7 | Volumes de 10 cl, 1,75 l, 2 l et 5 l ajoutés aux volumes proposés. |
 | 10/10/2026 | 10, 12 | Fin de la bêta : Tesseract retenu pour le texte (un peu moins précis que ML Kit, mais libre), ZXing pour les codes-barres ; ML Kit retiré ; licence GPL v3 ou ultérieure, sans exception. |
 | 10/10/2026 | 6.2 | Lecture d’étiquette : lignes voisines regroupées, mots qui annoncent un nom (« Château », « Domaine »…) collés à la ligne suivante, ligne ajoutable à la suite d’un champ déjà rempli. |
+| 10/10/2026 | 11, 12 | V1 terminée : toutes les fonctions V1 faites et vérifiées, conditions de fin remplies, application entièrement libre. Suite à décider : usage réel, diffusion, V2. |

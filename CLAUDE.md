@@ -4,7 +4,7 @@ Application Android (Flutter) de gestion d'une cave personnelle : références (
 
 ## Documents de référence
 
-- `docs/cahier_des_charges_v0.7.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.7.docx` (source officielle ; les .docx v0.4 à v0.6 sont conservés pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis report dans le Markdown. Méthode des v0.6 et v0.7 (pas de pandoc ni de python-docx sur le PC) : .docx décompressé, `word/document.xml` modifié par un script Python (remplacements de texte, lignes de tableau dupliquées), titre dans `docProps/core.xml` et version dans `word/footer1.xml`, recompressé, rendu vérifié avec `soffice --convert-to pdf` ; mêmes modifications appliquées au Markdown (renommé à la nouvelle version avec `git mv`). Piège : ne remplacer que des phrases contenues dans un seul `<w:t>` (le vérifier par un comptage avant de remplacer). En cas de doute fonctionnel, c'est le CDC qui fait foi ; citer la section (ex. « CDC §6.3 »).
+- `docs/cahier_des_charges_v0.8.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.8.docx` (source officielle ; les .docx v0.4 à v0.7 sont conservés pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis report dans le Markdown. Méthode des v0.6 à v0.8 (pas de pandoc ni de python-docx sur le PC) : .docx décompressé, `word/document.xml` modifié par un script Python (remplacements de texte, lignes de tableau dupliquées), titre dans `docProps/core.xml` et version dans `word/footer1.xml`, recompressé, rendu vérifié avec `soffice --convert-to pdf` ; mêmes modifications appliquées au Markdown (renommé à la nouvelle version avec `git mv`). Piège : ne remplacer que des phrases contenues dans un seul `<w:t>` (le vérifier par un comptage avant de remplacer). En cas de doute fonctionnel, c'est le CDC qui fait foi ; citer la section (ex. « CDC §6.3 »).
 - `docs/architecture.md` — bibliothèques, schéma de la base, principe de synchronisation.
 - `docs/bilan_v1.md` — bilan de la V1 (2026-10-08) : critères de réussite, fonctions, exigences non fonctionnelles, limites, décisions à venir.
 - Ce fichier — état d'avancement et conventions. **À mettre à jour à la fin de chaque lot.**
@@ -70,8 +70,6 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 ## À reprendre (prochaine séance)
 
 **La V1 est terminée** (2026-10-10, décision du porteur) : tout est commité et poussé sur GitHub, 339 tests verts, installée sur le téléphone. Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
-
-À reporter dans la prochaine version du CDC (v0.8) : statut « V1 terminée » (la v0.7 dit « dernières vérifications en cours »).
 
 Suite possible, **à décider avec le porteur** :
 1. Usage réel : fin de la saisie de la cave, inventaire, synchro avec un deuxième appareil ; corriger ce qui en ressortira.
@@ -281,3 +279,4 @@ Pièges rencontrés :
 - 2026-10-10 — **CDC v0.7** : fin de la bêta (Tesseract, ZXing, ML Kit retiré, licence sans exception : §7, 10, 11, 12), conditions de fin de la V1 (§11, 12), lecture d'étiquette (§6.2), volumes de 10 cl à 6 l (§7), Android 10 vérifié (§9) ; 4 décisions ajoutées au journal. Rendu vérifié avec LibreOffice.
 - 2026-10-10 — Relecture complète du code et test de performances (cave factice de 5 000 références) : « Déjà dans votre cave ? » après une photo 46 s → 0,3 s (`LabelMatcher`), tri de la liste et de l'inventaire 2 fois plus rapide (`fold` calculé une fois), modification faite pendant une synchro envoyée juste après (`SyncController._afterSync`), champs de texte des fenêtres « Retirer » et « Saisir le code » détruits au bon moment, doublons supprimés (`compactKey` dans `csv.dart`, `WriteContext.deletionStamp`, `stockEventOf`, `confirm` / `showMessage`). Test obsolète du diagnostic hOCR retiré. 339 tests verts.
 - 2026-10-10 — **V1 terminée** (décision du porteur) : conditions remplies (Android 10 vérifié, ZXing approuvé), Tesseract retenu, ML Kit retiré, code relu et optimisé. `docs/bilan_v1.md` mis à jour. 339 tests verts.
+- 2026-10-10 — **CDC v0.8** : statut « V1 terminée », §12 mis à jour (suite du projet), décision ajoutée au journal. Rendu vérifié avec LibreOffice.

@@ -1,11 +1,11 @@
 # Ma Cave — bilan de la V1
 
-Bilan établi le 2026-10-08 à la fin du lot 6, **mis à jour le 2026-10-10 à la clôture de la V1**, par rapport au cahier des charges v0.7 (CDC). Version installée : 0.1.0.
+Bilan établi le 2026-10-08 à la fin du lot 6, **mis à jour le 2026-10-10 à la clôture de la V1**, par rapport au cahier des charges v0.8 (CDC). Version installée : 0.1.0.
 
 ## En bref
 
 - **V1 terminée le 2026-10-10** (décision du porteur).
-- **Toutes les fonctions V1 du CDC §11 sont faites**, vérifiées sur le téléphone de référence (OnePlus 13, Android 16) et reportées dans le CDC v0.7.
+- **Toutes les fonctions V1 du CDC §11 sont faites**, vérifiées sur le téléphone de référence (OnePlus 13, Android 16) et reportées dans le CDC v0.8.
 - **Les deux conditions de fin de la V1 sont remplies** (décision du porteur du 2026-10-08) :
   - Android 10 vérifié sur un Xiaomi Mi 9T Pro : autorisation d'écrire dans Documents, sauvegarde, refus et refus définitif (un bug trouvé et corrigé à cette occasion) ;
   - codes-barres lus par **ZXing** (libre), essayé et approuvé par le porteur (lot 7).
