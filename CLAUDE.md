@@ -53,7 +53,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 4 | Synchronisation WebDAV, traitement des erreurs, sauvegardes automatiques, purge — en 5 étapes : 4a sauvegardes, 4b moteur de fusion, 4c client WebDAV + cycle de synchro, 4d écran Synchronisation + indicateur, 4e purge | **terminé** |
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **terminé** (Android 10 vérifié le 2026-10-10) |
-| 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **fait** : ML Kit retiré le 2026-10-10 (ZXing + Tesseract seuls, vérifiés sur le téléphone), CDC v0.7 ; clôture après les dernières vérifications du porteur |
+| 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **terminé** (2026-10-10) : ML Kit retiré, ZXing + Tesseract seuls, vérifiés sur le téléphone, CDC v0.7 |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -69,19 +69,15 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-État au 2026-10-10 : tout est commité, 339 tests verts ; Android 10 vérifié ; **ML Kit retiré** (lot 7 : ZXing pour les codes-barres, Tesseract pour le texte), appli entièrement libre, APK arm64 36,1 Mo. Le porteur veut faire encore une ou deux vérifications avant de déclarer la V1 terminée.
+**La V1 est terminée** (2026-10-10, décision du porteur) : tout est commité et poussé sur GitHub, 339 tests verts, installée sur le téléphone. Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
 
-0. **Clore la V1** : faire les dernières vérifications demandées par le porteur, puis passer le lot 7 à « terminé », noter la fin de la V1 (journal, `docs/bilan_v1.md`) et décider de la suite (diffusion, F-Droid, V2 ?). Si ZXing lit mal certains codes : pistes zxing-cpp (`io.github.zxing-cpp:android`, Apache 2.0, code natif, plus tolérant), recadrage sur le cadre visé, résolution plus fine.
+À reporter dans la prochaine version du CDC (v0.8) : statut « V1 terminée » (la v0.7 dit « dernières vérifications en cours »).
 
-1. **Lot 6 terminé** (récapitulatif) :
-   - ~~premier lancement sur un appareil neuf~~ : **vérifié le 2026-10-08** sur un OnePlus 8T (Android 14) en mode local (voir le journal) ; reste éventuellement le choix « Synchroniser avec un serveur » de l'étape 1 sur un appareil neuf ;
-   - ~~Android 8 à 10~~ : **vérifié le 2026-10-10** sur un Xiaomi Mi 9T Pro (Android 10) — autorisation, sauvegarde, refus, refus définitif (voir le journal) ;
-   - ~~faire relire `COPYING.md`~~ : **relu avec le porteur le 2026-10-08** (voir le journal) ; dépôt toujours privé. ML Kit retiré depuis (lot 7) : plus d'exception, F-Droid possible.
-   Lot 6 passé à « terminé » le 2026-10-10.
-   **La V1 ne sera terminée** (décision du porteur, 2026-10-08) qu'avec : l'essai sur Android 8 à 10 (**fait le 2026-10-10**) **et** une alternative libre à ML Kit pour la lecture des codes-barres, essayée et approuvée par le porteur (lot 7, **fait le 2026-10-10**). Ensuite seulement : décider de la suite (diffusion, V2 ?). Décision à reporter dans la prochaine version du CDC (§11, §12).
-2. ~~Bêta des moteurs~~ : **terminée le 2026-10-10** — Tesseract retenu (choix du porteur : appli 100 % libre, même un peu moins bonne), ML Kit retiré ; reporté dans le CDC v0.7 (§10, §12).
-3. ~~Test de performances~~ : **fait le 2026-10-10** (`tool/perf/cave_perf_test.dart`, voir « Conventions »). Les valeurs du PC tiennent largement le CDC §9 ; reste à mesurer sur un vieux téléphone si on diffuse.
-4. Plus tard : lecture des noms en arc de cercle, optimisation de la reconnaissance (étiquettes courbes).
+Suite possible, **à décider avec le porteur** :
+1. Usage réel : fin de la saisie de la cave, inventaire, synchro avec un deuxième appareil ; corriger ce qui en ressortira.
+2. Diffusion : choisir le canal (dépôt public + APK, F-Droid, Play Store) ; avant cela, mesurer les performances sur un vieux téléphone (`tool/perf/cave_perf_test.dart` ne mesure que le PC) et passer le dépôt en public (accord du porteur).
+3. V2 (CDC §11) : emplacements, période de consommation, accords mets et vins, statistiques dans le temps, photos d'étiquette, export PDF, appli PC.
+4. Plus tard : noms en arc de cercle (redresser l'image avant Tesseract), optimisation de la lecture des étiquettes courbes.
 
 ## Où trouver quoi (lot 1)
 
@@ -284,3 +280,4 @@ Pièges rencontrés :
 - 2026-10-10 — **Lot 7 : ML Kit retiré** (choix du porteur après la bêta) : `mobile_scanner` et `google_mlkit_text_recognition` supprimés, ZXing seul pour les codes-barres, Tesseract seul pour le texte (plus de choix de moteur ni de mode comparaison), règles R8 de ML Kit, exception de `COPYING.md` et mention de l'écran À propos retirées. APK vérifié : aucune classe ML Kit, ni services Google Play / Firebase. APK arm64 55,1 → 36,1 Mo. 337 tests verts (14 tests des choix de moteur supprimés). Vérifié sur le téléphone par le porteur (scan, lampe, étiquette, scan → photo, À propos).
 - 2026-10-10 — **CDC v0.7** : fin de la bêta (Tesseract, ZXing, ML Kit retiré, licence sans exception : §7, 10, 11, 12), conditions de fin de la V1 (§11, 12), lecture d'étiquette (§6.2), volumes de 10 cl à 6 l (§7), Android 10 vérifié (§9) ; 4 décisions ajoutées au journal. Rendu vérifié avec LibreOffice.
 - 2026-10-10 — Relecture complète du code et test de performances (cave factice de 5 000 références) : « Déjà dans votre cave ? » après une photo 46 s → 0,3 s (`LabelMatcher`), tri de la liste et de l'inventaire 2 fois plus rapide (`fold` calculé une fois), modification faite pendant une synchro envoyée juste après (`SyncController._afterSync`), champs de texte des fenêtres « Retirer » et « Saisir le code » détruits au bon moment, doublons supprimés (`compactKey` dans `csv.dart`, `WriteContext.deletionStamp`, `stockEventOf`, `confirm` / `showMessage`). Test obsolète du diagnostic hOCR retiré. 339 tests verts.
+- 2026-10-10 — **V1 terminée** (décision du porteur) : conditions remplies (Android 10 vérifié, ZXing approuvé), Tesseract retenu, ML Kit retiré, code relu et optimisé. `docs/bilan_v1.md` mis à jour. 339 tests verts.
