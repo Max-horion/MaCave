@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/app_preferences.dart';
 import '../../domain/drink_filter.dart';
 import '../../l10n/app_localizations.dart';
-import '../../scan/barcode_engine.dart';
-import '../../scan/ocr_engine.dart';
 import '../../theme/app_theme.dart';
 import '../backup/backup_screen.dart';
 import '../exchange/exchange_actions.dart';
@@ -28,8 +26,6 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final prefs = ref.watch(appPreferencesProvider);
     final notifier = ref.read(appPreferencesProvider.notifier);
-    final engine = ref.watch(ocrPreferencesProvider).value?.engine;
-    final barcodeEngine = ref.watch(barcodeEngineProvider).value;
 
     final themes = {
       ThemeMode.system: l10n.settingsThemeSystem,
@@ -52,15 +48,6 @@ class SettingsScreen extends ConsumerWidget {
     };
     final undo = {
       for (final s in AppPreferences.undoChoices) s: l10n.settingsSeconds(s),
-    };
-    final engines = {
-      OcrEngine.mlKit: l10n.labelEngineMlKit,
-      OcrEngine.tesseract: l10n.labelEngineTesseract,
-      OcrEngine.compare: l10n.labelEngineCompare,
-    };
-    final barcodeEngines = {
-      BarcodeEngine.mlKit: l10n.scanEngineMlKit,
-      BarcodeEngine.zxing: l10n.scanEngineZxing,
     };
 
     void open(Widget screen) => Navigator.push(
@@ -133,22 +120,6 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           _Section(l10n.settingsRecognition),
-          if (engine != null)
-            _ChoiceTile(
-              title: l10n.labelEngine,
-              options: engines,
-              value: engine,
-              onChanged: (v) =>
-                  ref.read(ocrPreferencesProvider.notifier).setEngine(v),
-            ),
-          if (barcodeEngine != null)
-            _ChoiceTile(
-              title: l10n.scanEngine,
-              options: barcodeEngines,
-              value: barcodeEngine,
-              onChanged: (v) =>
-                  ref.read(barcodeEngineProvider.notifier).setEngine(v),
-            ),
           SwitchListTile(
             title: Text(l10n.settingsOff),
             subtitle: Text(l10n.settingsOffHelp),

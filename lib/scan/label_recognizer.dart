@@ -1,58 +1,25 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../domain/label_reading.dart';
 
 // Reconnaissance du texte d'une photo d'étiquette, sur le téléphone. Le
-// moteur est interchangeable (CDC §10) : ML Kit, Tesseract, et
-// un mode comparaison qui affiche les deux.
+// moteur est interchangeable (CDC §10) ; depuis le 2026-10-10, c'est
+// Tesseract seul (libre) : ML Kit, essayé en parallèle pendant la bêta, a
+// été retiré pour une appli entièrement libre.
 
 abstract class LabelRecognizer {
-  /// Nom du moteur, affiché en mode comparaison.
-  String get name;
-
   /// Lignes de texte de l'image [imagePath], dans l'ordre de lecture.
   Future<List<LabelLine>> recognize(String imagePath);
-
-  /// Diagnostic de la dernière lecture, affiché en mode comparaison (bêta),
-  /// ou null.
-  String? get lastNote;
 
   Future<void> close();
 }
 
-/// ML Kit de Google (modèle des lettres latines embarqué : hors ligne).
-class MlKitLabelRecognizer implements LabelRecognizer {
-  final _recognizer = TextRecognizer(script: TextRecognitionScript.latin);
-
-  @override
-  String get name => 'ML Kit';
-
-  @override
-  String? get lastNote => null;
-
-  @override
-  Future<List<LabelLine>> recognize(String imagePath) async {
-    final result = await _recognizer.processImage(
-      InputImage.fromFilePath(imagePath),
-    );
-    return [
-      for (final block in result.blocks)
-        for (final line in block.lines)
-          LabelLine(line.text, height: line.boundingBox.height),
-    ];
-  }
-
-  @override
-  Future<void> close() => _recognizer.close();
-}
-
 /// Tesseract 5 (bibliothèque Android Tesseract4Android, appelée par
 /// `MainActivity.kt`), dictionnaire français « best » embarqué
-/// (assets/tessdata). Plus lent que ML Kit ; comparé pendant la bêta.
+/// (assets/tessdata).
 class TesseractLabelRecognizer implements LabelRecognizer {
   static const _channel = MethodChannel('fr.bouthon.cave/tesseract');
 
@@ -63,12 +30,6 @@ class TesseractLabelRecognizer implements LabelRecognizer {
   static const pageSegmentation = 3;
 
   @override
-  String get name => 'Tesseract';
-
-  @override
-  String? lastNote;
-
-  @override
   Future<List<LabelLine>> recognize(String imagePath) async {
     final hocr = await _channel.invokeMethod<String>('hocr', {
       'dataPath': await _dataPath(),
@@ -76,9 +37,7 @@ class TesseractLabelRecognizer implements LabelRecognizer {
       'imagePath': imagePath,
       'psm': pageSegmentation,
     });
-    final result = readHocr(hocr ?? '');
-    lastNote = result.note;
-    return result.lines;
+    return readHocr(hocr ?? '').lines;
   }
 
   /// Dossier privé contenant `tessdata/` : Tesseract ne lit pas les
@@ -108,19 +67,13 @@ class TesseractLabelRecognizer implements LabelRecognizer {
 const tesseractMinConfidence = 40;
 
 /// Lecture d'un résultat hOCR : les lignes, et combien de mots ont été
-/// gardés ou écartés (diagnostic de la bêta).
+/// gardés ou écartés.
 class HocrResult {
   const HocrResult(this.lines, {required this.kept, required this.dropped});
 
   final List<LabelLine> lines;
   final int kept;
   final int dropped;
-
-  /// « 42 mots lus, 7 écartés (confiance < 40) » : ce n'est pas un texte de
-  /// l'interface, mais une information technique pour la bêta.
-  String get note =>
-      'hOCR : $kept mots gardés, $dropped écartés '
-      '(confiance < $tesseractMinConfidence)';
 }
 
 /// Lignes d'un résultat hOCR de Tesseract (voir [readHocr]).

@@ -167,15 +167,6 @@ void main() {
       expect(store.values['pref_open_food_facts'], 'false');
     });
 
-    testWidgets('lecteur de codes-barres : ML Kit retenu sur l\'appareil', (
-      tester,
-    ) async {
-      await openSettings(tester);
-      await tap(tester, find.text('Lecteur de codes-barres (essai)'));
-      await tap(tester, find.text('ML Kit'));
-      expect(store.values['barcode_engine'], 'mlKit');
-    });
-
     testWidgets('volume par défaut changé depuis les paramètres', (
       tester,
     ) async {

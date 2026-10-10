@@ -18,16 +18,9 @@ final openFoodFactsProvider = Provider<OpenFoodFacts>((ref) {
   return off;
 });
 
-/// Moteur ML Kit de reconnaissance du texte des étiquettes ; remplacé dans
-/// les tests.
+/// Reconnaissance du texte des étiquettes : Tesseract (libre, CDC §10 ;
+/// ML Kit retiré le 2026-10-10) ; remplacée dans les tests.
 final labelRecognizerProvider = Provider<LabelRecognizer>((ref) {
-  final recognizer = MlKitLabelRecognizer();
-  ref.onDispose(recognizer.close);
-  return recognizer;
-});
-
-/// Moteur Tesseract (bêta, CDC §10) ; remplacé dans les tests.
-final tesseractRecognizerProvider = Provider<LabelRecognizer>((ref) {
   final recognizer = TesseractLabelRecognizer();
   ref.onDispose(recognizer.close);
   return recognizer;

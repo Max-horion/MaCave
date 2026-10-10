@@ -1374,15 +1374,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get scanTorchOff => 'Éteindre la lampe';
 
   @override
-  String get scanEngine => 'Lecteur de codes-barres (essai)';
-
-  @override
-  String get scanEngineMlKit => 'ML Kit';
-
-  @override
-  String get scanEngineZxing => 'ZXing (libre)';
-
-  @override
   String get scanManualEntry => 'Saisir le code';
 
   @override
@@ -1576,52 +1567,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scanUnknownPhoto => 'Photographier l\'étiquette';
-
-  @override
-  String get labelEngine => 'Moteur de lecture (bêta)';
-
-  @override
-  String get labelEngineMlKit => 'ML Kit';
-
-  @override
-  String get labelEngineTesseract => 'Tesseract';
-
-  @override
-  String get labelEngineCompare => 'Comparer';
-
-  @override
-  String get labelCompareTitle => 'Comparaison des moteurs';
-
-  @override
-  String get labelCompareHelp =>
-      'Les deux moteurs ont lu la même photo. Gardez le meilleur résultat : vos choix aideront à décider du moteur définitif.';
-
-  @override
-  String labelCompareTally(int mlKit, int tesseract) {
-    return 'Choix jusqu\'ici : ML Kit $mlKit, Tesseract $tesseract';
-  }
-
-  @override
-  String labelCompareSeconds(String seconds) {
-    return '$seconds s';
-  }
-
-  @override
-  String labelCompareLines(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count lignes lues',
-      one: '1 ligne lue',
-      zero: 'Aucune ligne lue',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String labelCompareKeep(String engine) {
-    return 'Garder le résultat de $engine';
-  }
 
   @override
   String get lotScanBarcode => 'Associer un code-barres';
@@ -1966,7 +1911,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutLicense =>
-      'Logiciel libre sous licence GNU GPL version 3 ou ultérieure, avec une autorisation supplémentaire pour Google ML Kit. Fourni sans aucune garantie.';
+      'Logiciel libre sous licence GNU GPL version 3 ou ultérieure. Fourni sans aucune garantie.';
 
   @override
   String get aboutData => 'Données';
@@ -1983,16 +1928,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutRecognition => 'Lecture des codes-barres et des étiquettes';
 
   @override
-  String get aboutMlKit =>
-      'Google ML Kit — gratuit, non libre ; fonctionne sur le téléphone, sans envoi des photos.';
-
-  @override
   String get aboutTesseract =>
       'Tesseract OCR et son dictionnaire français (tessdata_best), via Tesseract4Android — Apache 2.0. Avec Leptonica, libpng et libjpeg : ce logiciel est basé en partie sur les travaux de l\'Independent JPEG Group.';
 
   @override
-  String get aboutZxing =>
-      'ZXing, lecteur de codes-barres libre (essai, au choix avec ML Kit) — Apache 2.0.';
+  String get aboutZxing => 'ZXing, lecteur de codes-barres libre — Apache 2.0.';
 
   @override
   String get aboutIcon =>

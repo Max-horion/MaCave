@@ -31,9 +31,11 @@ void main() {
       find.textContaining('GNU GPL version 3 ou ultérieure'),
       findsOneWidget,
     );
-    for (final source in ['INAO', 'Open Food Facts', 'ML Kit', 'Tesseract']) {
+    for (final source in ['INAO', 'Open Food Facts', 'Tesseract', 'ZXing']) {
       expect(find.textContaining(source), findsWidgets, reason: source);
     }
+    // Appli entièrement libre depuis le retrait de ML Kit (lot 7).
+    expect(find.textContaining('ML Kit'), findsNothing);
     expect(find.text('Licences des logiciels'), findsOneWidget);
     expect(find.textContaining('Tabler Icons'), findsOneWidget);
     expect(

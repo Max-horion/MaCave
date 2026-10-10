@@ -4,7 +4,7 @@ import 'label_parsing.dart';
 import 'text.dart';
 
 // Lecture d'une étiquette (CDC §6.2) à partir des lignes de texte reconnues
-// sur la photo, quel que soit le moteur (ML Kit, Tesseract) :
+// sur la photo (Tesseract ; le moteur est interchangeable, CDC §10) :
 // - millésime, degré et volume extraits automatiquement ;
 // - appellation comparée à la liste officielle de l'INAO (embarquée) ;
 // - type et caractéristiques devinés d'après les mots de l'étiquette ;

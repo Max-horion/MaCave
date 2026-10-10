@@ -2032,24 +2032,6 @@ abstract class AppLocalizations {
   /// **'Éteindre la lampe'**
   String get scanTorchOff;
 
-  /// Titre du choix du lecteur de codes-barres (écran de scan, Paramètres).
-  ///
-  /// In fr, this message translates to:
-  /// **'Lecteur de codes-barres (essai)'**
-  String get scanEngine;
-
-  /// Lecteur ML Kit (Google, non libre).
-  ///
-  /// In fr, this message translates to:
-  /// **'ML Kit'**
-  String get scanEngineMlKit;
-
-  /// Lecteur ZXing (libre).
-  ///
-  /// In fr, this message translates to:
-  /// **'ZXing (libre)'**
-  String get scanEngineZxing;
-
   /// Bouton : taper le code-barres à la main.
   ///
   /// In fr, this message translates to:
@@ -2397,66 +2379,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Photographier l\'étiquette'**
   String get scanUnknownPhoto;
-
-  /// Titre du choix du moteur de reconnaissance de texte.
-  ///
-  /// In fr, this message translates to:
-  /// **'Moteur de lecture (bêta)'**
-  String get labelEngine;
-
-  /// Moteur ML Kit (Google).
-  ///
-  /// In fr, this message translates to:
-  /// **'ML Kit'**
-  String get labelEngineMlKit;
-
-  /// Moteur Tesseract.
-  ///
-  /// In fr, this message translates to:
-  /// **'Tesseract'**
-  String get labelEngineTesseract;
-
-  /// Mode comparaison : les deux moteurs.
-  ///
-  /// In fr, this message translates to:
-  /// **'Comparer'**
-  String get labelEngineCompare;
-
-  /// Titre de l'écran de comparaison ML Kit / Tesseract.
-  ///
-  /// In fr, this message translates to:
-  /// **'Comparaison des moteurs'**
-  String get labelCompareTitle;
-
-  /// Explication du mode comparaison.
-  ///
-  /// In fr, this message translates to:
-  /// **'Les deux moteurs ont lu la même photo. Gardez le meilleur résultat : vos choix aideront à décider du moteur définitif.'**
-  String get labelCompareHelp;
-
-  /// Nombre de fois où chaque moteur a été préféré.
-  ///
-  /// In fr, this message translates to:
-  /// **'Choix jusqu\'ici : ML Kit {mlKit}, Tesseract {tesseract}'**
-  String labelCompareTally(int mlKit, int tesseract);
-
-  /// Durée de lecture d'un moteur.
-  ///
-  /// In fr, this message translates to:
-  /// **'{seconds} s'**
-  String labelCompareSeconds(String seconds);
-
-  /// Nombre de lignes reconnues par un moteur.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count, plural, =0{Aucune ligne lue} =1{1 ligne lue} other{{count} lignes lues}}'**
-  String labelCompareLines(int count);
-
-  /// Bouton : choisir le résultat d'un moteur.
-  ///
-  /// In fr, this message translates to:
-  /// **'Garder le résultat de {engine}'**
-  String labelCompareKeep(String engine);
 
   /// Menu d'un lot : scanner son code-barres pour la prochaine fois.
   ///
@@ -3007,7 +2929,7 @@ abstract class AppLocalizations {
   /// Licence de l'appli.
   ///
   /// In fr, this message translates to:
-  /// **'Logiciel libre sous licence GNU GPL version 3 ou ultérieure, avec une autorisation supplémentaire pour Google ML Kit. Fourni sans aucune garantie.'**
+  /// **'Logiciel libre sous licence GNU GPL version 3 ou ultérieure. Fourni sans aucune garantie.'**
   String get aboutLicense;
 
   /// À propos : rubrique des sources de données.
@@ -3034,12 +2956,6 @@ abstract class AppLocalizations {
   /// **'Lecture des codes-barres et des étiquettes'**
   String get aboutRecognition;
 
-  /// Mention ML Kit.
-  ///
-  /// In fr, this message translates to:
-  /// **'Google ML Kit — gratuit, non libre ; fonctionne sur le téléphone, sans envoi des photos.'**
-  String get aboutMlKit;
-
   /// Mention Tesseract et bibliothèques embarquées (mention IJG exigée).
   ///
   /// In fr, this message translates to:
@@ -3049,7 +2965,7 @@ abstract class AppLocalizations {
   /// Mention ZXing.
   ///
   /// In fr, this message translates to:
-  /// **'ZXing, lecteur de codes-barres libre (essai, au choix avec ML Kit) — Apache 2.0.'**
+  /// **'ZXing, lecteur de codes-barres libre — Apache 2.0.'**
   String get aboutZxing;
 
   /// Source de l'icône.
