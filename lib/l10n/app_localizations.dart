@@ -2536,6 +2536,12 @@ abstract class AppLocalizations {
   /// **'Synchronisation activée'**
   String get welcomeSyncDone;
 
+  /// Premier lancement : la cave d'un autre appareil a été reprise du serveur, l'accueil se termine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cave récupérée du serveur : tout est prêt.'**
+  String get welcomeSyncRecovered;
+
   /// Alerte du mode local (CDC §8.4) : titre.
   ///
   /// In fr, this message translates to:

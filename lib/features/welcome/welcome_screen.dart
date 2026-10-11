@@ -152,6 +152,31 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
     }
   }
 
+  /// « Synchroniser avec un serveur ». Une cave récupérée du serveur (autre
+  /// appareil) apporte ses références et ses volumes par défaut : l'accueil
+  /// est alors terminé. Serveur vide (premier appareil) : étape suivante.
+  Future<void> _activateSync() async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final activated = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const SyncScreen(fromWelcome: true)),
+    );
+    if (!mounted) return;
+    if (activated != true) {
+      setState(() {});
+      return;
+    }
+    if (!await ref.read(caveRepositoryProvider).isEmpty()) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.welcomeSyncRecovered), persist: false),
+      );
+      widget.onDone();
+    } else if (mounted) {
+      setState(() => _step = 1);
+    }
+  }
+
   /// Rappel : en mode local, les données ne sont que sur l'appareil.
   Future<bool> _localAlert() async {
     if (_localAlertShown) return true;
@@ -210,13 +235,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
             icon: Icons.cloud_sync,
             title: l10n.welcomeSync,
             help: l10n.welcomeSyncHelp,
-            onTap: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute<void>(builder: (_) => const SyncScreen()),
-              );
-              if (mounted) setState(() {});
-            },
+            onTap: _activateSync,
           ),
         ],
       ],

@@ -1657,6 +1657,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get welcomeSyncDone => 'Synchronisation activée';
 
   @override
+  String get welcomeSyncRecovered =>
+      'Cave récupérée du serveur : tout est prêt.';
+
+  @override
   String get welcomeLocalAlertTitle => 'Données sur cet appareil seulement';
 
   @override

@@ -30,7 +30,11 @@ final syncOverviewProvider =
 /// WebDAV, état, synchronisation manuelle, journal des erreurs,
 /// désactivation.
 class SyncScreen extends ConsumerStatefulWidget {
-  const SyncScreen({super.key});
+  const SyncScreen({super.key, this.fromWelcome = false});
+
+  /// Ouvert depuis l'accueil (CDC §6.8) : l'écran se ferme dès que la
+  /// synchronisation est activée et rend `true`, pour que l'accueil continue.
+  final bool fromWelcome;
 
   @override
   ConsumerState<SyncScreen> createState() => _SyncScreenState();
@@ -236,6 +240,10 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
           await _controller.resolveOtherCave(useServer: useServer);
         }
         if (!mounted) return;
+        if (widget.fromWelcome) {
+          Navigator.pop(context, true);
+          return;
+        }
         setState(() => _editing = false);
         showMessage(context, l10n.syncActivated);
       });

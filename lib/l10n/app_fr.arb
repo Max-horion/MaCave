@@ -2038,6 +2038,10 @@
   "@welcomeSyncDone": {
     "description": "Premier lancement : la synchronisation est en place."
   },
+  "welcomeSyncRecovered": "Cave récupérée du serveur : tout est prêt.",
+  "@welcomeSyncRecovered": {
+    "description": "Premier lancement : la cave d'un autre appareil a été reprise du serveur, l'accueil se termine."
+  },
   "welcomeLocalAlertTitle": "Données sur cet appareil seulement",
   "@welcomeLocalAlertTitle": {
     "description": "Alerte du mode local (CDC §8.4) : titre."

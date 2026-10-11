@@ -6,6 +6,7 @@ import 'package:cave/data/local_store.dart';
 import 'package:cave/data/providers.dart';
 import 'package:cave/features/sync/sync_indicator.dart';
 import 'package:cave/features/sync/sync_screen.dart';
+import 'package:cave/features/welcome/welcome_screen.dart';
 import 'package:cave/l10n/app_localizations.dart';
 import 'package:cave/sync/backup.dart';
 import 'package:cave/sync/cave_file.dart';
@@ -229,6 +230,50 @@ void main() {
       expect(await localNames(tester), ['Bière du serveur']);
     },
   );
+
+  // Premier lancement (CDC §6.8) : « Synchroniser avec un serveur ».
+  group('depuis l\'accueil', () {
+    Future<void> activateFromWelcome(WidgetTester tester) async {
+      await tester.tap(find.text('Synchroniser avec un serveur'));
+      await settle(tester);
+      await fillForm(tester);
+      await tapActivate(tester);
+      await settle(tester, rounds: 25);
+    }
+
+    testWidgets('cave reprise du serveur : accueil terminé', (tester) async {
+      await tester.runAsync(() async {
+        server = await FakeWebDavServer.start();
+        await putOtherCave();
+      });
+      addTearDown(() => tester.runAsync(server.close));
+      var done = false;
+      await open(tester, WelcomeScreen(onDone: () => done = true));
+
+      await activateFromWelcome(tester);
+      expect(done, isTrue);
+      expect(await localNames(tester), ['Bière du serveur']);
+      expect(
+        find.text('Cave récupérée du serveur : tout est prêt.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('serveur vide : retour à l\'accueil, étape 2', (tester) async {
+      await tester.runAsync(() async {
+        server = await FakeWebDavServer.start();
+      });
+      addTearDown(() => tester.runAsync(server.close));
+      var done = false;
+      await open(tester, WelcomeScreen(onDone: () => done = true));
+
+      await activateFromWelcome(tester);
+      expect(done, isFalse);
+      expect(find.text('Activer la synchronisation'), findsNothing);
+      expect(find.text('Étape 2 sur 3'), findsOneWidget);
+      expect(server.files, contains('/cave/cave.sqlite'));
+    });
+  });
 
   testWidgets('indicateur : invisible en mode local, puis « Réessayer »', (
     tester,
