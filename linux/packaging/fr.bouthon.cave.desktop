@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Ma Cave
+GenericName=Gestion de cave
+Comment=Gérer les bouteilles de sa cave personnelle
+Exec=@EXEC@
+Icon=fr.bouthon.cave
+Terminal=false
+Categories=Utility;
+Keywords=vin;bière;cave;bouteilles;stock;
+StartupWMClass=fr.bouthon.cave

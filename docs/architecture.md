@@ -165,3 +165,4 @@ Un seul code pour Android et le PC (CDC §10) : Linux d'abord (compilé sur le P
 - Fenêtre Linux (`linux/runner/my_application.cc`) : titre « Ma Cave », 1100 × 760 au départ, 400 × 500 au minimum, icône `assets/icon.png` (prise en compte sous X11 ; sous Wayland, il faudra un fichier `.desktop`). Identifiant d'application `fr.bouthon.cave` (`linux/CMakeLists.txt`).
 - Paquets nécessaires pour compiler : clang, cmake, ninja, pkg-config, GTK 3, libsecret (`flutter doctor` → « Linux toolchain »). Compilation de débogage : ~40 s, 1,2 Go de RAM au maximum.
 - Pas de caméra sur PC : scan et lecture d'étiquette absents (CDC §10, étape 8b).
+- Installation (Linux) : `tool/installer_linux.sh` — appli dans `~/.local/share/ma-cave`, lanceur `fr.bouthon.cave.desktop` et icône SVG dans `~/.local/share` (sans sudo). Les données restent dans `~/.local/share/fr.bouthon.cave` : réinstaller ou retirer l'appli ne les touche pas.

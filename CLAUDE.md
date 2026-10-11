@@ -30,6 +30,7 @@ flutter test                         # tests automatiques
 tool/installer.sh                    # compile et installe sur le téléphone EN GARDANT LES DONNÉES
 flutter run -d linux                 # lance l'appli PC (vraie base : ~/.local/share/fr.bouthon.cave/)
 flutter build linux --debug          # appli PC seule (build/linux/x64/debug/bundle/cave), ~40 s
+tool/installer_linux.sh              # version finale de l'appli PC + lanceur du menu (sans sudo, données non touchées)
 flutter build apk --release --split-per-abi   # APK seuls, un par architecture (installation : tool/installer.sh --no-build, prend l'arm64)
 ```
 
@@ -56,7 +57,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **terminé** (Android 10 vérifié le 2026-10-10) |
 | 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **terminé** (2026-10-10) : ML Kit retiré, ZXing + Tesseract seuls, vérifiés sur le téléphone, CDC v0.7 |
-| 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **en cours** : 8a, 8b et 8c terminées, 8d terminées (2026-10-11) |
+| 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **en cours** : 8a à 8e faites (2026-10-11) ; clôture après quelques jours d'usage réel sur les deux appareils |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -74,7 +75,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 **La V1 est terminée** (2026-10-10, décision du porteur) et son **usage réel aussi** (2026-10-11 : cave entièrement saisie, stock vérifié à la main). Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
 
-**En cours : lot 8, portage Linux** (CDC v0.9). 8a à 8d terminées ; synchro PC ↔ téléphone vérifiée par le porteur le 2026-10-11 (une modification du téléphone n'arrive sur le PC qu'après la synchro du téléphone, puis celle du PC au retour sur sa fenêtre). Prochaine étape : **8e** — usage réel prolongé sur les deux appareils, banc de performance (`tool/perf/cave_perf_test.dart`), version finale (`flutter build linux --release`) + fichier `.desktop` (icône sous Wayland, menu des applications).
+**En cours : lot 8, portage Linux** (CDC v0.9). 8a à 8e faites ; appli PC installée par `tool/installer_linux.sh` (menu des applications). Reste : **usage réel quelques jours** sur le téléphone et le PC, corrections éventuelles, puis clôture du lot 8 (bilan, téléphone mis à jour avec `tool/installer.sh` : il n'a pas les changements de 8d, sans effet visible sur Android). Ensuite : portage **Windows** (PC Windows avec Visual Studio, ou GitHub Actions — à décider avec le porteur).
 
 Suite possible, **à décider avec le porteur** :
 1. Usage réel : fin de la saisie de la cave, inventaire, synchro avec un deuxième appareil ; corriger ce qui en ressortira.
@@ -222,6 +223,9 @@ Pièges rencontrés :
 - **Synchro sur PC** (8d) : trousseau de la session par libsecret (`SecureSecretStore`, vérifié sur KWallet le 2026-10-11) ; `connectivity_plus` par NetworkManager (vérifié). `SyncSettingsStore.checkSecrets()` est appelé **avant** la première synchro d'une activation (sinon la cave pourrait être reprise du serveur sans que les paramètres puissent être enregistrés) ; erreurs du coffre → `SyncProblem.secretStore` (message, pas de nouvel essai) ; à l'ouverture, coffre inutilisable = état d'erreur, pas de plantage ; la désactivation aboutit quand même. `loadSettings()` : paramètres sans mot de passe (formulaire).
 - **Cycle de vie sous Linux** (8d) : le moteur ne signale que `resumed` / `inactive` / `hidden` (jamais `paused`) et transmet la fermeture de la fenêtre (`didRequestAppExit`). `AutomaticTasks._leaving` (sauvegarde si due + envoi des modifications en attente) est appelé à `paused`, à `hidden` hors Android (fenêtre réduite) et à la fermeture (attente de 10 s au plus). Vérifié sur l'appli : fermeture → sauvegarde en 0,4 s puis sortie.
 - Textes : « ce téléphone » → « cet appareil » partout (valables sur les deux plateformes, téléphone compris).
+
+- **Installation PC** (8e) : `tool/installer_linux.sh` — `flutter build linux --release`, copie de `build/linux/x64/release/bundle` dans `~/.local/share/ma-cave` (copie à côté puis échange), lanceur `~/.local/share/applications/fr.bouthon.cave.desktop` (modèle `linux/packaging/fr.bouthon.cave.desktop`, `@EXEC@` remplacé), icône `~/.local/share/icons/hicolor/scalable/apps/fr.bouthon.cave.svg` (`linux/packaging/fr.bouthon.cave.svg` : tracés Tabler de l'icône Android sur carré bordeaux). Le nom du fichier `.desktop` = identifiant de l'appli (`fr.bouthon.cave`, `g_set_prgname`) : c'est ainsi que KDE sous Wayland trouve l'icône de la fenêtre. Refuse d'installer si l'appli est ouverte ; `--no-build`, `--remove` (données conservées). Version finale : 34 Mo, compilation ~80 s, 1,2 Go de RAM au maximum.
+- **Performances** (8e, 2026-10-11, portable **sur batterie**, processeur en économie, démon Gradle en mémoire) : ouverture 0,27 s, « −1 » 0,28 s, recherche ≤ 0,11 s, photo 0,54 s, sauvegarde 0,77 s, fusion 1,7 s — 30 à 70 % au-dessus des valeurs du 2026-10-10 alors que le code mesuré n'a pas changé ; à remesurer sur secteur pour comparer. Toujours très en deçà du CDC §9.
 
 Pièges rencontrés :
 - Test d'écran pendant une **transaction** (fusion…) avec des lectures en direct affichées : ne pas attendre la transaction d'un bloc dans `runAsync` (blocage) ; la lancer, puis alterner `runAsync(delayed 10 ms)` et `pump` jusqu'à la fin (`desktop_test.dart`, « vraie fusion »).
