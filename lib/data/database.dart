@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/enums.dart';
@@ -31,8 +34,23 @@ part 'database.g.dart';
 class CaveDatabase extends _$CaveDatabase {
   CaveDatabase(super.executor);
 
-  /// Base du téléphone, dans le dossier privé de l'application.
-  factory CaveDatabase.open() => CaveDatabase(driftDatabase(name: 'cave'));
+  /// Base de l'appareil, dans le dossier privé de l'application.
+  ///
+  /// Android : dossier par défaut de drift (`…/app_flutter/cave.sqlite`), à ne
+  /// jamais changer (l'appli ne retrouverait plus la base existante). Sur PC,
+  /// drift choisirait le dossier Documents de l'utilisateur : on prend le
+  /// dossier des données d'applications (Linux : `~/.local/share/
+  /// fr.bouthon.cave`).
+  factory CaveDatabase.open() => CaveDatabase(
+    driftDatabase(
+      name: 'cave',
+      native: Platform.isAndroid
+          ? null
+          : const DriftNativeOptions(
+              databaseDirectory: getApplicationSupportDirectory,
+            ),
+    ),
+  );
 
   @override
   int get schemaVersion => 4;
