@@ -67,8 +67,11 @@ Future<Directory> defaultBackupFolder() async {
       return Directory('$root/Documents/Cave/Sauvegardes');
     }
   }
+  // Séparateur du système : le chemin s'affiche sur l'écran Sauvegardes
+  // (Windows : C:\Users\…\Documents\Cave\Sauvegardes).
   final documents = await getApplicationDocumentsDirectory();
-  return Directory('${documents.path}/Cave/Sauvegardes');
+  final sep = Platform.pathSeparator;
+  return Directory('${documents.path}${sep}Cave${sep}Sauvegardes');
 }
 
 /// Lance la sauvegarde et la synchronisation automatiques (pas de tâche de

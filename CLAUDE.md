@@ -31,6 +31,7 @@ tool/installer.sh                    # compile et installe sur le téléphone EN
 flutter run -d linux                 # lance l'appli PC (vraie base : ~/.local/share/fr.bouthon.cave/)
 flutter build linux --debug          # appli PC seule (build/linux/x64/debug/bundle/cave), ~40 s
 tool/installer_linux.sh              # version finale de l'appli PC + lanceur du menu (sans sudo, données non touchées)
+# Windows (PowerShell) : powershell -ExecutionPolicy Bypass -File tool\installer_windows.ps1   (même rôle, menu Démarrer)
 flutter build apk --release --split-per-abi   # APK seuls, un par architecture (installation : tool/installer.sh --no-build, prend l'arm64)
 ```
 
@@ -58,6 +59,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **terminé** (Android 10 vérifié le 2026-10-10) |
 | 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **terminé** (2026-10-10) : ML Kit retiré, ZXing + Tesseract seuls, vérifiés sur le téléphone, CDC v0.7 |
 | 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **en cours** : 8a à 8e faites (2026-10-11) ; clôture après quelques jours d'usage réel sur les deux appareils |
+| 9 | **V2 — portage PC Windows** : préparé sous Linux (dossier `windows/`, fenêtre, icône, informations de version, `tool/installer_windows.ps1`) ; compilation, essais et corrections **sur le PC Windows** (liste ci-dessous) | **préparé** (2026-10-11), à finaliser sur le PC Windows |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -76,6 +78,8 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 **La V1 est terminée** (2026-10-10, décision du porteur) et son **usage réel aussi** (2026-10-11 : cave entièrement saisie, stock vérifié à la main). Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
 
 **En cours : lot 8, portage Linux** (CDC v0.9). 8a à 8e faites ; appli PC installée par `tool/installer_linux.sh` (menu des applications). Reste : **usage réel quelques jours** sur le téléphone et le PC, corrections éventuelles, puis clôture du lot 8 (bilan, téléphone mis à jour avec `tool/installer.sh` : il n'a pas les changements de 8d, sans effet visible sur Android). Ensuite : portage **Windows** (PC Windows avec Visual Studio, ou GitHub Actions — à décider avec le porteur).
+
+**Lot 9, portage Windows : préparé sous Linux** (2026-10-11). Le porteur installe l'outillage sur son PC Windows ; la suite se fait **sur ce PC** (Claude Code y fonctionne aussi) : suivre « À faire sur le PC Windows » (section du lot 9).
 
 Suite possible, **à décider avec le porteur** :
 1. Usage réel : fin de la saisie de la cave, inventaire, synchro avec un deuxième appareil ; corriger ce qui en ressortira.
@@ -235,6 +239,26 @@ Pièges rencontrés :
 - Tests en fenêtre large : `tester.view.physicalSize = Size(1200, 800)` + `devicePixelRatio = 1` + `addTearDown(tester.view.reset)` ; la fenêtre de test par défaut (800 × 600) reste « étroite ».
 - Préférences sous Linux : `~/.local/share/fr.bouthon.cave/shared_preferences.json`, clés **sans** préfixe `flutter.` (API `SharedPreferencesAsync`). Pour passer l'accueil dans un essai : `{"welcome_done":"1"}`.
 - `flutter create` sur le projet existant **met à jour `pubspec.lock`** en douce (une dizaine de bibliothèques) et remplace la plateforme `android` par `linux` dans `.metadata` : remettre le lock (`git checkout pubspec.lock`) et compléter `.metadata` à la main.
+
+## Où trouver quoi (lot 9, portage Windows)
+
+Préparé sous Linux le 2026-10-11 (Flutter génère `windows/` sur n'importe quel système, mais **ne compile pour Windows que sous Windows**).
+- `windows/` — généré par `flutter create --platforms=windows` (même piège qu'au lot 8 : `pubspec.lock` remis, `.metadata` complété à la main).
+- `windows/runner/main.cpp` : titre « Ma Cave », 1100 × 760 au départ ; `win32_window.cpp` : taille minimale 400 × 500 (`WM_GETMINMAXINFO`, mise à l'échelle par `FlutterDesktopGetDpiForMonitor`). **Commentaires C++ en ASCII** : le projet compile avec `/W4 /WX` sans `/utf-8`.
+- `windows/runner/Runner.rc` : **`CompanyName` = `fr.bouthon` et `ProductName` = `cave` donnent le dossier des données** (`%APPDATA%\fr.bouthon\cave`, construit par `path_provider_windows` à partir des informations de version de l'exe) : ne jamais les changer. `FileDescription` = « Ma Cave », copyright Maxence Pithon, GPL v3 ou ultérieure.
+- `windows/runner/resources/app_icon.ico` : 16 à 256 px, fait depuis `linux/packaging/fr.bouthon.cave.svg` (rendu Firefox, coins transparents refaits avec Pillow).
+- `tool/installer_windows.ps1` — pendant de `installer_linux.sh` : `flutter build windows --release`, copie dans `%LOCALAPPDATA%\Programs\Ma Cave`, raccourci du menu Démarrer ; `-NoBuild`, `-Remove`. Enregistré en UTF-8 **avec BOM** et CRLF (sinon PowerShell 5 affiche mal les accents). **Pas encore essayé.**
+- Code Dart : rien de propre à Windows ; `DeviceCapabilities.desktop` (pas de caméra ni de partage) ; base par `getApplicationSupportDirectory` ; sauvegardes dans `Documents\Cave\Sauvegardes` (chemin construit avec `Platform.pathSeparator`).
+
+**À faire sur le PC Windows** (installation : Git, Visual Studio Community + « Développement Desktop en C++ », Flutter **3.47.6** dans `C:\dev\flutter`, mode développeur de Windows), dans l'ordre :
+1. `flutter doctor` (ligne Visual Studio cochée), `flutter pub get`, `flutter analyze`, `flutter test`. Les tests n'ont jamais tourné sous Windows : échecs possibles liés aux fichiers verrouillés (suppression d'un dossier temporaire dont la base est encore ouverte) ou aux chemins.
+2. `flutter run -d windows` : titre, icône (fenêtre et barre des tâches), taille minimale, liste + fiche côte à côte, Ctrl+F, Échap.
+3. Base dans `%APPDATA%\fr.bouthon\cave\cave.sqlite` ; chemin des sauvegardes affiché avec des `\` ; export (« Enregistrer sur l'appareil ») et choix du dossier des sauvegardes (fenêtres de Windows).
+4. Synchronisation avec le Nextcloud du porteur (même serveur, utilisateur, dossier ; cave neuve → reprise de celle du serveur) ; mot de passe dans le Gestionnaire d'identification de Windows (`flutter_secure_storage`).
+5. Réduction de la fenêtre et **fermeture** : sauvegarde puis sortie rapide (`didRequestAppExit` ; vérifier que le moteur Windows transmet bien la fermeture).
+6. Partage de fichiers : `share_plus` sait peut-être partager des fichiers sous Windows ; si oui, `shareFiles: true` pour Windows dans `DeviceCapabilities.of` (aujourd'hui : faux, comme Linux).
+7. `tool/installer_windows.ps1` (raccourci, icône), puis banc de performance (`flutter test tool\perf\cave_perf_test.dart`, sur secteur).
+8. CLAUDE.md, journal, commit ; les deux PC et le téléphone sur la même version.
 
 ## Où trouver quoi (lot 7)
 

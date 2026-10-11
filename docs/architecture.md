@@ -152,14 +152,14 @@ Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées (
 
 ## 7. Plateformes (V2 : portage PC)
 
-Un seul code pour Android et le PC (CDC §10) : Linux d'abord (compilé sur le PC de développement), puis Windows.
+Un seul code pour Android et le PC (CDC §10) : Linux d'abord (compilé sur le PC de développement), puis Windows (préparé sous Linux, compilé sur un PC Windows).
 
-| Fichier | Android | Linux |
-|---|---|---|
-| Base `cave.sqlite` | `…/app_flutter/` (dossier privé, choix par défaut de drift, **à ne jamais changer**) | `~/.local/share/fr.bouthon.cave/` (`getApplicationSupportDirectory`, `CaveDatabase.open`) |
-| Préférences de l'appareil | `SharedPreferences` d'Android | `~/.local/share/fr.bouthon.cave/shared_preferences.json` |
-| Sauvegardes | `Documents/Cave/Sauvegardes` | `~/Documents/Cave/Sauvegardes` (dossier Documents de l'utilisateur, XDG) |
-| Mot de passe du serveur | Keystore d'Android | trousseau de la session par libsecret (KWallet, GNOME Keyring) |
+| Fichier | Android | Linux | Windows |
+|---|---|---|---|
+| Base `cave.sqlite` | `…/app_flutter/` (dossier privé, choix par défaut de drift, **à ne jamais changer**) | `~/.local/share/fr.bouthon.cave/` (`getApplicationSupportDirectory`, `CaveDatabase.open`) | `%APPDATA%\fr.bouthon\cave\` (même fonction ; nom tiré de `CompanyName` / `ProductName` de `Runner.rc`) |
+| Préférences de l'appareil | `SharedPreferences` d'Android | `~/.local/share/fr.bouthon.cave/shared_preferences.json` | même dossier que la base |
+| Sauvegardes | `Documents/Cave/Sauvegardes` | `~/Documents/Cave/Sauvegardes` (dossier Documents de l'utilisateur, XDG) | `Documents\Cave\Sauvegardes` |
+| Mot de passe du serveur | Keystore d'Android | trousseau de la session par libsecret (KWallet, GNOME Keyring) | Gestionnaire d'identification de Windows |
 
 - Sans emplacement imposé, drift mettrait la base dans `~/Documents` sur PC : d'où le dossier des données d'applications, sauf sur Android.
 - Fenêtre Linux (`linux/runner/my_application.cc`) : titre « Ma Cave », 1100 × 760 au départ, 400 × 500 au minimum, icône `assets/icon.png` (prise en compte sous X11 ; sous Wayland, il faudra un fichier `.desktop`). Identifiant d'application `fr.bouthon.cave` (`linux/CMakeLists.txt`).
