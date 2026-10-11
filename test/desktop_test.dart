@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:cave/app.dart';
 import 'package:cave/data/cave_repository.dart';
 import 'package:cave/data/database.dart';
 import 'package:cave/data/providers.dart';
 import 'package:cave/l10n/app_localizations.dart';
 import 'package:cave/platform/device_capabilities.dart';
+import 'package:cave/sync/cave_file.dart';
+import 'package:cave/sync/merge.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -260,5 +265,92 @@ void main() {
     await settle(tester);
     expect(find.text(l10n.scanManualScannerHelp), findsNothing);
     expect(find.text(l10n.searchHint), findsOneWidget);
+  });
+
+  testWidgets('fiche à droite : suit une modification reçue par la synchro', (
+    tester,
+  ) async {
+    wideWindow(tester);
+    await addBeer(tester, 'Bière favorite');
+    await tester.runAsync(() async {
+      final drink = (await db.select(db.drinks).get()).single;
+      await repo.setFavorite(drink.id, true);
+    });
+    await openApp(tester);
+    await tester.tap(find.text('Bière favorite'));
+    await settle(tester);
+    expect(find.byIcon(Icons.favorite), findsWidgets);
+
+    // Comme la fusion : SQL brut, puis notification de toutes les tables.
+    await tester.runAsync(() async {
+      await db.customStatement('UPDATE drinks SET favorite = 0');
+      db.markTablesUpdated(db.allTables);
+    });
+    await settle(tester);
+    expect(find.byIcon(Icons.favorite), findsNothing);
+  });
+
+  testWidgets('fiche à droite : retirer le favori met l\'icône à jour', (
+    tester,
+  ) async {
+    wideWindow(tester);
+    await addBeer(tester, 'Bière favorite');
+    await tester.runAsync(() async {
+      final drink = (await db.select(db.drinks).get()).single;
+      await repo.setFavorite(drink.id, true);
+    });
+    await openApp(tester);
+    await tester.tap(find.text('Bière favorite'));
+    await settle(tester);
+
+    await tester.runAsync(() async {
+      await tester.tap(find.byTooltip(l10n.favoriteLabel).last);
+    });
+    await settle(tester);
+    expect(find.byIcon(Icons.favorite), findsNothing);
+  });
+
+  testWidgets('fiche à droite : suit une vraie fusion de synchro', (
+    tester,
+  ) async {
+    wideWindow(tester);
+    await addBeer(tester, 'Bière favorite');
+    late String path;
+    late Directory dir;
+    await tester.runAsync(() async {
+      final drink = (await db.select(db.drinks).get()).single;
+      await repo.setFavorite(drink.id, true);
+      // L'autre appareil : copie de la cave, favori retiré plus tard.
+      dir = await Directory.systemTemp.createTemp('cave_fusion');
+      path = '${dir.path}/autre.sqlite';
+      await snapshotDatabase(db, path);
+      final other = CaveDatabase(NativeDatabase(File(path)));
+      await CaveRepository(
+        other,
+        TestContext(deviceId: 'telephone', start: 9000000),
+      ).setFavorite(drink.id, false);
+      await other.close();
+    });
+    addTearDown(() => dir.delete(recursive: true));
+    await openApp(tester);
+    await tester.tap(find.text('Bière favorite'));
+    await settle(tester);
+    expect(find.byIcon(Icons.favorite), findsWidgets);
+
+    // La fusion est une transaction : les lectures en direct de l'écran
+    // attendent leur tour, il faut laisser avancer le temps du test.
+    var merged = false;
+    await tester.runAsync(() async {
+      mergeCaveFile(db, ctx, path).then((_) => merged = true);
+    });
+    for (var i = 0; i < 100 && !merged; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 10)),
+      );
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(merged, isTrue);
+    await settle(tester);
+    expect(find.byIcon(Icons.favorite), findsNothing);
   });
 }
