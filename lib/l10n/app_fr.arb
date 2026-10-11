@@ -506,7 +506,7 @@
   "@exportShare": {
     "description": "Action : partager les fichiers (courriel, Drive…)."
   },
-  "exportSave": "Enregistrer sur le téléphone",
+  "exportSave": "Enregistrer sur l'appareil",
   "@exportSave": {
     "description": "Action : enregistrer les fichiers dans un dossier."
   },
@@ -1021,7 +1021,7 @@
   "@backupTitle": {
     "description": "Titre de l'écran des sauvegardes."
   },
-  "backupHelp": "Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.",
+  "backupHelp": "Votre cave est enregistrée uniquement sur cet appareil. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.",
   "@backupHelp": {
     "description": "Explication en tête de l'écran des sauvegardes."
   },
@@ -1066,7 +1066,7 @@
   "@backupOpenSettings": {
     "description": "Bouton : ouvrir la page de l'appli dans les réglages d'Android, pour autoriser le stockage."
   },
-  "backupFolderHelp": "Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.",
+  "backupFolderHelp": "Copiez ce dossier sur un autre appareil ou synchronisez-le avec une autre application pour en garder une copie ailleurs.",
   "@backupFolderHelp": {
     "description": "Conseil sous le dossier des sauvegardes."
   },
@@ -1078,7 +1078,7 @@
   "@backupRestoreFromFile": {
     "description": "Bouton : choisir un fichier de sauvegarde (.sqlite) à restaurer."
   },
-  "backupListTitle": "Sauvegardes sur ce téléphone",
+  "backupListTitle": "Sauvegardes sur cet appareil",
   "@backupListTitle": {
     "description": "Titre de la liste des sauvegardes."
   },
@@ -1223,7 +1223,7 @@
   "@backupKeepConfirm": {
     "description": "Bouton : confirmer la suppression des sauvegardes en trop."
   },
-  "backupHelpSynced": "Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.",
+  "backupHelpSynced": "Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur cet appareil, et une copie dans le dossier « Sauvegardes » du serveur.",
   "@backupHelpSynced": {
     "description": "Explication en tête de l'écran des sauvegardes, quand la synchronisation est active."
   },
@@ -1235,7 +1235,7 @@
   "@syncTitle": {
     "description": "Titre de l'écran de synchronisation."
   },
-  "syncIntro": "Votre cave est enregistrée uniquement sur ce téléphone. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.",
+  "syncIntro": "Votre cave est enregistrée uniquement sur cet appareil. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.",
   "@syncIntro": {
     "description": "Explication de l'écran de synchronisation en mode local."
   },
@@ -1271,7 +1271,7 @@
   "@syncPasswordLabel": {
     "description": "Champ : mot de passe de connexion au serveur."
   },
-  "syncPasswordHelp": "Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d'application. Il est rangé dans le coffre sécurisé du téléphone.",
+  "syncPasswordHelp": "Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d'application. Il est rangé dans le coffre sécurisé de l'appareil.",
   "@syncPasswordHelp": {
     "description": "Aide sous le champ mot de passe."
   },
@@ -1311,7 +1311,7 @@
   "@syncOtherCaveTitle": {
     "description": "Titre de la question : le serveur contient une cave différente."
   },
-  "syncOtherCaveMessage": "Le serveur contient déjà une cave différente de celle de ce téléphone. Les deux ne sont jamais mélangées : choisissez celle à garder.",
+  "syncOtherCaveMessage": "Le serveur contient déjà une cave différente de celle de cet appareil. Les deux ne sont jamais mélangées : choisissez celle à garder.",
   "@syncOtherCaveMessage": {
     "description": "Explication de la question « autre cave »."
   },
@@ -1319,7 +1319,7 @@
   "@syncUseServer": {
     "description": "Choix : remplacer la cave du téléphone par celle du serveur."
   },
-  "syncUseServerHelp": "La cave de ce téléphone est remplacée, après une sauvegarde automatique.",
+  "syncUseServerHelp": "La cave de cet appareil est remplacée, après une sauvegarde automatique.",
   "@syncUseServerHelp": {
     "description": "Explication du choix « Utiliser la cave du serveur »."
   },
@@ -1393,7 +1393,7 @@
   "@syncLongError": {
     "description": "Avertissement : erreur de synchronisation ancienne (remplace la notification)."
   },
-  "syncProblemUnreachable": "Serveur injoignable. Les modifications restent sur le téléphone, rien n'est perdu.",
+  "syncProblemUnreachable": "Serveur injoignable. Les modifications restent sur l'appareil, rien n'est perdu.",
   "@syncProblemUnreachable": {
     "description": "Erreur : serveur injoignable."
   },
@@ -1405,7 +1405,7 @@
   "@syncProblemFolderNotFound": {
     "description": "Erreur : dossier introuvable."
   },
-  "syncProblemInsufficientStorage": "Espace insuffisant sur le serveur. Les modifications restent sur le téléphone.",
+  "syncProblemInsufficientStorage": "Espace insuffisant sur le serveur. Les modifications restent sur l'appareil.",
   "@syncProblemInsufficientStorage": {
     "description": "Erreur : plus de place sur le serveur."
   },
@@ -1417,7 +1417,7 @@
   "@syncProblemNewerVersion": {
     "description": "Erreur : base créée par une version plus récente."
   },
-  "syncProblemOtherCave": "Le serveur contient une autre cave que celle de ce téléphone.",
+  "syncProblemOtherCave": "Le serveur contient une autre cave que celle de cet appareil.",
   "@syncProblemOtherCave": {
     "description": "Erreur : autre cave sur le serveur."
   },
@@ -1425,7 +1425,7 @@
   "@syncProblemConflict": {
     "description": "Erreur : conflit d'écriture répété."
   },
-  "syncSetAside": "Le fichier du serveur était endommagé : il a été mis de côté sous le nom « {name} » et remplacé par la cave de ce téléphone.",
+  "syncSetAside": "Le fichier du serveur était endommagé : il a été mis de côté sous le nom « {name} » et remplacé par la cave de cet appareil.",
   "@syncSetAside": {
     "description": "Message : fichier du serveur endommagé, mis de côté.",
     "placeholders": {
@@ -1454,7 +1454,7 @@
   "@syncDeactivate": {
     "description": "Bouton : revenir au mode local."
   },
-  "syncDeactivateMessage": "Ce téléphone garde sa cave et continue seul. La cave du serveur n'est pas supprimée.",
+  "syncDeactivateMessage": "Cet appareil garde sa cave et continue seul. La cave du serveur n'est pas supprimée.",
   "@syncDeactivateMessage": {
     "description": "Confirmation de la désactivation."
   },
@@ -1653,6 +1653,10 @@
   "@scanButton": {
     "description": "Bouton de la liste : ouvrir le scan de code-barres."
   },
+  "scanButtonByHand": "Code-barres",
+  "@scanButtonByHand": {
+    "description": "Bouton de la liste sur PC (pas de caméra) : saisir un code-barres au clavier ou avec une douchette."
+  },
   "scanTitle": "Scanner un code",
   "@scanTitle": {
     "description": "Titre de l'écran de scan."
@@ -1676,6 +1680,10 @@
   "scanManualLabel": "Code-barres",
   "@scanManualLabel": {
     "description": "Champ : code-barres tapé à la main."
+  },
+  "scanManualScannerHelp": "Tapez le code, ou lisez-le avec une douchette USB.",
+  "@scanManualScannerHelp": {
+    "description": "Aide du champ de saisie du code sur PC (pas de caméra)."
   },
   "scanCameraDenied": "L'appareil photo n'est pas autorisé. Autorisez-le dans les paramètres d'Android pour scanner, ou saisissez le code.",
   "@scanCameraDenied": {
@@ -1718,6 +1726,10 @@
   "scanAgain": "Scanner un autre code",
   "@scanAgain": {
     "description": "Bouton : relancer le scan."
+  },
+  "scanAgainByHand": "Saisir un autre code",
+  "@scanAgainByHand": {
+    "description": "Bouton sur PC (pas de caméra) : saisir un autre code-barres."
   },
   "scanUnknownTitle": "Code inconnu",
   "@scanUnknownTitle": {
@@ -1933,6 +1945,10 @@
   "@formScanBarcode": {
     "description": "Bouton du formulaire de création : lire le code de la bouteille."
   },
+  "formEnterBarcode": "Saisir le code-barres",
+  "@formEnterBarcode": {
+    "description": "Bouton du formulaire de création sur PC (pas de caméra) : saisir le code de la bouteille."
+  },
   "formBarcodeKnownTitle": "Code déjà dans la cave",
   "@formBarcodeKnownTitle": {
     "description": "Titre : le code scanné est déjà associé à une référence."
@@ -2014,7 +2030,7 @@
   "@welcomeLocalAlertTitle": {
     "description": "Alerte du mode local (CDC §8.4) : titre."
   },
-  "welcomeLocalAlert": "Votre cave n'est enregistrée que sur ce téléphone. S'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).",
+  "welcomeLocalAlert": "Votre cave n'est enregistrée que sur cet appareil. S'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (autre appareil, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).",
   "@welcomeLocalAlert": {
     "description": "Alerte du mode local (CDC §8.4) : message."
   },
@@ -2076,7 +2092,7 @@
   "@settingsTheme": {
     "description": "Paramètres : choix du thème."
   },
-  "settingsThemeSystem": "Comme le téléphone",
+  "settingsThemeSystem": "Comme le système",
   "@settingsThemeSystem": {
     "description": "Thème : suivre le réglage d'Android."
   },
@@ -2157,7 +2173,7 @@
   "@settingsData": {
     "description": "Paramètres : rubrique synchronisation, sauvegardes, import/export."
   },
-  "settingsDeviceNote": "Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.",
+  "settingsDeviceNote": "Sauf les volumes par défaut, ces réglages ne concernent que cet appareil.",
   "@settingsDeviceNote": {
     "description": "Paramètres : note en bas de l'écran."
   },

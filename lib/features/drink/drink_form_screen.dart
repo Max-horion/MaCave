@@ -11,6 +11,7 @@ import '../../domain/drink_draft.dart';
 import '../../domain/field_rules.dart';
 import '../../domain/text.dart';
 import '../../l10n/app_localizations.dart';
+import '../../platform/device_capabilities.dart';
 import '../../scan/open_food_facts.dart';
 import '../../scan/providers.dart';
 import '../../ui/widgets.dart';
@@ -403,6 +404,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final classification = ref.watch(classificationProvider).value;
+    final camera = ref.watch(deviceCapabilitiesProvider).camera;
     if (classification == null || (!_isNew && !_loaded)) {
       return Scaffold(
         appBar: AppBar(),
@@ -468,18 +470,24 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (_isNew) ...[
-                OutlinedButton.icon(
-                  onPressed: _saving ? null : () => _readLabel(classification),
-                  icon: const Icon(Icons.document_scanner_outlined),
-                  label: Text(l10n.labelButton),
-                ),
-                const SizedBox(height: 8),
+                if (camera) ...[
+                  OutlinedButton.icon(
+                    onPressed: _saving
+                        ? null
+                        : () => _readLabel(classification),
+                    icon: const Icon(Icons.document_scanner_outlined),
+                    label: Text(l10n.labelButton),
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 OutlinedButton.icon(
                   onPressed: _saving
                       ? null
                       : () => _scanBarcode(classification),
-                  icon: const Icon(Icons.qr_code_scanner),
-                  label: Text(l10n.formScanBarcode),
+                  icon: Icon(camera ? Icons.qr_code_scanner : Icons.keyboard),
+                  label: Text(
+                    camera ? l10n.formScanBarcode : l10n.formEnterBarcode,
+                  ),
                 ),
                 if (_barcode != null)
                   Padding(

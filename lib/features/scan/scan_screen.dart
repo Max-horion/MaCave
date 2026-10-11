@@ -75,10 +75,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   }
 
   Future<void> _typeCode() async {
-    final code = await showDialog<String>(
-      context: context,
-      builder: (context) => const _ManualCodeDialog(),
-    );
+    final code = await askBarcodeByHand(context);
     if (code != null && mounted) _found(code);
   }
 
@@ -164,10 +161,24 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   );
 }
 
-/// Saisie du code à la main. Le champ appartient à la fenêtre : il n'est
-/// détruit qu'une fois celle-ci fermée (animation comprise).
+/// Saisie d'un code à la main : depuis l'écran de scan, ou à sa place sur
+/// PC (pas de caméra), où [scanner] rappelle qu'une douchette USB convient
+/// (elle tape le code puis Entrée, comme un clavier). Retourne le code tapé,
+/// ou null.
+Future<String?> askBarcodeByHand(
+  BuildContext context, {
+  bool scanner = false,
+}) => showDialog<String>(
+  context: context,
+  builder: (context) => _ManualCodeDialog(scanner: scanner),
+);
+
+/// Le champ appartient à la fenêtre : il n'est détruit qu'une fois celle-ci
+/// fermée (animation comprise).
 class _ManualCodeDialog extends StatefulWidget {
-  const _ManualCodeDialog();
+  const _ManualCodeDialog({required this.scanner});
+
+  final bool scanner;
 
   @override
   State<_ManualCodeDialog> createState() => _ManualCodeDialogState();
@@ -191,7 +202,11 @@ class _ManualCodeDialogState extends State<_ManualCodeDialog> {
         controller: _field,
         autofocus: true,
         keyboardType: TextInputType.number,
-        decoration: InputDecoration(labelText: l10n.scanManualLabel),
+        decoration: InputDecoration(
+          labelText: l10n.scanManualLabel,
+          helperText: widget.scanner ? l10n.scanManualScannerHelp : null,
+          helperMaxLines: 3,
+        ),
         onSubmitted: (v) => Navigator.pop(context, v),
       ),
       actions: [

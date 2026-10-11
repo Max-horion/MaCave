@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../platform/device_capabilities.dart';
 import '../../sync/backup.dart';
 import '../../sync/cave_file.dart';
 import '../../sync/providers.dart';
@@ -311,10 +312,12 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     showMessage(
       context,
       l10n.backupDone,
-      action: SnackBarAction(
-        label: l10n.backupShare,
-        onPressed: () => _share(set),
-      ),
+      action: ref.read(deviceCapabilitiesProvider).shareFiles
+          ? SnackBarAction(
+              label: l10n.backupShare,
+              onPressed: () => _share(set),
+            )
+          : null,
     );
   });
 
@@ -360,6 +363,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   Future<void> _openSet(BackupSet set) async {
     final l10n = AppLocalizations.of(context);
+    final share = ref.read(deviceCapabilitiesProvider).shareFiles;
     final action = await showModalBottomSheet<String>(
       context: context,
       showDragHandle: true,
@@ -367,12 +371,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              minTileHeight: 56,
-              leading: const Icon(Icons.share),
-              title: Text(l10n.backupShare),
-              onTap: () => Navigator.pop(context, 'share'),
-            ),
+            if (share)
+              ListTile(
+                minTileHeight: 56,
+                leading: const Icon(Icons.share),
+                title: Text(l10n.backupShare),
+                onTap: () => Navigator.pop(context, 'share'),
+              ),
             ListTile(
               minTileHeight: 56,
               leading: const Icon(Icons.settings_backup_restore),

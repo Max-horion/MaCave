@@ -14,6 +14,7 @@ import '../../data/exchange/csv_export.dart';
 import '../../data/exchange/import_template.dart';
 import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../../platform/device_capabilities.dart';
 import 'import_guide_screen.dart';
 
 // ───────────────────────────────── Export ─────────────────────────────────
@@ -25,7 +26,12 @@ enum _ExportTarget { share, save }
 Future<void> startExport(BuildContext context, WidgetRef ref) async {
   final l10n = AppLocalizations.of(context);
   final messenger = ScaffoldMessenger.of(context);
-  final target = await _askTarget(context, l10n.exportTitle, l10n.exportHelp);
+  final target = await _askTarget(
+    context,
+    ref,
+    l10n.exportTitle,
+    l10n.exportHelp,
+  );
   if (target == null) return;
 
   try {
@@ -46,6 +52,7 @@ Future<void> deliverImportTemplate(BuildContext context, WidgetRef ref) async {
   final messenger = ScaffoldMessenger.of(context);
   final target = await _askTarget(
     context,
+    ref,
     l10n.importTemplateTitle,
     l10n.importTemplateHelp,
   );
@@ -60,13 +67,16 @@ Future<void> deliverImportTemplate(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Partager ou enregistrer sur le téléphone ?
+/// Partager ou enregistrer sur l'appareil ? Sans partage de fichiers
+/// (Linux) : enregistrer seulement.
 Future<_ExportTarget?> _askTarget(
   BuildContext context,
+  WidgetRef ref,
   String title,
   String help,
 ) {
   final l10n = AppLocalizations.of(context);
+  final share = ref.read(deviceCapabilitiesProvider).shareFiles;
   return showModalBottomSheet<_ExportTarget>(
     context: context,
     showDragHandle: true,
@@ -81,17 +91,24 @@ Future<_ExportTarget?> _askTarget(
             const SizedBox(height: 8),
             Text(help),
             const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: () => Navigator.pop(context, _ExportTarget.share),
-              icon: const Icon(Icons.share),
-              label: Text(l10n.exportShare),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: () => Navigator.pop(context, _ExportTarget.save),
-              icon: const Icon(Icons.save_alt),
-              label: Text(l10n.exportSave),
-            ),
+            if (share) ...[
+              FilledButton.icon(
+                onPressed: () => Navigator.pop(context, _ExportTarget.share),
+                icon: const Icon(Icons.share),
+                label: Text(l10n.exportShare),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.pop(context, _ExportTarget.save),
+                icon: const Icon(Icons.save_alt),
+                label: Text(l10n.exportSave),
+              ),
+            ] else
+              FilledButton.icon(
+                onPressed: () => Navigator.pop(context, _ExportTarget.save),
+                icon: const Icon(Icons.save_alt),
+                label: Text(l10n.exportSave),
+              ),
           ],
         ),
       ),

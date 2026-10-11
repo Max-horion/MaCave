@@ -56,7 +56,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **terminé** (Android 10 vérifié le 2026-10-10) |
 | 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **terminé** (2026-10-10) : ML Kit retiré, ZXing + Tesseract seuls, vérifiés sur le téléphone, CDC v0.7 |
-| 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **en cours** : 8a terminée (2026-10-11) |
+| 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **en cours** : 8a et 8b terminées (2026-10-11) |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -74,7 +74,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 **La V1 est terminée** (2026-10-10, décision du porteur) et son **usage réel aussi** (2026-10-11 : cave entièrement saisie, stock vérifié à la main). Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
 
-**En cours : lot 8, portage Linux** (CDC v0.9). Prochaine étape : **8b** — un fournisseur Riverpod des capacités de l'appareil (caméra, partage), remplaçable en test ; sur PC : scan = saisie du code seule (douchette USB = clavier), « Lire l'étiquette » et photo masqués, export / fichier modèle en « Enregistrer sous… » seulement (share_plus ne partage pas de fichier sous Linux) ; icône « téléphone » de l'accueil (« Sur cet appareil uniquement ») à remplacer sur PC.
+**En cours : lot 8, portage Linux** (CDC v0.9). Prochaine étape : **8c** — écrans adaptés à la largeur de la fenêtre (liste à gauche, fiche à droite au-delà d'environ 840 dp ; affichage actuel en dessous), clavier et souris (Ctrl+F recherche, Échap ferme, Entrée valide), textes « Touchez… » à revoir sur PC (ex. message de la cave vide). Le bandeau DEBUG cache le menu ⋮ en mode débogage (normal).
 
 Suite possible, **à décider avec le porteur** :
 1. Usage réel : fin de la saisie de la cave, inventaire, synchro avec un deuxième appareil ; corriger ce qui en ressortira.
@@ -216,7 +216,11 @@ Pièges rencontrés :
 - `CaveDatabase.open` (`lib/data/database.dart`) : sur PC, base dans le dossier des données d'applications (`~/.local/share/fr.bouthon.cave/cave.sqlite`) ; Android **inchangé** (dossier par défaut de drift — le changer perdrait la base du téléphone). Tableau des emplacements : `docs/architecture.md` §7.
 - Essayer l'appli PC **sans toucher à sa vraie base** : `XDG_DATA_HOME=<dossier temporaire> build/linux/x64/debug/bundle/cave` (préférences et base y sont créées).
 
+- **Capacités de l'appareil** (8b) : `lib/platform/device_capabilities.dart` — `deviceCapabilitiesProvider` (`camera`, `shareFiles`, `icon`), tiré de `defaultTargetPlatform` (Android dans les tests : les anciens tests voient le téléphone ; `test/desktop_test.dart` remplace le fournisseur par `DeviceCapabilities.desktop`). Sans caméra : `startScan` et `barcodeScannerProvider` ouvrent `askBarcodeByHand(scanner: true)` (`scan_screen.dart`, aide « douchette USB » ; une douchette tape le code puis Entrée), bouton « Code-barres » sur la liste, « Saisir le code-barres » dans le formulaire, « Lire l'étiquette » et la photo de la fiche « Code inconnu » masqués. Sans partage : export et fichier modèle en « Enregistrer » seul (`_askTarget`), pas de « Partager » dans l'écran Sauvegardes. `file_picker` sous Linux passe par le portail XDG (fenêtre de KDE) et écrit bien le fichier.
+- Textes : « ce téléphone » → « cet appareil » partout (valables sur les deux plateformes, téléphone compris).
+
 Pièges rencontrés :
+- Préférences sous Linux : `~/.local/share/fr.bouthon.cave/shared_preferences.json`, clés **sans** préfixe `flutter.` (API `SharedPreferencesAsync`). Pour passer l'accueil dans un essai : `{"welcome_done":"1"}`.
 - `flutter create` sur le projet existant **met à jour `pubspec.lock`** en douce (une dizaine de bibliothèques) et remplace la plateforme `android` par `linux` dans `.metadata` : remettre le lock (`git checkout pubspec.lock`) et compléter `.metadata` à la main.
 
 ## Où trouver quoi (lot 7)

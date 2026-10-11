@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../../platform/device_capabilities.dart';
 import '../../sync/storage_access.dart';
 import '../../sync/providers.dart';
 import '../../theme/app_theme.dart';
@@ -155,7 +156,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        icon: const Icon(Icons.phone_android),
+        icon: Icon(ref.read(deviceCapabilitiesProvider).icon),
         title: Text(l10n.welcomeLocalAlertTitle),
         content: SingleChildScrollView(child: Text(l10n.welcomeLocalAlert)),
         actions: [
@@ -196,7 +197,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
           )
         else ...[
           _Choice(
-            icon: Icons.phone_android,
+            icon: ref.watch(deviceCapabilitiesProvider).icon,
             title: l10n.welcomeLocal,
             help: l10n.welcomeLocalHelp,
             onTap: _next,

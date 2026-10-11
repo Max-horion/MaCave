@@ -5,6 +5,7 @@ import '../../data/cave_queries.dart';
 import '../../data/providers.dart';
 import '../../domain/drink_filter.dart';
 import '../../l10n/app_localizations.dart';
+import '../../platform/device_capabilities.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
 import '../drink/drink_detail_screen.dart';
@@ -29,6 +30,7 @@ class CellarScreen extends ConsumerWidget {
     final filter = ref.watch(drinkFilterProvider);
     final list = ref.watch(drinkListProvider);
     final totals = ref.watch(caveTotalsProvider).value;
+    final camera = ref.watch(deviceCapabilitiesProvider).camera;
 
     return Scaffold(
       appBar: AppBar(
@@ -108,8 +110,8 @@ class CellarScreen extends ConsumerWidget {
           FloatingActionButton.extended(
             heroTag: 'scan',
             onPressed: () => startScan(context, ref),
-            icon: const Icon(Icons.qr_code_scanner),
-            label: Text(l10n.scanButton),
+            icon: Icon(camera ? Icons.qr_code_scanner : Icons.keyboard),
+            label: Text(camera ? l10n.scanButton : l10n.scanButtonByHand),
           ),
           const SizedBox(height: 12),
           FloatingActionButton.extended(

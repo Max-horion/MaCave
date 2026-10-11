@@ -8,6 +8,7 @@ import '../../data/providers.dart';
 import '../../domain/barcode.dart';
 import '../../domain/drink_draft.dart';
 import '../../domain/drink_filter.dart';
+import '../../platform/device_capabilities.dart';
 import '../../scan/open_food_facts.dart';
 import '../../scan/providers.dart';
 import '../../ui/formats.dart';
@@ -27,8 +28,13 @@ import 'scan_screen.dart';
 // pour que le bandeau « Annuler » reste visible une fois le scan fermé.
 
 /// Ouvre le scan, puis traite le code lu (ou la photo de l'étiquette, pour
-/// une bouteille sans code-barres).
+/// une bouteille sans code-barres). Sans caméra (PC) : saisie du code.
 Future<void> startScan(BuildContext context, WidgetRef ref) async {
+  if (!ref.read(deviceCapabilitiesProvider).camera) {
+    final code = await askBarcodeByHand(context, scanner: true);
+    if (code == null || !context.mounted) return;
+    return handleScannedCode(context, ref, code);
+  }
   final result = await Navigator.push<ScanResult>(
     context,
     MaterialPageRoute(builder: (_) => const ScanScreen()),
@@ -46,9 +52,13 @@ Future<void> startScan(BuildContext context, WidgetRef ref) async {
 
 /// Scanne un code-barres à associer (formulaire, lot existant) : le code
 /// lu, sous sa forme enregistrée, ou null. Remplaçable dans les tests (pas
-/// de caméra).
+/// de caméra). Sans caméra (PC) : saisie du code.
 final barcodeScannerProvider = Provider<Future<String?> Function(BuildContext)>(
   (ref) => (context) async {
+    if (!ref.read(deviceCapabilitiesProvider).camera) {
+      final code = await askBarcodeByHand(context, scanner: true);
+      return code == null ? null : normalizeBarcode(code);
+    }
     final result = await Navigator.push<ScanResult>(
       context,
       MaterialPageRoute(builder: (_) => const ScanScreen(offerLabel: false)),
@@ -87,17 +97,19 @@ Future<void> handleScannedCode(
   if (normalized == null) return;
   final matches = await ref.read(caveRepositoryProvider).lotsByBarcode(code);
   if (!context.mounted) return;
+  final camera = ref.read(deviceCapabilitiesProvider).camera;
   final choice = matches.isEmpty
       ? await _showUnknown(
           context,
           normalized,
+          camera,
           // Recherche lancée tout de suite, pendant l'affichage de la fiche.
           OpenFoodFacts.canLookUp(normalized) &&
                   ref.read(appPreferencesProvider).openFoodFacts
               ? _lookUp(ref, normalized)
               : null,
         )
-      : await _showKnown(context, normalized, matches);
+      : await _showKnown(context, normalized, matches, camera);
   if (choice == null || !context.mounted) return;
 
   final classification = ref.read(classificationProvider).value;
@@ -221,6 +233,7 @@ Future<_ScanChoice?> _showKnown(
   BuildContext context,
   String code,
   List<({Drink drink, Lot lot})> matches,
+  bool camera,
 ) {
   final byDrink = <String, (Drink, List<Lot>)>{};
   for (final m in matches) {
@@ -288,8 +301,8 @@ Future<_ScanChoice?> _showKnown(
               const SizedBox(height: 8),
               OutlinedButton.icon(
                 onPressed: () => Navigator.pop(context, const _ScanAgain()),
-                icon: const Icon(Icons.qr_code_scanner),
-                label: Text(l10n.scanAgain),
+                icon: Icon(camera ? Icons.qr_code_scanner : Icons.keyboard),
+                label: Text(camera ? l10n.scanAgain : l10n.scanAgainByHand),
               ),
             ],
           ),
@@ -304,20 +317,29 @@ Future<_ScanChoice?> _showKnown(
 Future<_ScanChoice?> _showUnknown(
   BuildContext context,
   String code,
+  bool camera,
   Future<_Lookup>? lookup,
 ) {
   return showModalBottomSheet<_ScanChoice>(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
-    builder: (context) => _UnknownCodeSheet(code: code, lookup: lookup),
+    builder: (context) =>
+        _UnknownCodeSheet(code: code, camera: camera, lookup: lookup),
   );
 }
 
 class _UnknownCodeSheet extends StatelessWidget {
-  const _UnknownCodeSheet({required this.code, required this.lookup});
+  const _UnknownCodeSheet({
+    required this.code,
+    required this.camera,
+    required this.lookup,
+  });
 
   final String code;
+
+  /// Photo de l'étiquette proposée (pas sur PC).
+  final bool camera;
 
   /// Null : pas de recherche (QR code, contenu non numérique).
   final Future<_Lookup>? lookup;
@@ -410,12 +432,14 @@ class _UnknownCodeSheet extends StatelessWidget {
                     draft != null ? l10n.offUseDraft : l10n.scanNewDrink,
                   ),
                 ),
-                const SizedBox(height: 8),
-                FilledButton.tonalIcon(
-                  onPressed: () => Navigator.pop(context, _ReadLabel(draft)),
-                  icon: const Icon(Icons.document_scanner_outlined),
-                  label: Text(l10n.scanUnknownPhoto),
-                ),
+                if (camera) ...[
+                  const SizedBox(height: 8),
+                  FilledButton.tonalIcon(
+                    onPressed: () => Navigator.pop(context, _ReadLabel(draft)),
+                    icon: const Icon(Icons.document_scanner_outlined),
+                    label: Text(l10n.scanUnknownPhoto),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 FilledButton.tonalIcon(
                   onPressed: () => Navigator.pop(context, const _Associate()),
@@ -425,8 +449,8 @@ class _UnknownCodeSheet extends StatelessWidget {
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
                   onPressed: () => Navigator.pop(context, const _ScanAgain()),
-                  icon: const Icon(Icons.qr_code_scanner),
-                  label: Text(l10n.scanAgain),
+                  icon: Icon(camera ? Icons.qr_code_scanner : Icons.keyboard),
+                  label: Text(camera ? l10n.scanAgain : l10n.scanAgainByHand),
                 ),
               ],
             );

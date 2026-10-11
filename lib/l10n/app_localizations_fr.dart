@@ -408,7 +408,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get exportShare => 'Partager';
 
   @override
-  String get exportSave => 'Enregistrer sur le téléphone';
+  String get exportSave => 'Enregistrer sur l\'appareil';
 
   @override
   String exportSaved(int count) {
@@ -837,7 +837,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupHelp =>
-      'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.';
+      'Votre cave est enregistrée uniquement sur cet appareil. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.';
 
   @override
   String backupFolder(String path) {
@@ -874,7 +874,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupFolderHelp =>
-      'Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.';
+      'Copiez ce dossier sur un autre appareil ou synchronisez-le avec une autre application pour en garder une copie ailleurs.';
 
   @override
   String get backupNow => 'Sauvegarder maintenant';
@@ -883,7 +883,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupRestoreFromFile => 'Restaurer depuis un fichier…';
 
   @override
-  String get backupListTitle => 'Sauvegardes sur ce téléphone';
+  String get backupListTitle => 'Sauvegardes sur cet appareil';
 
   @override
   String get backupNone => 'Aucune sauvegarde pour l\'instant.';
@@ -1001,7 +1001,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupHelpSynced =>
-      'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.';
+      'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur cet appareil, et une copie dans le dossier « Sauvegardes » du serveur.';
 
   @override
   String get menuSync => 'Synchronisation';
@@ -1011,7 +1011,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncIntro =>
-      'Votre cave est enregistrée uniquement sur ce téléphone. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.';
+      'Votre cave est enregistrée uniquement sur cet appareil. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.';
 
   @override
   String get syncKindNextcloud => 'Nextcloud';
@@ -1039,7 +1039,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncPasswordHelp =>
-      'Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d\'application. Il est rangé dans le coffre sécurisé du téléphone.';
+      'Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d\'application. Il est rangé dans le coffre sécurisé de l\'appareil.';
 
   @override
   String get syncPasswordKeep =>
@@ -1071,14 +1071,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncOtherCaveMessage =>
-      'Le serveur contient déjà une cave différente de celle de ce téléphone. Les deux ne sont jamais mélangées : choisissez celle à garder.';
+      'Le serveur contient déjà une cave différente de celle de cet appareil. Les deux ne sont jamais mélangées : choisissez celle à garder.';
 
   @override
   String get syncUseServer => 'Utiliser la cave du serveur';
 
   @override
   String get syncUseServerHelp =>
-      'La cave de ce téléphone est remplacée, après une sauvegarde automatique.';
+      'La cave de cet appareil est remplacée, après une sauvegarde automatique.';
 
   @override
   String get syncReplaceServer => 'Remplacer la cave du serveur par celle-ci';
@@ -1135,7 +1135,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncProblemUnreachable =>
-      'Serveur injoignable. Les modifications restent sur le téléphone, rien n\'est perdu.';
+      'Serveur injoignable. Les modifications restent sur l\'appareil, rien n\'est perdu.';
 
   @override
   String get syncProblemUnauthorized =>
@@ -1147,7 +1147,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncProblemInsufficientStorage =>
-      'Espace insuffisant sur le serveur. Les modifications restent sur le téléphone.';
+      'Espace insuffisant sur le serveur. Les modifications restent sur l\'appareil.';
 
   @override
   String get syncProblemServer =>
@@ -1159,7 +1159,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncProblemOtherCave =>
-      'Le serveur contient une autre cave que celle de ce téléphone.';
+      'Le serveur contient une autre cave que celle de cet appareil.';
 
   @override
   String get syncProblemConflict =>
@@ -1167,7 +1167,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String syncSetAside(String name) {
-    return 'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « $name » et remplacé par la cave de ce téléphone.';
+    return 'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « $name » et remplacé par la cave de cet appareil.';
   }
 
   @override
@@ -1187,7 +1187,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncDeactivateMessage =>
-      'Ce téléphone garde sa cave et continue seul. La cave du serveur n\'est pas supprimée.';
+      'Cet appareil garde sa cave et continue seul. La cave du serveur n\'est pas supprimée.';
 
   @override
   String get syncDeactivated => 'Synchronisation désactivée';
@@ -1362,6 +1362,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get scanButton => 'Scanner';
 
   @override
+  String get scanButtonByHand => 'Code-barres';
+
+  @override
   String get scanTitle => 'Scanner un code';
 
   @override
@@ -1378,6 +1381,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scanManualLabel => 'Code-barres';
+
+  @override
+  String get scanManualScannerHelp =>
+      'Tapez le code, ou lisez-le avec une douchette USB.';
 
   @override
   String get scanCameraDenied =>
@@ -1407,6 +1414,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scanAgain => 'Scanner un autre code';
+
+  @override
+  String get scanAgainByHand => 'Saisir un autre code';
 
   @override
   String get scanUnknownTitle => 'Code inconnu';
@@ -1578,6 +1588,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get formScanBarcode => 'Scanner le code-barres';
 
   @override
+  String get formEnterBarcode => 'Saisir le code-barres';
+
+  @override
   String get formBarcodeKnownTitle => 'Code déjà dans la cave';
 
   @override
@@ -1637,7 +1650,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get welcomeLocalAlert =>
-      'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).';
+      'Votre cave n\'est enregistrée que sur cet appareil. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (autre appareil, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).';
 
   @override
   String get welcomeLocalAlertOk => 'J\'ai compris';
@@ -1689,7 +1702,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsTheme => 'Thème';
 
   @override
-  String get settingsThemeSystem => 'Comme le téléphone';
+  String get settingsThemeSystem => 'Comme le système';
 
   @override
   String get settingsThemeLight => 'Clair';
@@ -1758,7 +1771,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsDeviceNote =>
-      'Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.';
+      'Sauf les volumes par défaut, ces réglages ne concernent que cet appareil.';
 
   @override
   String get settingsClassification => 'Types et caractéristiques';

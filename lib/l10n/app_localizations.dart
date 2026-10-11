@@ -709,7 +709,7 @@ abstract class AppLocalizations {
   /// Action : enregistrer les fichiers dans un dossier.
   ///
   /// In fr, this message translates to:
-  /// **'Enregistrer sur le téléphone'**
+  /// **'Enregistrer sur l\'appareil'**
   String get exportSave;
 
   /// Confirmation après enregistrement.
@@ -1249,7 +1249,7 @@ abstract class AppLocalizations {
   /// Explication en tête de l'écran des sauvegardes.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.'**
+  /// **'Votre cave est enregistrée uniquement sur cet appareil. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé.'**
   String get backupHelp;
 
   /// Dossier où sont enregistrées les sauvegardes.
@@ -1309,7 +1309,7 @@ abstract class AppLocalizations {
   /// Conseil sous le dossier des sauvegardes.
   ///
   /// In fr, this message translates to:
-  /// **'Copiez ce dossier sur un ordinateur ou synchronisez-le avec une autre application pour garder une copie hors du téléphone.'**
+  /// **'Copiez ce dossier sur un autre appareil ou synchronisez-le avec une autre application pour en garder une copie ailleurs.'**
   String get backupFolderHelp;
 
   /// Bouton : sauvegarde immédiate.
@@ -1327,7 +1327,7 @@ abstract class AppLocalizations {
   /// Titre de la liste des sauvegardes.
   ///
   /// In fr, this message translates to:
-  /// **'Sauvegardes sur ce téléphone'**
+  /// **'Sauvegardes sur cet appareil'**
   String get backupListTitle;
 
   /// Liste des sauvegardes vide.
@@ -1483,7 +1483,7 @@ abstract class AppLocalizations {
   /// Explication en tête de l'écran des sauvegardes, quand la synchronisation est active.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur ce téléphone, et une copie dans le dossier « Sauvegardes » du serveur.'**
+  /// **'Votre cave est synchronisée avec le serveur. Elle est sauvegardée automatiquement, à la fréquence choisie ci-dessous et seulement si elle a changé : sur cet appareil, et une copie dans le dossier « Sauvegardes » du serveur.'**
   String get backupHelpSynced;
 
   /// Menu principal : ouvrir l'écran de synchronisation.
@@ -1501,7 +1501,7 @@ abstract class AppLocalizations {
   /// Explication de l'écran de synchronisation en mode local.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave est enregistrée uniquement sur ce téléphone. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.'**
+  /// **'Votre cave est enregistrée uniquement sur cet appareil. Avec la synchronisation, elle est aussi copiée sur votre serveur (Nextcloud ou autre serveur WebDAV) et partagée avec vos autres appareils. Tout reste utilisable sans réseau.'**
   String get syncIntro;
 
   /// Type de serveur : Nextcloud (adresse simplifiée).
@@ -1555,7 +1555,7 @@ abstract class AppLocalizations {
   /// Aide sous le champ mot de passe.
   ///
   /// In fr, this message translates to:
-  /// **'Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d\'application. Il est rangé dans le coffre sécurisé du téléphone.'**
+  /// **'Dans Nextcloud : Paramètres personnels › Sécurité › Créer un nouveau mot de passe d\'application. Il est rangé dans le coffre sécurisé de l\'appareil.'**
   String get syncPasswordHelp;
 
   /// Aide sous le champ mot de passe, quand on modifie des paramètres existants.
@@ -1615,7 +1615,7 @@ abstract class AppLocalizations {
   /// Explication de la question « autre cave ».
   ///
   /// In fr, this message translates to:
-  /// **'Le serveur contient déjà une cave différente de celle de ce téléphone. Les deux ne sont jamais mélangées : choisissez celle à garder.'**
+  /// **'Le serveur contient déjà une cave différente de celle de cet appareil. Les deux ne sont jamais mélangées : choisissez celle à garder.'**
   String get syncOtherCaveMessage;
 
   /// Choix : remplacer la cave du téléphone par celle du serveur.
@@ -1627,7 +1627,7 @@ abstract class AppLocalizations {
   /// Explication du choix « Utiliser la cave du serveur ».
   ///
   /// In fr, this message translates to:
-  /// **'La cave de ce téléphone est remplacée, après une sauvegarde automatique.'**
+  /// **'La cave de cet appareil est remplacée, après une sauvegarde automatique.'**
   String get syncUseServerHelp;
 
   /// Choix : envoyer la cave du téléphone à la place de celle du serveur.
@@ -1723,7 +1723,7 @@ abstract class AppLocalizations {
   /// Erreur : serveur injoignable.
   ///
   /// In fr, this message translates to:
-  /// **'Serveur injoignable. Les modifications restent sur le téléphone, rien n\'est perdu.'**
+  /// **'Serveur injoignable. Les modifications restent sur l\'appareil, rien n\'est perdu.'**
   String get syncProblemUnreachable;
 
   /// Erreur : identifiants refusés.
@@ -1741,7 +1741,7 @@ abstract class AppLocalizations {
   /// Erreur : plus de place sur le serveur.
   ///
   /// In fr, this message translates to:
-  /// **'Espace insuffisant sur le serveur. Les modifications restent sur le téléphone.'**
+  /// **'Espace insuffisant sur le serveur. Les modifications restent sur l\'appareil.'**
   String get syncProblemInsufficientStorage;
 
   /// Erreur : réponse inattendue du serveur.
@@ -1759,7 +1759,7 @@ abstract class AppLocalizations {
   /// Erreur : autre cave sur le serveur.
   ///
   /// In fr, this message translates to:
-  /// **'Le serveur contient une autre cave que celle de ce téléphone.'**
+  /// **'Le serveur contient une autre cave que celle de cet appareil.'**
   String get syncProblemOtherCave;
 
   /// Erreur : conflit d'écriture répété.
@@ -1771,7 +1771,7 @@ abstract class AppLocalizations {
   /// Message : fichier du serveur endommagé, mis de côté.
   ///
   /// In fr, this message translates to:
-  /// **'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « {name} » et remplacé par la cave de ce téléphone.'**
+  /// **'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « {name} » et remplacé par la cave de cet appareil.'**
   String syncSetAside(String name);
 
   /// Bouton : relancer la synchronisation.
@@ -1807,7 +1807,7 @@ abstract class AppLocalizations {
   /// Confirmation de la désactivation.
   ///
   /// In fr, this message translates to:
-  /// **'Ce téléphone garde sa cave et continue seul. La cave du serveur n\'est pas supprimée.'**
+  /// **'Cet appareil garde sa cave et continue seul. La cave du serveur n\'est pas supprimée.'**
   String get syncDeactivateMessage;
 
   /// Message : retour au mode local.
@@ -2008,6 +2008,12 @@ abstract class AppLocalizations {
   /// **'Scanner'**
   String get scanButton;
 
+  /// Bouton de la liste sur PC (pas de caméra) : saisir un code-barres au clavier ou avec une douchette.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres'**
+  String get scanButtonByHand;
+
   /// Titre de l'écran de scan.
   ///
   /// In fr, this message translates to:
@@ -2043,6 +2049,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Code-barres'**
   String get scanManualLabel;
+
+  /// Aide du champ de saisie du code sur PC (pas de caméra).
+  ///
+  /// In fr, this message translates to:
+  /// **'Tapez le code, ou lisez-le avec une douchette USB.'**
+  String get scanManualScannerHelp;
 
   /// Erreur : autorisation de l'appareil photo refusée.
   ///
@@ -2091,6 +2103,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Scanner un autre code'**
   String get scanAgain;
+
+  /// Bouton sur PC (pas de caméra) : saisir un autre code-barres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisir un autre code'**
+  String get scanAgainByHand;
 
   /// Titre : le code lu n'est dans aucun lot.
   ///
@@ -2398,6 +2416,12 @@ abstract class AppLocalizations {
   /// **'Scanner le code-barres'**
   String get formScanBarcode;
 
+  /// Bouton du formulaire de création sur PC (pas de caméra) : saisir le code de la bouteille.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisir le code-barres'**
+  String get formEnterBarcode;
+
   /// Titre : le code scanné est déjà associé à une référence.
   ///
   /// In fr, this message translates to:
@@ -2503,7 +2527,7 @@ abstract class AppLocalizations {
   /// Alerte du mode local (CDC §8.4) : message.
   ///
   /// In fr, this message translates to:
-  /// **'Votre cave n\'est enregistrée que sur ce téléphone. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (ordinateur, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).'**
+  /// **'Votre cave n\'est enregistrée que sur cet appareil. S\'il est perdu, cassé ou réinitialisé, elle est perdue aussi.\n\nPensez à copier de temps en temps le dossier Documents/Cave/Sauvegardes ailleurs (autre appareil, cloud), ou activez la synchronisation (menu ⋮ → Paramètres → Synchronisation).'**
   String get welcomeLocalAlert;
 
   /// Alerte du mode local : bouton.
@@ -2581,7 +2605,7 @@ abstract class AppLocalizations {
   /// Thème : suivre le réglage d'Android.
   ///
   /// In fr, this message translates to:
-  /// **'Comme le téléphone'**
+  /// **'Comme le système'**
   String get settingsThemeSystem;
 
   /// Thème clair.
@@ -2695,7 +2719,7 @@ abstract class AppLocalizations {
   /// Paramètres : note en bas de l'écran.
   ///
   /// In fr, this message translates to:
-  /// **'Sauf les volumes par défaut, ces réglages ne concernent que ce téléphone.'**
+  /// **'Sauf les volumes par défaut, ces réglages ne concernent que cet appareil.'**
   String get settingsDeviceNote;
 
   /// Paramètres : lien vers la gestion de la classification.
