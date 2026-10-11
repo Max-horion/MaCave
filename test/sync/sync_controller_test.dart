@@ -309,6 +309,59 @@ void main() {
     expect(state().automatic, isTrue);
   });
 
+  // Sur PC, le coffre est le trousseau de la session (KWallet, GNOME
+  // Keyring) : il peut manquer ou refuser l'accès.
+  group('coffre inutilisable', () {
+    Matcher secretStoreProblem() => throwsA(
+      isA<SyncException>().having(
+        (e) => e.problem,
+        'problem',
+        SyncProblem.secretStore,
+      ),
+    );
+
+    test('activation refusée avant tout échange avec le serveur', () async {
+      // Une cave sur le serveur, qu'une activation reprendrait.
+      final other = Device(
+        'pc',
+        CaveDatabase(NativeDatabase(File('${root.path}/pc.sqlite'))),
+      );
+      await other.addBeer('Bière du serveur', 2);
+      final path = '${root.path}/autre.sqlite';
+      await snapshotDatabase(other.db, path);
+      await other.db.close();
+      server.put(remote, File(path).readAsBytesSync());
+      secrets.broken = true;
+
+      await expectLater(
+        controller().activate(settings(), FakeWebDavServer.password),
+        secretStoreProblem(),
+      );
+      expect(server.requests, isEmpty);
+      expect(await phone.drinkNames(), isEmpty);
+      expect(state().status, SyncStatus.off);
+      expect(store.values, isNot(contains('sync_settings')));
+    });
+
+    test('à l\'ouverture : erreur affichée, pas de nouvel essai', () async {
+      await activate();
+      secrets.broken = true;
+      await controller().start();
+      expect(state().status, SyncStatus.error);
+      expect(state().problem, SyncProblem.secretStore);
+      // Le formulaire reste pré-rempli.
+      expect(await controller().savedSettings(), isNotNull);
+    });
+
+    test('la désactivation aboutit quand même', () async {
+      await activate();
+      secrets.broken = true;
+      await controller().deactivate();
+      expect(state().status, SyncStatus.off);
+      expect(await controller().savedSettings(), isNull);
+    });
+  });
+
   test('désactivation : mode local, le fichier du serveur reste', () async {
     await activate();
     await controller().deactivate();

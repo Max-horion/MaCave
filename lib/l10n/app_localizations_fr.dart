@@ -1173,6 +1173,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le fichier du serveur changeait pendant l\'envoi. Nouvel essai automatique.';
 
   @override
+  String get syncProblemSecretStore =>
+      'Le mot de passe ne peut pas être rangé dans le coffre sécurisé de l\'appareil. Sur un ordinateur, il faut un trousseau (KWallet ou GNOME Keyring) installé et déverrouillé. Rien n\'a été modifié.';
+
+  @override
   String syncSetAside(String name) {
     return 'Le fichier du serveur était endommagé : il a été mis de côté sous le nom « $name » et remplacé par la cave de cet appareil.';
   }

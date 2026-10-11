@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../data/local_store.dart';
+import 'sync_service.dart';
 
 // Paramètres de synchronisation, propres à cet appareil (chaque appareil a
 // ses identifiants) : hors de la base synchronisée. Le mot de passe est rangé
@@ -119,7 +120,8 @@ abstract class SecretStore {
   Future<void> delete(String key);
 }
 
-/// Coffre sécurisé d'Android (Keystore).
+/// Coffre sécurisé du système : Keystore d'Android ; sur PC Linux, trousseau
+/// de la session par libsecret (KWallet, GNOME Keyring).
 class SecureSecretStore implements SecretStore {
   static const _storage = FlutterSecureStorage();
 
@@ -137,14 +139,30 @@ class SecureSecretStore implements SecretStore {
 class MemorySecretStore implements SecretStore {
   final values = <String, String>{};
 
-  @override
-  Future<String?> read(String key) async => values[key];
+  /// Pour les tests : coffre inutilisable (pas de trousseau sur le PC).
+  bool broken = false;
+
+  void _check() {
+    if (broken) throw StateError('coffre indisponible');
+  }
 
   @override
-  Future<void> write(String key, String value) async => values[key] = value;
+  Future<String?> read(String key) async {
+    _check();
+    return values[key];
+  }
 
   @override
-  Future<void> delete(String key) async => values.remove(key);
+  Future<void> write(String key, String value) async {
+    _check();
+    values[key] = value;
+  }
+
+  @override
+  Future<void> delete(String key) async {
+    _check();
+    values.remove(key);
+  }
 }
 
 /// Paramètres de synchronisation enregistrés : `null` = mode local.
@@ -158,32 +176,71 @@ class SyncSettingsStore {
   static const _passwordKey = 'sync_password';
 
   /// Paramètres et mot de passe, ou null si la synchronisation est désactivée
-  /// (ou le mot de passe introuvable dans le coffre).
+  /// (ou le mot de passe introuvable dans le coffre). Lève [SyncException]
+  /// ([SyncProblem.secretStore]) si le coffre est inutilisable.
   Future<({SyncSettings settings, String password})?> load() async {
+    final settings = await loadSettings();
+    if (settings == null) return null;
+    final password = await _guard(() => _secrets.read(_passwordKey));
+    if (password == null) return null;
+    return (settings: settings, password: password);
+  }
+
+  /// Paramètres seuls, sans le mot de passe (pré-remplir le formulaire).
+  Future<SyncSettings?> loadSettings() async {
     final raw = await _store.getString(_settingsKey);
     if (raw == null) return null;
-    final SyncSettings? settings;
     try {
-      settings = SyncSettings.fromJson(
+      return SyncSettings.fromJson(
         (jsonDecode(raw) as Map).cast<String, Object?>(),
       );
     } on FormatException {
       return null;
     }
-    final password = await _secrets.read(_passwordKey);
-    if (settings == null || password == null) return null;
-    return (settings: settings, password: password);
   }
 
   Future<void> save(SyncSettings settings, String password) async {
-    await _secrets.write(_passwordKey, password);
+    await _guard(() => _secrets.write(_passwordKey, password));
     await _store.setString(_settingsKey, jsonEncode(settings.toJson()));
   }
 
+  /// Vérifie que le coffre range et relit un secret. À faire **avant** la
+  /// première synchronisation d'une activation : sinon la cave pourrait être
+  /// reprise du serveur sans que les paramètres puissent être enregistrés.
+  /// Lève [SyncException] ([SyncProblem.secretStore]).
+  Future<void> checkSecrets() async {
+    const probe = 'sync_probe';
+    final read = await _guard(() async {
+      await _secrets.write(probe, 'ok');
+      final value = await _secrets.read(probe);
+      await _secrets.delete(probe);
+      return value;
+    });
+    if (read != 'ok') {
+      throw const SyncException(SyncProblem.secretStore, 'relecture');
+    }
+  }
+
   /// Désactive la synchronisation sur cet appareil (CDC §8.2) : le fichier du
-  /// serveur n'est pas touché.
+  /// serveur n'est pas touché. Le coffre peut être inutilisable : les
+  /// paramètres sont retirés d'abord, la désactivation aboutit quand même.
   Future<void> clear() async {
     await _store.remove(_settingsKey);
-    await _secrets.delete(_passwordKey);
+    try {
+      await _secrets.delete(_passwordKey);
+    } catch (_) {
+      // Mot de passe resté dans le coffre : sans paramètres, il ne sert plus.
+    }
+  }
+
+  /// Toute erreur du coffre devient [SyncProblem.secretStore].
+  static Future<T> _guard<T>(Future<T> Function() action) async {
+    try {
+      return await action();
+    } on SyncException {
+      rethrow;
+    } catch (e) {
+      throw SyncException(SyncProblem.secretStore, '$e');
+    }
   }
 }

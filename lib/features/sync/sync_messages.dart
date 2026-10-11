@@ -19,6 +19,7 @@ String syncProblemMessage(AppLocalizations l10n, SyncProblem problem) =>
       SyncProblem.newerVersion => l10n.syncProblemNewerVersion,
       SyncProblem.otherCave => l10n.syncProblemOtherCave,
       SyncProblem.conflict => l10n.syncProblemConflict,
+      SyncProblem.secretStore => l10n.syncProblemSecretStore,
     };
 
 /// L'erreur ne se corrige que dans les paramètres de synchronisation.

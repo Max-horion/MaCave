@@ -45,6 +45,10 @@ enum SyncProblem {
 
   /// Le fichier a changé pendant chaque essai : nouvelle tentative plus tard.
   conflict,
+
+  /// Coffre sécurisé inutilisable (sur PC : pas de trousseau de session, ou
+  /// accès refusé) : le mot de passe ne peut être ni rangé ni relu.
+  secretStore,
 }
 
 class SyncException implements Exception {

@@ -222,7 +222,18 @@ class SyncController extends Notifier<SyncState> {
 
   /// À l'ouverture de l'appli : charge les paramètres et synchronise.
   Future<void> start() async {
-    final saved = await _env.settings.load();
+    final ({SyncSettings settings, String password})? saved;
+    try {
+      saved = await _env.settings.load();
+    } on SyncException catch (e) {
+      // Coffre inutilisable : la cave reste utilisable, l'erreur s'affiche.
+      state = SyncState(
+        status: SyncStatus.error,
+        problem: e.problem,
+        detail: e.detail,
+      );
+      return;
+    }
     if (saved == null) {
       state = SyncState.off;
       return;
@@ -350,6 +361,7 @@ class SyncController extends Notifier<SyncState> {
     if (password == null) {
       throw const SyncException(SyncProblem.unauthorized, 'mot de passe vide');
     }
+    await _env.settings.checkSecrets();
     cancelActivation();
     final connection = _open(settings, password);
     // Nouveau serveur ou nouveau dossier : on oublie l'état précédent.
@@ -431,8 +443,7 @@ class SyncController extends Notifier<SyncState> {
   }
 
   /// Paramètres enregistrés (pour pré-remplir le formulaire).
-  Future<SyncSettings?> savedSettings() async =>
-      (await _env.settings.load())?.settings;
+  Future<SyncSettings?> savedSettings() async => _env.settings.loadSettings();
 
   /// Journal technique des dernières erreurs, de la plus récente à la plus
   /// ancienne.
@@ -509,6 +520,7 @@ class SyncController extends Notifier<SyncState> {
       SyncProblem.folderNotFound,
       SyncProblem.newerVersion,
       SyncProblem.otherCave,
+      SyncProblem.secretStore,
     };
     if (userMustAct.contains(e.problem) || !state.automatic) return;
     if (_retryIndex < _env.retryDelays.length) {

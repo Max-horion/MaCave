@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
@@ -113,13 +114,33 @@ class _AutomaticTasksState extends ConsumerState<AutomaticTasks>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!mounted) return;
     switch (state) {
+      // Linux ne signale jamais « paused » : une fenêtre réduite est
+      // « hidden ». Sur Android, « hidden » précède toujours « paused ».
       case AppLifecycleState.paused:
-        ref.read(backupServiceProvider).backupIfDue();
-        ref.read(syncControllerProvider.notifier).paused();
+      case AppLifecycleState.hidden when !Platform.isAndroid:
+        _leaving();
       case AppLifecycleState.resumed:
         ref.read(syncControllerProvider.notifier).resumed();
       default:
     }
+  }
+
+  /// Fermeture de la fenêtre (PC) : comme une mise en arrière-plan, mais la
+  /// fermeture attend la fin (10 s au plus, réseau lent compris).
+  @override
+  Future<AppExitResponse> didRequestAppExit() async {
+    if (mounted) {
+      await _leaving().timeout(const Duration(seconds: 10), onTimeout: () {});
+    }
+    return AppExitResponse.exit;
+  }
+
+  /// Fin d'une séance de saisie : sauvegarde si elle est due, et envoi des
+  /// modifications qui attendaient le regroupement.
+  Future<void> _leaving() async {
+    await ref.read(backupServiceProvider).backupIfDue();
+    if (!mounted) return;
+    await ref.read(syncControllerProvider.notifier).paused();
   }
 
   /// Synchronisation d'abord : la sauvegarde du jour contient alors les

@@ -1780,6 +1780,12 @@ abstract class AppLocalizations {
   /// **'Le fichier du serveur changeait pendant l\'envoi. Nouvel essai automatique.'**
   String get syncProblemConflict;
 
+  /// Erreur : coffre sécurisé (trousseau du PC) inutilisable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le mot de passe ne peut pas être rangé dans le coffre sécurisé de l\'appareil. Sur un ordinateur, il faut un trousseau (KWallet ou GNOME Keyring) installé et déverrouillé. Rien n\'a été modifié.'**
+  String get syncProblemSecretStore;
+
   /// Message : fichier du serveur endommagé, mis de côté.
   ///
   /// In fr, this message translates to:
