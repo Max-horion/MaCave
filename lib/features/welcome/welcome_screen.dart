@@ -11,6 +11,7 @@ import '../cellar/cellar_screen.dart';
 import '../exchange/exchange_actions.dart';
 import '../settings/default_volumes.dart';
 import '../sync/sync_screen.dart';
+import '../../ui/layout.dart';
 
 /// Préférence de l'appareil : premier lancement terminé (ou passé).
 const welcomeDoneKey = 'welcome_done';
@@ -109,14 +110,16 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                   icon: const Icon(Icons.arrow_back),
                 ),
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            child: switch (_step) {
-              0 => _storageStep(context, syncOn),
-              1 => _importStep(context, bottles),
-              _ => const _DefaultsStep(),
-            },
+        body: ReadableWidth(
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              child: switch (_step) {
+                0 => _storageStep(context, syncOn),
+                1 => _importStep(context, bottles),
+                _ => const _DefaultsStep(),
+              },
+            ),
           ),
         ),
         bottomNavigationBar: SafeArea(

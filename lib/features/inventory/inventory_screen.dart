@@ -5,6 +5,7 @@ import '../../data/cave_queries.dart';
 import '../../data/providers.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../../ui/layout.dart';
 
 /// Inventaire guidé (CDC §5, §6.4) : les lots défilent un par un ; chacun est
 /// confirmé d'un geste ou corrigé (ajustement d'inventaire).
@@ -90,14 +91,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final l10n = formats.l10n;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.inventoryTitle)),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: switch (_phase) {
-            _Phase.intro => _buildIntro(context),
-            _Phase.running => _buildLot(context, formats),
-            _Phase.done => _buildDone(context),
-          },
+      body: ReadableWidth(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: switch (_phase) {
+              _Phase.intro => _buildIntro(context),
+              _Phase.running => _buildLot(context, formats),
+              _Phase.done => _buildDone(context),
+            },
+          ),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../../ui/layout.dart';
 
 /// Statistiques de base (CDC §6.6) : totaux, puis répartition des bouteilles
 /// par type, par caractéristique et par région. Aucune notion de valeur.
@@ -20,55 +21,57 @@ class StatsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.statsTitle)),
-      body: stats.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(l10n.errorGeneric('$e'))),
-        data: (s) {
-          if (s.bottles == 0) {
-            return EmptyMessage(
-              icon: Icons.bar_chart,
-              title: l10n.statsTitle,
-              message: l10n.statsEmpty,
-            );
-          }
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _StatTile(
-                      label: l10n.statsBottles,
-                      value: formats.number(s.bottles),
+      body: ReadableWidth(
+        child: stats.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text(l10n.errorGeneric('$e'))),
+          data: (s) {
+            if (s.bottles == 0) {
+              return EmptyMessage(
+                icon: Icons.bar_chart,
+                title: l10n.statsTitle,
+                message: l10n.statsEmpty,
+              );
+            }
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatTile(
+                        label: l10n.statsBottles,
+                        value: formats.number(s.bottles),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _StatTile(
-                      label: l10n.statsDrinks,
-                      value: formats.number(s.drinks),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _StatTile(
+                        label: l10n.statsDrinks,
+                        value: formats.number(s.drinks),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              _Section(
-                title: l10n.statsByType,
-                entries: s.byType,
-                unknownLabel: l10n.uncategorized,
-              ),
-              for (final family in s.byFamily)
-                _Section(
-                  title: '${family.typeName} · ${family.familyName}',
-                  entries: family.values,
+                  ],
                 ),
-              _Section(
-                title: l10n.statsByRegion,
-                entries: s.byRegion,
-                unknownLabel: l10n.statsUnknownRegion,
-              ),
-            ],
-          );
-        },
+                _Section(
+                  title: l10n.statsByType,
+                  entries: s.byType,
+                  unknownLabel: l10n.uncategorized,
+                ),
+                for (final family in s.byFamily)
+                  _Section(
+                    title: '${family.typeName} · ${family.familyName}',
+                    entries: family.values,
+                  ),
+                _Section(
+                  title: l10n.statsByRegion,
+                  entries: s.byRegion,
+                  unknownLabel: l10n.statsUnknownRegion,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

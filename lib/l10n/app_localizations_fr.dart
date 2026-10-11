@@ -17,7 +17,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeEmptyMessage =>
-      'Touchez « Ajouter » pour enregistrer votre première bouteille.';
+      'Utilisez le bouton « Ajouter » pour enregistrer votre première bouteille.';
+
+  @override
+  String get detailPaneEmptyTitle => 'Aucune boisson choisie';
+
+  @override
+  String get detailPaneEmptyMessage =>
+      'Choisissez une boisson dans la liste pour afficher sa fiche ici.';
 
   @override
   String bottleCount(int count) {
@@ -1105,7 +1112,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncManualNote =>
-      'Synchronisation automatique désactivée : touchez « Synchroniser maintenant » pour envoyer et recevoir les modifications.';
+      'Synchronisation automatique désactivée : utilisez « Synchroniser maintenant » pour envoyer et recevoir les modifications.';
 
   @override
   String get syncAutomatic => 'Synchronisation automatique';
@@ -1480,7 +1487,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get scanMaybeHelp =>
-      'Touchez une référence pour lui associer ce code.';
+      'Choisissez une référence pour lui associer ce code.';
 
   @override
   String get similarTitle => 'Référence proche déjà dans la cave';
@@ -1682,7 +1689,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get welcomeDefaultsHelp =>
-      'Volume proposé pour une nouvelle bouteille, selon son type. Touchez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.';
+      'Volume proposé pour une nouvelle bouteille, selon son type. Choisissez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.';
 
   @override
   String welcomeVolumeOf(String type) {

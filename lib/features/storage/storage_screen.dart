@@ -8,6 +8,7 @@ import '../../sync/providers.dart';
 import '../../theme/app_theme.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../../ui/layout.dart';
 
 /// Ce qu'affiche l'écran : taille, historique, réglage de la purge auto.
 class StorageOverview {
@@ -83,96 +84,101 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
               )
             : null,
       ),
-      body: overview.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(l10n.errorGeneric('$e')),
-        ),
-        data: (o) {
-          final limit = DateTime.now().subtract(StorageScreen.minimumAge);
-          final canPurge =
-              o.oldest != null &&
-              o.oldest! < limit.toUtc().millisecondsSinceEpoch;
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            children: [
-              Text(l10n.storageSize(_size(l10n, formats, o.bytes))),
-              const SizedBox(height: 4),
-              Text(l10n.storageHistory(o.movements)),
-              if (o.oldest != null)
+      body: ReadableWidth(
+        child: overview.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(l10n.errorGeneric('$e')),
+          ),
+          data: (o) {
+            final limit = DateTime.now().subtract(StorageScreen.minimumAge);
+            final canPurge =
+                o.oldest != null &&
+                o.oldest! < limit.toUtc().millisecondsSinceEpoch;
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              children: [
+                Text(l10n.storageSize(_size(l10n, formats, o.bytes))),
+                const SizedBox(height: 4),
+                Text(l10n.storageHistory(o.movements)),
+                if (o.oldest != null)
+                  Text(
+                    l10n.storageHistorySince(formats.date(o.oldest!)),
+                    style: theme.textTheme.bodySmall,
+                  ),
+                if (o.purgedBefore != null)
+                  Text(
+                    l10n.storagePurgedBefore(formats.date(o.purgedBefore!)),
+                    style: theme.textTheme.bodySmall,
+                  ),
+                const SizedBox(height: 24),
                 Text(
-                  l10n.storageHistorySince(formats.date(o.oldest!)),
-                  style: theme.textTheme.bodySmall,
-                ),
-              if (o.purgedBefore != null)
-                Text(
-                  l10n.storagePurgedBefore(formats.date(o.purgedBefore!)),
-                  style: theme.textTheme.bodySmall,
-                ),
-              const SizedBox(height: 24),
-              Text(l10n.storagePurgeTitle, style: theme.textTheme.titleMedium),
-              const SizedBox(height: 4),
-              Text(l10n.storagePurgeHelp),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: _busy || !canPurge ? null : () => _purge(o),
-                icon: const Icon(Icons.delete_sweep_outlined),
-                label: Text(l10n.storagePurgeButton),
-              ),
-              if (!canPurge)
-                Text(
-                  l10n.storagePurgeNothingOld,
-                  style: theme.textTheme.bodySmall,
-                ),
-              const SizedBox(height: 24),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  l10n.storageAutoTitle,
+                  l10n.storagePurgeTitle,
                   style: theme.textTheme.titleMedium,
                 ),
-                subtitle: Text(l10n.storageAutoHelp),
-                value: o.auto.enabled,
-                onChanged: _busy
-                    ? null
-                    : (on) => _changeAuto(
-                        AutoPurgeSettings(enabled: on, months: o.auto.months),
-                      ),
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                minTileHeight: AppTheme.minButtonHeight,
-                title: Text(l10n.storageAutoDelay),
-                trailing: DropdownButton<int>(
-                  value: o.auto.months,
+                const SizedBox(height: 4),
+                Text(l10n.storagePurgeHelp),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: _busy || !canPurge ? null : () => _purge(o),
+                  icon: const Icon(Icons.delete_sweep_outlined),
+                  label: Text(l10n.storagePurgeButton),
+                ),
+                if (!canPurge)
+                  Text(
+                    l10n.storagePurgeNothingOld,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                const SizedBox(height: 24),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    l10n.storageAutoTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  subtitle: Text(l10n.storageAutoHelp),
+                  value: o.auto.enabled,
                   onChanged: _busy
                       ? null
-                      : (months) => _changeAuto(
-                          AutoPurgeSettings(
-                            enabled: o.auto.enabled,
-                            months: months ?? o.auto.months,
+                      : (on) => _changeAuto(
+                          AutoPurgeSettings(enabled: on, months: o.auto.months),
+                        ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  minTileHeight: AppTheme.minButtonHeight,
+                  title: Text(l10n.storageAutoDelay),
+                  trailing: DropdownButton<int>(
+                    value: o.auto.months,
+                    onChanged: _busy
+                        ? null
+                        : (months) => _changeAuto(
+                            AutoPurgeSettings(
+                              enabled: o.auto.enabled,
+                              months: months ?? o.auto.months,
+                            ),
+                          ),
+                    items: [
+                      for (final m in {
+                        ...AutoPurgeSettings.monthChoices,
+                        o.auto.months,
+                      })
+                        DropdownMenuItem(
+                          value: m,
+                          child: Text(
+                            m % 12 == 0
+                                ? l10n.storageYears(m ~/ 12)
+                                : l10n.storageMonths(m),
                           ),
                         ),
-                  items: [
-                    for (final m in {
-                      ...AutoPurgeSettings.monthChoices,
-                      o.auto.months,
-                    })
-                      DropdownMenuItem(
-                        value: m,
-                        child: Text(
-                          m % 12 == 0
-                              ? l10n.storageYears(m ~/ 12)
-                              : l10n.storageMonths(m),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

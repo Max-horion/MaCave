@@ -109,8 +109,20 @@ abstract class AppLocalizations {
   /// Message d'aide sous le titre de la cave vide.
   ///
   /// In fr, this message translates to:
-  /// **'Touchez « Ajouter » pour enregistrer votre première bouteille.'**
+  /// **'Utilisez le bouton « Ajouter » pour enregistrer votre première bouteille.'**
   String get homeEmptyMessage;
+
+  /// Partie droite d'une fenêtre large (PC), quand aucune référence n'est choisie : titre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune boisson choisie'**
+  String get detailPaneEmptyTitle;
+
+  /// Partie droite d'une fenêtre large (PC), quand aucune référence n'est choisie : explication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une boisson dans la liste pour afficher sa fiche ici.'**
+  String get detailPaneEmptyMessage;
 
   /// Nombre de bouteilles, avec accord du pluriel.
   ///
@@ -1675,7 +1687,7 @@ abstract class AppLocalizations {
   /// Ligne d'explication sous l'état de la synchronisation quand elle n'est pas automatique.
   ///
   /// In fr, this message translates to:
-  /// **'Synchronisation automatique désactivée : touchez « Synchroniser maintenant » pour envoyer et recevoir les modifications.'**
+  /// **'Synchronisation automatique désactivée : utilisez « Synchroniser maintenant » pour envoyer et recevoir les modifications.'**
   String get syncManualNote;
 
   /// Interrupteur de l'écran Synchronisation (CDC §7).
@@ -2215,7 +2227,7 @@ abstract class AppLocalizations {
   /// Aide sous les références proches.
   ///
   /// In fr, this message translates to:
-  /// **'Touchez une référence pour lui associer ce code.'**
+  /// **'Choisissez une référence pour lui associer ce code.'**
   String get scanMaybeHelp;
 
   /// Titre de l'avertissement de doublon à la création.
@@ -2569,7 +2581,7 @@ abstract class AppLocalizations {
   /// Premier lancement, étape 3 : explication.
   ///
   /// In fr, this message translates to:
-  /// **'Volume proposé pour une nouvelle bouteille, selon son type. Touchez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.'**
+  /// **'Volume proposé pour une nouvelle bouteille, selon son type. Choisissez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.'**
   String get welcomeDefaultsHelp;
 
   /// Fenêtre de choix du volume par défaut d'un type.

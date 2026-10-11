@@ -13,6 +13,7 @@ import '../../sync/providers.dart';
 import '../../sync/storage_access.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../../ui/layout.dart';
 
 /// État affiché par l'écran : dossier, sauvegardes présentes, dernière erreur.
 class BackupOverview {
@@ -117,140 +118,145 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               )
             : null,
       ),
-      body: overview.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(l10n.errorGeneric('$e')),
-        ),
-        data: (o) => ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          children: [
-            Text(synced ? l10n.backupHelpSynced : l10n.backupHelp),
-            const SizedBox(height: 12),
-            SelectableText(
-              l10n.backupFolder(o.folder),
-              style: theme.textTheme.bodySmall,
-            ),
-            Text(l10n.backupFolderHelp, style: theme.textTheme.bodySmall),
-            Wrap(
-              spacing: 8,
-              children: [
-                TextButton.icon(
-                  onPressed: _busy ? null : _chooseFolder,
-                  icon: const Icon(Icons.folder_open),
-                  label: Text(l10n.backupChooseFolder),
-                ),
-                if (o.chosenFolder)
-                  TextButton(
-                    onPressed: _busy ? null : () => _setFolder(null),
-                    child: Text(l10n.backupDefaultFolder),
-                  ),
-              ],
-            ),
-            if (!o.access) ...[
-              const SizedBox(height: 8),
-              Text(
-                l10n.backupNeedsPermission,
-                style: TextStyle(color: theme.colorScheme.error),
-              ),
-              if (o.accessBlocked) ...[
-                Text(l10n.backupPermissionBlocked),
-                FilledButton.tonalIcon(
-                  onPressed: _busy
-                      ? null
-                      : ref.read(storageAccessProvider).openSettings,
-                  icon: const Icon(Icons.settings),
-                  label: Text(l10n.backupOpenSettings),
-                ),
-              ] else
-                FilledButton.tonalIcon(
-                  onPressed: _busy ? null : _allow,
-                  icon: const Icon(Icons.lock_open),
-                  label: Text(l10n.backupAllow),
-                ),
-            ],
-            if (o.lastError != null) ...[
+      body: ReadableWidth(
+        child: overview.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(l10n.errorGeneric('$e')),
+          ),
+          data: (o) => ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+            children: [
+              Text(synced ? l10n.backupHelpSynced : l10n.backupHelp),
               const SizedBox(height: 12),
-              Text(
-                l10n.backupLastError(o.lastError!),
-                style: TextStyle(color: theme.colorScheme.error),
+              SelectableText(
+                l10n.backupFolder(o.folder),
+                style: theme.textTheme.bodySmall,
               ),
-            ],
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: _busy ? null : _backupNow,
-              icon: const Icon(Icons.save),
-              label: Text(l10n.backupNow),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: _busy ? null : _restoreFromFile,
-              icon: const Icon(Icons.settings_backup_restore),
-              label: Text(l10n.backupRestoreFromFile),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              minTileHeight: 56,
-              title: Text(l10n.backupEveryLabel),
-              subtitle: Text(l10n.backupEveryHelp),
-              trailing: DropdownButton<int>(
-                value: o.everyDays,
-                onChanged: _busy ? null : _changeEvery,
-                items: [
-                  for (final n in {
-                    ...BackupService.everyDaysChoices,
-                    o.everyDays,
-                  })
-                    DropdownMenuItem(
-                      value: n,
-                      child: Text(switch (n) {
-                        1 => l10n.backupEveryDay,
-                        7 => l10n.backupEveryWeek,
-                        30 => l10n.backupEveryMonth,
-                        _ => l10n.backupEveryDays(n),
-                      }),
+              Text(l10n.backupFolderHelp, style: theme.textTheme.bodySmall),
+              Wrap(
+                spacing: 8,
+                children: [
+                  TextButton.icon(
+                    onPressed: _busy ? null : _chooseFolder,
+                    icon: const Icon(Icons.folder_open),
+                    label: Text(l10n.backupChooseFolder),
+                  ),
+                  if (o.chosenFolder)
+                    TextButton(
+                      onPressed: _busy ? null : () => _setFolder(null),
+                      child: Text(l10n.backupDefaultFolder),
                     ),
                 ],
               ),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              minTileHeight: 56,
-              title: Text(l10n.backupKeepLabel),
-              subtitle: Text(l10n.backupKeepHelp),
-              trailing: DropdownButton<int>(
-                value: o.keep,
-                onChanged: _busy ? null : _changeKeep,
-                items: [
-                  for (final n in {...BackupService.keepChoices, o.keep})
-                    DropdownMenuItem(value: n, child: Text(formats.number(n))),
-                ],
+              if (!o.access) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.backupNeedsPermission,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+                if (o.accessBlocked) ...[
+                  Text(l10n.backupPermissionBlocked),
+                  FilledButton.tonalIcon(
+                    onPressed: _busy
+                        ? null
+                        : ref.read(storageAccessProvider).openSettings,
+                    icon: const Icon(Icons.settings),
+                    label: Text(l10n.backupOpenSettings),
+                  ),
+                ] else
+                  FilledButton.tonalIcon(
+                    onPressed: _busy ? null : _allow,
+                    icon: const Icon(Icons.lock_open),
+                    label: Text(l10n.backupAllow),
+                  ),
+              ],
+              if (o.lastError != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.backupLastError(o.lastError!),
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              ],
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: _busy ? null : _backupNow,
+                icon: const Icon(Icons.save),
+                label: Text(l10n.backupNow),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(l10n.backupListTitle, style: theme.textTheme.titleMedium),
-            const SizedBox(height: 4),
-            if (o.sets.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(l10n.backupNone),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _restoreFromFile,
+                icon: const Icon(Icons.settings_backup_restore),
+                label: Text(l10n.backupRestoreFromFile),
               ),
-            for (final set in o.sets)
+              const SizedBox(height: 16),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 minTileHeight: 56,
-                leading: const Icon(Icons.inventory_2_outlined),
-                title: Text(formats.dateTime(set.date)),
-                subtitle: Text(
-                  l10n.backupSize(formats.number((set.size / 1024).ceil())),
+                title: Text(l10n.backupEveryLabel),
+                subtitle: Text(l10n.backupEveryHelp),
+                trailing: DropdownButton<int>(
+                  value: o.everyDays,
+                  onChanged: _busy ? null : _changeEvery,
+                  items: [
+                    for (final n in {
+                      ...BackupService.everyDaysChoices,
+                      o.everyDays,
+                    })
+                      DropdownMenuItem(
+                        value: n,
+                        child: Text(switch (n) {
+                          1 => l10n.backupEveryDay,
+                          7 => l10n.backupEveryWeek,
+                          30 => l10n.backupEveryMonth,
+                          _ => l10n.backupEveryDays(n),
+                        }),
+                      ),
+                  ],
                 ),
-                trailing: const Icon(Icons.more_vert),
-                enabled: !_busy,
-                onTap: () => _openSet(set),
               ),
-          ],
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                minTileHeight: 56,
+                title: Text(l10n.backupKeepLabel),
+                subtitle: Text(l10n.backupKeepHelp),
+                trailing: DropdownButton<int>(
+                  value: o.keep,
+                  onChanged: _busy ? null : _changeKeep,
+                  items: [
+                    for (final n in {...BackupService.keepChoices, o.keep})
+                      DropdownMenuItem(
+                        value: n,
+                        child: Text(formats.number(n)),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(l10n.backupListTitle, style: theme.textTheme.titleMedium),
+              const SizedBox(height: 4),
+              if (o.sets.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(l10n.backupNone),
+                ),
+              for (final set in o.sets)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  minTileHeight: 56,
+                  leading: const Icon(Icons.inventory_2_outlined),
+                  title: Text(formats.dateTime(set.date)),
+                  subtitle: Text(
+                    l10n.backupSize(formats.number((set.size / 1024).ceil())),
+                  ),
+                  trailing: const Icon(Icons.more_vert),
+                  enabled: !_busy,
+                  onTap: () => _openSet(set),
+                ),
+            ],
+          ),
         ),
       ),
     );

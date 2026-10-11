@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../ui/layout.dart';
 
 /// Version de l'appli (« 0.1.0 ») ; remplacée dans les tests.
 final appVersionProvider = FutureProvider<String>(
@@ -35,54 +36,56 @@ class AboutScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.aboutTitle)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        children: [
-          Center(
-            child: Image.asset(
-              'assets/icon.png',
-              width: 96,
-              height: 96,
-              excludeFromSemantics: true,
+      body: ReadableWidth(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          children: [
+            Center(
+              child: Image.asset(
+                'assets/icon.png',
+                width: 96,
+                height: 96,
+                excludeFromSemantics: true,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            l10n.appTitle,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineSmall,
-          ),
-          if (version != null)
+            const SizedBox(height: 12),
             Text(
-              l10n.aboutVersion(version),
+              l10n.appTitle,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall,
+              style: theme.textTheme.headlineSmall,
             ),
-          const SizedBox(height: 16),
-          paragraph(l10n.aboutDescription),
-          paragraph(l10n.aboutCopyright),
-          paragraph(l10n.aboutLicense),
-          section(l10n.aboutData),
-          paragraph(l10n.aboutInao),
-          paragraph(l10n.aboutOff),
-          section(l10n.aboutRecognition),
-          paragraph(l10n.aboutTesseract),
-          paragraph(l10n.aboutZxing),
-          const SizedBox(height: 8),
-          paragraph(l10n.aboutIcon),
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () => showLicensePage(
-              context: context,
-              applicationName: l10n.appTitle,
-              applicationVersion: version,
-              applicationLegalese:
-                  '${l10n.aboutCopyright}\n${l10n.aboutLicense}',
+            if (version != null)
+              Text(
+                l10n.aboutVersion(version),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall,
+              ),
+            const SizedBox(height: 16),
+            paragraph(l10n.aboutDescription),
+            paragraph(l10n.aboutCopyright),
+            paragraph(l10n.aboutLicense),
+            section(l10n.aboutData),
+            paragraph(l10n.aboutInao),
+            paragraph(l10n.aboutOff),
+            section(l10n.aboutRecognition),
+            paragraph(l10n.aboutTesseract),
+            paragraph(l10n.aboutZxing),
+            const SizedBox(height: 8),
+            paragraph(l10n.aboutIcon),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () => showLicensePage(
+                context: context,
+                applicationName: l10n.appTitle,
+                applicationVersion: version,
+                applicationLegalese:
+                    '${l10n.aboutCopyright}\n${l10n.aboutLicense}',
+              ),
+              icon: const Icon(Icons.gavel),
+              label: Text(l10n.aboutLicenses),
             ),
-            icon: const Icon(Icons.gavel),
-            label: Text(l10n.aboutLicenses),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

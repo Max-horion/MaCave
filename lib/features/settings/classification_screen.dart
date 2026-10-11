@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
+import '../../ui/layout.dart';
 
 /// Gestion de la classification (CDC §6.1, §7) : types, familles de
 /// caractéristiques et valeurs. Les suppressions sont logiques et les
@@ -32,32 +33,34 @@ class ClassificationScreen extends ConsumerWidget {
         icon: const Icon(Icons.add),
         label: Text(l10n.classAddType),
       ),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 96),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Text(l10n.classHelp, style: theme.textTheme.bodySmall),
-          ),
-          for (final type in types)
-            ListTile(
-              minTileHeight: AppTheme.minButtonHeight,
-              title: Text(type.name),
-              subtitle: Text(
-                l10n.classTypeSummary(
-                  profileLabel(l10n, type.fieldProfile),
-                  formats.volume(type.defaultVolumeMl),
-                ),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => TypeClassificationScreen(typeId: type.id),
-                ),
-              ),
+      body: ReadableWidth(
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 96),
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Text(l10n.classHelp, style: theme.textTheme.bodySmall),
             ),
-        ],
+            for (final type in types)
+              ListTile(
+                minTileHeight: AppTheme.minButtonHeight,
+                title: Text(type.name),
+                subtitle: Text(
+                  l10n.classTypeSummary(
+                    profileLabel(l10n, type.fieldProfile),
+                    formats.volume(type.defaultVolumeMl),
+                  ),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => TypeClassificationScreen(typeId: type.id),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -141,39 +144,41 @@ class TypeClassificationScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-        children: [
-          Text(
-            profileLabel(l10n, type.fieldProfile),
-            style: theme.textTheme.titleSmall,
-          ),
-          Text(
-            _profileHelp(l10n, type.fieldProfile),
-            style: theme.textTheme.bodySmall,
-          ),
-          const SizedBox(height: 16),
-          if (families.isEmpty) Text(l10n.classNoFamily),
-          for (final family in families)
-            _FamilyCard(
-              family: family,
-              classification: classification,
-              siblings: {for (final f in families) f.name},
+      body: ReadableWidth(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          children: [
+            Text(
+              profileLabel(l10n, type.fieldProfile),
+              style: theme.textTheme.titleSmall,
             ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () async {
-              final name = await askName(
-                context,
-                title: l10n.classNewFamily,
-                taken: {for (final f in families) f.name},
-              );
-              if (name != null) await repo.createFamily(type.id, name);
-            },
-            icon: const Icon(Icons.add),
-            label: Text(l10n.classAddFamily),
-          ),
-        ],
+            Text(
+              _profileHelp(l10n, type.fieldProfile),
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: 16),
+            if (families.isEmpty) Text(l10n.classNoFamily),
+            for (final family in families)
+              _FamilyCard(
+                family: family,
+                classification: classification,
+                siblings: {for (final f in families) f.name},
+              ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () async {
+                final name = await askName(
+                  context,
+                  title: l10n.classNewFamily,
+                  taken: {for (final f in families) f.name},
+                );
+                if (name != null) await repo.createFamily(type.id, name);
+              },
+              icon: const Icon(Icons.add),
+              label: Text(l10n.classAddFamily),
+            ),
+          ],
+        ),
       ),
     );
   }

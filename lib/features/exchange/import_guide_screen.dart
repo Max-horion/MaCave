@@ -5,6 +5,7 @@ import '../../data/exchange/exchange_format.dart';
 import '../../data/providers.dart';
 import '../../l10n/app_localizations.dart';
 import 'exchange_actions.dart';
+import '../../ui/layout.dart';
 
 /// Consignes pour préparer un fichier d'import dans un tableur (CDC §6.7) :
 /// règles générales, colonnes, types et caractéristiques reconnus, fichier
@@ -67,71 +68,73 @@ class ImportGuideScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.importGuideTitle)),
-      body: ListView(
-        key: const Key('import-guide'),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-        children: [
-          Text(l10n.importGuideIntro),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () => deliverImportTemplate(context, ref),
-            icon: const Icon(Icons.download),
-            label: Text(l10n.importTemplateGet),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => pickAndImport(context, ref),
-            icon: const Icon(Icons.file_open),
-            label: Text(l10n.importGuideImport),
-          ),
-          section(l10n.importGuideRulesTitle),
-          bullet(l10n.importGuideRuleLot),
-          bullet(l10n.importGuideRuleHeader),
-          bullet(l10n.importGuideRuleCsv),
-          bullet(l10n.importGuideRuleIncomplete),
-          bullet(l10n.importGuideRuleAgain),
-          section(l10n.importGuideColumnsTitle),
-          for (final (column, help) in columns)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    column,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(help),
-                ],
-              ),
+      body: ReadableWidth(
+        child: ListView(
+          key: const Key('import-guide'),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          children: [
+            Text(l10n.importGuideIntro),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => deliverImportTemplate(context, ref),
+              icon: const Icon(Icons.download),
+              label: Text(l10n.importTemplateGet),
             ),
-          section(l10n.importGuideTypesTitle),
-          Text(l10n.importGuideTypesHelp),
-          const SizedBox(height: 8),
-          if (classification != null)
-            for (final type in classification.types)
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => pickAndImport(context, ref),
+              icon: const Icon(Icons.file_open),
+              label: Text(l10n.importGuideImport),
+            ),
+            section(l10n.importGuideRulesTitle),
+            bullet(l10n.importGuideRuleLot),
+            bullet(l10n.importGuideRuleHeader),
+            bullet(l10n.importGuideRuleCsv),
+            bullet(l10n.importGuideRuleIncomplete),
+            bullet(l10n.importGuideRuleAgain),
+            section(l10n.importGuideColumnsTitle),
+            for (final (column, help) in columns)
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      type.name,
+                      column,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    for (final family in classification.familiesOf(type.id))
-                      Text(
-                        '${family.name}$familySeparator'
-                        '${classification.valuesOf(family.id).map((v) => v.name).join(', ')}',
-                      ),
+                    Text(help),
                   ],
                 ),
               ),
-        ],
+            section(l10n.importGuideTypesTitle),
+            Text(l10n.importGuideTypesHelp),
+            const SizedBox(height: 8),
+            if (classification != null)
+              for (final type in classification.types)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        type.name,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      for (final family in classification.familiesOf(type.id))
+                        Text(
+                          '${family.name}$familySeparator'
+                          '${classification.valuesOf(family.id).map((v) => v.name).join(', ')}',
+                        ),
+                    ],
+                  ),
+                ),
+          ],
+        ),
       ),
     );
   }

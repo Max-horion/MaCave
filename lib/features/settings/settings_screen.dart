@@ -12,6 +12,7 @@ import '../sync/sync_screen.dart';
 import 'about_screen.dart';
 import 'classification_screen.dart';
 import 'default_volumes.dart';
+import '../../ui/layout.dart';
 
 /// Écran des paramètres (CDC §7). Les réglages d'affichage sont propres à
 /// l'appareil ([AppPreferences]) ; les volumes par défaut sont dans la base,
@@ -57,118 +58,122 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsTitle)),
-      body: ListView(
-        key: const Key('settings-list'),
-        padding: const EdgeInsets.only(bottom: 32),
-        children: [
-          _Section(l10n.settingsAppearance),
-          _ChoiceTile(
-            title: l10n.settingsTheme,
-            options: themes,
-            value: prefs.themeMode,
-            onChanged: (v) => notifier.change((p) => p.copyWith(themeMode: v)),
-          ),
-          _ChoiceTile(
-            title: l10n.settingsTextSize,
-            options: textSizes,
-            value: prefs.textScale,
-            onChanged: (v) => notifier.change((p) => p.copyWith(textScale: v)),
-          ),
-
-          _Section(l10n.settingsDefaults),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              l10n.settingsDefaultsHelp,
-              style: theme.textTheme.bodySmall,
+      body: ReadableWidth(
+        child: ListView(
+          key: const Key('settings-list'),
+          padding: const EdgeInsets.only(bottom: 32),
+          children: [
+            _Section(l10n.settingsAppearance),
+            _ChoiceTile(
+              title: l10n.settingsTheme,
+              options: themes,
+              value: prefs.themeMode,
+              onChanged: (v) =>
+                  notifier.change((p) => p.copyWith(themeMode: v)),
             ),
-          ),
-          const DefaultVolumeTiles(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-          ),
-
-          ListTile(
-            minTileHeight: AppTheme.minButtonHeight,
-            leading: const Icon(Icons.category_outlined),
-            title: Text(l10n.settingsClassification),
-            subtitle: Text(l10n.settingsClassificationHelp),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => open(const ClassificationScreen()),
-          ),
-
-          _Section(l10n.settingsDisplay),
-          _ChoiceTile(
-            title: l10n.settingsDefaultSort,
-            options: sorts,
-            value: prefs.defaultSort,
-            onChanged: (v) =>
-                notifier.change((p) => p.copyWith(defaultSort: v)),
-          ),
-          SwitchListTile(
-            title: Text(l10n.settingsShowExhausted),
-            subtitle: Text(l10n.settingsShowExhaustedHelp),
-            value: prefs.showExhausted,
-            onChanged: (v) =>
-                notifier.change((p) => p.copyWith(showExhausted: v)),
-          ),
-          _ChoiceTile(
-            title: l10n.settingsUndo,
-            options: undo,
-            value: prefs.undoSeconds,
-            onChanged: (v) =>
-                notifier.change((p) => p.copyWith(undoSeconds: v)),
-          ),
-
-          _Section(l10n.settingsRecognition),
-          SwitchListTile(
-            title: Text(l10n.settingsOff),
-            subtitle: Text(l10n.settingsOffHelp),
-            value: prefs.openFoodFacts,
-            onChanged: (v) =>
-                notifier.change((p) => p.copyWith(openFoodFacts: v)),
-          ),
-
-          _Section(l10n.settingsData),
-          _LinkTile(
-            icon: Icons.cloud_outlined,
-            title: l10n.menuSync,
-            onTap: () => open(const SyncScreen()),
-          ),
-          _LinkTile(
-            icon: Icons.save_outlined,
-            title: l10n.menuBackups,
-            onTap: () => open(const BackupScreen()),
-          ),
-          _LinkTile(
-            icon: Icons.storage_outlined,
-            title: l10n.menuStorage,
-            onTap: () => open(const StorageScreen()),
-          ),
-          _LinkTile(
-            icon: Icons.file_open_outlined,
-            title: l10n.menuImport,
-            onTap: () => startImport(context, ref),
-          ),
-          _LinkTile(
-            icon: Icons.ios_share,
-            title: l10n.menuExport,
-            onTap: () => startExport(context, ref),
-          ),
-          const Divider(height: 32),
-          _LinkTile(
-            icon: Icons.info_outline,
-            title: l10n.aboutTitle,
-            onTap: () => open(const AboutScreen()),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              l10n.settingsDeviceNote,
-              style: theme.textTheme.bodySmall,
+            _ChoiceTile(
+              title: l10n.settingsTextSize,
+              options: textSizes,
+              value: prefs.textScale,
+              onChanged: (v) =>
+                  notifier.change((p) => p.copyWith(textScale: v)),
             ),
-          ),
-        ],
+
+            _Section(l10n.settingsDefaults),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                l10n.settingsDefaultsHelp,
+                style: theme.textTheme.bodySmall,
+              ),
+            ),
+            const DefaultVolumeTiles(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+            ),
+
+            ListTile(
+              minTileHeight: AppTheme.minButtonHeight,
+              leading: const Icon(Icons.category_outlined),
+              title: Text(l10n.settingsClassification),
+              subtitle: Text(l10n.settingsClassificationHelp),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => open(const ClassificationScreen()),
+            ),
+
+            _Section(l10n.settingsDisplay),
+            _ChoiceTile(
+              title: l10n.settingsDefaultSort,
+              options: sorts,
+              value: prefs.defaultSort,
+              onChanged: (v) =>
+                  notifier.change((p) => p.copyWith(defaultSort: v)),
+            ),
+            SwitchListTile(
+              title: Text(l10n.settingsShowExhausted),
+              subtitle: Text(l10n.settingsShowExhaustedHelp),
+              value: prefs.showExhausted,
+              onChanged: (v) =>
+                  notifier.change((p) => p.copyWith(showExhausted: v)),
+            ),
+            _ChoiceTile(
+              title: l10n.settingsUndo,
+              options: undo,
+              value: prefs.undoSeconds,
+              onChanged: (v) =>
+                  notifier.change((p) => p.copyWith(undoSeconds: v)),
+            ),
+
+            _Section(l10n.settingsRecognition),
+            SwitchListTile(
+              title: Text(l10n.settingsOff),
+              subtitle: Text(l10n.settingsOffHelp),
+              value: prefs.openFoodFacts,
+              onChanged: (v) =>
+                  notifier.change((p) => p.copyWith(openFoodFacts: v)),
+            ),
+
+            _Section(l10n.settingsData),
+            _LinkTile(
+              icon: Icons.cloud_outlined,
+              title: l10n.menuSync,
+              onTap: () => open(const SyncScreen()),
+            ),
+            _LinkTile(
+              icon: Icons.save_outlined,
+              title: l10n.menuBackups,
+              onTap: () => open(const BackupScreen()),
+            ),
+            _LinkTile(
+              icon: Icons.storage_outlined,
+              title: l10n.menuStorage,
+              onTap: () => open(const StorageScreen()),
+            ),
+            _LinkTile(
+              icon: Icons.file_open_outlined,
+              title: l10n.menuImport,
+              onTap: () => startImport(context, ref),
+            ),
+            _LinkTile(
+              icon: Icons.ios_share,
+              title: l10n.menuExport,
+              onTap: () => startExport(context, ref),
+            ),
+            const Divider(height: 32),
+            _LinkTile(
+              icon: Icons.info_outline,
+              title: l10n.aboutTitle,
+              onTap: () => open(const AboutScreen()),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                l10n.settingsDeviceNote,
+                style: theme.textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

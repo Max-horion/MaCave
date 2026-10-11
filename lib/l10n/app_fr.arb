@@ -8,9 +8,17 @@
   "@homeEmptyTitle": {
     "description": "Titre affiché sur l'écran d'accueil quand aucune bouteille n'est enregistrée."
   },
-  "homeEmptyMessage": "Touchez « Ajouter » pour enregistrer votre première bouteille.",
+  "homeEmptyMessage": "Utilisez le bouton « Ajouter » pour enregistrer votre première bouteille.",
   "@homeEmptyMessage": {
     "description": "Message d'aide sous le titre de la cave vide."
+  },
+  "detailPaneEmptyTitle": "Aucune boisson choisie",
+  "@detailPaneEmptyTitle": {
+    "description": "Partie droite d'une fenêtre large (PC), quand aucune référence n'est choisie : titre."
+  },
+  "detailPaneEmptyMessage": "Choisissez une boisson dans la liste pour afficher sa fiche ici.",
+  "@detailPaneEmptyMessage": {
+    "description": "Partie droite d'une fenêtre large (PC), quand aucune référence n'est choisie : explication."
   },
   "bottleCount": "{count, plural, =0{Aucune bouteille} =1{1 bouteille} other{{count} bouteilles}}",
   "@bottleCount": {
@@ -1351,7 +1359,7 @@
   "@syncStatusPending": {
     "description": "État : synchronisation automatique désactivée et modifications pas encore envoyées au serveur."
   },
-  "syncManualNote": "Synchronisation automatique désactivée : touchez « Synchroniser maintenant » pour envoyer et recevoir les modifications.",
+  "syncManualNote": "Synchronisation automatique désactivée : utilisez « Synchroniser maintenant » pour envoyer et recevoir les modifications.",
   "@syncManualNote": {
     "description": "Ligne d'explication sous l'état de la synchronisation quand elle n'est pas automatique."
   },
@@ -1809,7 +1817,7 @@
   "@scanMaybeTitle": {
     "description": "Titre : références proches du produit trouvé."
   },
-  "scanMaybeHelp": "Touchez une référence pour lui associer ce code.",
+  "scanMaybeHelp": "Choisissez une référence pour lui associer ce code.",
   "@scanMaybeHelp": {
     "description": "Aide sous les références proches."
   },
@@ -2063,7 +2071,7 @@
   "@welcomeDefaultsTitle": {
     "description": "Premier lancement, étape 3 : titre."
   },
-  "welcomeDefaultsHelp": "Volume proposé pour une nouvelle bouteille, selon son type. Touchez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.",
+  "welcomeDefaultsHelp": "Volume proposé pour une nouvelle bouteille, selon son type. Choisissez une ligne pour le changer ; vous pourrez aussi le faire plus tard dans les paramètres.",
   "@welcomeDefaultsHelp": {
     "description": "Premier lancement, étape 3 : explication."
   },

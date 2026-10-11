@@ -6,16 +6,22 @@ import '../../data/providers.dart';
 import '../../domain/enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/formats.dart';
+import '../../ui/layout.dart';
 import '../../ui/widgets.dart';
 import '../scan/scan_flow.dart';
 import '../stock_actions.dart';
 import 'drink_form_screen.dart';
 
 /// Fiche d'une référence : informations et lots, avec les actions de stock.
+///
+/// Écran à part entière, ou partie droite de la liste sur une fenêtre large :
+/// [onDeleted] est alors appelé après la suppression de la référence (au lieu
+/// de fermer l'écran, ce qui fermerait la liste).
 class DrinkDetailScreen extends ConsumerWidget {
-  const DrinkDetailScreen({super.key, required this.drinkId});
+  const DrinkDetailScreen({super.key, required this.drinkId, this.onDeleted});
 
   final String drinkId;
+  final VoidCallback? onDeleted;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,7 +70,7 @@ class DrinkDetailScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: _DrinkDetailBody(drink: drink),
+      body: ReadableWidth(child: _DrinkDetailBody(drink: drink)),
     );
   }
 
@@ -81,7 +87,11 @@ class DrinkDetailScreen extends ConsumerWidget {
     );
     if (confirmed && context.mounted) {
       await ref.read(caveRepositoryProvider).deleteDrink(drink.id);
-      if (context.mounted) Navigator.pop(context);
+      if (onDeleted != null) {
+        onDeleted!();
+      } else if (context.mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 }

@@ -18,7 +18,8 @@ import '../../ui/widgets.dart';
 import '../label/label_flow.dart';
 import '../scan/scan_flow.dart';
 import '../stock_actions.dart';
-import 'drink_detail_screen.dart';
+import '../cellar/selected_drink.dart';
+import '../../ui/layout.dart';
 
 /// Formulaire de création (avec le premier lot) ou de modification d'une
 /// référence. Les champs affichés dépendent du type (CDC §4.1).
@@ -211,12 +212,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
       );
       if (!mounted || choice == null) return;
       if (!choice) {
-        await Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (_) => DrinkDetailScreen(drinkId: drink.id),
-          ),
-        );
+        await openDrink(context, ref, drink.id);
         return;
       }
     }
@@ -250,12 +246,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
           barcode: _barcode,
         );
         if (!added || !mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute<void>(
-            builder: (_) => DrinkDetailScreen(drinkId: drink.id),
-          ),
-        );
+        await openDrink(context, ref, drink.id, replace: true);
     }
   }
 
@@ -312,12 +303,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
               barcode: _barcode,
             );
             if (!mounted) return;
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute<void>(
-                builder: (_) => DrinkDetailScreen(drinkId: drink.id),
-              ),
-            );
+            await openDrink(context, ref, drink.id, replace: true);
             return;
           }
         }
@@ -331,12 +317,7 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
         );
         if (!mounted) return;
         // Affiche directement la fiche créée.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute<void>(
-            builder: (_) => DrinkDetailScreen(drinkId: created.drinkId),
-          ),
-        );
+        await openDrink(context, ref, created.drinkId, replace: true);
       } else {
         await repo.saveDrink(widget.drinkId!, input, _characteristicIds);
         if (mounted) Navigator.pop(context);
@@ -462,166 +443,171 @@ class _DrinkFormScreenState extends ConsumerState<DrinkFormScreen> {
       // Colonne défilante plutôt que ListView : tous les champs restent
       // construits, donc tous sont vérifiés à l'enregistrement (une ListView
       // ne construit que les champs visibles à l'écran).
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (_isNew) ...[
-                if (camera) ...[
+      body: ReadableWidth(
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_isNew) ...[
+                  if (camera) ...[
+                    OutlinedButton.icon(
+                      onPressed: _saving
+                          ? null
+                          : () => _readLabel(classification),
+                      icon: const Icon(Icons.document_scanner_outlined),
+                      label: Text(l10n.labelButton),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   OutlinedButton.icon(
                     onPressed: _saving
                         ? null
-                        : () => _readLabel(classification),
-                    icon: const Icon(Icons.document_scanner_outlined),
-                    label: Text(l10n.labelButton),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-                OutlinedButton.icon(
-                  onPressed: _saving
-                      ? null
-                      : () => _scanBarcode(classification),
-                  icon: Icon(camera ? Icons.qr_code_scanner : Icons.keyboard),
-                  label: Text(
-                    camera ? l10n.formScanBarcode : l10n.formEnterBarcode,
-                  ),
-                ),
-                if (_barcode != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      l10n.drinkFormBarcode(_barcode!),
-                      style: theme.textTheme.bodySmall,
-                      textAlign: TextAlign.center,
+                        : () => _scanBarcode(classification),
+                    icon: Icon(camera ? Icons.qr_code_scanner : Icons.keyboard),
+                    label: Text(
+                      camera ? l10n.formScanBarcode : l10n.formEnterBarcode,
                     ),
                   ),
-                const SizedBox(height: 16),
-              ],
-              Text(l10n.fieldType, style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final t in classification.types)
-                    ChoiceChip(
-                      label: Text(t.name),
-                      selected: t.id == _typeId,
-                      onSelected: (_) => _selectType(classification, t),
+                  if (_barcode != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        l10n.drinkFormBarcode(_barcode!),
+                        style: theme.textTheme.bodySmall,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
+                  const SizedBox(height: 16),
                 ],
-              ),
-              const SizedBox(height: 16),
-              field(
-                _name,
-                '${l10n.fieldName} *',
-                key: const Key('field-name'),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l10n.requiredFieldError
-                    : null,
-              ),
-              field(_producer, l10n.fieldProducer),
-              if (shown(DrinkField.appellation))
-                field(
-                  _appellation,
-                  label(DrinkField.appellation, l10n.fieldAppellation),
-                ),
-              if (shown(DrinkField.region)) ...[
-                field(_region, label(DrinkField.region, l10n.fieldRegion)),
-                field(_country, l10n.fieldCountry),
-              ],
-              if (incomplete && type != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(
-                    l10n.formIncompleteWarning,
-                    style: TextStyle(color: theme.colorScheme.tertiary),
-                  ),
-                ),
-              if (shown(DrinkField.grapes)) field(_grapes, l10n.fieldGrapes),
-              if (shown(DrinkField.abv))
-                field(
-                  _abv,
-                  l10n.fieldAbv,
-                  keyboard: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  formatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                Text(l10n.fieldType, style: theme.textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final t in classification.types)
+                      ChoiceChip(
+                        label: Text(t.name),
+                        selected: t.id == _typeId,
+                        onSelected: (_) => _selectType(classification, t),
+                      ),
                   ],
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return null;
-                    final abv = _parseAbv();
-                    return abv == null || abv < 0 || abv > 100
-                        ? l10n.invalidNumber
-                        : null;
-                  },
                 ),
-              if (type != null &&
-                  classification.familiesOf(type.id).isNotEmpty) ...[
-                Text(
-                  l10n.characteristicsSection,
-                  style: theme.textTheme.titleMedium,
-                ),
-                for (final family in classification.familiesOf(type.id)) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, bottom: 4),
-                    child: Text(family.name, style: theme.textTheme.labelLarge),
-                  ),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final value in classification.valuesOf(family.id))
-                        FilterChip(
-                          label: Text(value.name),
-                          selected: _characteristicIds.contains(value.id),
-                          onSelected: (on) => setState(() {
-                            on
-                                ? _characteristicIds.add(value.id)
-                                : _characteristicIds.remove(value.id);
-                          }),
-                        ),
-                    ],
-                  ),
-                ],
                 const SizedBox(height: 16),
-              ],
-              if (_isNew) ...[
-                Text(l10n.formLotSection, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 12),
-                LotFields(
-                  vintage: shown(DrinkField.vintage) ? _vintage : null,
-                  volumeMl: _volumeMl ?? 750,
-                  onVolumeChanged: (v) => setState(() => _volumeMl = v),
-                  quantity: _quantity,
-                  onQuantityChanged: (q) => setState(() => _quantity = q),
+                field(
+                  _name,
+                  '${l10n.fieldName} *',
+                  key: const Key('field-name'),
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? l10n.requiredFieldError
+                      : null,
                 ),
-                const SizedBox(height: 24),
+                field(_producer, l10n.fieldProducer),
+                if (shown(DrinkField.appellation))
+                  field(
+                    _appellation,
+                    label(DrinkField.appellation, l10n.fieldAppellation),
+                  ),
+                if (shown(DrinkField.region)) ...[
+                  field(_region, label(DrinkField.region, l10n.fieldRegion)),
+                  field(_country, l10n.fieldCountry),
+                ],
+                if (incomplete && type != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      l10n.formIncompleteWarning,
+                      style: TextStyle(color: theme.colorScheme.tertiary),
+                    ),
+                  ),
+                if (shown(DrinkField.grapes)) field(_grapes, l10n.fieldGrapes),
+                if (shown(DrinkField.abv))
+                  field(
+                    _abv,
+                    l10n.fieldAbv,
+                    keyboard: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    formatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                    ],
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) return null;
+                      final abv = _parseAbv();
+                      return abv == null || abv < 0 || abv > 100
+                          ? l10n.invalidNumber
+                          : null;
+                    },
+                  ),
+                if (type != null &&
+                    classification.familiesOf(type.id).isNotEmpty) ...[
+                  Text(
+                    l10n.characteristicsSection,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  for (final family in classification.familiesOf(type.id)) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, bottom: 4),
+                      child: Text(
+                        family.name,
+                        style: theme.textTheme.labelLarge,
+                      ),
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final value in classification.valuesOf(family.id))
+                          FilterChip(
+                            label: Text(value.name),
+                            selected: _characteristicIds.contains(value.id),
+                            onSelected: (on) => setState(() {
+                              on
+                                  ? _characteristicIds.add(value.id)
+                                  : _characteristicIds.remove(value.id);
+                            }),
+                          ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                ],
+                if (_isNew) ...[
+                  Text(l10n.formLotSection, style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  LotFields(
+                    vintage: shown(DrinkField.vintage) ? _vintage : null,
+                    volumeMl: _volumeMl ?? 750,
+                    onVolumeChanged: (v) => setState(() => _volumeMl = v),
+                    quantity: _quantity,
+                    onQuantityChanged: (q) => setState(() => _quantity = q),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                Text(l10n.fieldRating, style: theme.textTheme.titleMedium),
+                RatingStars(
+                  value: _rating,
+                  onChanged: (r) => setState(() => _rating = r),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.favoriteLabel),
+                  value: _favorite,
+                  onChanged: (v) => setState(() => _favorite = v),
+                ),
+                const SizedBox(height: 8),
+                field(_comment, l10n.fieldComment, maxLines: 3),
+                FilledButton.icon(
+                  key: const Key('save-drink'),
+                  onPressed: _saving ? null : () => _save(type),
+                  icon: const Icon(Icons.check),
+                  label: Text(l10n.actionSave),
+                ),
               ],
-              Text(l10n.fieldRating, style: theme.textTheme.titleMedium),
-              RatingStars(
-                value: _rating,
-                onChanged: (r) => setState(() => _rating = r),
-              ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.favoriteLabel),
-                value: _favorite,
-                onChanged: (v) => setState(() => _favorite = v),
-              ),
-              const SizedBox(height: 8),
-              field(_comment, l10n.fieldComment, maxLines: 3),
-              FilledButton.icon(
-                key: const Key('save-drink'),
-                onPressed: _saving ? null : () => _save(type),
-                icon: const Icon(Icons.check),
-                label: Text(l10n.actionSave),
-              ),
-            ],
+            ),
           ),
         ),
       ),

@@ -11,6 +11,7 @@ import '../../theme/app_theme.dart';
 import '../../ui/formats.dart';
 import '../../ui/widgets.dart';
 import 'sync_messages.dart';
+import '../../ui/layout.dart';
 
 /// Paramètres enregistrés et journal, relus à chaque changement d'état.
 final syncOverviewProvider =
@@ -64,26 +65,28 @@ class _SyncScreenState extends ConsumerState<SyncScreen> {
               )
             : null,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-        child: showForm
-            ? _SyncForm(
-                // Recréé une seule fois, quand les paramètres enregistrés
-                // arrivent (pré-remplissage) : jamais pendant la saisie.
-                key: ValueKey(overview != null),
-                initial: overview?.settings,
-                editing: state.enabled,
-                busy: _busy,
-                error: _error,
-                onSubmit: _activate,
-                onCancel: state.enabled
-                    ? () => setState(() {
-                        _editing = false;
-                        _error = null;
-                      })
-                    : null,
-              )
-            : _status(context, state, overview),
+      body: ReadableWidth(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          child: showForm
+              ? _SyncForm(
+                  // Recréé une seule fois, quand les paramètres enregistrés
+                  // arrivent (pré-remplissage) : jamais pendant la saisie.
+                  key: ValueKey(overview != null),
+                  initial: overview?.settings,
+                  editing: state.enabled,
+                  busy: _busy,
+                  error: _error,
+                  onSubmit: _activate,
+                  onCancel: state.enabled
+                      ? () => setState(() {
+                          _editing = false;
+                          _error = null;
+                        })
+                      : null,
+                )
+              : _status(context, state, overview),
+        ),
       ),
     );
   }

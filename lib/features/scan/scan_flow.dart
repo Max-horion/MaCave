@@ -12,11 +12,12 @@ import '../../platform/device_capabilities.dart';
 import '../../scan/open_food_facts.dart';
 import '../../scan/providers.dart';
 import '../../ui/formats.dart';
-import '../drink/drink_detail_screen.dart';
 import '../drink/drink_form_screen.dart';
 import '../label/label_flow.dart';
 import '../stock_actions.dart';
 import 'scan_screen.dart';
+import '../cellar/selected_drink.dart';
+import '../../ui/layout.dart';
 
 // Déroulé d'un scan (CDC §6.2, §6.3) : le code lu est cherché dans la cave.
 // - Connu : le ou les lots s'affichent avec « −1 » et « Ajouter » ; le scan
@@ -127,12 +128,7 @@ Future<void> handleScannedCode(
         barcode: normalized,
       );
     case _OpenDrink(:final drink):
-      await Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (_) => DrinkDetailScreen(drinkId: drink.id),
-        ),
-      );
+      await openDrink(context, ref, drink.id);
     case _NewDrink(:final draft):
       await Navigator.push(
         context,
@@ -581,29 +577,31 @@ class _DrinkPickerScreenState extends ConsumerState<DrinkPickerScreen> {
           ),
         ),
       ),
-      body: StreamBuilder(
-        stream: _items,
-        builder: (context, snapshot) {
-          final items = snapshot.data;
-          if (items == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return ListView.separated(
-            itemCount: items.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
-            itemBuilder: (context, i) {
-              final item = items[i];
-              return ListTile(
-                minTileHeight: 64,
-                title: Text(item.drink.name),
-                subtitle: Text(
-                  [?item.drink.producer, ?item.drink.appellation].join(' · '),
-                ),
-                onTap: () => Navigator.pop(context, item.drink),
-              );
-            },
-          );
-        },
+      body: ReadableWidth(
+        child: StreamBuilder(
+          stream: _items,
+          builder: (context, snapshot) {
+            final items = snapshot.data;
+            if (items == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return ListView.separated(
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const Divider(height: 1),
+              itemBuilder: (context, i) {
+                final item = items[i];
+                return ListTile(
+                  minTileHeight: 64,
+                  title: Text(item.drink.name),
+                  subtitle: Text(
+                    [?item.drink.producer, ?item.drink.appellation].join(' · '),
+                  ),
+                  onTap: () => Navigator.pop(context, item.drink),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

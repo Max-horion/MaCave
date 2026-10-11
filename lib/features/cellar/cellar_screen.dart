@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/cave_queries.dart';
@@ -7,6 +8,7 @@ import '../../domain/drink_filter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../platform/device_capabilities.dart';
 import '../../ui/formats.dart';
+import '../../ui/layout.dart';
 import '../../ui/widgets.dart';
 import '../drink/drink_detail_screen.dart';
 import '../exchange/exchange_actions.dart';
@@ -18,14 +20,50 @@ import '../sync/sync_indicator.dart';
 import '../drink/drink_form_screen.dart';
 import '../stock_actions.dart';
 import 'filter_sheet.dart';
+import 'selected_drink.dart';
 
 /// Écran principal : la liste de la cave, avec recherche, filtres et tri
 /// (CDC §6.5), et sortie rapide « −1 » sur chaque ligne (CDC §6.3).
-class CellarScreen extends ConsumerWidget {
+///
+/// Fenêtre large (PC, [wideLayoutMinWidth]) : la fiche de la référence
+/// choisie s'affiche à droite de la liste au lieu de la recouvrir.
+class CellarScreen extends ConsumerStatefulWidget {
   const CellarScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CellarScreen> createState() => _CellarScreenState();
+}
+
+class _CellarScreenState extends ConsumerState<CellarScreen> {
+  /// Champ de recherche, pour Ctrl+F.
+  final _searchFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final list = CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyF, control: true):
+            _searchFocus.requestFocus,
+      },
+      child: Focus(autofocus: true, child: _list(context)),
+    );
+    if (!isWideLayout(context)) return list;
+    return Row(
+      children: [
+        Expanded(flex: 2, child: list),
+        const VerticalDivider(width: 1),
+        const Expanded(flex: 3, child: _DetailPane()),
+      ],
+    );
+  }
+
+  Widget _list(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final filter = ref.watch(drinkFilterProvider);
     final list = ref.watch(drinkListProvider);
@@ -56,7 +94,7 @@ class CellarScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _SearchField(initial: filter.query),
+                _SearchField(initial: filter.query, focusNode: _searchFocus),
                 const SizedBox(height: 6),
                 // Résumé sur toute la largeur : jamais coupé par les boutons.
                 Text(
@@ -196,9 +234,10 @@ class _MainMenu extends ConsumerWidget {
 }
 
 class _SearchField extends ConsumerStatefulWidget {
-  const _SearchField({required this.initial});
+  const _SearchField({required this.initial, required this.focusNode});
 
   final String initial;
+  final FocusNode focusNode;
 
   @override
   ConsumerState<_SearchField> createState() => _SearchFieldState();
@@ -221,6 +260,7 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
   Widget build(BuildContext context) {
     return SearchBar(
       controller: _controller,
+      focusNode: widget.focusNode,
       hintText: AppLocalizations.of(context).searchHint,
       leading: const Icon(Icons.search),
       trailing: [
@@ -313,15 +353,15 @@ class DrinkTile extends ConsumerWidget {
       if (inStock.isNotEmpty) inStock.map(formats.lot).join(', '),
     ].join(' · ');
 
+    final wide = isWideLayout(context);
     return ListTile(
       minTileHeight: 72,
       contentPadding: const EdgeInsets.only(left: 16, right: 8),
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (_) => DrinkDetailScreen(drinkId: drink.id),
-        ),
-      ),
+      selected: wide && ref.watch(selectedDrinkProvider) == drink.id,
+      selectedTileColor: theme.colorScheme.secondaryContainer,
+      onTap: () => wide
+          ? ref.read(selectedDrinkProvider.notifier).select(drink.id)
+          : openDrink(context, ref, drink.id),
       title: Row(
         children: [
           Flexible(child: Text(drink.name, overflow: TextOverflow.ellipsis)),
@@ -367,6 +407,35 @@ class DrinkTile extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Partie droite d'une fenêtre large : la fiche choisie, ou une invitation à
+/// en choisir une. Ses propres messages (bandeau « Annuler »…) s'affichent
+/// dans cette partie seulement.
+class _DetailPane extends ConsumerWidget {
+  const _DetailPane();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final selected = ref.watch(selectedDrinkProvider);
+    return ScaffoldMessenger(
+      child: selected == null
+          ? Scaffold(
+              body: EmptyMessage(
+                icon: Icons.wine_bar_outlined,
+                title: l10n.detailPaneEmptyTitle,
+                message: l10n.detailPaneEmptyMessage,
+              ),
+            )
+          : DrinkDetailScreen(
+              key: ValueKey(selected),
+              drinkId: selected,
+              onDeleted: () =>
+                  ref.read(selectedDrinkProvider.notifier).select(null),
+            ),
     );
   }
 }

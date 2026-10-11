@@ -12,10 +12,10 @@ import '../../domain/label_reading.dart';
 import '../../l10n/app_localizations.dart';
 import '../../scan/providers.dart';
 import '../../ui/formats.dart';
-import '../drink/drink_detail_screen.dart';
 import '../drink/drink_form_screen.dart';
 import '../stock_actions.dart';
 import 'label_capture_screen.dart';
+import '../cellar/selected_drink.dart';
 
 // Photo de l'étiquette (CDC §6.2) : prise de vue, reconnaissance du texte
 // sur le téléphone, puis écran de lecture où l'utilisateur valide ou corrige
@@ -180,12 +180,7 @@ Future<void> continueAfterLabel(
         barcode: barcode,
       );
       if (!added || !context.mounted) return;
-      await Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (_) => DrinkDetailScreen(drinkId: drink.id),
-        ),
-      );
+      await openDrink(context, ref, drink.id);
   }
 }
 
