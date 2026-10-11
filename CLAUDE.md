@@ -4,7 +4,7 @@ Application Android (Flutter) de gestion d'une cave personnelle : références (
 
 ## Documents de référence
 
-- `docs/cahier_des_charges_v0.8.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.8.docx` (source officielle ; les .docx v0.4 à v0.7 sont conservés pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis report dans le Markdown. Méthode des v0.6 à v0.8 (pas de pandoc ni de python-docx sur le PC) : .docx décompressé, `word/document.xml` modifié par un script Python (remplacements de texte, lignes de tableau dupliquées), titre dans `docProps/core.xml` et version dans `word/footer1.xml`, recompressé, rendu vérifié avec `soffice --convert-to pdf` ; mêmes modifications appliquées au Markdown (renommé à la nouvelle version avec `git mv`). Piège : ne remplacer que des phrases contenues dans un seul `<w:t>` (le vérifier par un comptage avant de remplacer). En cas de doute fonctionnel, c'est le CDC qui fait foi ; citer la section (ex. « CDC §6.3 »).
+- `docs/cahier_des_charges_v0.9.md` — **cahier des charges** (CDC), converti de `cahier_des_charges_gestion_cave_v0.9.docx` (source officielle ; les .docx v0.4 à v0.8 sont conservés pour l'historique). Toute décision qui modifie le CDC : nouvelle version du .docx (historique + journal des décisions), puis report dans le Markdown. Méthode des v0.6 à v0.9 (pas de pandoc ni de python-docx sur le PC) : .docx décompressé, `word/document.xml` modifié par un script Python (remplacements de texte, lignes de tableau dupliquées), titre dans `docProps/core.xml` et version dans `word/footer1.xml`, recompressé, rendu vérifié avec `soffice --convert-to pdf` ; mêmes modifications appliquées au Markdown (renommé à la nouvelle version avec `git mv`). Piège : ne remplacer que des phrases contenues dans un seul `<w:t>` (le vérifier par un comptage avant de remplacer). En cas de doute fonctionnel, c'est le CDC qui fait foi ; citer la section (ex. « CDC §6.3 »).
 - `docs/architecture.md` — bibliothèques, schéma de la base, principe de synchronisation.
 - `docs/bilan_v1.md` — bilan de la V1 (2026-10-08) : critères de réussite, fonctions, exigences non fonctionnelles, limites, décisions à venir.
 - Ce fichier — état d'avancement et conventions. **À mettre à jour à la fin de chaque lot.**
@@ -28,6 +28,8 @@ dart run drift_dev make-migrations   # après tout changement de schéma : photo
 flutter analyze                      # analyse statique : doit afficher « No issues found »
 flutter test                         # tests automatiques
 tool/installer.sh                    # compile et installe sur le téléphone EN GARDANT LES DONNÉES
+flutter run -d linux                 # lance l'appli PC (vraie base : ~/.local/share/fr.bouthon.cave/)
+flutter build linux --debug          # appli PC seule (build/linux/x64/debug/bundle/cave), ~40 s
 flutter build apk --release --split-per-abi   # APK seuls, un par architecture (installation : tool/installer.sh --no-build, prend l'arm64)
 ```
 
@@ -54,6 +56,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 5 | Scan code-barres (+ Open Food Facts), reconnaissance de texte (ML Kit / Tesseract), lampe torche, doublons — en 5 étapes, dans cet ordre : 5a scan + lampe, 5b Open Food Facts, 5e doublons, 5c photo d'étiquette + ML Kit, 5d Tesseract + comparaison | **terminé** |
 | 6 | Premier lancement (3 étapes), écran des paramètres, finitions | **terminé** (Android 10 vérifié le 2026-10-10) |
 | 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **terminé** (2026-10-10) : ML Kit retiré, ZXing + Tesseract seuls, vérifiés sur le téléphone, CDC v0.7 |
+| 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **en cours** : 8a terminée (2026-10-11) |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
@@ -69,7 +72,9 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 ## À reprendre (prochaine séance)
 
-**La V1 est terminée** (2026-10-10, décision du porteur) : tout est commité et poussé sur GitHub, 339 tests verts, installée sur le téléphone. Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
+**La V1 est terminée** (2026-10-10, décision du porteur) et son **usage réel aussi** (2026-10-11 : cave entièrement saisie, stock vérifié à la main). Bilan : `docs/bilan_v1.md`. Appli entièrement libre (Tesseract, ZXing), APK arm64 36,1 Mo.
+
+**En cours : lot 8, portage Linux** (CDC v0.9). Prochaine étape : **8b** — un fournisseur Riverpod des capacités de l'appareil (caméra, partage), remplaçable en test ; sur PC : scan = saisie du code seule (douchette USB = clavier), « Lire l'étiquette » et photo masqués, export / fichier modèle en « Enregistrer sous… » seulement (share_plus ne partage pas de fichier sous Linux) ; icône « téléphone » de l'accueil (« Sur cet appareil uniquement ») à remplacer sur PC.
 
 Suite possible, **à décider avec le porteur** :
 1. Usage réel : fin de la saisie de la cave, inventaire, synchro avec un deuxième appareil ; corriger ce qui en ressortira.
@@ -77,7 +82,7 @@ Suite possible, **à décider avec le porteur** :
 3. V2 (CDC §11) : emplacements, période de consommation, accords mets et vins, statistiques dans le temps, photos d'étiquette, export PDF, appli PC.
 4. Plus tard : noms en arc de cercle (redresser l'image avant Tesseract), optimisation de la lecture des étiquettes courbes.
 
-**Plan de démarrage de la V2** (accord de principe du porteur, 2026-10-10) : **portage PC avant toute nouvelle fonction**, pour que chaque fonction de la V2 soit conçue une seule fois pour les deux plateformes. Après la fin de l'usage réel de la V1 (point 1), pour ne pas mêler corrections et portage.
+**Plan de démarrage de la V2** (accord du porteur 2026-10-10, lancé le 2026-10-11 : lot 8) : **portage PC avant toute nouvelle fonction**, pour que chaque fonction de la V2 soit conçue une seule fois pour les deux plateformes. Après la fin de l'usage réel de la V1 (point 1), pour ne pas mêler corrections et portage.
 - Ordre : **Linux d'abord** (compilé sur ce PC), puis **Windows** (Flutter ne compile pas pour Windows depuis Linux : PC Windows avec Visual Studio Community, ou GitHub Actions).
 - Ce qui passe par `MainActivity.kt` n'existe pas sur PC : Tesseract, ZXing, autorisation de stockage. Proposition : scan et photo **désactivés sur PC** au début (saisie du code à la main ; une douchette USB se comporte comme un clavier). Décision à reporter dans le CDC (§10).
 - Process d'ajout d'une fonction une fois les deux versions faites : CDC (préciser les plateformes concernées) → logique commune dans `lib/domain` / `lib/data` + tests → un seul écran, adapté **à la largeur de la fenêtre** et non au système → partie propre à une plateforme derrière une interface Dart (comme `LabelRecognizer`, `StorageAccess`) → `flutter analyze` + `flutter test` une fois → essai sur le téléphone **et** sur le PC → livraison des deux. Une seule base pour les deux : après une migration de schéma, **mettre à jour les deux applis ensemble** (la synchro refuse une base plus récente que l'appli).
@@ -204,6 +209,15 @@ Pièges rencontrés :
 - `tester.pageBack()` ne trouve pas le bouton retour ici : toucher `find.byTooltip('Retour')`.
 - Android 10 sans autorisation de stockage : **même lister** un dossier de Documents échoue (`PathAccessException`, errno 13). Tout écran qui lit ce dossier doit d'abord vérifier `StorageAccess.granted()`.
 - Xiaomi (MIUI) : « Installer via USB » exige un compte Xiaomi et une carte SIM ; à défaut, copier l'APK avec `adb push … /sdcard/Download/` et l'installer depuis le gestionnaire de fichiers. `pm revoke` est aussi refusé par MIUI. Si `adb devices` est vide alors que le téléphone est branché : `adb kill-server; adb start-server`.
+
+## Où trouver quoi (lot 8, portage PC)
+
+- `linux/` — projet natif Linux généré par `flutter create --platforms=linux` (à commiter ; `linux/flutter/ephemeral` ignoré). Fenêtre dans `linux/runner/my_application.cc` (titre « Ma Cave », taille, taille minimale, icône), identifiant `fr.bouthon.cave` dans `linux/CMakeLists.txt`.
+- `CaveDatabase.open` (`lib/data/database.dart`) : sur PC, base dans le dossier des données d'applications (`~/.local/share/fr.bouthon.cave/cave.sqlite`) ; Android **inchangé** (dossier par défaut de drift — le changer perdrait la base du téléphone). Tableau des emplacements : `docs/architecture.md` §7.
+- Essayer l'appli PC **sans toucher à sa vraie base** : `XDG_DATA_HOME=<dossier temporaire> build/linux/x64/debug/bundle/cave` (préférences et base y sont créées).
+
+Pièges rencontrés :
+- `flutter create` sur le projet existant **met à jour `pubspec.lock`** en douce (une dizaine de bibliothèques) et remplace la plateforme `android` par `linux` dans `.metadata` : remettre le lock (`git checkout pubspec.lock`) et compléter `.metadata` à la main.
 
 ## Où trouver quoi (lot 7)
 

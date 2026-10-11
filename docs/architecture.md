@@ -1,7 +1,7 @@
 # Architecture technique — Ma Cave
 
 > **Statut : validée le 5 octobre 2026.**
-> Référence fonctionnelle : [cahier_des_charges_v0.8.md](cahier_des_charges_v0.8.md) (CDC).
+> Référence fonctionnelle : [cahier_des_charges_v0.9.md](cahier_des_charges_v0.9.md) (CDC).
 
 ## 1. Bibliothèques retenues
 
@@ -142,10 +142,26 @@ Copie datée de la base (`VACUUM INTO`) + export CSV, N dernières conservées (
 
 - **Fait au lot 4a** (`lib/sync/backup.dart`) : sauvegarde automatique appli ouverte (à l'ouverture et à la mise en arrière-plan, au plus une fois par jour, seulement si la base a changé), « Sauvegarder maintenant », partage, restauration avec vérification du fichier et sauvegarde de sécurité préalable.
 - **Pas de tâche de fond** (workmanager) en V1, décision du 5 octobre 2026.
-- **Android** : depuis Android 11, une appli peut écrire ses propres fichiers dans `Documents` sans autorisation, mais ne voit pas ceux des autres applis (ni les siens après une réinstallation) : la restauration passe alors par le sélecteur de fichiers. Android 8 à 10 demanderait l'autorisation de stockage (non gérée pour l'instant). Le choix d'un autre dossier par l'utilisateur (CDC §8.4) reste à faire.
+- **Android** : depuis Android 11, une appli peut écrire ses propres fichiers dans `Documents` sans autorisation, mais ne voit pas ceux des autres applis (ni les siens après une réinstallation) : la restauration passe alors par le sélecteur de fichiers. Android 8 à 10 : autorisation de stockage demandée (lot 6). Autre dossier au choix de l'utilisateur (lot 6).
 
 ## 6. Points d'attention
 
 - **Mémoire du PC (8 Go)** : drift utilise la génération de code (`build_runner`), à lancer ponctuellement, Android Studio fermé.
-- **Taille de l'APK** : ML Kit + Tesseract (dictionnaire français) ajoutent plusieurs Mo, acceptable pour la bêta.
-- **Licence** : GPL v3 + exception de liaison ML Kit (CDC §10) ; fichier `LICENSE` à ajouter avant toute diffusion.
+- **Taille de l'APK** : 36,1 Mo en arm64 (Tesseract et son dictionnaire français compris, ML Kit retiré au lot 7).
+- **Licence** : GPL v3 ou ultérieure, sans exception depuis le retrait de ML Kit (CDC §10) ; `LICENSE` et `COPYING.md` à la racine.
+
+## 7. Plateformes (V2 : portage PC)
+
+Un seul code pour Android et le PC (CDC §10) : Linux d'abord (compilé sur le PC de développement), puis Windows.
+
+| Fichier | Android | Linux |
+|---|---|---|
+| Base `cave.sqlite` | `…/app_flutter/` (dossier privé, choix par défaut de drift, **à ne jamais changer**) | `~/.local/share/fr.bouthon.cave/` (`getApplicationSupportDirectory`, `CaveDatabase.open`) |
+| Préférences de l'appareil | `SharedPreferences` d'Android | `~/.local/share/fr.bouthon.cave/shared_preferences.json` |
+| Sauvegardes | `Documents/Cave/Sauvegardes` | `~/Documents/Cave/Sauvegardes` (dossier Documents de l'utilisateur, XDG) |
+| Mot de passe du serveur | Keystore d'Android | trousseau de la session par libsecret (KWallet, GNOME Keyring) |
+
+- Sans emplacement imposé, drift mettrait la base dans `~/Documents` sur PC : d'où le dossier des données d'applications, sauf sur Android.
+- Fenêtre Linux (`linux/runner/my_application.cc`) : titre « Ma Cave », 1100 × 760 au départ, 400 × 500 au minimum, icône `assets/icon.png` (prise en compte sous X11 ; sous Wayland, il faudra un fichier `.desktop`). Identifiant d'application `fr.bouthon.cave` (`linux/CMakeLists.txt`).
+- Paquets nécessaires pour compiler : clang, cmake, ninja, pkg-config, GTK 3, libsecret (`flutter doctor` → « Linux toolchain »). Compilation de débogage : ~40 s, 1,2 Go de RAM au maximum.
+- Pas de caméra sur PC : scan et lecture d'étiquette absents (CDC §10, étape 8b).

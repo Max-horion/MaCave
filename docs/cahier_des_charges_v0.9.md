@@ -2,14 +2,14 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.8.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.9.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.8 |
-| Date | 10 octobre 2026 |
-| Statut | V1 terminée |
+| Version | 0.9 |
+| Date | 11 octobre 2026 |
+| Statut | V2 en cours (portage PC) |
 
 ### Historique des versions
 
@@ -23,6 +23,7 @@
 | 0.6 | 7 octobre 2026 | Décisions des lots 4 à 6 de la V1 : synchronisation et sauvegarde application ouverte, sans tâche de fond (8.3, 8.4) ; sauvegardes sur l’appareil et sur le serveur ; purge manuelle limitée ; code-barres associable à un lot existant et doublons signalés aussi au scan et à la photo (6.2) ; cave du serveur reprise sur un appareil neuf (6.8) ; classification modifiable (6.1) ; import préparé dans un tableur avec consignes et fichier modèle (6.7) ; paramètres précisés (7) ; Open Food Facts désactivable (9) ; licence GPL v3 ou ultérieure (10). |
 | 0.7 | 10 octobre 2026 | Fin de la bêta des moteurs de reconnaissance : ML Kit retiré, Tesseract pour le texte et ZXing pour les codes-barres, application entièrement libre et licence sans exception (7, 10, 11, 12) ; conditions de fin de la V1 (11, 12) ; lecture d’étiquette : lignes regroupées et ajout à la suite d’un champ (6.2) ; volumes proposés de 10 cl à 6 l (7) ; Android 8 à 10 vérifié (9). |
 | 0.8 | 10 octobre 2026 | Clôture de la V1 : statut « V1 terminée » ; conditions de fin remplies (Android 10 vérifié, lecteur de codes-barres libre approuvé) ; points à rediscuter mis à jour (12). |
+| 0.9 | 11 octobre 2026 | Début de la V2 par le portage PC, après l’usage réel de la V1 : Linux, puis Windows, avant les autres fonctions ; ni scan ni lecture d’étiquette sur PC (2.2, 10, 11) ; identifiants dans le trousseau du système sur PC (9) ; points à rediscuter mis à jour (12). |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -39,7 +40,7 @@ L’application sera réussie si :
 Un seul utilisateur. L’ajout d’un second utilisateur pourra être envisagé dans une version ultérieure, sans être prévu à ce stade.
 ### 2.2 Supports
 - **V1 :** application Android.
-- **Ensuite :** application PC (Windows, Linux) utilisant la même base de données, à partir du même code (voir 10).
+- **V2 :** application PC (Linux, puis Windows) utilisant la même base de données, à partir du même code, réalisée avant les autres fonctions de la V2 (voir 10).
 ### 2.3 Hors périmètre
 L’application ne fera pas :
 - de vente, ni d’achat en ligne (aucun lien vers des cavistes ou sites marchands) ;
@@ -251,7 +252,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Ergonomie** | Utilisable d’une main, dans une cave peu éclairée : contraste élevé, gros boutons, lampe torche au scan ; thème clair ou sombre, qui suit le système par défaut. |
 | **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8 (vérifié sur Android 10 : l’autorisation d’écrire les sauvegardes dans Documents est demandée sur Android 8 à 10, et l’application guide l’utilisateur vers les réglages si elle a été refusée définitivement). |
 | **Fiabilité** | Aucune perte de données : l’enregistrement et la synchronisation ne doivent jamais corrompre la base, même en cas de coupure de réseau ou de batterie. |
-| **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé d’Android, jamais en clair. |
+| **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé du système (Android ; sur PC, trousseau de la session, par exemple KWallet ou GNOME Keyring), jamais en clair. |
 | **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. Seuls les codes-barres de 8 à 14 chiffres sont envoyés, jamais le contenu d’un QR code ; la recherche Open Food Facts peut être désactivée dans les paramètres. |
 | **Maintenabilité** | Code commenté, tests automatiques sur les fonctions de base (stock, synchronisation), documentation à jour : le projet doit pouvoir être repris facilement après une longue pause, et par d’autres en cas de diffusion libre. |
 
@@ -260,7 +261,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Sujet** | **Choix** |
 |---|---|
 | **Développement** | Par le porteur du projet (débutant en Python), avec Claude Code. |
-| **Technologie** | Flutter (langage Dart) : un seul code pour Android (V1) et pour le PC (Windows, Linux) ensuite. |
+| **Technologie** | Flutter (langage Dart) : un seul code pour Android et pour le PC (Linux, puis Windows) ; chaque écran s’adapte à la largeur de la fenêtre. Sur PC, ni scan de code-barres ni lecture d’étiquette : le code est saisi au clavier, ou avec une douchette USB, qui se comporte comme un clavier. |
 | **Base de données** | Fichier SQLite local, synchronisé facultativement par WebDAV (Nextcloud ou autre serveur). |
 | **Reconnaissance de texte** | Moteur interchangeable dans le code. Tesseract (libre), retenu après une bêta qui le comparait à ML Kit (Google, non libre) : un peu moins précis, mais il rend l’application entièrement libre. |
 | **Codes-barres** | Lecture sur le téléphone avec ZXing (libre), qui remplace ML Kit ; base Open Food Facts en complément si réseau. |
@@ -294,7 +295,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 - Statistiques de consommation dans le temps
 - Conservation des photos d’étiquette
 - Export PDF
-- Application PC
+- Application PC, en premier (Linux, puis Windows)
 ### Plus tard, éventuellement
 - Second utilisateur
 - Diffusion à d’autres utilisateurs sous licence libre
@@ -302,7 +303,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 - Synchronisation avec Google Drive, Dropbox ou OneDrive
 - Interprétation automatique plus poussée des étiquettes
 ## 12. Points à rediscuter
-- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel (saisie complète, inventaire, deuxième appareil), diffusion, V2 ; ordre à décider.
+- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel terminé le 11/10/2026 (cave saisie, inventaire vérifié) ; V2 commencée par le portage PC ; diffusion à décider.
 - Canal de diffusion à d’autres utilisateurs, à la fin de la V1.
 - Paramètres manquants éventuels, après les tests de la V1.
 - Hors cahier des charges : optimisation de la procédure de sauvegarde du serveur (Raspberry Pi).
@@ -360,3 +361,4 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 10/10/2026 | 10, 12 | Fin de la bêta : Tesseract retenu pour le texte (un peu moins précis que ML Kit, mais libre), ZXing pour les codes-barres ; ML Kit retiré ; licence GPL v3 ou ultérieure, sans exception. |
 | 10/10/2026 | 6.2 | Lecture d’étiquette : lignes voisines regroupées, mots qui annoncent un nom (« Château », « Domaine »…) collés à la ligne suivante, ligne ajoutable à la suite d’un champ déjà rempli. |
 | 10/10/2026 | 11, 12 | V1 terminée : toutes les fonctions V1 faites et vérifiées, conditions de fin remplies, application entièrement libre. Suite à décider : usage réel, diffusion, V2. |
+| 11/10/2026 | 2.2, 10, 11 | Usage réel de la V1 terminé (cave saisie, inventaire vérifié). La V2 commence par le portage PC, avant toute nouvelle fonction : Linux d’abord, puis Windows. Pas de caméra sur PC : ni scan de code-barres ni lecture d’étiquette, code saisi au clavier ou avec une douchette USB. |
