@@ -2569,7 +2569,7 @@ abstract class AppLocalizations {
   /// Premier lancement, étape 2 : explication.
   ///
   /// In fr, this message translates to:
-  /// **'Importez un export Vivino ou un fichier CSV (par exemple une sauvegarde de Ma Cave). Un aperçu est affiché avant tout ajout. Vous pourrez aussi le faire plus tard (menu ⋮ → Importer un fichier).'**
+  /// **'Importez un export Vivino, une sauvegarde de Ma Cave ou une liste tenue dans un tableur (Excel, LibreOffice) : l\'appli vous explique comment la préparer et fournit un fichier modèle. Un aperçu est affiché avant tout ajout. Vous pourrez aussi le faire plus tard (menu ⋮ → Importer un fichier).'**
   String get welcomeImportHelp;
 
   /// Premier lancement, étape 2 : bouton d'import.
