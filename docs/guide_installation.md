@@ -66,7 +66,7 @@ Après l'installation, vous pouvez désactiver à nouveau « Autoriser cette sou
 L'appli ne demande que ce qui lui sert :
 - **Appareil photo** : pour scanner les codes-barres et lire les étiquettes, demandé à la première utilisation ;
 - **Stockage** (Android 8 à 10 seulement) : pour écrire les sauvegardes dans *Documents* ;
-- **Internet** : uniquement pour la synchronisation avec votre serveur et la recherche facultative sur Open Food Facts.
+- **Internet** : pour la synchronisation avec votre serveur et la recherche facultative sur Open Food Facts.
 
 ---
 
@@ -75,7 +75,7 @@ L'appli ne demande que ce qui lui sert :
 ### Installer
 
 1. **Téléchargez** `MaCave-1.0.0-windows-setup.exe`.
-2. **Ouvrez-le.** Windows affiche « Windows a protégé votre ordinateur » (SmartScreen) : cliquez sur **Informations complémentaires**, puis **Exécuter quand même**. Cet avertissement apparaît pour toute appli dont l'éditeur n'a pas acheté de certificat de signature (payant) ; il ne signale pas un danger.
+2. **Ouvrez-le.** Windows affiche « Windows a protégé votre ordinateur » (SmartScreen) : cliquez sur **Informations complémentaires**, puis **Exécuter quand même**. Cet avertissement apparaît pour toute appli dont l'éditeur n'a pas acheté de certificat de signature ; il ne signale pas un danger.
 3. Suivez l'installateur. Il installe Ma Cave **pour votre compte uniquement**, sans droits d'administrateur.
 4. Ma Cave est ensuite dans le **menu Démarrer**.
 
@@ -150,7 +150,7 @@ Dans Ma Cave (**Synchroniser avec un serveur**, ou **⋮ → Paramètres → Syn
 - **Adresse du serveur** : celle de votre Nextcloud, par exemple `cloud.exemple.fr` ;
 - **Identifiant** : votre identifiant Nextcloud ;
 - **Mot de passe d'application** : celui que vous venez de copier ;
-- **Dossier sur le serveur** : `Cave` par défaut ; il est créé s'il n'existe pas ;
+- **Dossier sur le serveur** : `Cave` par défaut ; il est créé s'il n'existe pas ; changez-le à votre convenance ;
 - **Activer la synchronisation**.
 
 **Sur chacun de vos appareils, utilisez le même serveur et le même dossier.** Vous pouvez créer un mot de passe d'application par appareil : si vous perdez votre téléphone, vous révoquez le sien sans toucher aux autres.

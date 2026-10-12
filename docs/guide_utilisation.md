@@ -1,9 +1,9 @@
 # Ma Cave — guide d'utilisation
 
-Ma Cave tient l'inventaire de votre cave personnelle : vins, bières, spiritueux, softs. Vous savez à tout moment ce que vous avez, combien, et ce que vous avez bu.
+Ma Cave est un gestionnaire de cave personnelle pour Android, Windows et Linux.
 
-- **Elle fonctionne sans réseau** : tout est enregistré sur votre appareil, y compris au fond d'une cave sans signal.
-- **Téléphone et ordinateur** : la même appli existe sur Android, Windows et Linux. Avec la synchronisation (facultative), vos appareils partagent la même cave.
+- **Elle fonctionne sans réseau** : tout est enregistré sur votre appareil.
+- **Téléphone et ordinateur** : l'application existe sur Android, Windows et Linux. Avec la synchronisation (facultative), vos appareils partagent la même cave.
 - **Vos données restent chez vous** : aucun compte, aucune publicité, aucune donnée envoyée ailleurs (voir [Confidentialité](#16-confidentialité)).
 - **Logiciel libre** (licence GNU GPL v3 ou ultérieure), gratuit.
 
@@ -44,7 +44,7 @@ Quatre mots suffisent pour tout comprendre :
 
 Une même référence peut donc avoir plusieurs lots : le 2019 et le 2020, ou une bouteille de 75 cl et un magnum. Le stock de la référence est la somme de ses lots.
 
-**Types et caractéristiques.** Chaque référence a un **type** (Vin, Bière, Spiritueux, Soft) et des **caractéristiques** rangées par familles : pour un vin, la *robe* (rouge, blanc, rosé), le *style* (tranquille, effervescent), le *sucre* (sec, moelleux…). Pour une bière, la *robe* (blonde, brune…), le *style* (IPA, stout…). Vous pouvez tout modifier (voir [Paramètres](#13-paramètres)).
+**Types et caractéristiques.** Chaque référence a un **type** (Vin, Bière, Spiritueux, Soft) et des **caractéristiques** rangées par familles : pour un vin, la *robe* (rouge, blanc, rosé), le *style* (tranquille, effervescent), le *sucre* (sec, moelleux…). Pour une bière, la *robe* (blonde, brune…), le *style* (IPA, stout…). Vous pouvez tout modifier pour personnaliser selon votre usage (voir [Paramètres](#13-paramètres)).
 
 **Les champs dépendent du type** : un vin a un millésime, une appellation, des cépages ; une bière n'a pas de millésime ; un soft se limite au nom, au producteur et au volume.
 
@@ -58,7 +58,7 @@ Au tout premier démarrage, l'appli vous guide en trois étapes. Chacune peut ê
 
 **Étape 1 — « Où ranger votre cave ? »**
 - **Sur cet appareil uniquement** : rien à configurer. Un message vous rappelle que la cave n'est que sur cet appareil : s'il est perdu ou cassé, elle est perdue aussi. Des sauvegardes automatiques sont faites dans `Documents/Cave/Sauvegardes` ; pensez à les copier ailleurs de temps en temps.
-- **Synchroniser avec un serveur** : votre cave est aussi copiée sur votre serveur Nextcloud (ou un autre serveur WebDAV) et partagée avec vos autres appareils. Voir [Synchronisation](#10-synchronisation-entre-appareils).
+- **Synchroniser avec un serveur** : votre cave est aussi copiée sur votre serveur Nextcloud ou un autre serveur WebDAV et partagée avec vos autres appareils. Voir [Synchronisation](#10-synchronisation-entre-appareils).
   - Si une cave est **déjà** sur le serveur (vous installez l'appli sur un deuxième appareil), elle est récupérée et l'accueil se termine aussitôt : « Cave récupérée du serveur : tout est prêt. »
 
 **Étape 2 — « Vous avez déjà une cave ? »** : importez un export Vivino ou un fichier préparé dans un tableur (voir [Importer](#9-importer-et-exporter)). Un aperçu s'affiche avant tout ajout.
@@ -82,7 +82,7 @@ Chaque ligne montre le nom, le producteur, l'appellation et les lots en stock (�
 
 ### Rechercher
 
-Tapez n'importe quoi de ce que vous voyez : nom, producteur, appellation, région, type, caractéristique, millésime. Les résultats s'affichent pendant la frappe, sans tenir compte des accents ni des majuscules. Exemples : « chateau », « rouge », « 2015 », « ipa », « vin rouge ».
+Tout ce qui est vu à l'écran peut être utilisé dans la barre de recherche : nom, producteur, appellation, région, type, caractéristique, millésime. Les résultats s'affichent pendant la frappe, sans tenir compte des accents ni des majuscules. Exemples : « chateau », « rouge », « 2015 », « ipa », « vin rouge ».
 
 ### Filtrer
 
@@ -122,7 +122,7 @@ Sur un téléphone, deux boutons en haut du formulaire vous font gagner du temps
 
 Sur un ordinateur, le second bouton s'appelle **Saisir le code-barres**.
 
-**Doublons.** Si une référence au nom proche existe déjà (« Château Exemple » / « Ch. Exemple »), l'appli vous le signale : « Référence proche déjà dans la cave ». Vous pouvez ajouter les bouteilles à la référence existante, créer quand même une nouvelle référence, ou revenir au formulaire. Elle ne fait que proposer : c'est vous qui décidez.
+**Doublons.** Si une référence au nom proche existe déjà (« Château Exemple » / « Ch. Exemple »), l'appli vous le signale : « Référence proche déjà dans la cave ». Vous pouvez ajouter les bouteilles à la référence existante, créer quand même une nouvelle référence, ou revenir au formulaire.
 
 ### 4.2 Des bouteilles d'une boisson déjà en cave
 
@@ -155,9 +155,9 @@ Pour une bouteille sans code-barres, ou pour remplir la fiche plus vite : **Lire
 2. L'appli lit le texte **sur le téléphone** (rien n'est envoyé) et propose : type, millésime, degré, volume, appellation (comparée à la liste officielle de l'INAO), nom et producteur.
 3. Vérifiez. En bas, la liste **Texte lu** montre les lignes trouvées : touchez une ligne pour l'utiliser comme nom, producteur ou appellation, ou pour l'**ajouter à la suite** d'un nom écrit sur deux lignes.
 4. Si la boisson ressemble à une référence de votre cave, l'appli le signale (« Déjà dans votre cave ? ») : touchez-la pour lui ajouter des bouteilles.
-5. **Continuer avec ces informations** ouvre le formulaire pré-rempli, à valider.
+5. **Continuer avec ces informations** ouvre le formulaire pré-rempli, à compléter si nécessaire puis valider.
 
-La photo est supprimée juste après la lecture. La lecture n'est pas parfaite (étiquettes courbes, écritures fantaisie, noms en arc de cercle) : elle aide, vous corrigez.
+La photo est supprimée juste après la lecture. La lecture peut présenter des erreurs (étiquettes courbes, écritures fantaisie, noms en arc de cercle) : elle aide, vous corrigez.
 
 ---
 
@@ -169,7 +169,7 @@ La photo est supprimée juste après la lecture. La lecture n'est pas parfaite (
 
 Un retrait rapide est enregistré comme « Consommée ».
 
-**Annuler.** Après chaque ajout ou retrait, un bandeau propose **Annuler** pendant quelques secondes (durée réglable). Une erreur de doigt se rattrape donc d'un geste.
+**Annuler.** Après chaque ajout ou retrait, un bandeau propose **Annuler** pendant quelques secondes (durée réglable). Une erreur se rattrape donc d'un geste.
 
 On ne peut jamais retirer plus de bouteilles qu'il n'y en a (« Stock insuffisant »).
 
@@ -251,17 +251,17 @@ Elle fonctionne avec **votre propre serveur** : Nextcloud, ou tout serveur WebDA
 ### Activer
 
 **⋮ → Paramètres → Synchronisation** (ou étape 1 du premier lancement) :
-- **Nextcloud** : adresse du serveur (par exemple `cloud.exemple.fr`), identifiant, **mot de passe d'application** et dossier sur le serveur (`Cave` par défaut, créé s'il n'existe pas).
+- **Nextcloud** : adresse du serveur (par exemple `cloud.exemple.fr`), identifiant, **mot de passe d'application** et dossier sur le serveur (`Cave` par défaut, créé s'il n'existe pas et modifiable si nécessaire).
   - Le mot de passe d'application se crée dans Nextcloud : *Paramètres personnels › Sécurité › Créer un nouveau mot de passe d'application*. Il est rangé dans le coffre sécurisé de l'appareil, jamais en clair.
 - **Autre serveur WebDAV** : l'adresse complète du dossier.
 
 Puis **Activer la synchronisation**.
 
-**Tous vos appareils doivent utiliser le même serveur et le même dossier.** Ne modifiez jamais à la main le fichier `cave.sqlite` de ce dossier.
+**Tous vos appareils doivent utiliser le même serveur et le même dossier.** Si vous personnalisez ce dossier, pensez à le faire sur tous les appareils synchornisés. Ne modifiez jamais à la main le fichier `cave.sqlite` de ce dossier.
 
 Si le serveur contient déjà une **autre** cave et que celle de l'appareil n'est pas vide, l'appli demande laquelle garder : **Utiliser la cave du serveur** (celle de l'appareil est sauvegardée puis remplacée) ou **Remplacer la cave du serveur par celle-ci** (l'ancienne est mise de côté sur le serveur, pas supprimée). Deux caves différentes ne sont jamais mélangées.
 
-### Quand se fait-elle ?
+### Quand se fait la synchronisation ?
 
 Automatiquement, appli ouverte : à l'ouverture, quand l'appli revient au premier plan, une dizaine de secondes après une modification, au retour du réseau. Et sur demande : **Synchroniser maintenant**.
 
@@ -294,7 +294,7 @@ L'appli sauvegarde **automatiquement** votre cave, à l'ouverture (et à la ferm
 - **Sauvegarder maintenant**, à tout moment.
 - **Restaurer** : touchez une sauvegarde de la liste, ou **Restaurer depuis un fichier…** (par exemple une sauvegarde copiée depuis un autre appareil). La cave actuelle est **d'abord sauvegardée** : vous pouvez toujours revenir en arrière.
 
-Sur Android 8 à 10, l'appli demande l'autorisation d'écrire dans Documents. Si vous l'avez refusée définitivement, **Ouvrir les réglages** vous mène à la bonne page d'Android.
+Sur Android 8 à 10, l'appli demande l'autorisation d'écrire dans Documents. Si vous l'avez refusée définitivement, **Ouvrir les réglages** vous mène à la page de réglage de ce paramètre.
 
 ---
 
