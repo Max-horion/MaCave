@@ -57,6 +57,8 @@ PATH=/snap/android-studio/current/jbr/bin:$PATH \
 
 Vérifié le 2026-10-13 avec une clé d'essai jetable : APK signé avec elle quand `key.properties` existe, avec la clé de débogage sinon.
 
+**Clé de diffusion** créée le 2026-10-13 (`~/cles-ma-cave/ma-cave-diffusion.jks`, alias `ma-cave`, RSA 4096) : certificat `CN=Maxence Pithon`, empreinte SHA-256 `af941f5159bf226af3c8b2e1c8ca10d0c47b971b2771a4efdbac0cb3391cc3ea`. Cette empreinte est publique : elle permet à chacun de vérifier qu'un APK vient bien de Ma Cave (à indiquer avec chaque version publiée).
+
 ### Téléphone du porteur (au moment de la 1.0.0)
 
 Son appli est signée avec la clé de débogage : Android refusera la version signée avec la clé de diffusion (`tool/installer.sh` l'explique, sans rien toucher). Passage, avec l'accord du porteur le moment venu :
