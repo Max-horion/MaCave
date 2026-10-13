@@ -121,3 +121,14 @@ Méthode, à refaire avant toute nouvelle publication si des fichiers sensibles 
 `README.md` réécrit pour le public (présentation, téléchargement, retours, développeurs, licence).
 
 **Dépôt passé en public le 2026-10-13** (accord du porteur ; `gh repo edit --visibility public`), page lisible sans connexion vérifiée. Choix du porteur : publier tel quel, notes de travail comprises (un second dépôt public « nettoyé » a été écarté : deux dépôts à tenir à jour, risque d'oubli).
+
+## 4. Publier une version
+
+1. `pubspec.yaml` : `version: X.Y.Z+N`, N augmenté de 1 à chaque version (1.0.0 = `+2`). Ligne `<release>` dans `linux/packaging/fr.bouthon.cave.metainfo.xml`.
+2. Ici : `flutter build apk --release --split-per-abi`, vérifier version, signature (`apksigner`, `CN=Maxence Pithon`) et autorisations (`aapt2 dump permissions`) ; copier `app-arm64-v8a-release.apk` → `build/diffusion/MaCave-X.Y.Z-android.apk` et `app-armeabi-v7a-release.apk` → `…-android-armv7.apk` ; `tool/paquet_linux.sh`.
+3. Commit poussé, puis sur le PC Windows : `git pull`, `tool\paquet_windows.ps1`, installation et vérification ; installateur copié dans `build/diffusion/`.
+4. `sha256sum MaCave-X.Y.Z-* > SHA256SUMS.txt` ; notes dans `docs/notes_version_X.Y.Z.md` (relues par le porteur).
+5. Étiquette annotée `vX.Y.Z` sur le commit compilé, poussée ; `gh release create vX.Y.Z --title "Ma Cave X.Y.Z" --notes-file docs/notes_version_X.Y.Z.md --verify-tag <fichiers>` depuis `build/diffusion/`.
+6. Vérifier : fichiers retéléchargés sans connexion et comparés à `SHA256SUMS.txt`.
+
+**1.0.0** publiée le 2026-10-13 : https://github.com/Max-horion/MaCave/releases/tag/v1.0.0 (5 fichiers, retéléchargés et vérifiés).
