@@ -5,7 +5,7 @@ Première version diffusée de **Ma Cave** : gestion d'une cave personnelle (vin
 | Pour | Fichier |
 |---|---|
 | Presque tous les téléphones Android (Android 8 ou plus récent) | `MaCave-1.0.0-android.apk` |
-| Versions antérieures d'Android, si le précédent refuse de s'installer | `MaCave-1.0.0-android-armv7.apk` |
+| Téléphones anciens (processeur 32 bits), si le précédent refuse de s'installer | `MaCave-1.0.0-android-armv7.apk` |
 | Windows 10 ou 11 (64 bits) | `MaCave-1.0.0-windows-setup.exe` |
 | Linux 64 bits (Ubuntu 24.04, Linux Mint 22, Debian 13, Fedora 39 ou plus récents) | `MaCave-1.0.0-linux-x86_64.AppImage` |
 
