@@ -11,6 +11,17 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29"
         tools:replace="android:maxSdkVersion" />
+    <!-- Lecture du dossier des sauvegardes (Android 8 à 10). Sans cette
+         ligne, Android l'ajoute d'office sans limite de version (à cause de
+         WRITE_EXTERNAL_STORAGE), alors qu'elle ne sert à rien ensuite. -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <!-- Déclarée par le paquet camera (vidéo avec son) ; l'appli n'enregistre
+         jamais de son (enableAudio: false) : on la retire. -->
+    <uses-permission
+        android:name="android.permission.RECORD_AUDIO"
+        tools:node="remove" />
     <application
         android:label="Ma Cave"
         android:name="${applicationName}"
