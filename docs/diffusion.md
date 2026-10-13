@@ -87,7 +87,7 @@ tool/paquet_linux.sh --no-build  # reprend la version déjà compilée
 
 ### Windows : installateur Inno Setup
 
-Sur le PC Windows, avec **Inno Setup 6.3 ou plus récent** (https://jrsoftware.org/isdl.php) :
+Sur le PC Windows, avec **Inno Setup 6.3 ou plus récent, 7 compris** (https://jrsoftware.org/isdl.php ; Inno Setup 7, sorti en 2026, reste compatible : aucune des fonctions modifiées n'est utilisée ; le script trouve le dossier « Inno Setup N » le plus récent) :
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tool\paquet_windows.ps1            # compile puis construit MaCave-<version>-windows-setup.exe

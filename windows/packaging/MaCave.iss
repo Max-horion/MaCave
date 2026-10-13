@@ -1,4 +1,5 @@
-﻿; Installateur Windows de Ma Cave (lot 10), pour Inno Setup 6.
+﻿; Installateur Windows de Ma Cave (lot 10), pour Inno Setup 6.3 ou plus récent
+; (7 compris : rien de ce qui a changé en version 7 n'est utilisé ici).
 ; Construit par tool\paquet_windows.ps1, qui passe la version :
 ;   ISCC /DAppVersion=1.0.0 windows\packaging\MaCave.iss
 ; Résultat : build\diffusion\MaCave-<version>-windows-setup.exe (nom fixé par

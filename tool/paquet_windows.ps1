@@ -2,8 +2,9 @@
 #   build\diffusion\MaCave-<version>-windows-setup.exe
 # (nom fixé par docs\guide_installation.md ; version lue dans pubspec.yaml).
 #
-# Prérequis : Inno Setup 6 (https://jrsoftware.org/isdl.php), installé à son
-# emplacement par défaut, ou ISCC.exe dans le PATH.
+# Prérequis : Inno Setup 6.3 ou plus récent, 7 compris
+# (https://jrsoftware.org/isdl.php), installé à son emplacement par défaut,
+# ou ISCC.exe dans le PATH.
 #
 # Usage (PowerShell, à la racine du projet) :
 #   powershell -ExecutionPolicy Bypass -File tool\paquet_windows.ps1
@@ -17,14 +18,19 @@ $version = $line.Matches[0].Groups[1].Value
 
 $iscc = (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
 if (-not $iscc) {
-  foreach ($dir in @("${env:ProgramFiles(x86)}\Inno Setup 6",
-                     "$env:ProgramFiles\Inno Setup 6",
-                     "$env:LOCALAPPDATA\Programs\Inno Setup 6")) {
-    if (Test-Path "$dir\ISCC.exe") { $iscc = "$dir\ISCC.exe"; break }
+  # Dossiers « Inno Setup 6 », « Inno Setup 7 »… : la version la plus récente.
+  $found = foreach ($root in @(${env:ProgramFiles(x86)}, $env:ProgramFiles,
+                               "$env:LOCALAPPDATA\Programs")) {
+    if ($root) {
+      Get-ChildItem -Path $root -Directory -Filter 'Inno Setup *' -ErrorAction SilentlyContinue |
+        Where-Object { Test-Path (Join-Path $_.FullName 'ISCC.exe') }
+    }
   }
+  $best = $found | Sort-Object Name -Descending | Select-Object -First 1
+  if ($best) { $iscc = Join-Path $best.FullName 'ISCC.exe' }
 }
 if (-not $iscc) {
-  Write-Error 'Inno Setup 6 introuvable : https://jrsoftware.org/isdl.php'
+  Write-Error 'Inno Setup introuvable : https://jrsoftware.org/isdl.php'
 }
 
 if (-not $NoBuild) {
