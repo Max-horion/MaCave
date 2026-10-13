@@ -119,3 +119,5 @@ Rendre le dépôt public publie **tout l'historique Git** (chaque version de cha
 Méthode, à refaire avant toute nouvelle publication si des fichiers sensibles ont pu être ajoutés : `git log --all --name-only` (chemins), `git grep -I -i -E <motif> $(git rev-list --all)` (contenus), noms de `docs/cellar.csv` cherchés un par un (`git grep -F`), `.docx` extraits avec `git cat-file -p` et leurs `docProps/` et `word/comments.xml` relus.
 
 `README.md` réécrit pour le public (présentation, téléchargement, retours, développeurs, licence).
+
+**Dépôt passé en public le 2026-10-13** (accord du porteur ; `gh repo edit --visibility public`), page lisible sans connexion vérifiée. Choix du porteur : publier tel quel, notes de travail comprises (un second dépôt public « nettoyé » a été écarté : deux dépôts à tenir à jour, risque d'oubli).

@@ -20,7 +20,7 @@ Débutant (un peu de Python, découvre Flutter/Dart). Communiquer en français, 
 - PC Kubuntu 26.04, **8 Go de RAM** : fermer Android Studio pendant les compilations. Gradle est volontairement limité dans `android/gradle.properties` (1,5 Go, 2 workers, Kotlin dans le même processus) — ne pas remonter ces valeurs.
 - Flutter stable dans `~/development/flutter` (dans le PATH via `~/.bashrc`). Ne jamais proposer `snap install flutter`.
 - Téléphone de test : OnePlus 13 (CPH2653), Android 16, en USB (`adb` : `~/Android/Sdk/platform-tools/adb`).
-- Dépôt : https://github.com/Max-horion/MaCave (privé), branche `main`.
+- Dépôt : https://github.com/Max-horion/MaCave (**public** depuis le 2026-10-13), branche `main`. Tout commit y est visible de tous : ne jamais y mettre de donnée personnelle (voir « Données personnelles »).
 
 ```bash
 flutter pub get                      # dépendances
@@ -62,7 +62,7 @@ flutter build apk --release --split-per-abi   # APK seuls, un par architecture (
 | 7 | Lecteur de codes-barres sans ML Kit (bibliothèque libre, piste ZXing), à essayer et approuver par le porteur — **condition pour terminer la V1** (décision du 2026-10-08). Prévu le 2026-10-09 : le porteur testera les deux alternatives libres (Tesseract pour le texte, ce lecteur pour les codes-barres) pendant la saisie de sa cave ; si elles sont validées, on clôt la V1 en appliquant le choix définitif (retrait de ML Kit, exception de `COPYING.md`, CDC) | **terminé** (2026-10-10) : ML Kit retiré, ZXing + Tesseract seuls, vérifiés sur le téléphone, CDC v0.7 |
 | 8 | **V2 — portage PC Linux**, en 5 étapes : 8a socle (dossier `linux/`, base dans le dossier des applis, fenêtre, CDC v0.9), 8b fonctions sans caméra ni partage sur PC, 8c écrans adaptés à la largeur + clavier/souris, 8d synchro et trousseau, 8e essai réel téléphone + PC et livraison. Windows ensuite | **terminé** (2026-10-13, décision du porteur) |
 | 9 | **V2 — portage PC Windows** : préparé sous Linux (dossier `windows/`, fenêtre, icône, informations de version, `tool/installer_windows.ps1`) ; compilation, essais et corrections **sur le PC Windows** (liste ci-dessous) | **terminé** (2026-10-13) : compilé et vérifié sur le PC Windows le 2026-10-11 (tests, fenêtre, base, sauvegardes, synchro, fermeture, `installer_windows.ps1`, performances) ; partage de fichiers désactivé sur PC (décision du porteur) |
-| 10 | **Diffusion privée 1.0.0** (détail plus bas) : 1. autorisations Android, 2. À propos (contact), 3. clé de diffusion, 4. paquets PC (AppImage, Inno Setup), 5. historique Git vérifié et dépôt public, 6. CDC v0.10 et guides, 7. version 1.0.0 et publication | **en cours** : 1 à 3 faites, 4 faite sous Linux, 5 vérifiée (2026-10-13) : installateur Windows à essayer sur le PC Windows ; dépôt à passer en public (accord du porteur) |
+| 10 | **Diffusion privée 1.0.0** (détail plus bas) : 1. autorisations Android, 2. À propos (contact), 3. clé de diffusion, 4. paquets PC (AppImage, Inno Setup), 5. historique Git vérifié et dépôt public, 6. CDC v0.10 et guides, 7. version 1.0.0 et publication | **en cours** : 1 à 3 faites, 4 faite sous Linux, 5 faite (2026-10-13, dépôt **public**) : installateur Windows à essayer sur le PC Windows |
 
 **Décisions du porteur** (toutes reportées dans le CDC v0.6) :
 - une fiche incomplète est enregistrée avec le marqueur « à compléter », jamais refusée (2026-10-05) ;
