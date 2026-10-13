@@ -317,7 +317,7 @@ Sur Android 8 à 10, l'appli demande l'autorisation d'écrire dans Documents. Si
 - **Affichage** : tri à l'ouverture, afficher les références épuisées à l'ouverture, durée du bandeau « Annuler ».
 - **Reconnaissance** : activer ou non la recherche sur Open Food Facts.
 - **Données** : Synchronisation, Sauvegardes, Espace disque, import et export.
-- **À propos** : version, licence, sources des données, licences des logiciels utilisés.
+- **À propos** : version, licence, contact (**Écrire un courriel**, **Signaler un problème**, **Code source**), sources des données, licences des logiciels utilisés.
 
 **Ce qui est partagé entre vos appareils** (avec la synchronisation) : la cave elle-même, les volumes par défaut, les types et caractéristiques, la purge automatique. Tous les autres réglages (thème, affichage, sauvegardes…) sont propres à chaque appareil.
 
@@ -372,5 +372,7 @@ Une idée, un défaut, une question ? Vos retours sont précieux, surtout sur un
 
 - par courriel : **maxence@bouthon.fr** ;
 - sur GitHub : **https://github.com/Max-horion/MaCave/issues** (le code source de l'appli y est publié).
+
+Ces liens sont aussi dans **Paramètres → À propos**, rubrique « Contact ». Si l'appareil n'a pas d'appli pour les ouvrir, l'adresse est copiée : collez-la dans votre messagerie ou votre navigateur.
 
 Pour un défaut, précisez si possible : l'appareil (téléphone ou ordinateur, système), la version de l'appli (**Paramètres → À propos**), ce que vous avez fait, ce que vous attendiez et ce qui s'est passé. Une capture d'écran aide beaucoup. N'envoyez jamais votre mot de passe.

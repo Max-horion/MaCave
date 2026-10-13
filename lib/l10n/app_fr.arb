@@ -2392,6 +2392,30 @@
   "@aboutLicense": {
     "description": "Licence de l'appli."
   },
+  "aboutContact": "Contact",
+  "@aboutContact": {
+    "description": "À propos : rubrique des liens de contact."
+  },
+  "aboutContactText": "Une question, un défaut, une idée ? Écrivez-moi, ou ouvrez un ticket sur GitHub, où le code source de l'appli est publié.",
+  "@aboutContactText": {
+    "description": "À propos : invitation à faire un retour."
+  },
+  "aboutEmail": "Écrire un courriel",
+  "@aboutEmail": {
+    "description": "À propos : lien vers la messagerie (adresse de l'auteur affichée dessous)."
+  },
+  "aboutIssues": "Signaler un problème",
+  "@aboutIssues": {
+    "description": "À propos : lien vers les tickets GitHub."
+  },
+  "aboutSource": "Code source",
+  "@aboutSource": {
+    "description": "À propos : lien vers le dépôt GitHub."
+  },
+  "aboutLinkCopied": "Aucune appli pour l'ouvrir : adresse copiée.",
+  "@aboutLinkCopied": {
+    "description": "À propos : le lien n'a pas pu être ouvert, son adresse est copiée dans le presse-papiers."
+  },
   "aboutData": "Données",
   "@aboutData": {
     "description": "À propos : rubrique des sources de données."

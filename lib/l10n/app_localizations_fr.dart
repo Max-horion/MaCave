@@ -1942,6 +1942,25 @@ class AppLocalizationsFr extends AppLocalizations {
       'Logiciel libre sous licence GNU GPL version 3 ou ultérieure. Fourni sans aucune garantie.';
 
   @override
+  String get aboutContact => 'Contact';
+
+  @override
+  String get aboutContactText =>
+      'Une question, un défaut, une idée ? Écrivez-moi, ou ouvrez un ticket sur GitHub, où le code source de l\'appli est publié.';
+
+  @override
+  String get aboutEmail => 'Écrire un courriel';
+
+  @override
+  String get aboutIssues => 'Signaler un problème';
+
+  @override
+  String get aboutSource => 'Code source';
+
+  @override
+  String get aboutLinkCopied => 'Aucune appli pour l\'ouvrir : adresse copiée.';
+
+  @override
   String get aboutData => 'Données';
 
   @override

@@ -4,6 +4,7 @@ import 'package:cave/licenses.dart';
 import 'package:cave/theme/app_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,6 +43,70 @@ void main() {
       find.textContaining('Independent JPEG Group'),
       findsOneWidget,
       reason: 'mention exigée par la licence de libjpeg',
+    );
+  });
+
+  testWidgets('À propos : liens de contact, adresse copiée à défaut', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1080, 4000);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+    final opened = <Uri>[];
+    var canOpen = true;
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied = (call.arguments as Map)['text'] as String;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appVersionProvider.overrideWith((ref) async => '1.0.0'),
+          linkLauncherProvider.overrideWithValue((uri) async {
+            opened.add(uri);
+            return canOpen;
+          }),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const AboutScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Écrire un courriel'));
+    await tester.tap(find.text('Signaler un problème'));
+    await tester.tap(find.text('Code source'));
+    await tester.pumpAndSettle();
+    expect(opened, [
+      Uri.parse('mailto:maxence@bouthon.fr?subject=Ma%20Cave%201.0.0'),
+      Uri.parse('https://github.com/Max-horion/MaCave/issues'),
+      Uri.parse('https://github.com/Max-horion/MaCave'),
+    ]);
+    expect(copied, isNull);
+
+    canOpen = false;
+    await tester.tap(find.text('Écrire un courriel'));
+    await tester.pumpAndSettle();
+    expect(copied, 'maxence@bouthon.fr');
+    expect(
+      find.text("Aucune appli pour l'ouvrir : adresse copiée."),
+      findsOneWidget,
     );
   });
 

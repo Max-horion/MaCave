@@ -22,6 +22,7 @@ Versions vérifiées sur pub.dev le 5 octobre 2026. Toutes gratuites et open sou
 | Open Food Facts | **http** (appel direct à l'API) | Un seul appel « produit par code-barres » : le paquet officiel serait surdimensionné. | 5 |
 | Requêtes HTTP | **http** | Base du client WebDAV maison. | 4 |
 | Fichiers | **path_provider**, **file_picker**, **share_plus**, **csv** | Emplacement de la base, choix du fichier à importer / dossier de sauvegarde, partage d'un export. | 3–4 |
+| Liens (À propos) | **url_launcher** | Ouvrir le dépôt GitHub, les tickets et la messagerie (lot 10). | 10 |
 | Traductions | **flutter_localizations** + **intl** (`gen-l10n`) | Déjà en place (lot 0). | 0 |
 
 Les bibliothèques sont ajoutées au moment du lot qui en a besoin, pas avant.

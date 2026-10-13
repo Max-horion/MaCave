@@ -2980,6 +2980,42 @@ abstract class AppLocalizations {
   /// **'Logiciel libre sous licence GNU GPL version 3 ou ultérieure. Fourni sans aucune garantie.'**
   String get aboutLicense;
 
+  /// À propos : rubrique des liens de contact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact'**
+  String get aboutContact;
+
+  /// À propos : invitation à faire un retour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une question, un défaut, une idée ? Écrivez-moi, ou ouvrez un ticket sur GitHub, où le code source de l\'appli est publié.'**
+  String get aboutContactText;
+
+  /// À propos : lien vers la messagerie (adresse de l'auteur affichée dessous).
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrire un courriel'**
+  String get aboutEmail;
+
+  /// À propos : lien vers les tickets GitHub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Signaler un problème'**
+  String get aboutIssues;
+
+  /// À propos : lien vers le dépôt GitHub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code source'**
+  String get aboutSource;
+
+  /// À propos : le lien n'a pas pu être ouvert, son adresse est copiée dans le presse-papiers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune appli pour l\'ouvrir : adresse copiée.'**
+  String get aboutLinkCopied;
+
   /// À propos : rubrique des sources de données.
   ///
   /// In fr, this message translates to:
