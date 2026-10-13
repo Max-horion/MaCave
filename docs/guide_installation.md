@@ -25,7 +25,7 @@ Ma Cave est gratuite, sans compte ni publicité. Elle n'est pas distribuée par 
 |---|---|
 | **Téléphone Android** | Android 8 ou plus récent |
 | **Ordinateur Windows** | Windows 10 ou 11, 64 bits |
-| **Ordinateur Linux** | Distribution 64 bits récente (Ubuntu, Kubuntu, Debian, Fedora, Mint…), avec un bureau graphique |
+| **Ordinateur Linux** | Distribution 64 bits récente, avec un bureau graphique : Ubuntu / Kubuntu 24.04, Linux Mint 22, Debian 13, Fedora 39 ou plus récentes |
 
 Pour **synchroniser** votre cave entre plusieurs appareils (facultatif), il faut aussi un serveur **Nextcloud** ou un autre serveur **WebDAV** (NAS, hébergeur) auquel vous avez accès. Sans serveur, l'appli fonctionne très bien sur un seul appareil.
 
@@ -101,11 +101,9 @@ L'appli est fournie en **AppImage** : un seul fichier qui fonctionne sur la plup
    ```
 3. **Double-cliquez** dessus.
 
-**Rien ne se passe, ou un message parle de « FUSE »** : certaines distributions récentes n'installent plus FUSE 2, dont les AppImage ont besoin. Sur Ubuntu 24.04 et suivantes (et leurs dérivées) :
-```
-sudo apt install libfuse2t64
-```
-Sur les versions plus anciennes d'Ubuntu ou Debian : `sudo apt install libfuse2`.
+**Rien ne se passe** : lancez le fichier depuis un terminal (`./MaCave-1.0.0-linux-x86_64.AppImage`) pour lire le message d'erreur.
+- Un message parle de **« FUSE »** : lancez-la avec `./MaCave-1.0.0-linux-x86_64.AppImage --appimage-extract-and-run`, ou installez le paquet `fuse3` de votre distribution.
+- Un message parle de **« GLIBC »** : votre distribution est trop ancienne (voir [Ce qu'il vous faut](#1-ce-quil-vous-faut)).
 
 ### Ajouter Ma Cave au menu des applications (facultatif)
 
@@ -168,7 +166,7 @@ Une nouvelle version vous sera signalée directement (l'appli ne vérifie pas el
 | Support | Mise à jour | Vos données |
 |---|---|---|
 | **Android** | Ouvrez le nouvel APK et touchez **Mettre à jour**. **Ne désinstallez pas l'ancienne version avant** : désinstaller efface la cave du téléphone. | Conservées |
-| **Windows** | Lancez le nouvel installateur : il remplace l'ancienne version. | Conservées |
+| **Windows** | Lancez le nouvel installateur : il remplace l'ancienne version (si Ma Cave est ouverte, il propose de la fermer). | Conservées |
 | **Linux** | Remplacez l'ancien fichier AppImage par le nouveau (et rendez-le exécutable). | Conservées |
 
 **Avec la synchronisation, mettez à jour tous vos appareils** quand une nouvelle version sort. Si un appareil a une version plus ancienne que la cave du serveur, il suspend sa synchronisation (sans rien abîmer) et vous invite à le mettre à jour.

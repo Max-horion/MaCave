@@ -1,6 +1,6 @@
 # Diffusion — procédures du porteur
 
-Procédures pour publier une version (lot 10 et suivantes). À compléter au fil du lot 10 (paquets PC, publication).
+Procédures pour publier une version (lot 10 et suivantes). À compléter au fil du lot 10 (publication).
 
 ## 1. Clé de diffusion Android
 
@@ -67,3 +67,35 @@ Son appli est signée avec la clé de débogage : Android refusera la version si
 2. désinstallation (efface la base du téléphone) ;
 3. installation de l'APK 1.0.0 signé ;
 4. accueil → « Synchroniser avec un serveur » → cave reprise du serveur ; vérifier le nombre de bouteilles.
+
+## 2. Paquets PC
+
+Fichiers produits dans `build/diffusion/` (ignoré par Git), noms fixés par `docs/guide_installation.md`, version lue dans `pubspec.yaml`.
+
+### Linux : AppImage
+
+```bash
+tool/paquet_linux.sh             # compile puis construit MaCave-<version>-linux-x86_64.AppImage
+tool/paquet_linux.sh --no-build  # reprend la version déjà compilée
+```
+
+- Outils téléchargés une fois dans `~/.cache/ma-cave/appimage`, versions figées et vérifiées par SHA-256 : **appimagetool 1.9.1** et le **runtime type 2 du 2025-11-08**. Ce runtime n'a pas besoin de FUSE 2 (`libfuse2`) ; à défaut de FUSE, l'AppImage se lance avec `--appimage-extract-and-run`.
+- L'appli utilise les bibliothèques du bureau (GTK 3, libsecret…). Compilée sur Kubuntu 26.04, elle exige **glibc 2.38** : Ubuntu 24.04, Mint 22, Debian 13, Fedora 39 ou plus récents. Le script s'arrête si une mise à jour de Flutter ou du PC fait monter cette exigence au-delà de 2.39 (Ubuntu 24.04). Pour viser plus ancien, il faudrait compiler dans une Ubuntu 22.04 (conteneur), non prévu.
+- Contenu : l'appli dans `app/`, lanceur et icône (`linux/packaging/`), description AppStream `linux/packaging/fr.bouthon.cave.metainfo.xml` (lue par Gear Lever ; validée sans réseau par le script, car `appimagetool` vérifie aussi les liens GitHub, introuvables tant que le dépôt est privé).
+- Données : les mêmes que l'appli installée par `tool/installer_linux.sh` (`~/.local/share/fr.bouthon.cave`).
+- Vérifié le 2026-10-13 (version 0.1.0, 15 Mo) : lancement sur une base d'essai (`XDG_DATA_HOME=<dossier temporaire>`), base et préférences créées.
+
+### Windows : installateur Inno Setup
+
+Sur le PC Windows, avec **Inno Setup 6.3 ou plus récent** (https://jrsoftware.org/isdl.php) :
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tool\paquet_windows.ps1            # compile puis construit MaCave-<version>-windows-setup.exe
+powershell -ExecutionPolicy Bypass -File tool\paquet_windows.ps1 -NoBuild   # reprend la version déjà compilée
+```
+
+- Script : `windows/packaging/MaCave.iss` (UTF-8 avec BOM, CRLF). **`AppId` ne doit jamais changer** : c'est par lui que Windows reconnaît une mise à jour.
+- Installation pour l'utilisateur seul, sans droits d'administrateur, dans `%LOCALAPPDATA%\Programs\Ma Cave`, raccourci « Ma Cave » du menu Démarrer (icône du Bureau proposée, décochée) : mêmes emplacements que `tool\installer_windows.ps1`, l'un remplace l'autre. Ferme Ma Cave si elle est ouverte. Désinstallation par Paramètres → Applications ; les données (`%APPDATA%\fr.bouthon\cave`, `Documents\Cave`) ne sont jamais touchées.
+- Non signé : SmartScreen avertit (« Informations complémentaires » → « Exécuter quand même »), expliqué dans le guide d'installation.
+
+**À vérifier sur le PC Windows** (écrit sous Linux, jamais essayé) : construction sans erreur ; installation (pas de demande d'administrateur, raccourci et icône, appli lancée à la fin, cave existante retrouvée) ; nouvelle installation par-dessus (mise à jour, appli ouverte fermée d'abord) ; désinstallation (raccourci et dossier retirés, données conservées) ; réinstallation.

@@ -7,7 +7,8 @@
 # fichiers de l'appli (%LOCALAPPDATA%\Programs\Ma Cave) et le raccourci sont
 # remplacés.
 #
-# PAS ENCORE ESSAYÉ (écrit sous Linux) : à vérifier sur le PC Windows.
+# Pour diffuser l'appli : installateur construit par tool\paquet_windows.ps1
+# (même dossier et même raccourci : l'un remplace l'autre).
 #
 # Usage (PowerShell, à la racine du projet) :
 #   powershell -ExecutionPolicy Bypass -File tool\installer_windows.ps1
