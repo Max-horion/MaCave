@@ -8,7 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../ui/layout.dart';
 import '../../ui/widgets.dart';
 
-/// Version de l'appli (« 0.1.0 ») ; remplacée dans les tests.
+/// Version de l'appli (« 1.0.0 ») ; remplacée dans les tests.
 final appVersionProvider = FutureProvider<String>(
   (ref) async => (await PackageInfo.fromPlatform()).version,
 );
