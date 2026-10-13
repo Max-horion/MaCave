@@ -1,0 +1,8 @@
+# Modèle de android/key.properties (clé de diffusion, lot 10).
+# Copier ce fichier en android/key.properties (jamais commité : .gitignore)
+# et remplacer les valeurs. storeFile : chemin ABSOLU du fichier de clé,
+# rangé hors du dépôt.
+storeFile=/home/UTILISATEUR/cles-ma-cave/ma-cave-diffusion.jks
+storePassword=MOT_DE_PASSE
+keyAlias=ma-cave
+keyPassword=MOT_DE_PASSE

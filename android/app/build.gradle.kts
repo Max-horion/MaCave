@@ -1,8 +1,21 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Clé de diffusion (lot 10) : android/key.properties, hors dépôt (.gitignore),
+// pointe vers le fichier de clé, lui aussi hors dépôt. Sans ce fichier, ou
+// avec CAVE_SIGNING=debug, l'APK de production est signé avec la clé de
+// débogage (appareils de développement seulement : jamais diffusé).
+val keyProperties = Properties().apply {
+    val file = rootProject.file("key.properties")
+    if (file.exists()) FileInputStream(file).use { load(it) }
+}
+val releaseSigning = !keyProperties.isEmpty && System.getenv("CAVE_SIGNING") != "debug"
 
 android {
     namespace = "fr.bouthon.cave"
@@ -30,11 +43,25 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (releaseSigning) {
+            create("release") {
+                storeFile = file(keyProperties.getProperty("storeFile"))
+                storePassword = keyProperties.getProperty("storePassword")
+                keyAlias = keyProperties.getProperty("keyAlias")
+                keyPassword = keyProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (releaseSigning) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("Ma Cave : APK signé avec la clé de DÉBOGAGE (ne pas diffuser).")
+                signingConfigs.getByName("debug")
+            }
             // Règles d'optimisation propres à l'appli (Tesseract).
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -7,6 +7,8 @@
 #
 # Usage : tool/installer.sh            (compile puis installe)
 #         tool/installer.sh --no-build (installe l'APK déjà compilé)
+#         CAVE_SIGNING=debug tool/installer.sh  (clé de débogage, même si
+#                                                android/key.properties existe)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -36,7 +38,20 @@ first_install() {
 
 before="$(first_install)"
 # -r : remplace l'appli existante sans toucher à ses données.
-"$ADB" install -r "$APK"
+if ! output="$("$ADB" install -r "$APK" 2>&1)"; then
+  echo "$output" >&2
+  if [[ "$output" == *INSTALL_FAILED_UPDATE_INCOMPATIBLE* ]]; then
+    # Clé de l'APK différente de celle de l'appli installée (lot 10 : clé de
+    # débogage → clé de diffusion). Rien n'a été modifié sur le téléphone.
+    echo >&2
+    echo "L'appli du téléphone est signée avec une autre clé : Android refuse" >&2
+    echo "la mise à jour (rien n'a été touché). NE PAS désinstaller sans avoir" >&2
+    echo "vérifié une sauvegarde : la désinstallation efface la base." >&2
+    echo "Pour rester sur la clé de débogage : CAVE_SIGNING=debug $0" >&2
+  fi
+  exit 1
+fi
+echo "$output"
 after="$(first_install)"
 
 if [[ -n "$before" && "$before" != "$after" ]]; then
