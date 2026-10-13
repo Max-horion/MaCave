@@ -99,3 +99,23 @@ powershell -ExecutionPolicy Bypass -File tool\paquet_windows.ps1 -NoBuild   # re
 - Non signé : SmartScreen avertit (« Informations complémentaires » → « Exécuter quand même »), expliqué dans le guide d'installation.
 
 **À vérifier sur le PC Windows** (écrit sous Linux, jamais essayé) : construction sans erreur ; installation (pas de demande d'administrateur, raccourci et icône, appli lancée à la fin, cave existante retrouvée) ; nouvelle installation par-dessus (mise à jour, appli ouverte fermée d'abord) ; désinstallation (raccourci et dossier retirés, données conservées) ; réinstallation.
+
+## 3. Dépôt public
+
+Rendre le dépôt public publie **tout l'historique Git** (chaque version de chaque fichier depuis le premier commit), pas seulement l'état actuel.
+
+### Vérification de l'historique (2026-10-13, 89 commits, branche `main` seule)
+
+| Contrôle | Résultat |
+|---|---|
+| Auteur des commits | `Max-horion`, adresse anonyme GitHub (`…@users.noreply.github.com`) : le courriel personnel n'apparaît pas. |
+| Fichiers ayant existé | Aucune base (`.sqlite`, `.db`), sauvegarde, export, clé (`.jks`, `key.properties`), `.env`, ni `docs/cellar.csv`. Seul CSV : `test/fixtures/vivino_cellar.csv` (inventé). |
+| Secrets | Aucun mot de passe réel (seulement les faux des tests), jeton GitHub, mot de passe d'application Nextcloud ou clé privée. Adresse du serveur Nextcloud, identifiant et dossier de synchro : absents. |
+| Cave du porteur | Chaque nom de vin et de producteur de `docs/cellar.csv` cherché dans tout l'historique : seuls des noms d'**appellations** apparaissent (liste INAO, exemples génériques), aucun château ni producteur. Étiquettes des tests (`test/fixtures/*.hocr`) : noms inventés, sans chemin de fichier. |
+| Cahiers des charges `.docx` (6 versions) | Auteur « Maxence Pithon », aucun commentaire, aucune modification suivie, aucun chemin local. |
+| Taille | `.git` : 14 Mo ; plus gros fichier : dictionnaire Tesseract (3,8 Mo). |
+| Rendu public volontairement | Nom « Maxence Pithon », `maxence@bouthon.fr` (contact), notes de travail (`CLAUDE.md`, `docs/journal.md`, `docs/bilan_v1.md` : modèles des téléphones d'essai, configuration du PC). |
+
+Méthode, à refaire avant toute nouvelle publication si des fichiers sensibles ont pu être ajoutés : `git log --all --name-only` (chemins), `git grep -I -i -E <motif> $(git rev-list --all)` (contenus), noms de `docs/cellar.csv` cherchés un par un (`git grep -F`), `.docx` extraits avec `git cat-file -p` et leurs `docProps/` et `word/comments.xml` relus.
+
+`README.md` réécrit pour le public (présentation, téléchargement, retours, développeurs, licence).
