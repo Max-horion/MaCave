@@ -2,14 +2,14 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.9.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.10.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.9 |
-| Date | 11 octobre 2026 |
-| Statut | V2 en cours (portage PC) |
+| Version | 0.10 |
+| Date | 13 octobre 2026 |
+| Statut | Portage PC terminé ; diffusion 1.0.0 en préparation |
 
 ### Historique des versions
 
@@ -24,6 +24,7 @@
 | 0.7 | 10 octobre 2026 | Fin de la bêta des moteurs de reconnaissance : ML Kit retiré, Tesseract pour le texte et ZXing pour les codes-barres, application entièrement libre et licence sans exception (7, 10, 11, 12) ; conditions de fin de la V1 (11, 12) ; lecture d’étiquette : lignes regroupées et ajout à la suite d’un champ (6.2) ; volumes proposés de 10 cl à 6 l (7) ; Android 8 à 10 vérifié (9). |
 | 0.8 | 10 octobre 2026 | Clôture de la V1 : statut « V1 terminée » ; conditions de fin remplies (Android 10 vérifié, lecteur de codes-barres libre approuvé) ; points à rediscuter mis à jour (12). |
 | 0.9 | 11 octobre 2026 | Début de la V2 par le portage PC, après l’usage réel de la V1 : Linux, puis Windows, avant les autres fonctions ; ni scan ni lecture d’étiquette sur PC (2.2, 10, 11) ; identifiants dans le trousseau du système sur PC (9) ; points à rediscuter mis à jour (12). |
+| 0.10 | 13 octobre 2026 | Portage PC terminé, Linux et Windows (2.2, 11) ; diffusion privée de la version 1.0.0 sur Android, Windows et Linux : code source public, fichiers publiés sur GitHub, clé de signature Android, retours des utilisateurs (2.2, 9, 10, 11, 12) ; premier lancement : accueil terminé quand la cave est reprise du serveur (6.8) ; pas de partage de fichiers sur PC (10). |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -40,7 +41,8 @@ L’application sera réussie si :
 Un seul utilisateur. L’ajout d’un second utilisateur pourra être envisagé dans une version ultérieure, sans être prévu à ce stade.
 ### 2.2 Supports
 - **V1 :** application Android.
-- **V2 :** application PC (Linux, puis Windows) utilisant la même base de données, à partir du même code, réalisée avant les autres fonctions de la V2 (voir 10).
+- **V2 :** application PC (Linux, puis Windows) utilisant la même base de données, à partir du même code, réalisée avant les autres fonctions de la V2 (voir 10) ; terminée le 13/10/2026.
+- **Versions diffusées :** numérotées 1.0.0, 1.1.0, etc. La 1.0.0, première version diffusée, réunit la V1 et l’application PC ; V1 et V2 désignent les étapes du projet, pas des numéros de version.
 ### 2.3 Hors périmètre
 L’application ne fera pas :
 - de vente, ni d’achat en ligne (aucun lien vers des cavistes ou sites marchands) ;
@@ -179,7 +181,7 @@ Aucune notion de valeur.
 - **Export PDF imprimable :** V2 éventuelle.
 ### 6.8 Premier lancement
 Écran d’accueil en trois étapes, chacune pouvant être passée :
-- Mode de stockage : « Sur cet appareil uniquement » ou « Synchroniser avec un serveur (Nextcloud / WebDAV) » ; si une cave existe déjà sur le serveur, elle est récupérée (nouvel appareil, PC) : sur un appareil dont la cave est encore vide, sans poser la question du 8.2.
+- Mode de stockage : « Sur cet appareil uniquement » ou « Synchroniser avec un serveur (Nextcloud / WebDAV) » ; si une cave existe déjà sur le serveur, elle est récupérée (nouvel appareil, PC) : sur un appareil dont la cave est encore vide, sans poser la question du 8.2. La cave récupérée, l’accueil est terminé : les deux étapes suivantes ne concernent qu’une cave neuve ; si le serveur est vide, l’accueil passe à l’import.
 - Import facultatif d’une cave existante : fichier Vivino ou CSV.
 - Récapitulatif des valeurs par défaut (volumes pré-remplis par type), modifiables immédiatement ou plus tard.
 Les valeurs par défaut et la classification initiale livrées sont celles de ce cahier des charges ; chacun peut les modifier dans les paramètres.
@@ -250,10 +252,10 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Rapidité de saisie** | Ajouter une bouteille en moins de 30 secondes et en moins de 3 manipulations. |
 | **Performances** | Ouverture en moins de 2 secondes ; recherche instantanée, même avec plusieurs milliers de lots. |
 | **Ergonomie** | Utilisable d’une main, dans une cave peu éclairée : contraste élevé, gros boutons, lampe torche au scan ; thème clair ou sombre, qui suit le système par défaut. |
-| **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8 (vérifié sur Android 10 : l’autorisation d’écrire les sauvegardes dans Documents est demandée sur Android 8 à 10, et l’application guide l’utilisateur vers les réglages si elle a été refusée définitivement). |
+| **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8 (vérifié sur Android 10 : l’autorisation d’écrire les sauvegardes dans Documents est demandée sur Android 8 à 10, et l’application guide l’utilisateur vers les réglages si elle a été refusée définitivement). PC : Windows 10 ou 11 (64 bits) ; Linux 64 bits récent (Ubuntu 24.04, Debian 13, Fedora 39 ou plus récents). |
 | **Fiabilité** | Aucune perte de données : l’enregistrement et la synchronisation ne doivent jamais corrompre la base, même en cas de coupure de réseau ou de batterie. |
 | **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé du système (Android ; sur PC, trousseau de la session, par exemple KWallet ou GNOME Keyring), jamais en clair. |
-| **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. Seuls les codes-barres de 8 à 14 chiffres sont envoyés, jamais le contenu d’un QR code ; la recherche Open Food Facts peut être désactivée dans les paramètres. |
+| **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. Seuls les codes-barres de 8 à 14 chiffres sont envoyés, jamais le contenu d’un QR code ; la recherche Open Food Facts peut être désactivée dans les paramètres. Sur Android, l’application ne demande que l’appareil photo, l’accès à Internet et, sur Android 8 à 10 seulement, l’écriture dans le stockage. |
 | **Maintenabilité** | Code commenté, tests automatiques sur les fonctions de base (stock, synchronisation), documentation à jour : le projet doit pouvoir être repris facilement après une longue pause, et par d’autres en cas de diffusion libre. |
 
 ## 10. Choix techniques et réalisation
@@ -261,13 +263,13 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Sujet** | **Choix** |
 |---|---|
 | **Développement** | Par le porteur du projet (débutant en Python), avec Claude Code. |
-| **Technologie** | Flutter (langage Dart) : un seul code pour Android et pour le PC (Linux, puis Windows) ; chaque écran s’adapte à la largeur de la fenêtre. Sur PC, ni scan de code-barres ni lecture d’étiquette : le code est saisi au clavier, ou avec une douchette USB, qui se comporte comme un clavier. |
+| **Technologie** | Flutter (langage Dart) : un seul code pour Android et pour le PC (Linux, puis Windows) ; chaque écran s’adapte à la largeur de la fenêtre. Sur PC, ni scan de code-barres ni lecture d’étiquette : le code est saisi au clavier, ou avec une douchette USB, qui se comporte comme un clavier. Sur PC, pas de partage de fichiers : les exports, le fichier modèle et les sauvegardes sont enregistrés dans un dossier choisi. |
 | **Base de données** | Fichier SQLite local, synchronisé facultativement par WebDAV (Nextcloud ou autre serveur). |
 | **Reconnaissance de texte** | Moteur interchangeable dans le code. Tesseract (libre), retenu après une bêta qui le comparait à ML Kit (Google, non libre) : un peu moins précis, mais il rend l’application entièrement libre. |
 | **Codes-barres** | Lecture sur le téléphone avec ZXing (libre), qui remplace ML Kit ; base Open Food Facts en complément si réseau. |
 | **Budget** | Nul : uniquement des composants et services gratuits. |
 | **Licence** | GNU GPL v3 ou toute version ultérieure, sans exception : l’exception de liaison prévue pour ML Kit a été retirée avec lui. |
-| **Diffusion** | V1 : code privé, fichier APK installé manuellement sur le téléphone. Diffusion à d’autres utilisateurs, pour un usage privé, envisagée dans un second temps ; le canal (dépôt public avec APK, F-Droid, Google Play Store) sera choisi à la fin de la V1 ; sans ML Kit, F-Droid devient possible, le Play Store reste payant. |
+| **Diffusion** | Diffusion privée à partir de la version 1.0.0 : code source public sur GitHub ; fichiers publiés sur la page « Releases » du dépôt : APK Android signé avec la clé de diffusion du projet (à conserver sans limite de durée : sans elle, plus aucune mise à jour possible), installateur Windows pour l’utilisateur seul (non signé), AppImage Linux ; installation manuelle, avec un guide d’installation et un guide d’utilisation ; retours par courriel ou par tickets GitHub, liens dans l’écran « À propos » ; l’application ne vérifie pas elle-même les mises à jour. F-Droid et Google Play Store restent possibles plus tard. |
 
 ## 11. Priorisation
 ### V1 — indispensable
@@ -295,16 +297,16 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 - Statistiques de consommation dans le temps
 - Conservation des photos d’étiquette
 - Export PDF
-- Application PC, en premier (Linux, puis Windows)
+- Application PC, en premier (Linux, puis Windows) — faite le 13/10/2026
 ### Plus tard, éventuellement
 - Second utilisateur
-- Diffusion à d’autres utilisateurs sous licence libre
+- Diffusion plus large (F-Droid, Google Play Store)
 - Traductions de l’interface
 - Synchronisation avec Google Drive, Dropbox ou OneDrive
 - Interprétation automatique plus poussée des étiquettes
 ## 12. Points à rediscuter
-- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel terminé le 11/10/2026 (cave saisie, inventaire vérifié) ; V2 commencée par le portage PC ; diffusion à décider.
-- Canal de diffusion à d’autres utilisateurs, à la fin de la V1.
+- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel terminé le 11/10/2026 (cave saisie, inventaire vérifié) ; portage PC terminé le 13/10/2026 ; diffusion privée de la version 1.0.0 en préparation ; ensuite, les autres fonctions de la V2.
+- Diffusion plus large (F-Droid, Google Play Store), selon les retours de la diffusion privée.
 - Paramètres manquants éventuels, après les tests de la V1.
 - Hors cahier des charges : optimisation de la procédure de sauvegarde du serveur (Raspberry Pi).
 ## 13. Journal des décisions
@@ -362,3 +364,8 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 10/10/2026 | 6.2 | Lecture d’étiquette : lignes voisines regroupées, mots qui annoncent un nom (« Château », « Domaine »…) collés à la ligne suivante, ligne ajoutable à la suite d’un champ déjà rempli. |
 | 10/10/2026 | 11, 12 | V1 terminée : toutes les fonctions V1 faites et vérifiées, conditions de fin remplies, application entièrement libre. Suite à décider : usage réel, diffusion, V2. |
 | 11/10/2026 | 2.2, 10, 11 | Usage réel de la V1 terminé (cave saisie, inventaire vérifié). La V2 commence par le portage PC, avant toute nouvelle fonction : Linux d’abord, puis Windows. Pas de caméra sur PC : ni scan de code-barres ni lecture d’étiquette, code saisi au clavier ou avec une douchette USB. |
+| 11/10/2026 | 6.8 | Synchronisation choisie à l’accueil : si la cave est reprise du serveur, l’accueil est terminé ; si le serveur est vide, il passe à l’import. |
+| 11/10/2026 | 10 | Pas de partage de fichiers sur PC (Linux et Windows) : enregistrement dans un dossier seulement. |
+| 11/10/2026 | 10, 12 | Diffusion privée : version 1.0.0 publiée en même temps pour Android, Windows et Linux ; code source public ; retours par courriel et par tickets GitHub. |
+| 13/10/2026 | 2.2, 11 | Portage PC terminé : Linux et Windows vérifiés en usage réel. La 1.0.0 réunit la V1 et l’application PC ; V1 et V2 restent les étapes du projet. |
+| 13/10/2026 | 9, 10 | Fichiers de diffusion : APK signé avec une clé de diffusion propre au projet, installateur Windows (Inno Setup) et AppImage Linux (Ubuntu 24.04 et plus récents) ; autorisations Android réduites au nécessaire ; dépôt rendu public après vérification de tout son historique. |

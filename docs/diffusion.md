@@ -98,7 +98,7 @@ powershell -ExecutionPolicy Bypass -File tool\paquet_windows.ps1 -NoBuild   # re
 - Installation pour l'utilisateur seul, sans droits d'administrateur, dans `%LOCALAPPDATA%\Programs\Ma Cave`, raccourci « Ma Cave » du menu Démarrer (icône du Bureau proposée, décochée) : mêmes emplacements que `tool\installer_windows.ps1`, l'un remplace l'autre. Ferme Ma Cave si elle est ouverte. Désinstallation par Paramètres → Applications ; les données (`%APPDATA%\fr.bouthon\cave`, `Documents\Cave`) ne sont jamais touchées.
 - Non signé : SmartScreen avertit (« Informations complémentaires » → « Exécuter quand même »), expliqué dans le guide d'installation.
 
-**À vérifier sur le PC Windows** (écrit sous Linux, jamais essayé) : construction sans erreur ; installation (pas de demande d'administrateur, raccourci et icône, appli lancée à la fin, cave existante retrouvée) ; nouvelle installation par-dessus (mise à jour, appli ouverte fermée d'abord) ; désinstallation (raccourci et dossier retirés, données conservées) ; réinstallation.
+**Vérifié sur le PC Windows le 2026-10-13** (Inno Setup 7) : construction sans erreur ; installation (pas de demande d'administrateur, raccourci et icône, appli lancée à la fin, cave existante retrouvée) ; nouvelle installation par-dessus (mise à jour, appli ouverte fermée d'abord) ; désinstallation (raccourci et dossier retirés, données conservées) ; réinstallation.
 
 ## 3. Dépôt public
 
