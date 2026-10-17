@@ -33,6 +33,10 @@ class FakeWebDavServer {
   /// Code renvoyé à toutes les requêtes à la place du fonctionnement normal.
   int? forcedStatus;
 
+  /// Si non nul, toute requête vers le dossier de la cave est redirigée
+  /// (302) vers ce chemin du même serveur.
+  String? redirectTo;
+
   /// Si faux, PUT ne renvoie pas d'ETag (il faut le relire par PROPFIND).
   bool etagOnPut = true;
 
@@ -70,6 +74,10 @@ class FakeWebDavServer {
       return _end(response, 401);
     }
     if (forcedStatus != null) return _end(response, forcedStatus!);
+    if (redirectTo != null && path.startsWith('/cave/')) {
+      response.headers.set('Location', redirectTo!);
+      return _end(response, 302);
+    }
 
     switch (request.method) {
       case 'GET':

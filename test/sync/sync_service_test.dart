@@ -270,6 +270,16 @@ void main() {
       expect((await phone.sync.sync()).uploaded, isTrue);
     });
 
+    test('redirection : jamais suivie, mot de passe gardé', () async {
+      server.redirectTo = '/ailleurs/cave.sqlite';
+      server.put('/ailleurs/cave.sqlite', await fileOf(pc));
+      await expectLater(
+        phone.sync.sync(),
+        throwsA(_problem(SyncProblem.server)),
+      );
+      expect(server.requests, ['GET $remote']);
+    });
+
     test('le dossier est créé au premier envoi', () async {
       server.folders.clear();
       expect((await phone.sync.sync()).uploaded, isTrue);

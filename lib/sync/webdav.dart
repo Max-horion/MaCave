@@ -258,6 +258,10 @@ class WebDavClient {
 
   Future<http.StreamedResponse> _send(http.BaseRequest request) async {
     request.headers['Authorization'] = _auth;
+    // Une redirection n'est jamais suivie : elle emporterait le mot de passe
+    // vers une autre adresse, éventuellement en http:// (audit de sécurité
+    // du 2026-10-17). Elle aboutit à une erreur « serveur ».
+    request.followRedirects = false;
     try {
       return await _http.send(request).timeout(timeout);
     } on TimeoutException catch (e) {
