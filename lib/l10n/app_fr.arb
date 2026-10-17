@@ -112,9 +112,9 @@
       }
     }
   },
-  "cellarSummary": "{bottles} · {drinks}",
+  "cellarSummary": "{bottles} · {drinks} en stock",
   "@cellarSummary": {
-    "description": "Résumé sous le titre : « 12 bouteilles · 5 références ».",
+    "description": "Résumé sous le titre : « 12 bouteilles · 5 références en stock ». Ne compte que le stock, même quand les références épuisées sont affichées.",
     "placeholders": {
       "bottles": {
         "type": "String"
@@ -826,6 +826,15 @@
     "placeholders": {
       "message": {
         "type": "String"
+      }
+    }
+  },
+  "importTooLarge": "Fichier trop gros pour être importé ({max} Mo au plus).",
+  "@importTooLarge": {
+    "description": "Erreur : fichier à importer trop gros.",
+    "placeholders": {
+      "max": {
+        "type": "int"
       }
     }
   },

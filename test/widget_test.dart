@@ -84,7 +84,10 @@ void main() {
 
     expect(find.text('Ma Cave'), findsOneWidget);
     expect(find.text('Votre cave est vide'), findsOneWidget);
-    expect(find.text('Aucune bouteille · Aucune référence'), findsOneWidget);
+    expect(
+      find.text('Aucune bouteille · Aucune référence en stock'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('le thème suit le réglage clair / sombre du système', (
@@ -106,7 +109,7 @@ void main() {
     await settle(tester);
 
     expect(find.text('Bière Imaginaire'), findsOneWidget);
-    expect(find.text('3 bouteilles · 1 référence'), findsOneWidget);
+    expect(find.text('3 bouteilles · 1 référence en stock'), findsOneWidget);
     expect(find.textContaining('33 cl'), findsOneWidget);
   });
 

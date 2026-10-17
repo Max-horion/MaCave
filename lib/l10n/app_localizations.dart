@@ -244,10 +244,10 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{Aucune référence} =1{1 référence} other{{count} références}}'**
   String drinkCount(int count);
 
-  /// Résumé sous le titre : « 12 bouteilles · 5 références ».
+  /// Résumé sous le titre : « 12 bouteilles · 5 références en stock ». Ne compte que le stock, même quand les références épuisées sont affichées.
   ///
   /// In fr, this message translates to:
-  /// **'{bottles} · {drinks}'**
+  /// **'{bottles} · {drinks} en stock'**
   String cellarSummary(String bottles, String drinks);
 
   /// Infobulle du bouton « −1 ».
@@ -1053,6 +1053,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Fichier illisible : {message}'**
   String importUnreadable(String message);
+
+  /// Erreur : fichier à importer trop gros.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier trop gros pour être importé ({max} Mo au plus).'**
+  String importTooLarge(int max);
 
   /// Erreur d'import.
   ///

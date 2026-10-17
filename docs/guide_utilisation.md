@@ -76,7 +76,7 @@ C'est l'écran principal. En haut :
 - **⇅ Trier** : par nom, derniers ajouts, millésime ou stock ;
 - **Filtres** (avec un chiffre quand des filtres sont actifs) ;
 - **⋮ Plus d'actions** : Inventaire, Statistiques, Importer un fichier, Exporter (CSV), Paramètres ;
-- la **barre de recherche** et le résumé : nombre de bouteilles et de références.
+- la **barre de recherche** et le résumé : nombre de bouteilles et de références **en stock** (les références épuisées ne sont pas comptées, même quand elles sont affichées).
 
 Chaque ligne montre le nom, le producteur, l'appellation et les lots en stock (« 2019 · 75 cl »), le nombre de bouteilles, et le bouton **−1**. Un cœur ♥ signale un favori, l'icône ✎ une fiche à compléter.
 

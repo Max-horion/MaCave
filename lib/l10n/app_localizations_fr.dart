@@ -114,7 +114,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String cellarSummary(String bottles, String drinks) {
-    return '$bottles · $drinks';
+    return '$bottles · $drinks en stock';
   }
 
   @override
@@ -693,6 +693,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String importUnreadable(String message) {
     return 'Fichier illisible : $message';
+  }
+
+  @override
+  String importTooLarge(int max) {
+    return 'Fichier trop gros pour être importé ($max Mo au plus).';
   }
 
   @override

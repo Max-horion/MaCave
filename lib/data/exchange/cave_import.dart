@@ -77,6 +77,11 @@ class _Rollback implements Exception {
 ///
 /// [preview] fait tout l'import dans une transaction puis l'annule : le bilan
 /// affiché est exactement celui qu'obtiendra [apply].
+/// Taille maximale d'un fichier à importer : un historique de 21 000
+/// mouvements tient en quelques Mo. Au-delà, le fichier serait lu en entier
+/// en mémoire pour rien (audit de sécurité du 2026-10-17).
+const maxImportMegabytes = 50;
+
 class CaveImporter {
   CaveImporter(this._db, WriteContext ctx)
     : _repo = CaveRepository(_db, ctx),

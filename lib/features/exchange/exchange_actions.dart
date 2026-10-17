@@ -216,7 +216,14 @@ Future<void> pickAndImport(BuildContext context, WidgetRef ref) async {
   try {
     final picked = await FilePicker.pickFiles();
     if (picked.isEmpty) return;
-    content = decodeText(await picked.first.xFile.readAsBytes());
+    final file = picked.first.xFile;
+    if (await file.length() > maxImportMegabytes * 1024 * 1024) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.importTooLarge(maxImportMegabytes))),
+      );
+      return;
+    }
+    content = decodeText(await file.readAsBytes());
   } catch (e) {
     messenger.showSnackBar(
       SnackBar(content: Text(l10n.importUnreadable('$e'))),
