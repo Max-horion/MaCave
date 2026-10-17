@@ -2,14 +2,14 @@
 
 *Version consolidée après arbitrage des questions ouvertes.*
 
-> Converti depuis `cahier_des_charges_gestion_cave_v0.10.docx` (le .docx reste la source de référence).
+> Converti depuis `cahier_des_charges_gestion_cave_v0.11.docx` (le .docx reste la source de référence).
 
 | **Élément** | **Valeur** |
 |---|---|
 | Porteur du projet | Maxence Pithon |
-| Version | 0.10 |
-| Date | 13 octobre 2026 |
-| Statut | Portage PC terminé ; diffusion 1.0.0 en préparation |
+| Version | 0.11 |
+| Date | 17 octobre 2026 |
+| Statut | Version 1.0.0 diffusée ; version 1.0.1 en préparation (audit de sécurité) |
 
 ### Historique des versions
 
@@ -25,6 +25,7 @@
 | 0.8 | 10 octobre 2026 | Clôture de la V1 : statut « V1 terminée » ; conditions de fin remplies (Android 10 vérifié, lecteur de codes-barres libre approuvé) ; points à rediscuter mis à jour (12). |
 | 0.9 | 11 octobre 2026 | Début de la V2 par le portage PC, après l’usage réel de la V1 : Linux, puis Windows, avant les autres fonctions ; ni scan ni lecture d’étiquette sur PC (2.2, 10, 11) ; identifiants dans le trousseau du système sur PC (9) ; points à rediscuter mis à jour (12). |
 | 0.10 | 13 octobre 2026 | Portage PC terminé, Linux et Windows (2.2, 11) ; diffusion privée de la version 1.0.0 sur Android, Windows et Linux : code source public, fichiers publiés sur GitHub, clé de signature Android, retours des utilisateurs (2.2, 9, 10, 11, 12) ; premier lancement : accueil terminé quand la cave est reprise du serveur (6.8) ; pas de partage de fichiers sur PC (10). |
+| 0.11 | 17 octobre 2026 | Audit de sécurité de la version 1.0.0 sur Android, Windows et Linux : connexion chiffrée au serveur obligatoire hors du réseau local, redirections non suivies, fichiers reçus vérifiés et limités en taille, date de purge dans le futur ignorée (8.3, 8.4, 9) ; formules de tableur neutralisées dans l’export CSV, imports limités en taille (6.7) ; mot de passe de synchronisation exclu de la sauvegarde Android (8.4, 9) ; résumé de la liste limité au stock (6.5) ; points à rediscuter mis à jour (12). |
 
 ## 1. Contexte et objectifs
 ### 1.1 Présentation du projet
@@ -170,14 +171,15 @@ Ajout manuel ou assisté par scan. Il est possible d’ajouter des bouteilles au
 - Recherche par texte libre, avec résultats pendant la frappe.
 - Filtres et tris sur les champs de la fiche : type, caractéristiques, région, millésime, nom, date d’ajout, favori, « à compléter »… ; tri par période idéale de consommation en V2.
 - Affichage en liste en V1, avec la référence et le stock.
+- En haut de la liste, un résumé donne le nombre de bouteilles et de références en stock ; les références épuisées n’y sont pas comptées, même quand elles sont affichées.
 ### 6.6 Statistiques
 - **V1 :** nombre total de bouteilles et de références ; répartition par type, par caractéristique et par région.
 - **V2 :** consommation dans le temps (bouteilles sorties par mois ou par an, par type, références les plus consommées).
 Aucune notion de valeur.
 ### 6.7 Import et export
 - **Import Vivino (V1, utilisé une fois) :** fichier cellar.csv de l’export Vivino (vin, producteur, millésime, région, pays, type, quantité). Les volumes absents prennent la valeur par défaut du type ; les fiches incomplètes (région manquante…) sont importées avec le marqueur « à compléter ».
-- **Export CSV (V1) :** deux fichiers, stock (références et lots) et historique, lisibles dans Excel ou LibreOffice ; sert aussi de sauvegarde de secours.
-- **Import CSV (V1) :** au format de l’export, pour restaurer une sauvegarde ou importer une saisie préparée dans un tableur. Pour un fichier préparé à la main, l’application affiche les consignes (colonnes, valeurs acceptées, types et caractéristiques de la cave) et fournit un fichier modèle à remplir ; le volume peut y être écrit en millilitres ou avec son unité (75 cl, 1,5 l).
+- **Export CSV (V1) :** deux fichiers, stock (références et lots) et historique, lisibles dans Excel ou LibreOffice ; sert aussi de sauvegarde de secours. Une cellule qu’un tableur prendrait pour une formule (commençant par =, +, - ou @, hors nombres) est précédée d’une apostrophe, retirée à l’import.
+- **Import CSV (V1) :** au format de l’export, pour restaurer une sauvegarde ou importer une saisie préparée dans un tableur. Pour un fichier préparé à la main, l’application affiche les consignes (colonnes, valeurs acceptées, types et caractéristiques de la cave) et fournit un fichier modèle à remplir ; le volume peut y être écrit en millilitres ou avec son unité (75 cl, 1,5 l). Un fichier de plus de 50 Mo est refusé.
 - **Export PDF imprimable :** V2 éventuelle.
 ### 6.8 Premier lancement
 Écran d’accueil en trois étapes, chacune pouvant être passée :
@@ -220,6 +222,8 @@ Le serveur Nextcloud est accessible hors du domicile. Aucun service supplémenta
 - Moments : à l’ouverture, au retour de l’application au premier plan, quelques secondes après une modification (les saisies sont regroupées), au retour du réseau, sur demande (bouton) ; hors ligne, les modifications attendent le retour du réseau. Uniquement application ouverte : pas de tâche de fond en V1. Synchronisation automatique désactivée : seulement sur demande.
 - Modifications sur deux appareils entre deux synchronisations : les mouvements de stock s’additionnent sans perte ; pour les fiches, la modification la plus récente l’emporte, fiche par fiche.
 - Un indicateur discret affiche l’état : synchronisé, en attente ou erreur.
+- Connexion au serveur chiffrée (https) obligatoire ; une adresse en http n’est acceptée que pour un appareil du réseau local (NAS de la maison). Les redirections du serveur ne sont pas suivies : elles emporteraient le mot de passe vers une autre adresse.
+- Le fichier reçu du serveur n’est jamais considéré comme sûr : taille limitée (200 Mo), structure vérifiée, ses vues et déclencheurs ne sont jamais exécutés ; une date de purge de l’historique postérieure à l’horloge de l’appareil est ignorée, car elle effacerait l’historique de tous les appareils.
 **Traitement des erreurs :**
 - L’absence de réseau n’est pas une erreur : l’état est « en attente », sans message.
 - Les données de l’appareil ne sont jamais modifiées par une erreur : les modifications restent en attente, rien n’est perdu.
@@ -227,8 +231,9 @@ Le serveur Nextcloud est accessible hors du domicile. Aucun service supplémenta
 - L’indicateur passe en orange ou en rouge ; le toucher affiche un message clair et l’action qui corrige :
   - serveur injoignable : « Réessayer » ;
   - identifiants refusés : ouverture des paramètres de synchronisation ;
+  - adresse du serveur en http hors du réseau local (enregistrée avant la version 1.0.1) : ouverture des paramètres de synchronisation ;
   - espace insuffisant sur le serveur : message ;
-  - fichier du serveur illisible ou endommagé : jamais utilisé à la place des données de l’appareil ; mis de côté (renommé) puis remplacé par la version de l’appareil, avec un message ;
+  - fichier du serveur illisible, endommagé, trop gros ou de structure inattendue : jamais utilisé à la place des données de l’appareil ; mis de côté (renommé) puis remplacé par la version de l’appareil, avec un message ;
   - base créée par une version plus récente de l’application : synchronisation suspendue sur cet appareil, invitation à mettre l’application à jour, aucun écrasement.
 - Pas de notification en V1 (pas de tâche de fond) : si l’erreur dure plus de 24 heures, l’indicateur passe au rouge dans l’application.
 - Journal technique des dernières erreurs consultable dans les paramètres.
@@ -240,6 +245,8 @@ Le serveur Nextcloud est accessible hors du domicile. Aucun service supplémenta
 - En mode local, une alerte au premier lancement rappelle que les données ne sont stockées que sur l’appareil.
 - Export CSV et « Sauvegarder maintenant » avec possibilité de partager le fichier (courriel, autre application).
 - Boutons « Sauvegarder maintenant » et « Restaurer ».
+- Un fichier à restaurer est vérifié comme celui du serveur (taille, structure) avant de remplacer la cave.
+- Sauvegarde Android du système (compte Google) : la cave et les réglages y figurent, mais pas le mot de passe de synchronisation, dont la clé ne quitte pas l’appareil ; sur un nouvel appareil, la synchronisation est à réactiver.
 **Contexte serveur :** le stockage du serveur est sur SSD ; les fichiers Nextcloud sont synchronisés sur plusieurs PC ; le serveur fait des sauvegardes automatiques (les deux plus récentes sont conservées), dont une copie locale est prévue avec les fichiers de configuration du serveur web.
 ### 8.5 Photos
 En V1, la photo sert uniquement à extraire les informations, puis elle est supprimée. Volume de données faible : uniquement du texte.
@@ -254,7 +261,7 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | **Ergonomie** | Utilisable d’une main, dans une cave peu éclairée : contraste élevé, gros boutons, lampe torche au scan ; thème clair ou sombre, qui suit le système par défaut. |
 | **Compatibilité** | Android récent (téléphone de référence sous OxygenOS 16, soit Android 16) ; minimum Android 8 (vérifié sur Android 10 : l’autorisation d’écrire les sauvegardes dans Documents est demandée sur Android 8 à 10, et l’application guide l’utilisateur vers les réglages si elle a été refusée définitivement). PC : Windows 10 ou 11 (64 bits) ; Linux 64 bits récent (Ubuntu 24.04, Debian 13, Fedora 39 ou plus récents). |
 | **Fiabilité** | Aucune perte de données : l’enregistrement et la synchronisation ne doivent jamais corrompre la base, même en cas de coupure de réseau ou de batterie. |
-| **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé du système (Android ; sur PC, trousseau de la session, par exemple KWallet ou GNOME Keyring), jamais en clair. |
+| **Sécurité** | Pas d’enjeu sur ces données : pas de verrouillage de l’application. Identifiants du serveur (mot de passe d’application) stockés dans le coffre sécurisé du système (Android ; sur PC, trousseau de la session, par exemple KWallet ou GNOME Keyring), jamais en clair. Connexion au serveur chiffrée, sauf pour un appareil du réseau local ; fichiers reçus (serveur, restauration, import) vérifiés et limités en taille ; à la compilation, la bibliothèque Tesseract4Android est vérifiée par son empreinte. |
 | **Confidentialité** | Aucune donnée ne sort des appareils et du serveur de synchronisation choisi, sauf le code-barres envoyé à Open Food Facts lors d’une recherche, ce que l’application signale. Seuls les codes-barres de 8 à 14 chiffres sont envoyés, jamais le contenu d’un QR code ; la recherche Open Food Facts peut être désactivée dans les paramètres. Sur Android, l’application ne demande que l’appareil photo, l’accès à Internet et, sur Android 8 à 10 seulement, l’écriture dans le stockage. |
 | **Maintenabilité** | Code commenté, tests automatiques sur les fonctions de base (stock, synchronisation), documentation à jour : le projet doit pouvoir être repris facilement après une longue pause, et par d’autres en cas de diffusion libre. |
 
@@ -305,9 +312,11 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 - Synchronisation avec Google Drive, Dropbox ou OneDrive
 - Interprétation automatique plus poussée des étiquettes
 ## 12. Points à rediscuter
-- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel terminé le 11/10/2026 (cave saisie, inventaire vérifié) ; portage PC terminé le 13/10/2026 ; diffusion privée de la version 1.0.0 en préparation ; ensuite, les autres fonctions de la V2.
+- Suite du projet après la V1 (terminée le 10/10/2026) : usage réel terminé le 11/10/2026 (cave saisie, inventaire vérifié) ; portage PC terminé le 13/10/2026 ; version 1.0.0 diffusée le 13/10/2026 ; version 1.0.1 (audit de sécurité) en préparation ; ensuite, les autres fonctions de la V2.
 - Diffusion plus large (F-Droid, Google Play Store), selon les retours de la diffusion privée.
 - Paramètres manquants éventuels, après les tests de la V1.
+- Signature de l’installateur Windows (programme gratuit pour les logiciels libres, par exemple SignPath), pour éviter l’avertissement SmartScreen.
+- Appareil dont l’horloge est très en avance : ses mouvements et ses fiches, datés du futur, l’emportent ensuite sur ceux des autres appareils ; à traiter si le cas se présente.
 - Hors cahier des charges : optimisation de la procédure de sauvegarde du serveur (Raspberry Pi).
 ## 13. Journal des décisions
 
@@ -369,3 +378,6 @@ En V1, la photo sert uniquement à extraire les informations, puis elle est supp
 | 11/10/2026 | 10, 12 | Diffusion privée : version 1.0.0 publiée en même temps pour Android, Windows et Linux ; code source public ; retours par courriel et par tickets GitHub. |
 | 13/10/2026 | 2.2, 11 | Portage PC terminé : Linux et Windows vérifiés en usage réel. La 1.0.0 réunit la V1 et l’application PC ; V1 et V2 restent les étapes du projet. |
 | 13/10/2026 | 9, 10 | Fichiers de diffusion : APK signé avec une clé de diffusion propre au projet, installateur Windows (Inno Setup) et AppImage Linux (Ubuntu 24.04 et plus récents) ; autorisations Android réduites au nécessaire ; dépôt rendu public après vérification de tout son historique. |
+| 17/10/2026 | 6.5 | Résumé de la liste : bouteilles et références en stock seulement, avec la mention « en stock » (les références épuisées affichées ne sont pas comptées). |
+| 17/10/2026 | 8.3, 9 | Audit de sécurité : connexion https obligatoire hors du réseau local ; redirections du serveur non suivies ; fichiers reçus vérifiés (structure, 200 Mo au plus) ; date de purge dans le futur ignorée. |
+| 17/10/2026 | 6.7, 8.4, 10 | Formules de tableur neutralisées dans l’export CSV ; imports de 50 Mo au plus ; mot de passe de synchronisation exclu de la sauvegarde Android ; empreinte de Tesseract4Android vérifiée à la compilation. Toutes les corrections de l’audit entrent dans la version 1.0.1. |

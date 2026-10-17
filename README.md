@@ -43,7 +43,7 @@ flutter test
 flutter run -d linux        # ou : un téléphone Android branché, ou -d windows sous Windows
 ```
 
-- [`docs/cahier_des_charges_v0.10.md`](docs/cahier_des_charges_v0.10.md) : cahier des charges, qui fait foi.
+- [`docs/cahier_des_charges_v0.11.md`](docs/cahier_des_charges_v0.11.md) : cahier des charges, qui fait foi.
 - [`docs/architecture.md`](docs/architecture.md) : bibliothèques, schéma de la base, synchronisation.
 - [`CLAUDE.md`](CLAUDE.md) : état d'avancement, conventions et pièges rencontrés.
 - [`docs/diffusion.md`](docs/diffusion.md) : construction des fichiers de diffusion.

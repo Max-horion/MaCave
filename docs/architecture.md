@@ -1,7 +1,7 @@
 # Architecture technique — Ma Cave
 
 > **Statut : validée le 5 octobre 2026.**
-> Référence fonctionnelle : [cahier_des_charges_v0.10.md](cahier_des_charges_v0.10.md) (CDC).
+> Référence fonctionnelle : [cahier_des_charges_v0.11.md](cahier_des_charges_v0.11.md) (CDC).
 
 ## 1. Bibliothèques retenues
 
@@ -97,7 +97,7 @@ Le serveur contient un seul fichier, `cave.sqlite`, dans le dossier choisi. Aucu
 ### Un cycle de synchronisation
 
 1. **Télécharger si nécessaire** : `GET cave.sqlite` avec `If-None-Match: <dernier ETag connu>`. Réponse « 304 inchangé » → passer directement à l'étape 4.
-2. **Vérifier le fichier reçu** (copie temporaire) : intégrité SQLite (`PRAGMA integrity_check`), même `cave_id`, version de schéma ≤ celle de l'appli.
+2. **Vérifier le fichier reçu** (copie temporaire) : taille (200 Mo au plus, téléchargement arrêté au-delà), intégrité SQLite (`PRAGMA integrity_check`), tables lues qui sont de vraies tables (pas des vues), même `cave_id`, version de schéma ≤ celle de l'appli. Le fichier n'est jamais tenu pour sûr (version 1.0.1, audit de sécurité) : ouvert avec `trusted_schema=OFF`, et la copie mise au schéma actuel (`migratedCopy`) perd d'abord toutes ses vues et ses déclencheurs ; seules ses tables sont lues.
    - fichier endommagé → renommé côté serveur (`MOVE` vers `cave.sqlite.endommage-<date>`), puis remplacé par la version de l'appareil, avec un message ;
    - version plus récente → synchro suspendue, invitation à mettre l'appli à jour ;
    - `cave_id` différent → ce n'est pas la même cave : on ne fusionne jamais, l'utilisateur choisit (CDC §8.2).
@@ -119,6 +119,7 @@ Fait au lot 4c (`lib/sync/webdav.dart`, `lib/sync/sync_service.dart`). Après un
 - À l'ouverture et au retour au premier plan, 10 secondes après une modification (regroupées), à la mise en arrière-plan si une modification attend, au retour du réseau, sur le bouton « Synchroniser maintenant » (`lib/sync/sync_controller.dart`). Appli ouverte seulement (pas de tâche de fond en V1).
 - Pas de réseau → état « en attente », sans message. Erreurs → nouvelles tentatives espacées (1 min, 5 min, 30 min), puis à chaque ouverture ; pas de nouvel essai automatique si seul l'utilisateur peut corriger (identifiants, dossier, version, autre cave). Après 24 h d'erreur, l'indicateur passe au rouge (pas de notification en V1).
 - Paramètres (adresse, identifiant, dossier) dans les préférences de l'appareil, mot de passe dans le coffre sécurisé ; ils ne sont enregistrés qu'après une première synchronisation réussie.
+- Sécurité (version 1.0.1) : `https://` obligatoire, sauf pour un appareil du réseau local (`isLocalHost` : IP privées, 100.64/10, noms sans point ou en `.local`, `.lan`, `.home.arpa`…) ; les redirections ne sont jamais suivies (elles emporteraient l'en-tête `Authorization`).
 - La base locale n'est modifiée qu'à l'étape 3, en transaction : une erreur réseau ne peut jamais l'abîmer.
 - Les horloges des appareils servent à départager les fiches : un téléphone synchronisé à l'heure réseau suffit pour un usage personnel.
 
@@ -133,6 +134,7 @@ Une purge doit aussi se propager, sinon la fusion ferait revenir les mouvements 
 Fait au lot 4e (`lib/data/history_purge.dart`) :
 - avant d'effacer, chaque lot reçoit un **report de stock** : un inventaire, à la date de purge, du stock à cette date. Comme un inventaire remplace le stock, les mouvements antérieurs n'ont plus d'effet et peuvent disparaître sans changer aucun stock. Son identifiant est dérivé du lot et de la date : deux appareils qui purgent à la même date produisent le même report ;
 - la date ne recule jamais : la fusion prend la plus récente des deux bases et la réécrit si besoin ;
+- une date postérieure à l'horloge de l'appareil + 1 jour est ignorée (`HistoryPurge.clockTolerance`, version 1.0.1) : venue d'un fichier abîmé ou modifié, elle effacerait l'historique de tous les appareils et bloquerait pour toujours l'arrivée des mouvements ;
 - la purge manuelle est limitée aux mouvements de plus de 30 jours, pour laisser aux autres appareils le temps d'envoyer leurs mouvements ;
 - purge automatique : lot, mouvements et référence sans autre lot supprimés logiquement ; réglage commun (`settings`), désactivé par défaut.
 - Pas encore fait : l'effacement définitif des pierres tombales anciennes (gain de place faible, risque de résurrection par un appareil resté longtemps hors ligne).
