@@ -25,7 +25,10 @@ Mise à jour : installez le nouveau fichier par-dessus l'ancien, sans désinstal
 Empreintes SHA-256 (aussi dans `SHA256SUMS.txt`) :
 
 ```
-@SHA256SUMS@
+5fe331d1a04d45494e66c951d0041ff237aa310c63016b65636bd2c95d533851  MaCave-1.0.1-android.apk
+9c4dd84453a9b1177af829fe4eade45794c9fffad28919f2f67e9ff0ee91be55  MaCave-1.0.1-android-armv7.apk
+23d9c0b42cca3d4116825992ef4fbafa1fbde75c97e23b38bebc18d6dd7d4749  MaCave-1.0.1-linux-x86_64.AppImage
+0498cc63efde26fcdb04f1ff946f42c2f0fe0b650d6b115d0b5cb6e9ec826f4a  MaCave-1.0.1-windows-setup.exe
 ```
 
 Les APK sont signés par la clé de Ma Cave, d'empreinte SHA-256 `af941f5159bf226af3c8b2e1c8ca10d0c47b971b2771a4efdbac0cb3391cc3ea`, la même que pour la 1.0.0.
