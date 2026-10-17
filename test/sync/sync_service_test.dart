@@ -280,6 +280,33 @@ void main() {
       expect(server.requests, ['GET $remote']);
     });
 
+    test('fichier trop gros : téléchargement arrêté, fichier fermé', () async {
+      server.put('/cave/gros.sqlite', List.filled(300000, 1));
+      final client = WebDavClient(
+        folder: server.folderUri,
+        user: FakeWebDavServer.user,
+        password: FakeWebDavServer.password,
+      );
+      addTearDown(client.close);
+      final target = File('${root.path}/gros.sqlite');
+      await expectLater(
+        client.download('gros.sqlite', target, maxBytes: 100000),
+        throwsA(
+          isA<WebDavException>().having(
+            (e) => e.problem,
+            'problem',
+            WebDavProblem.server,
+          ),
+        ),
+      );
+      // Fichier fermé : il peut être supprimé (sous Windows aussi).
+      target.deleteSync();
+      // Sous la limite, rien ne change.
+      final ok = await client.download('gros.sqlite', target, maxBytes: 300000);
+      expect(ok.status, DownloadStatus.downloaded);
+      expect(target.lengthSync(), 300000);
+    });
+
     test('le dossier est créé au premier envoi', () async {
       server.folders.clear();
       expect((await phone.sync.sync()).uploaded, isTrue);

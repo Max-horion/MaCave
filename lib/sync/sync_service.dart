@@ -160,6 +160,7 @@ class SyncService {
         fileName,
         received,
         ifNoneMatch: known,
+        maxBytes: maxCaveFileBytes,
       );
 
       switch (got.status) {
@@ -274,7 +275,11 @@ class SyncService {
       final temp = await _tempFolder();
       final received = File('${temp.path}/synchro-serveur.sqlite');
       try {
-        final got = await _client.download(fileName, received);
+        final got = await _client.download(
+          fileName,
+          received,
+          maxBytes: maxCaveFileBytes,
+        );
         if (got.status != DownloadStatus.downloaded) {
           throw const SyncException(
             SyncProblem.folderNotFound,

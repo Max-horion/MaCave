@@ -50,13 +50,62 @@ class CaveFileInfo {
   final int bottles;
 }
 
-/// Vérifie un fichier de base sans le modifier : intégrité SQLite, version de
-/// schéma au plus égale à [currentVersion], présence d'un `cave_id`.
+/// Taille maximale d'un fichier de base reçu (serveur, restauration) : une
+/// cave de 5 000 références et 21 000 mouvements pèse une dizaine de Mo. Au
+/// delà, le fichier n'est pas une vraie cave (audit de sécurité du
+/// 2026-10-17 : un fichier énorme remplirait le disque ou la mémoire).
+const maxCaveFileBytes = 200 * 1024 * 1024;
+
+/// Tables lues dans un fichier reçu : présentes depuis la version 1 du
+/// schéma.
+const _dataTables = [
+  'drink_types',
+  'characteristic_families',
+  'characteristics',
+  'drinks',
+  'drink_characteristics',
+  'lots',
+  'movements',
+  'settings',
+  'meta',
+];
+
+/// Un fichier reçu n'est pas digne de confiance (fichier choisi par
+/// l'utilisateur, modifié sur le serveur) : ses vues et déclencheurs
+/// pourraient exécuter des requêtes à notre place. Chaque table lue doit
+/// être une vraie table, pas une vue.
+void _requireDataTables(Database file) {
+  final kinds = {
+    for (final row in file.select(
+      "SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view')",
+    ))
+      row['name'] as String: row['type'] as String,
+  };
+  for (final name in _dataTables) {
+    if (kinds[name] != 'table') {
+      throw CaveFileException(
+        CaveFileProblem.notACave,
+        '$name : ${kinds[name] ?? 'absente'}',
+      );
+    }
+  }
+}
+
+/// Vérifie un fichier de base sans le modifier : taille, intégrité SQLite,
+/// tables attendues, version de schéma au plus égale à [currentVersion],
+/// présence d'un `cave_id`.
 ///
 /// Lève [CaveFileException] si le fichier ne peut pas être utilisé.
 CaveFileInfo inspectCaveFile(String path, {required int currentVersion}) {
-  if (!File(path).existsSync()) {
+  final source = File(path);
+  if (!source.existsSync()) {
     throw CaveFileException(CaveFileProblem.unreadable, 'absent : $path');
+  }
+  if (source.lengthSync() > maxCaveFileBytes) {
+    throw CaveFileException(
+      CaveFileProblem.unreadable,
+      'fichier trop gros (${source.lengthSync()} octets)',
+    );
   }
   final Database file;
   try {
@@ -65,6 +114,9 @@ CaveFileInfo inspectCaveFile(String path, {required int currentVersion}) {
     throw CaveFileException(CaveFileProblem.unreadable, e.message);
   }
   try {
+    // Les fonctions « à risque » ne peuvent pas être appelées par le schéma
+    // du fichier (vues, déclencheurs, index).
+    file.execute('PRAGMA trusted_schema = OFF');
     final check = file.select('PRAGMA integrity_check');
     if (check.length != 1 || check.first.values.first != 'ok') {
       throw CaveFileException(
@@ -79,6 +131,7 @@ CaveFileInfo inspectCaveFile(String path, {required int currentVersion}) {
     if (version < 1 || hasMeta.isEmpty) {
       throw const CaveFileException(CaveFileProblem.notACave);
     }
+    _requireDataTables(file);
     if (version > currentVersion) {
       throw CaveFileException(
         CaveFileProblem.newerVersion,
@@ -150,10 +203,15 @@ Future<String> contentFingerprint(CaveDatabase db) async {
 /// Copie [source] dans [copyPath] et la met à niveau vers le schéma actuel
 /// (migrations drift habituelles). Le fichier d'origine n'est pas modifié.
 /// [source] doit avoir été vérifié par [inspectCaveFile].
+///
+/// Les vues et déclencheurs du fichier sont supprimés de la copie avant la
+/// migration : ils pourraient venir de n'importe qui, et la copie ne sert
+/// qu'à être lue (les migrations recréent ceux dont elles ont besoin).
 Future<void> migratedCopy(String source, String copyPath) async {
   final copy = File(copyPath);
   if (copy.existsSync()) copy.deleteSync();
   await File(source).copy(copyPath);
+  _dropSchemaCode(copyPath);
   // Une seconde instance de CaveDatabase, sur un autre fichier : voulu ici,
   // on coupe l'avertissement de drift le temps de la créer.
   final warned = driftRuntimeOptions.dontWarnAboutMultipleDatabases;
@@ -165,6 +223,36 @@ Future<void> migratedCopy(String source, String copyPath) async {
     await db.customSelect('SELECT 1').get();
   } finally {
     await db.close();
+  }
+}
+
+/// Supprime les vues et déclencheurs du fichier [path], puis vérifie que les
+/// tables lues sont bien des tables. Lève [CaveFileException].
+void _dropSchemaCode(String path) {
+  final Database file;
+  try {
+    file = sqlite3.open(path);
+  } on SqliteException catch (e) {
+    throw CaveFileException(CaveFileProblem.unreadable, e.message);
+  }
+  try {
+    file.execute('PRAGMA trusted_schema = OFF');
+    final objects = file.select(
+      "SELECT type, name FROM sqlite_master WHERE type IN ('trigger', 'view')",
+    );
+    for (final row in objects) {
+      final name = (row['name'] as String).replaceAll('"', '""');
+      file.execute(
+        row['type'] == 'view'
+            ? 'DROP VIEW IF EXISTS "$name"'
+            : 'DROP TRIGGER IF EXISTS "$name"',
+      );
+    }
+    _requireDataTables(file);
+  } on SqliteException catch (e) {
+    throw CaveFileException(CaveFileProblem.unreadable, e.message);
+  } finally {
+    file.close();
   }
 }
 

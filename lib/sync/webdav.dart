@@ -104,11 +104,14 @@ class WebDavClient {
   }
 
   /// Télécharge [name] dans [target]. Avec [ifNoneMatch] (dernier ETag connu),
-  /// le serveur répond « inchangé » sans renvoyer le fichier.
+  /// le serveur répond « inchangé » sans renvoyer le fichier. Au-delà de
+  /// [maxBytes], le téléchargement s'arrête ([WebDavProblem.server]) : un
+  /// fichier anormalement gros remplirait le disque.
   Future<DownloadResult> download(
     String name,
     File target, {
     String? ifNoneMatch,
+    int? maxBytes,
   }) async {
     final request = http.Request('GET', _uri(name));
     if (ifNoneMatch != null) request.headers['If-None-Match'] = ifNoneMatch;
@@ -122,13 +125,38 @@ class WebDavClient {
         return const DownloadResult(DownloadStatus.absent);
       case 200:
         // Écriture en flux : le fichier n'est jamais entièrement en mémoire.
+        final length = response.contentLength;
+        if (maxBytes != null && length != null && length > maxBytes) {
+          await response.stream.drain<void>();
+          throw WebDavException(WebDavProblem.server, 'fichier trop gros');
+        }
+        var received = 0;
         final sink = target.openWrite();
         try {
-          await response.stream.timeout(timeout).pipe(sink);
+          await sink.addStream(
+            response.stream.timeout(timeout).map((chunk) {
+              received += chunk.length;
+              if (maxBytes != null && received > maxBytes) {
+                throw const WebDavException(
+                  WebDavProblem.server,
+                  'fichier trop gros',
+                );
+              }
+              return chunk;
+            }),
+          );
         } on TimeoutException catch (e) {
           throw WebDavException(WebDavProblem.unreachable, '$e');
         } on IOException catch (e) {
           throw WebDavException(WebDavProblem.unreachable, '$e');
+        } finally {
+          // Toujours fermé, même après une erreur : sous Windows, un fichier
+          // encore ouvert ne peut pas être supprimé.
+          try {
+            await sink.close();
+          } on IOException {
+            // Déjà signalé par l'erreur d'écriture.
+          }
         }
         return DownloadResult(DownloadStatus.downloaded, _etagOf(response));
     }
