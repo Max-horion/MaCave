@@ -254,6 +254,7 @@ Elle fonctionne avec **votre propre serveur** : Nextcloud, ou tout serveur WebDA
 - **Nextcloud** : adresse du serveur (par exemple `cloud.exemple.fr`), identifiant, **mot de passe d'application** et dossier sur le serveur (`Cave` par défaut, créé s'il n'existe pas et modifiable si nécessaire).
   - Le mot de passe d'application se crée dans Nextcloud : *Paramètres personnels › Sécurité › Créer un nouveau mot de passe d'application*. Il est rangé dans le coffre sécurisé de l'appareil, jamais en clair.
 - **Autre serveur WebDAV** : l'adresse complète du dossier.
+- L'adresse doit commencer par `https://` (connexion chiffrée ; c'est le cas si vous ne tapez que `cloud.exemple.fr`). Une adresse en `http://` n'est acceptée que pour un appareil de votre réseau local, par exemple un NAS à la maison (`http://192.168.1.20:5005/webdav/cave`) ; sinon le message « Adresse non chiffrée » s'affiche.
 
 Puis **Activer la synchronisation**.
 

@@ -125,6 +125,23 @@ void main() {
     expect(await SyncSettingsStore(store, secrets).load(), isNotNull);
   });
 
+  test('adresse http:// enregistrée avant la 1.0.1 : erreur, pas de '
+      'plantage ni de requête', () async {
+    await SyncSettingsStore(store, secrets).save(
+      const SyncSettings(
+        kind: ServerKind.other,
+        server: 'http://cloud.exemple.fr/webdav/cave',
+        user: 'max',
+      ),
+      'secret',
+    );
+    await controller().start();
+    expect(state().status, SyncStatus.error);
+    expect(state().problem, SyncProblem.insecureAddress);
+    await controller().syncNow();
+    expect(state().problem, SyncProblem.insecureAddress);
+  });
+
   test('identifiants refusés : rien n\'est enregistré', () async {
     await expectLater(
       controller().activate(settings(), 'faux'),

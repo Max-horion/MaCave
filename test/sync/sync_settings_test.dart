@@ -63,6 +63,65 @@ void main() {
     expect(uri.toString(), 'http://nas.local:5005/webdav/cave/');
   });
 
+  group('http:// refusé hors du réseau local', () {
+    Uri other(String server) => SyncSettings(
+      kind: ServerKind.other,
+      server: server,
+      user: 'max',
+    ).folderUri();
+
+    test('serveur sur Internet : refusé, https:// accepté', () {
+      expect(
+        () => other('http://cloud.exemple.fr/remote.php/dav/files/max/Cave'),
+        throwsA(isA<InsecureAddressException>()),
+      );
+      expect(
+        () => nextcloud('http://cloud.exemple.fr'),
+        throwsA(isA<InsecureAddressException>()),
+      );
+      expect(
+        () => other('http://8.8.8.8/webdav'),
+        throwsA(isA<InsecureAddressException>()),
+      );
+      expect(
+        () => other('http://172.32.0.1/webdav'),
+        throwsA(isA<InsecureAddressException>()),
+      );
+      expect(
+        other('https://cloud.exemple.fr/webdav').toString(),
+        'https://cloud.exemple.fr/webdav/',
+      );
+    });
+
+    test('appareil du réseau local : accepté', () {
+      for (final host in [
+        'localhost',
+        '127.0.0.1',
+        '10.0.0.5',
+        '172.16.0.2',
+        '172.31.255.1',
+        '192.168.1.20',
+        '169.254.3.4',
+        '100.101.102.103',
+        'nas',
+        'nas.local',
+        'nas.home.arpa',
+        'box.lan',
+        '[::1]',
+        '[fd12:3456::1]',
+        '[fe80::1]',
+      ]) {
+        expect(other('http://$host:8080/webdav').scheme, 'http', reason: host);
+      }
+    });
+
+    test('isLocalHost ne se laisse pas tromper par un nom', () {
+      expect(isLocalHost('192.168.1.1.exemple.fr'), isFalse);
+      expect(isLocalHost('local.exemple.fr'), isFalse);
+      expect(isLocalHost('2001:db8::1'), isFalse);
+    });
+  });
+
   test('même cible : même adresse finale et même utilisateur', () {
     const a = SyncSettings(
       kind: ServerKind.nextcloud,

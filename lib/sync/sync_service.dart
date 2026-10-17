@@ -49,6 +49,10 @@ enum SyncProblem {
   /// Coffre sécurisé inutilisable (sur PC : pas de trousseau de session, ou
   /// accès refusé) : le mot de passe ne peut être ni rangé ni relu.
   secretStore,
+
+  /// Adresse enregistrée en `http://` hors du réseau local (refusée depuis la
+  /// 1.0.1) : la corriger dans les paramètres de synchronisation.
+  insecureAddress,
 }
 
 class SyncException implements Exception {

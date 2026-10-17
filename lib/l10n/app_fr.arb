@@ -1303,6 +1303,10 @@
   "@syncInvalidAddress": {
     "description": "Message d'erreur : adresse du serveur incorrecte."
   },
+  "syncInsecureAddress": "Adresse non chiffrée : utilisez https://. L'adresse http:// n'est acceptée que pour un appareil du réseau local.",
+  "@syncInsecureAddress": {
+    "description": "Message d'erreur du formulaire : adresse en http:// hors du réseau local."
+  },
   "syncActivate": "Activer la synchronisation",
   "@syncActivate": {
     "description": "Bouton : activer la synchronisation avec les paramètres saisis."
@@ -1432,6 +1436,10 @@
   "syncProblemConflict": "Le fichier du serveur changeait pendant l'envoi. Nouvel essai automatique.",
   "@syncProblemConflict": {
     "description": "Erreur : conflit d'écriture répété."
+  },
+  "syncProblemInsecureAddress": "L'adresse du serveur commence par http:// : le mot de passe et la cave circuleraient sans chiffrement sur Internet. Remplacez-la par une adresse en https:// dans les paramètres de synchronisation.",
+  "@syncProblemInsecureAddress": {
+    "description": "Erreur : adresse enregistrée en http:// hors du réseau local, refusée depuis la version 1.0.1."
   },
   "syncProblemSecretStore": "Le mot de passe ne peut pas être rangé dans le coffre sécurisé de l'appareil. Sur un ordinateur, il faut un trousseau (KWallet ou GNOME Keyring) installé et déverrouillé. Rien n'a été modifié.",
   "@syncProblemSecretStore": {

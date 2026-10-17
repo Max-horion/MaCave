@@ -1600,6 +1600,12 @@ abstract class AppLocalizations {
   /// **'Adresse invalide'**
   String get syncInvalidAddress;
 
+  /// Message d'erreur du formulaire : adresse en http:// hors du réseau local.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse non chiffrée : utilisez https://. L\'adresse http:// n\'est acceptée que pour un appareil du réseau local.'**
+  String get syncInsecureAddress;
+
   /// Bouton : activer la synchronisation avec les paramètres saisis.
   ///
   /// In fr, this message translates to:
@@ -1779,6 +1785,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le fichier du serveur changeait pendant l\'envoi. Nouvel essai automatique.'**
   String get syncProblemConflict;
+
+  /// Erreur : adresse enregistrée en http:// hors du réseau local, refusée depuis la version 1.0.1.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'adresse du serveur commence par http:// : le mot de passe et la cave circuleraient sans chiffrement sur Internet. Remplacez-la par une adresse en https:// dans les paramètres de synchronisation.'**
+  String get syncProblemInsecureAddress;
 
   /// Erreur : coffre sécurisé (trousseau du PC) inutilisable.
   ///

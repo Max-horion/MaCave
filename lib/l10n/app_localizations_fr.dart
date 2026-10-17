@@ -1065,6 +1065,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncInvalidAddress => 'Adresse invalide';
 
   @override
+  String get syncInsecureAddress =>
+      'Adresse non chiffrée : utilisez https://. L\'adresse http:// n\'est acceptée que pour un appareil du réseau local.';
+
+  @override
   String get syncActivate => 'Activer la synchronisation';
 
   @override
@@ -1171,6 +1175,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get syncProblemConflict =>
       'Le fichier du serveur changeait pendant l\'envoi. Nouvel essai automatique.';
+
+  @override
+  String get syncProblemInsecureAddress =>
+      'L\'adresse du serveur commence par http:// : le mot de passe et la cave circuleraient sans chiffrement sur Internet. Remplacez-la par une adresse en https:// dans les paramètres de synchronisation.';
 
   @override
   String get syncProblemSecretStore =>

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -17,6 +18,44 @@ enum ServerKind {
   /// Tout autre serveur WebDAV (ownCloud, NAS, hébergeur) : adresse complète
   /// du dossier.
   other,
+}
+
+/// Adresse en `http://` (non chiffrée) hors du réseau local : refusée, car le
+/// mot de passe et toute la cave y circuleraient en clair (audit de sécurité
+/// du 2026-10-17).
+class InsecureAddressException extends FormatException {
+  const InsecureAddressException([Object? source])
+    : super('http:// hors du réseau local', source);
+}
+
+/// [host] désigne un appareil du réseau local (NAS de la maison…) : seule
+/// exception admise au chiffrement obligatoire. Adresses IP privées, de
+/// bouclage et de lien local (IPv4 et IPv6), plage 100.64/10 des réseaux
+/// privés virtuels (Tailscale), noms sans point (« nas ») ou se terminant
+/// par un suffixe réservé aux réseaux privés (« nas.local »).
+bool isLocalHost(String host) {
+  final name = host.toLowerCase();
+  if (name == 'localhost' || name.endsWith('.localhost')) return true;
+  final ip = InternetAddress.tryParse(name);
+  if (ip == null) {
+    if (!name.contains('.')) return true;
+    const suffixes = ['.local', '.lan', '.home', '.home.arpa', '.internal'];
+    return suffixes.any(name.endsWith);
+  }
+  final b = ip.rawAddress;
+  if (ip.type == InternetAddressType.IPv4) {
+    return b[0] == 127 ||
+        b[0] == 10 ||
+        (b[0] == 172 && b[1] >= 16 && b[1] <= 31) ||
+        (b[0] == 192 && b[1] == 168) ||
+        (b[0] == 169 && b[1] == 254) ||
+        (b[0] == 100 && b[1] >= 64 && b[1] <= 127);
+  }
+  // IPv6 : bouclage, adresses uniques locales (fc00::/7), lien local
+  // (fe80::/10).
+  return ip.isLoopback ||
+      (b[0] & 0xfe) == 0xfc ||
+      (b[0] == 0xfe && (b[1] & 0xc0) == 0x80);
 }
 
 /// Paramètres saisis sur l'écran Synchronisation.
@@ -43,7 +82,9 @@ class SyncSettings {
   final String folder;
 
   /// Adresse WebDAV du dossier de la cave, terminée par « / ». Lève
-  /// [FormatException] si l'adresse saisie n'est pas utilisable.
+  /// [FormatException] si l'adresse saisie n'est pas utilisable, et en
+  /// particulier [InsecureAddressException] pour une adresse `http://` hors
+  /// du réseau local.
   Uri folderUri() {
     var text = server.trim();
     if (text.isEmpty) throw const FormatException('adresse vide');
@@ -51,6 +92,9 @@ class SyncSettings {
     final base = Uri.parse(text);
     if (!{'http', 'https'}.contains(base.scheme) || base.host.isEmpty) {
       throw FormatException('adresse invalide', server);
+    }
+    if (base.scheme == 'http' && !isLocalHost(base.host)) {
+      throw InsecureAddressException(server);
     }
     final List<String> segments;
     switch (kind) {

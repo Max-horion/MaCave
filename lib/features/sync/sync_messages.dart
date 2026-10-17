@@ -20,12 +20,14 @@ String syncProblemMessage(AppLocalizations l10n, SyncProblem problem) =>
       SyncProblem.otherCave => l10n.syncProblemOtherCave,
       SyncProblem.conflict => l10n.syncProblemConflict,
       SyncProblem.secretStore => l10n.syncProblemSecretStore,
+      SyncProblem.insecureAddress => l10n.syncProblemInsecureAddress,
     };
 
 /// L'erreur ne se corrige que dans les paramètres de synchronisation.
 bool problemNeedsSettings(SyncProblem? problem) =>
     problem == SyncProblem.unauthorized ||
-    problem == SyncProblem.folderNotFound;
+    problem == SyncProblem.folderNotFound ||
+    problem == SyncProblem.insecureAddress;
 
 /// Titre de l'état (« Synchronisé », « Erreur… »).
 String syncStatusTitle(AppLocalizations l10n, SyncState state) =>

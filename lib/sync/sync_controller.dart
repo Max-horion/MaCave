@@ -239,7 +239,21 @@ class SyncController extends Notifier<SyncState> {
       return;
     }
     _current?.client.close();
-    _current = _open(saved.settings, saved.password);
+    _current = null;
+    try {
+      _current = _open(saved.settings, saved.password);
+    } on FormatException catch (e) {
+      // Adresse enregistrée devenue inutilisable (http:// refusé depuis la
+      // 1.0.1) : la cave reste utilisable, l'erreur s'affiche.
+      state = SyncState(
+        status: SyncStatus.error,
+        problem: e is InsecureAddressException
+            ? SyncProblem.insecureAddress
+            : SyncProblem.folderNotFound,
+        detail: e.message,
+      );
+      return;
+    }
     final automatic = await _env.store.getString(automaticKey) != 'false';
     state = SyncState(
       status: SyncStatus.synced,
@@ -521,6 +535,7 @@ class SyncController extends Notifier<SyncState> {
       SyncProblem.newerVersion,
       SyncProblem.otherCave,
       SyncProblem.secretStore,
+      SyncProblem.insecureAddress,
     };
     if (userMustAct.contains(e.problem) || !state.automatic) return;
     if (_retryIndex < _env.retryDelays.length) {

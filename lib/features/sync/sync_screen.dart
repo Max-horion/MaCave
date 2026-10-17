@@ -424,12 +424,16 @@ class _SyncFormState extends State<_SyncForm> {
               hintText: _kind == ServerKind.nextcloud
                   ? l10n.syncServerHint
                   : l10n.syncUrlHint,
+              // Message « adresse non chiffrée » sur plusieurs lignes.
+              errorMaxLines: 3,
             ),
             validator: (value) {
               final missing = required(value);
               if (missing != null) return missing;
               try {
                 _settings.folderUri();
+              } on InsecureAddressException {
+                return l10n.syncInsecureAddress;
               } on FormatException {
                 return l10n.syncInvalidAddress;
               }

@@ -155,7 +155,7 @@ Dans Ma Cave (**Synchroniser avec un serveur**, ou **⋮ → Paramètres → Syn
 
 Si vous synchronisez aussi vos fichiers Nextcloud sur votre ordinateur avec le client Nextcloud, ne touchez pas au dossier `Cave` ainsi copié (ou excluez-le de la synchronisation) : c'est Ma Cave qui gère ce dossier.
 
-**Autre serveur WebDAV** (NAS, hébergeur) : choisissez **Autre serveur WebDAV** et indiquez l'**adresse complète du dossier**, fournie par votre NAS ou votre hébergeur (par exemple `https://nas.exemple.fr/webdav/cave`).
+**Autre serveur WebDAV** (NAS, hébergeur) : choisissez **Autre serveur WebDAV** et indiquez l'**adresse complète du dossier**, fournie par votre NAS ou votre hébergeur (par exemple `https://nas.exemple.fr/webdav/cave`). Elle doit commencer par `https://` ; `http://` n'est accepté que pour un NAS de votre réseau local.
 
 ---
 
