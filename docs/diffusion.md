@@ -136,7 +136,7 @@ Méthode, à refaire avant toute nouvelle publication si des fichiers sensibles 
 
 ## 5. Sécurité de la publication (audit du 2026-10-17)
 
-- **Compte GitHub** : la double authentification doit être activée (*Settings › Password and authentication*). Un compte piraté pourrait remplacer les fichiers d'une version **et** leur `SHA256SUMS.txt`, publiés sur la même page.
+- **Compte GitHub** : la double authentification doit être activée (*Settings › Password and authentication*) — active, vérifiée par le porteur le 2026-10-17. Un compte piraté pourrait remplacer les fichiers d'une version **et** leur `SHA256SUMS.txt`, publiés sur la même page.
 - **Empreinte du certificat Android** (§1) : à rappeler dans les notes de chaque version ; c'est elle, et non `SHA256SUMS.txt`, qui prouve qu'un APK vient de Ma Cave.
 - **Dépendance JitPack** : `android/gradle/verification-metadata.xml` contient les empreintes SHA-256 de Tesseract4Android 4.9.0 ; Gradle refuse de compiler si les fichiers téléchargés diffèrent (« Dependency verification failed »). À la mise à jour de cette bibliothèque : relever les empreintes des nouveaux `.aar`, `.pom` et `.module` sur `https://jitpack.io/cz/adaptech/tesseract4android/…` et les remplacer. Les autres dépendances (Google, Maven Central) ne sont pas vérifiées : elles changent à chaque mise à jour de Flutter.
 - **Installateur Windows non signé** : SmartScreen avertit à l'installation. Piste : programme gratuit de signature pour les logiciels libres (SignPath Foundation), qui exige une compilation par GitHub Actions — point à rediscuter (CDC §12).

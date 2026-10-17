@@ -91,7 +91,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 - Android : coffre de `flutter_secure_storage` exclu de la sauvegarde système (`res/xml/data_extraction_rules.xml`, `backup_rules.xml` : noms des fichiers de la version 11, à revoir si la bibliothèque change). Gradle vérifie les empreintes de Tesseract4Android (`android/gradle/verification-metadata.xml`, procédure : `docs/diffusion.md` §5 ; vérifié : empreinte fausse → « Dependency verification failed »). Pour lancer `./gradlew` à la main : `JAVA_HOME=/snap/android-studio/current/jbr`.
 - Résumé de la liste : « 228 bouteilles · 82 références **en stock** » (décision du porteur du 2026-10-17 : simple précision, pas de compteur qui suit le filtre).
 - **CDC v0.11** fait (6.5, 6.7, 8.3, 8.4, 9, 12, 13). 375 tests verts.
-- Reste, côté porteur : vérifier la double authentification du compte GitHub ; signature de l'installateur Windows renvoyée au CDC §12. Fichiers de la 1.0.0 rangés dans `build/diffusion/1.0.0/`.
+- Double authentification du compte GitHub active (vérifiée par le porteur le 2026-10-17) ; signature de l'installateur Windows renvoyée au CDC §12. Les trois appareils du porteur (téléphone, PC Windows, PC Linux) sont en 1.0.1. Fichiers de la 1.0.0 rangés dans `build/diffusion/1.0.0/`.
 
 À revoir (remarque du 2026-10-13, au passage du téléphone en 1.0.0) : le résumé en haut de la liste (« 228 bouteilles · 82 références ») ne compte que les références **en stock**, même quand les épuisées sont affichées ; le porteur s'attendait au total. Libellé « en stock » ou compteur qui suit le filtre, à décider (version 1.0.1).
 
