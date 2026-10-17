@@ -82,7 +82,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 
 **Lots 8 et 9 terminés** (portage Linux et Windows, clos le 2026-10-13 par le porteur). Appli PC installée par `tool/installer_linux.sh` / `tool/installer_windows.ps1`. **Lot 10 terminé** (2026-10-13) : **version 1.0.0 publiée** sur GitHub (Android, Windows, Linux), dépôt public, CDC v0.10. Téléphone du porteur en 1.0.0, **signé avec la clé de diffusion** : `tool/installer.sh` s'utilise de nouveau sans `CAVE_SIGNING` (et ne doit plus jamais recevoir un APK signé avec la clé de débogage). Prochaine version : procédure `docs/diffusion.md` §4, `+N` à augmenter (1.0.0 = `+2`).
 
-**Version 1.0.1 — commencée le 2026-10-17** après un audit de sécurité (Android, Linux, Windows ; aucune faille grave). Faits, avec tests :
+**Version 1.0.1 — publiée le 2026-10-17** (https://github.com/Max-horion/MaCave/releases/tag/v1.0.1, étiquette sur `9d7872d` ; téléphone du porteur et PC Windows en 1.0.1). Prochaine version : `+4`. Commencée le 2026-10-17 après un audit de sécurité (Android, Linux, Windows ; aucune faille grave). Faits, avec tests :
 - `http://` refusé hors du réseau local (`isLocalHost`, `InsecureAddressException` dans `sync_settings.dart` : IP privées, 100.64/10, noms sans point ou en `.local`/`.lan`/`.home.arpa`…). Adresse `http://` déjà enregistrée : erreur `SyncProblem.insecureAddress` à l'ouverture, pas de plantage. Guides mis à jour.
 - Date de purge dans le futur (> maintenant + 1 jour, `HistoryPurge.clockTolerance`) ignorée par `purgedBefore` : elle effaçait l'historique de tous les appareils et bloquait pour toujours l'arrivée des mouvements. Limite connue, non traitée : un appareil dont l'horloge est très en avance écrit des mouvements (inventaires) et fiches datés du futur, qui l'emportent ensuite.
 - Redirections HTTP jamais suivies par le client WebDAV (`followRedirects = false`) : elles emportaient le mot de passe.
@@ -91,7 +91,7 @@ Les fonctions marquées V2 dans le CDC (emplacements, dates de consommation, pho
 - Android : coffre de `flutter_secure_storage` exclu de la sauvegarde système (`res/xml/data_extraction_rules.xml`, `backup_rules.xml` : noms des fichiers de la version 11, à revoir si la bibliothèque change). Gradle vérifie les empreintes de Tesseract4Android (`android/gradle/verification-metadata.xml`, procédure : `docs/diffusion.md` §5 ; vérifié : empreinte fausse → « Dependency verification failed »). Pour lancer `./gradlew` à la main : `JAVA_HOME=/snap/android-studio/current/jbr`.
 - Résumé de la liste : « 228 bouteilles · 82 références **en stock** » (décision du porteur du 2026-10-17 : simple précision, pas de compteur qui suit le filtre).
 - **CDC v0.11** fait (6.5, 6.7, 8.3, 8.4, 9, 12, 13). 375 tests verts.
-- Reste, côté porteur : vérifier la double authentification du compte GitHub ; signature de l'installateur Windows renvoyée au CDC §12. Puis publication : procédure `docs/diffusion.md` §4 (`1.0.1+3`), essai sur le téléphone et les deux PC.
+- Reste, côté porteur : vérifier la double authentification du compte GitHub ; signature de l'installateur Windows renvoyée au CDC §12. Fichiers de la 1.0.0 rangés dans `build/diffusion/1.0.0/`.
 
 À revoir (remarque du 2026-10-13, au passage du téléphone en 1.0.0) : le résumé en haut de la liste (« 228 bouteilles · 82 références ») ne compte que les références **en stock**, même quand les épuisées sont affichées ; le porteur s'attendait au total. Libellé « en stock » ou compteur qui suit le filtre, à décider (version 1.0.1).
 

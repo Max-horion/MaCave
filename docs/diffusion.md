@@ -132,6 +132,7 @@ Méthode, à refaire avant toute nouvelle publication si des fichiers sensibles 
 6. Vérifier : fichiers retéléchargés sans connexion et comparés à `SHA256SUMS.txt`.
 
 **1.0.0** publiée le 2026-10-13 : https://github.com/Max-horion/MaCave/releases/tag/v1.0.0 (5 fichiers, retéléchargés et vérifiés).
+**1.0.1** publiée le 2026-10-17 : https://github.com/Max-horion/MaCave/releases/tag/v1.0.1 (5 fichiers, retéléchargés et vérifiés). Les fichiers d'une version précédente sont rangés dans `build/diffusion/<version>/` avant l'étape 4.
 
 ## 5. Sécurité de la publication (audit du 2026-10-17)
 
