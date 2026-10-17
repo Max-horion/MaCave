@@ -55,6 +55,32 @@ void main() {
     });
   });
 
+  group('formules de tableur neutralisées', () {
+    test('un début de formule reçoit une apostrophe, pas les nombres', () {
+      final text = encodeCsv([
+        ['=LIEN("http://x")', '+1+2', '@SOMME', '-moins', '-3', '+2,5', 'Vin'],
+      ]);
+      const expected =
+          r'''"'=LIEN(""http://x"")";'+1+2;'@SOMME;'-moins;-3;+2,5;Vin''';
+      expect(text, '$utf8Bom$expected\r\n');
+    });
+
+    test('aller-retour export → import : valeurs intactes', () {
+      final cells = [
+        '=1+1',
+        '+33 6 12',
+        '@x',
+        '-',
+        "'=déjà",
+        "''=deux",
+        "l'apostrophe",
+        '-12',
+        '\tTab',
+      ];
+      expect(decodeCsv(encodeCsv([cells])), [cells]);
+    });
+  });
+
   group('tableau avec en-tête', () {
     test(
       'colonnes retrouvées sans tenir compte de la casse ni des accents',

@@ -22,7 +22,27 @@ String encodeCsv(List<List<String>> rows, {String delimiter = ';'}) {
   return buffer.toString();
 }
 
-String _quote(String cell, String delimiter) {
+/// Début de cellule qu'un tableur prendrait pour une formule (« =LIEN(…) »,
+/// « +1+2 », « @SOMME »…) : un nom venu d'Open Food Facts, d'un import ou
+/// d'un autre appareil pourrait ainsi s'exécuter à l'ouverture du fichier
+/// (audit de sécurité du 2026-10-17). Une apostrophe devant l'en empêche ;
+/// [decodeCsv] la retire. Les nombres (« -3 », « +2,5 ») restent tels quels.
+final _formulaStart = RegExp(r'^[=+\-@\t\r]');
+final _number = RegExp(r'^[+-]?\d+([.,]\d+)?$');
+
+/// Cellule protégée par [_defuse] : apostrophe suivie d'un début de formule.
+final _defused = RegExp(r"^'+[=+\-@\t\r]");
+
+/// Une valeur qui ressemble déjà à une cellule protégée reçoit aussi une
+/// apostrophe : l'aller-retour export → import la rend intacte.
+String _defuse(String cell) =>
+    (_formulaStart.hasMatch(cell) && !_number.hasMatch(cell)) ||
+        _defused.hasMatch(cell)
+    ? "'$cell"
+    : cell;
+
+String _quote(String raw, String delimiter) {
+  final cell = _defuse(raw);
   final needsQuotes =
       cell.contains(delimiter) ||
       cell.contains('"') ||
@@ -47,7 +67,8 @@ List<List<String>> decodeCsv(String input) {
   var inQuotes = false;
 
   void endCell() {
-    row.add(cell.toString());
+    final value = cell.toString();
+    row.add(_defused.hasMatch(value) ? value.substring(1) : value);
     cell.clear();
   }
 
