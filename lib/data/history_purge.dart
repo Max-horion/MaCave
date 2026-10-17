@@ -50,8 +50,17 @@ class HistoryPurge {
 
   // ──────────────────────────── Purge manuelle ─────────────────────────────
 
+  /// Avance tolérée d'une date de purge sur l'horloge de cet appareil.
+  static const clockTolerance = Duration(days: 1);
+
   /// Date avant laquelle l'historique a été purgé (UTC, millisecondes), ou
   /// null. Lit la base [schema] (`main` ou `source` pendant une fusion).
+  ///
+  /// Une date dans le futur (horloge d'un autre appareil très en avance,
+  /// fichier abîmé ou modifié sur le serveur) est ignorée : appliquée, elle
+  /// effacerait tout l'historique et la fusion n'importerait plus jamais
+  /// aucun mouvement, puisque la date ne recule jamais (audit de sécurité du
+  /// 2026-10-17).
   Future<int?> purgedBefore({String schema = 'main'}) async {
     final row = await _db
         .customSelect(
@@ -60,7 +69,9 @@ class HistoryPurge {
         )
         .getSingleOrNull();
     final value = row == null ? null : jsonDecode(row.read<String>('value'));
-    return value is int ? value : null;
+    if (value is! int) return null;
+    final limit = _ctx.now() + clockTolerance.inMilliseconds;
+    return value <= limit ? value : null;
   }
 
   /// Nombre de mouvements antérieurs à [date] (pour la confirmation).
@@ -140,7 +151,8 @@ class HistoryPurge {
   });
 
   /// Enregistre la date de purge si elle est plus récente que celle connue :
-  /// elle ne recule jamais, quel que soit l'ordre des synchronisations.
+  /// elle ne recule jamais, quel que soit l'ordre des synchronisations (une
+  /// date dans le futur, ignorée par [purgedBefore], est remplacée).
   /// Retourne true si le réglage a changé.
   Future<bool> recordPurgeDate(int date) async {
     final current = await purgedBefore();

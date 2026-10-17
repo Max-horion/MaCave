@@ -280,6 +280,9 @@ void main() {
       phone.ctx.time = y2026;
       await phone.repo.addExit(lotId, 1);
       await sync(phone, pc);
+      // Horloge du PC à la même époque : une date de purge postérieure à
+      // son horloge serait ignorée.
+      pc.ctx.time = y2026;
     });
 
     test('la purge d\'un appareil s\'applique à l\'autre', () async {
@@ -331,6 +334,44 @@ void main() {
         expect(await HistoryPurge(d.db, d.ctx).purgedBefore(), y2025);
         expect(await d.stockOf(lotId), 4);
       }
+    });
+
+    group('date de purge dans le futur', () {
+      final y2029 = DateTime.utc(2029).millisecondsSinceEpoch;
+
+      setUp(() async {
+        // Fichier abîmé ou modifié sur le serveur : date de purge de 2029
+        // dans les réglages du téléphone, sans purge réelle.
+        await HistoryPurge(phone.db, phone.ctx).recordPurgeDate(y2029);
+      });
+
+      test('elle n\'efface pas l\'historique de l\'autre appareil', () async {
+        await sync(phone, pc);
+
+        expect(await HistoryPurge(pc.db, pc.ctx).purgedBefore(), isNull);
+        expect(await pc.stockOf(lotId), 4);
+        // Entrée, sortie de 2024, sortie de 2026 : rien n'a disparu.
+        expect(await movementCount(pc), 3);
+      });
+
+      test('les mouvements faits ailleurs arrivent toujours', () async {
+        await sync(phone, pc);
+        pc.ctx.time = y2026 + 1000000;
+        await pc.repo.addExit(lotId, 1);
+
+        // Sans la limite, la date de 2029 écarterait cette sortie de 2026.
+        final r = await sync(pc, phone);
+        expect(r.applied['movements'], 1);
+        expect(await phone.stockOf(lotId), 3);
+        expect(await pc.dump(), await phone.dump());
+      });
+
+      test('une vraie purge ultérieure la remplace', () async {
+        await sync(phone, pc);
+        await HistoryPurge(pc.db, pc.ctx).purgeBefore(y2025);
+        expect(await HistoryPurge(pc.db, pc.ctx).purgedBefore(), y2025);
+        expect(await pc.stockOf(lotId), 4);
+      });
     });
   });
 
